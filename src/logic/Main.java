@@ -1,3 +1,5 @@
+package logic;
+
 import data_access.ConecctionDataBase;
 
 public class Main {
