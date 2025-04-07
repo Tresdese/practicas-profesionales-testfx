@@ -43,4 +43,12 @@ public class PartialEvaluationDTO {
     public void setTuiton(String tuiton) {
         this.tuiton = tuiton;
     }
+
+    public String getEvidence() {
+        return evidence;
+    }
+    
+    public void setEvidence(String evidence) {
+        this.evidence = evidence;
+    }
 }

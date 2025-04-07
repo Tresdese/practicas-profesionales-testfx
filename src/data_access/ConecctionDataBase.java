@@ -16,7 +16,7 @@ public class ConecctionDataBase {
 
     public ConecctionDataBase() {
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("out/resources/config.properties")) {
+        try (FileInputStream input = new FileInputStream("config.properties")) {
             properties.load(input);
             this.URL = properties.getProperty("db.url");
             this.USER = properties.getProperty("db.user");
