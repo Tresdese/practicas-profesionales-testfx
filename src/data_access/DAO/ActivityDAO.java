@@ -1,4 +1,4 @@
-package logic.DAO;
+package data_access.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,34 +17,34 @@ public class ActivityDAO implements IActivityDAO {
     private final static String SQL_SELECT = "SELECT * FROM actividad WHERE idActividad = ?";
 
     public boolean insertActivity(ActivityDTO activity, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_INSERT)) {
-            ps.setString(1, activity.getActivityId());
-            ps.setString(2, activity.getActivityName());
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+            statement.setString(1, activity.getActivityId());
+            statement.setString(2, activity.getActivityName());
+            return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateActivity(ActivityDTO activity, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_UPDATE)) {
-            ps.setString(1, activity.getActivityName());
-            ps.setString(2, activity.getActivityId());
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+            statement.setString(1, activity.getActivityName());
+            statement.setString(2, activity.getActivityId());
+            return statement.executeUpdate() > 0;
         }
     }
 
     public boolean deleteActivity(ActivityDTO activity, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_DELETE)) {
-            ps.setString(1, activity.getActivityId());
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+            statement.setString(1, activity.getActivityId());
+            return statement.executeUpdate() > 0;
         }
     }
 
     public ActivityDTO getActivity(String idActivity, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_SELECT)) {
-            ps.setString(1, idActivity);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new ActivityDTO(rs.getString("idActividad"), rs.getString("nombreActividad"));
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+            statement.setString(1, idActivity);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new ActivityDTO(resultSet.getString("idActividad"), resultSet.getString("nombreActividad"));
                 }
             }
         }
@@ -54,10 +54,10 @@ public class ActivityDAO implements IActivityDAO {
     public List<ActivityDTO> getAllActivities(Connection connection) throws SQLException {
         List<ActivityDTO> activities = new ArrayList<>();
         String SQL_SELECT_ALL = "SELECT * FROM actividad";
-        try (PreparedStatement ps = connection.prepareStatement(SQL_SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                activities.add(new ActivityDTO(rs.getString("idActividad"), rs.getString("nombreActividad")));
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                activities.add(new ActivityDTO(resultSet.getString("idActividad"), resultSet.getString("nombreActividad")));
             }
         }
         return activities;

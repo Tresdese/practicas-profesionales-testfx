@@ -1,4 +1,4 @@
-package logic.DAO;
+package data_access.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,36 +18,36 @@ public class EvaluationCriteriaDAO implements IEvaluationCriteriaDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evaluacion_criterio";
 
     public boolean insertEvaluationCriteria(EvaluationCriteriaDTO criteria, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_INSERT)) {
-            ps.setString(1, criteria.getIdEvaluation());
-            ps.setString(2, criteria.getIdCriterion());
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+            statement.setString(1, criteria.getIdEvaluation());
+            statement.setString(2, criteria.getIdCriterion());
+            return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateEvaluationCriteria(EvaluationCriteriaDTO criteria, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_UPDATE)) {
-            ps.setString(1, criteria.getIdCriterion());
-            ps.setString(2, criteria.getIdEvaluation());
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+            statement.setString(1, criteria.getIdCriterion());
+            statement.setString(2, criteria.getIdEvaluation());
+            return statement.executeUpdate() > 0;
         }
     }
 
     public boolean deleteEvaluationCriteria(String idEvaluation, String idCriterion, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_DELETE)) {
-            ps.setString(1, idEvaluation);
-            ps.setString(2, idCriterion);
-            return ps.executeUpdate() > 0;
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+            statement.setString(1, idEvaluation);
+            statement.setString(2, idCriterion);
+            return statement.executeUpdate() > 0;
         }
     }
 
     public EvaluationCriteriaDTO getEvaluationCriteria(String idEvaluation, String idCriterion, Connection connection) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(SQL_SELECT)) {
-            ps.setString(1, idEvaluation);
-            ps.setString(2, idCriterion);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new EvaluationCriteriaDTO(rs.getString("idEvaluacion"), rs.getString("idCriterio"));
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+            statement.setString(1, idEvaluation);
+            statement.setString(2, idCriterion);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new EvaluationCriteriaDTO(resultSet.getString("idEvaluacion"), resultSet.getString("idCriterio"));
                 }
             }
         }
@@ -56,10 +56,10 @@ public class EvaluationCriteriaDAO implements IEvaluationCriteriaDAO {
 
     public List<EvaluationCriteriaDTO> getAllEvaluationCriteria(Connection connection) throws SQLException {
         List<EvaluationCriteriaDTO> criteriaList = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(SQL_SELECT_ALL);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                criteriaList.add(new EvaluationCriteriaDTO(rs.getString("idEvaluacion"), rs.getString("idCriterio")));
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                criteriaList.add(new EvaluationCriteriaDTO(resultSet.getString("idEvaluacion"), resultSet.getString("idCriterio")));
             }
         }
         return criteriaList;
