@@ -16,7 +16,7 @@ public class ConecctionDataBase {
 
     public ConecctionDataBase() {
         Properties properties = new Properties();
-        try (FileInputStream input = new FileInputStream("config.properties")) {
+        try (FileInputStream input = new FileInputStream("out/resources/config.properties")) {
             properties.load(input);
             this.URL = properties.getProperty("db.url");
             this.USER = properties.getProperty("db.user");
@@ -29,8 +29,10 @@ public class ConecctionDataBase {
     public Connection connectDB() throws SQLException {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Conexión exitosa a la base de datos.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+            throw e;
         }
         return connection;
     }

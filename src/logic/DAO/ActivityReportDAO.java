@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.ActivityReportDTO;
+import logic.interfaces.IActivityReportDAO;
 
-public class ActivityReportDAO {
+public class ActivityReportDAO implements IActivityReportDAO {
     private final static String SQL_INSERT = "INSERT INTO reporte (numReporte, idActividad) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE reporte SET idActividad = ? WHERE numReporte = ?";
     private final static String SQL_DELETE = "DELETE FROM reporte WHERE numReporte = ?";

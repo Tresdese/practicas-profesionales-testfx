@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.GroupDTO;
+import logic.interfaces.IGroupDAO;
 
-public class GroupDAO {
+public class GroupDAO implements IGroupDAO {
     private final static String SQL_INSERT = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE grupo SET nombre = ?, idUsuario = ?, idPeriodo = ? WHERE NRC = ?";
     private final static String SQL_DELETE = "DELETE FROM grupo WHERE NRC = ?";

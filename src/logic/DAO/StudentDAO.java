@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.StudentDTO;
+import logic.interfaces.IStudentDAO;
 
-public class StudentDAO {
+public class StudentDAO implements IStudentDAO {
     private final static String SQL_INSERT = "INSERT INTO estudiante (matricula, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE estudiante SET nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM estudiante WHERE matricula = ?";

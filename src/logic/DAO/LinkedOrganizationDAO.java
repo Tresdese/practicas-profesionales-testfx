@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.LinkedOrganizationDTO;
+import logic.interfaces.ILinkedOrganizationDAO;
 
-public class LinkedOrganizationDAO {
+public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private final static String SQL_INSERT = "INSERT INTO organizacion_vinculada (idOrganizacion, nombre, direccion) VALUES (?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
     private final static String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";

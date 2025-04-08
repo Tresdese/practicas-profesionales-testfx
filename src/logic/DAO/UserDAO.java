@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.UserDTO;
+import logic.interfaces.IUserDAO;
 
-public class UserDAO {
+public class UserDAO implements IUserDAO {
     private final static String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
     private final static String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";

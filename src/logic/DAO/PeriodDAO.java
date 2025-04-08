@@ -36,7 +36,7 @@ public class PeriodDAO {
         }
     }
 
-    public boolean deletePeriod(String idPeriod, Connection connection) throws SQLException {
+    public boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException {
         try (PreparedStatement ps = connection.prepareStatement(SQL_DELETE)) {
             ps.setString(1, idPeriod);
             return ps.executeUpdate() > 0;

@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.AssessmentCriterionDTO;
+import logic.interfaces.IAssessmentCriterionDAO;
 
-public class AssessmentCriterionDAO {
+public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
     private final static String SQL_INSERT = "INSERT INTO criterio_evaluacion (idCriterio, nombreCriterio, calificacion) VALUES (?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE criterio_evaluacion SET nombreCriterio = ?, calificacion = ? WHERE idCriterio = ?";
     private final static String SQL_DELETE = "DELETE FROM criterio_evaluacion WHERE idCriterio = ?";

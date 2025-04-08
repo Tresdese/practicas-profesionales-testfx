@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.CriterionSelfAssessmentDTO;
+import logic.interfaces.ICriterionSelfAssessmentDAO;
 
-public class CriterionSelfAssessmentDAO {
+public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
     private final static String SQL_INSERT = "INSERT INTO criterio_autoevaluacion (idAutoevaluacion, idCriterios) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE criterio_autoevaluacion SET idCriterios = ? WHERE idAutoevaluacion = ?";
     private final static String SQL_DELETE = "DELETE FROM criterio_autoevaluacion WHERE idAutoevaluacion = ? AND idCriterios = ?";

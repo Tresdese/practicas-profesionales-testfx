@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.EvidenceDTO;
+import logic.interfaces.IEvidenceDAO;
 
-public class EvidenceDAO {
+public class EvidenceDAO implements IEvidenceDAO {
     private final static String SQL_INSERT = "INSERT INTO evidencia (idEvidencia, nombreEvidencia, fechaEntrega, ruta, contenido) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE evidencia SET nombreEvidencia = ?, fechaEntrega = ?, ruta = ?, contenido = ? WHERE idEvidencia = ?";
     private final static String SQL_DELETE = "DELETE FROM evidencia WHERE idEvidencia = ?";

@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.PartialEvaluationDTO;
+import logic.interfaces.IPartialEvaluationDAO;
 
-public class PartialEvaluationDAO {
+public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     private final static String SQL_INSERT = "INSERT INTO evaluacion_parcial (idEvaluacion, promedio, matricula, IdEvidencia) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE evaluacion_parcial SET promedio = ?, matricula = ?, IdEvidencia = ? WHERE idEvaluacion = ?";
     private final static String SQL_DELETE = "DELETE FROM evaluacion_parcial WHERE idEvaluacion = ?";
