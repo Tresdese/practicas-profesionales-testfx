@@ -2,6 +2,7 @@ package logic.DTO;
 
 public class UserDTO {
     private String idUser;
+    private int state;
     private String numberOffStaff;
     private String names;
     private String surname;
@@ -11,6 +12,7 @@ public class UserDTO {
 
     public UserDTO () {
         this.idUser = "";
+        this.state = 1;
         this.numberOffStaff = "";
         this.names = "";
         this.surname = "";
@@ -21,6 +23,7 @@ public class UserDTO {
 
     public UserDTO(String idUser, String numberOffStaff, String names, String surname, String userName, String password, Role role) {
         this.idUser = idUser;
+        this.state = 1;
         this.numberOffStaff = numberOffStaff;
         this.names = names;
         this.surname = surname;
@@ -35,6 +38,14 @@ public class UserDTO {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     public String getNumberOffStaff() {
