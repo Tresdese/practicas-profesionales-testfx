@@ -10,8 +10,8 @@ import java.util.List;
 import logic.DTO.EvidenceDTO;
 
 public class EvidenceDAO {
-    private final static String SQL_INSERT = "INSERT INTO evidencia (idEvidencia, nombreEvidencia, fechaEntrega, ruta, contenido) VALUES (?, ?, ?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE evidencia SET nombreEvidencia = ?, fechaEntrega = ?, ruta = ?, contenido = ? WHERE idEvidencia = ?";
+    private final static String SQL_INSERT = "INSERT INTO evidencia (idEvidencia, nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE evidencia SET nombreEvidencia = ?, fechaEntrega = ?, ruta = ? WHERE idEvidencia = ?";
     private final static String SQL_DELETE = "DELETE FROM evidencia WHERE idEvidencia = ?";
     private final static String SQL_SELECT = "SELECT * FROM evidencia WHERE idEvidencia = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM evidencia";
@@ -22,7 +22,6 @@ public class EvidenceDAO {
             statement.setString(2, evidence.getEvidenceName());
             statement.setDate(3, new java.sql.Date(evidence.getDeliveryDate().getTime()));
             statement.setString(4, evidence.getRoute());
-            statement.setBytes(5, evidence.getContenido());
             return statement.executeUpdate() > 0;
         }
     }
@@ -32,7 +31,6 @@ public class EvidenceDAO {
             statement.setString(1, evidence.getEvidenceName());
             statement.setDate(2, new java.sql.Date(evidence.getDeliveryDate().getTime()));
             statement.setString(3, evidence.getRoute());
-            statement.setBytes(4, evidence.getContenido());
             statement.setInt(5, evidence.getIdEvidence());
             return statement.executeUpdate() > 0;
         }
@@ -50,7 +48,7 @@ public class EvidenceDAO {
             statement.setInt(1, idEvidence);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new EvidenceDTO(resultSet.getInt("idEvidencia"), resultSet.getString("nombreEvidencia"),resultSet.getDate("fechaEntrega"), resultSet.getString("ruta"), resultSet.getBytes("contenido"));
+                    return new EvidenceDTO(resultSet.getInt("idEvidencia"), resultSet.getString("nombreEvidencia"),resultSet.getDate("fechaEntrega"), resultSet.getString("ruta"));
                 }
             }
         }
@@ -63,7 +61,7 @@ public class EvidenceDAO {
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 evidences.add(new EvidenceDTO(resultSet.getInt("idEvidencia"), resultSet.getString("nombreEvidencia"),
-                        resultSet.getDate("fechaEntrega"), resultSet.getString("ruta"), resultSet.getBytes("contenido")));
+                        resultSet.getDate("fechaEntrega"), resultSet.getString("ruta")));
             }
         }
         return evidences;

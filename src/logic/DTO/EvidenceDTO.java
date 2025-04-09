@@ -7,22 +7,19 @@ public class EvidenceDTO {
     private String evidenceName;
     private Date deliveryDate;
     private String route;
-    private byte[] contenido;
 
     public EvidenceDTO() {
         this.idEvidence = 0;
         this.evidenceName = "";
         this.deliveryDate = null;
         this.route = "";
-        this.contenido = null;
     }
 
-    public EvidenceDTO(int idEvidence, String evidenceName, Date deliveryDate, String route, byte[] contenido) {
+    public EvidenceDTO(int idEvidence, String evidenceName, Date deliveryDate, String route) {
         this.idEvidence = idEvidence;
         this.evidenceName = evidenceName;
         this.deliveryDate = deliveryDate;
         this.route = route;
-        this.contenido = contenido;
     }
 
     public int getIdEvidence() {
@@ -55,13 +52,5 @@ public class EvidenceDTO {
 
     public void setRoute(String route) {
         this.route = route;
-    }
-
-    public byte[] getContenido() {
-        return contenido;
-    }
-
-    public void setContenido(byte[] contenido) {
-        this.contenido = contenido;
     }
 }
