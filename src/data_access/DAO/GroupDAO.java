@@ -17,6 +17,11 @@ public class GroupDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM grupo";
 
     public boolean insertGroup(GroupDTO group, Connection connection) throws SQLException {
+        GroupDTO existingGroup = getGroup(group.getNRC(), connection);
+        if (existingGroup != null) {
+            return group.getNRC().equals(existingGroup.getNRC());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, group.getNRC());
             statement.setString(2, group.getName());

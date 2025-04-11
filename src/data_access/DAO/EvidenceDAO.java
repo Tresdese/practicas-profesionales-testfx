@@ -31,7 +31,7 @@ public class EvidenceDAO {
             statement.setString(1, evidence.getEvidenceName());
             statement.setDate(2, new java.sql.Date(evidence.getDeliveryDate().getTime()));
             statement.setString(3, evidence.getRoute());
-            statement.setInt(5, evidence.getIdEvidence());
+            statement.setInt(4, evidence.getIdEvidence());
             return statement.executeUpdate() > 0;
         }
     }

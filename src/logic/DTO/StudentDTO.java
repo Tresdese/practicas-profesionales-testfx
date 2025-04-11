@@ -25,8 +25,9 @@ public class StudentDTO {
         this.creditAdvance = "";
     }
 
-    public StudentDTO(String tuiton, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance) {
+    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance) {
         this.tuiton = tuiton;
+        this.state = state;
         this.state = 1;
         this.names = names;
         this.surnames = surnames;

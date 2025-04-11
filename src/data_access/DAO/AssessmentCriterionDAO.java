@@ -11,11 +11,11 @@ import logic.DTO.AssessmentCriterionDTO;
 import logic.interfaces.IAssessmentCriterionDAO;
 
 public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
-    private final static String SQL_INSERT = "INSERT INTO criterio_evaluacion (idCriterio, nombreCriterio, calificacion) VALUES (?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE criterio_evaluacion SET nombreCriterio = ?, calificacion = ? WHERE idCriterio = ?";
-    private final static String SQL_DELETE = "DELETE FROM criterio_evaluacion WHERE idCriterio = ?";
-    private final static String SQL_SELECT = "SELECT * FROM criterio_evaluacion WHERE idCriterio = ?";
-    private final static String SQL_SELECT_ALL = "SELECT * FROM criterio_evaluacion";
+    private final static String SQL_INSERT = "INSERT INTO criterio_de_evaluacion (idCriterio, nombreCriterio, calificacion) VALUES (?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE criterio_de_evaluacion SET nombreCriterio = ?, calificacion = ? WHERE idCriterio = ?";
+    private final static String SQL_DELETE = "DELETE FROM criterio_de_evaluacion WHERE idCriterio = ?";
+    private final static String SQL_SELECT = "SELECT * FROM criterio_de_evaluacion WHERE idCriterio = ?";
+    private final static String SQL_SELECT_ALL = "SELECT * FROM criterio_de_evaluacion";
 
     public boolean insertAssessmentCriterion(AssessmentCriterionDTO criterion, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
