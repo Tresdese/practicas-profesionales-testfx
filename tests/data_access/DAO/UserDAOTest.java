@@ -187,9 +187,9 @@ class UserDAOTest {
             String username2 = "evaluador" + UUID.randomUUID().toString().substring(0, 5);
             String username3 = "coordinador" + UUID.randomUUID().toString().substring(0, 5);
 
-            int numeroPersonal1 = 7010;
-            int numeroPersonal2 = 7011;
-            int numeroPersonal3 = 7012;
+            int numeroPersonal1 = 0;
+            int numeroPersonal2 = 0;
+            int numeroPersonal3 = 0;
 
             int id1 = insertTestUser(
                     "Profesor",
