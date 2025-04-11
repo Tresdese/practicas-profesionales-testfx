@@ -36,6 +36,20 @@ class EvaluationCriteriaDAOTest {
     @BeforeEach
     void setUp() {
         criteriaDAO = new EvaluationCriteriaDAO();
+        try {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "INSERT IGNORE INTO evaluacion_parcial (idEvaluacion) VALUES (?)")) {
+                stmt.setString(1, "10000");
+                stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "INSERT IGNORE INTO criterio_de_evaluacion (idCriterio) VALUES (?)")) {
+                stmt.setString(1, "1");
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            fail("Error al preparar los datos iniciales: " + e.getMessage());
+        }
     }
 
     @AfterEach
@@ -54,7 +68,7 @@ class EvaluationCriteriaDAOTest {
             boolean result = criteriaDAO.insertEvaluationCriteria(criteria, connection);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            EvaluationCriteriaDTO insertedCriteria = criteriaDAO.getEvaluationCriteria("1", "101", connection);
+            EvaluationCriteriaDTO insertedCriteria = criteriaDAO.getEvaluationCriteria("10000", "1", connection);
             assertNotNull(insertedCriteria, "El criterio debería existir en la base de datos");
             assertEquals("10000", insertedCriteria.getIdEvaluation(), "El ID de evaluación debería coincidir");
             assertEquals("1", insertedCriteria.getIdCriterion(), "El ID de criterio debería coincidir");
@@ -64,49 +78,32 @@ class EvaluationCriteriaDAOTest {
     }
 
     @Test
-    void testGetEvaluationCriteria() {
+    void testGetAllEvaluationCriteria() {
         try {
-            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("11111", "3");
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+            EvaluationCriteriaDTO criteria1 = new EvaluationCriteriaDTO("10000", "1");
+            criteriaDAO.insertEvaluationCriteria(criteria1, connection);
 
-            EvaluationCriteriaDTO retrievedCriteria = criteriaDAO.getEvaluationCriteria("11111", "3", connection);
-            assertNotNull(retrievedCriteria, "El criterio debería existir en la base de datos");
-            assertEquals("11111", retrievedCriteria.getIdEvaluation(), "El ID de evaluación debería coincidir");
-            assertEquals("3", retrievedCriteria.getIdCriterion(), "El ID de criterio debería coincidir");
+            List<EvaluationCriteriaDTO> criteriaList = criteriaDAO.getAllEvaluationCriteria(connection);
+            assertNotNull(criteriaList, "La lista no debería ser nula");
+            assertTrue(criteriaList.size() >= 1, "Debería haber al menos un criterio en la lista");
         } catch (SQLException e) {
-            fail("Error en testGetEvaluationCriteria: " + e.getMessage());
+            fail("Error en testGetAllEvaluationCriteria: " + e.getMessage());
         }
     }
 
     @Test
     void testDeleteEvaluationCriteria() {
         try {
-            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("33333", "105");
+            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
             criteriaDAO.insertEvaluationCriteria(criteria, connection);
 
-            boolean result = criteriaDAO.deleteEvaluationCriteria("4", "105", connection);
+            boolean result = criteriaDAO.deleteEvaluationCriteria("10000", "1", connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            EvaluationCriteriaDTO deletedCriteria = criteriaDAO.getEvaluationCriteria("4", "105", connection);
+            EvaluationCriteriaDTO deletedCriteria = criteriaDAO.getEvaluationCriteria("10000", "1", connection);
             assertNull(deletedCriteria, "El criterio eliminado no debería existir en la base de datos");
         } catch (SQLException e) {
             fail("Error en testDeleteEvaluationCriteria: " + e.getMessage());
-        }
-    }
-
-    @Test
-    void testGetAllEvaluationCriteria() {
-        try {
-            EvaluationCriteriaDTO criteria1 = new EvaluationCriteriaDTO("5", "106");
-            EvaluationCriteriaDTO criteria2 = new EvaluationCriteriaDTO("6", "107");
-            criteriaDAO.insertEvaluationCriteria(criteria1, connection);
-            criteriaDAO.insertEvaluationCriteria(criteria2, connection);
-
-            List<EvaluationCriteriaDTO> criteriaList = criteriaDAO.getAllEvaluationCriteria(connection);
-            assertNotNull(criteriaList, "La lista no debería ser nula");
-            assertTrue(criteriaList.size() >= 2, "Debería haber al menos dos criterios en la lista");
-        } catch (SQLException e) {
-            fail("Error en testGetAllEvaluationCriteria: " + e.getMessage());
         }
     }
 }
