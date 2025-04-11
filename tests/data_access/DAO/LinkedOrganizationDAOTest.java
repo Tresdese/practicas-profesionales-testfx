@@ -68,7 +68,7 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Test " + UUID.randomUUID().toString().substring(0, 5);
 
             LinkedOrganizationDTO organization = new LinkedOrganizationDTO(
-                    "0", // El ID será generado automáticamente
+                    "0",
                     uniqueName,
                     "Dirección Test 123"
             );
