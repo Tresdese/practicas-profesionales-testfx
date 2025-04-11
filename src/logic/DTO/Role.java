@@ -1,7 +1,7 @@
 package logic.DTO;
 
 public enum Role {
-    ACADEMIC {
+    ACADEMICO {
         @Override
         public void performAction1() {
             System.out.println("Acción 1 realizada por ACADEMICO");
@@ -12,7 +12,7 @@ public enum Role {
             System.out.println("Acción 2 realizada por ACADEMICO");
         }
     },
-    ACADEMIC_EVALUATOR {
+    ACADEMICO_EVALUADOR {
         @Override
         public void performAction1() {
             System.out.println("Acción 1 realizada por ACADEMICO_EVALUADOR");
@@ -23,7 +23,7 @@ public enum Role {
             System.out.println("Acción 2 realizada por ACADEMICO_EVALUADOR");
         }
     },
-    COORDINATOR {
+    COORDINADOR {
         @Override
         public void performAction1() {
             System.out.println("Acción 1 realizada por COORDINADOR");
