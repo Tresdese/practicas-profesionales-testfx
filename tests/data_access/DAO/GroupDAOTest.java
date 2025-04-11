@@ -40,7 +40,7 @@ class GroupDAOTest {
         if (existingGroup != null) {
             return nrc;
         }
-    
+
         String sql = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, nrc);
@@ -58,7 +58,7 @@ class GroupDAOTest {
             String nrc = "12345";
             String name = "Grupo de Prueba";
             String idUser = "1";
-            String idPeriod = "1";
+            String idPeriod = "222601"; // Actualizado a 222601
 
             GroupDTO group = new GroupDTO(nrc, name, idUser, idPeriod);
             boolean result = groupDAO.insertGroup(group, connection);
@@ -75,7 +75,7 @@ class GroupDAOTest {
     @Test
     void testGetGroup() {
         try {
-            String nrc = insertTestGroup("54321", "Grupo para Consulta", "2", "2");
+            String nrc = insertTestGroup("54321", "Grupo para Consulta", "2", "222601"); // Actualizado a 222601
 
             GroupDTO retrievedGroup = groupDAO.getGroup(nrc, connection);
             assertNotNull(retrievedGroup, "Debería encontrar el grupo");
@@ -89,9 +89,9 @@ class GroupDAOTest {
     @Test
     void testUpdateGroup() {
         try {
-            String nrc = insertTestGroup("67890", "Grupo Original", "3", "3");
+            String nrc = insertTestGroup("67890", "Grupo Original", "3", "222601"); // Actualizado a 222601
 
-            GroupDTO group = new GroupDTO(nrc, "Grupo Actualizado", "5", "5");
+            GroupDTO group = new GroupDTO(nrc, "Grupo Actualizado", "5", "222601"); // Actualizado a 222601
             boolean updateResult = groupDAO.updateGroup(group, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
@@ -106,7 +106,7 @@ class GroupDAOTest {
     @Test
     void testGetAllGroups() {
         try {
-            insertTestGroup("11111", "Grupo para Listar", "6", "6");
+            insertTestGroup("11111", "Grupo para Listar", "6", "222601"); // Actualizado a 222601
 
             List<GroupDTO> groups = groupDAO.getAllGroups(connection);
             assertNotNull(groups, "La lista no debería ser nula");
@@ -123,7 +123,7 @@ class GroupDAOTest {
     @Test
     void testDeleteGroup() {
         try {
-            String nrc = insertTestGroup("22222", "Grupo para Eliminar", "7", "7");
+            String nrc = insertTestGroup("22222", "Grupo para Eliminar", "7", "222601"); // Actualizado a 222601
 
             GroupDTO before = groupDAO.getGroup(nrc, connection);
             assertNotNull(before, "El grupo debería existir antes de eliminarlo");
