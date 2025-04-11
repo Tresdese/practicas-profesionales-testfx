@@ -92,7 +92,7 @@ class UserDAOTest {
                     int insertedNumPersonal = rs.getInt("numeroDePersonal");
                     String hashedPassword = rs.getString("contraseña");
 
-                    UserDTO retrievedUser = userDAO.getUser(String.valueOf(insertedId), connection);
+                    UserDTO retrievedUser = userDAO.getUser(new UserDTO(String.valueOf(insertedId)), connection);
                     assertNotNull(retrievedUser, "El usuario debería existir en la base de datos");
                     assertEquals(nombreUsuario, retrievedUser.getUserName(), "El nombre de usuario debería coincidir");
                     assertEquals(String.valueOf(numeroPersonal), retrievedUser.getNumberOffStaff(), "El número de personal debería coincidir");
@@ -119,7 +119,7 @@ class UserDAOTest {
                     numeroPersonal
             );
 
-            UserDTO user = userDAO.getUser(String.valueOf(testUserId), connection);
+            UserDTO user = userDAO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
             assertNotNull(user, "Debería encontrar al usuario");
             assertEquals("Juan", user.getNames(), "El nombre debería coincidir");
             assertEquals("Pérez", user.getSurname(), "El apellido debería coincidir");
@@ -144,7 +144,7 @@ class UserDAOTest {
                     numeroPersonal
             );
 
-            UserDTO currentUser = userDAO.getUser(String.valueOf(testUserId), connection);
+            UserDTO currentUser = userDAO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
             int nuevoNumeroPersonal = numeroPersonal + 1;
 
             UserDTO userToUpdate = new UserDTO(
@@ -171,7 +171,7 @@ class UserDAOTest {
                 }
             }
 
-            UserDTO updatedUser = userDAO.getUser(String.valueOf(testUserId), connection);
+            UserDTO updatedUser = userDAO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
             assertNotNull(updatedUser, "El usuario debería existir después de actualizar");
             assertEquals("María Actualizada", updatedUser.getNames(), "El nombre debería actualizarse");
             assertEquals(String.valueOf(nuevoNumeroPersonal), updatedUser.getNumberOffStaff(), "El número de personal debería actualizarse");
@@ -218,9 +218,9 @@ class UserDAOTest {
                     numeroPersonal3
             );
 
-            UserDTO user1 = userDAO.getUser(String.valueOf(id1), connection);
-            UserDTO user2 = userDAO.getUser(String.valueOf(id2), connection);
-            UserDTO user3 = userDAO.getUser(String.valueOf(id3), connection);
+            UserDTO user1 = userDAO.getUser(new UserDTO(String.valueOf(id1)), connection);
+            UserDTO user2 = userDAO.getUser(new UserDTO(String.valueOf(id2)), connection);
+            UserDTO user3 = userDAO.getUser(new UserDTO(String.valueOf(id3)), connection);
 
             assertNotNull(user1, "El profesor debería existir");
             assertNotNull(user2, "El evaluador debería existir");
@@ -239,11 +239,11 @@ class UserDAOTest {
             boolean deleteResult = userDAO.deleteUser(userToDelete, connection);
             assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-            UserDTO deletedUser = userDAO.getUser(String.valueOf(id2), connection);
+            UserDTO deletedUser = userDAO.getUser(new UserDTO(String.valueOf(id2)), connection);
             assertNull(deletedUser, "El evaluador eliminado no debería existir");
 
-            UserDTO remainingUser1 = userDAO.getUser(String.valueOf(id1), connection);
-            UserDTO remainingUser3 = userDAO.getUser(String.valueOf(id3), connection);
+            UserDTO remainingUser1 = userDAO.getUser(new UserDTO(String.valueOf(id1)), connection);
+            UserDTO remainingUser3 = userDAO.getUser(new UserDTO(String.valueOf(id3)), connection);
 
             assertNotNull(remainingUser1, "El profesor debería seguir existiendo");
             assertNotNull(remainingUser3, "El coordinador debería seguir existiendo");

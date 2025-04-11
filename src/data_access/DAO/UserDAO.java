@@ -1,8 +1,5 @@
 package data_access.DAO;
 
-import logic.DTO.UserDTO;
-import logic.utils.PasswordHasher;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import logic.DTO.Role;
+import logic.DTO.UserDTO;
+
 public class UserDAO {
     private final static String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
+    private final static String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";
     private final static String SQL_SELECT = "SELECT * FROM usuario WHERE idUsuario = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM usuario";
@@ -24,8 +25,8 @@ public class UserDAO {
             statement.setString(3, user.getNames());
             statement.setString(4, user.getSurname());
             statement.setString(5, user.getUserName());
-            statement.setString(6, PasswordHasher.hashPassword(user.getPassword()));
-            statement.setString(7, user.getRole().toString());
+            statement.setString(6, user.getPassword());
+            statement.setString(7, user.getRole().toString()); 
             return statement.executeUpdate() > 0;
         }
     }
@@ -36,25 +37,31 @@ public class UserDAO {
             statement.setString(2, user.getNames());
             statement.setString(3, user.getSurname());
             statement.setString(4, user.getUserName());
-            statement.setString(5, PasswordHasher.hashPassword(user.getPassword()));
-            statement.setString(6, user.getRole().toString());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getRole().toString()); 
             statement.setString(7, user.getIdUser());
             return statement.executeUpdate() > 0;
         }
     }
 
-    // En UserDAO.java
-    public boolean deleteUser(UserDTO user, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            int userId = Integer.parseInt(user.getIdUser());
-            statement.setInt(1, userId);
+    public boolean updateUserState(String idUser, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATE)) {
+            statement.setInt(1, 1);
+            statement.setString(2, idUser);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public UserDTO getUser(String idUser, Connection connection) throws SQLException {
+    public boolean deleteUser(UserDTO user, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+            statement.setString(1, user.getIdUser());
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public UserDTO getUser(UserDTO user, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
-            statement.setString(1, idUser);
+            statement.setString(1, user.getIdUser());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new UserDTO(
@@ -64,7 +71,7 @@ public class UserDAO {
                         resultSet.getString("apellidos"),
                         resultSet.getString("nombreUsuario"),
                         resultSet.getString("contraseña"),
-                        null // Assuming you will set the role later
+                        user.getRole()
                     );
                 }
             }
@@ -84,7 +91,7 @@ public class UserDAO {
                     resultSet.getString("apellidos"),
                     resultSet.getString("nombreUsuario"),
                     resultSet.getString("contraseña"),
-                    null // Assuming you will set the role later
+                    Role.valueOf(resultSet.getString("rol"))
                 ));
             }
         }

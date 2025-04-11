@@ -12,6 +12,7 @@ import logic.DTO.StudentDTO;
 public class StudentDAO {
     private final static String SQL_INSERT = "INSERT INTO estudiante (matricula, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE estudiante SET nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ? WHERE matricula = ?";
+    private final static String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM estudiante WHERE matricula = ?";
     private final static String SQL_SELECT = "SELECT * FROM estudiante WHERE matricula = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM estudiante";
@@ -46,9 +47,17 @@ public class StudentDAO {
         }
     }
 
-    public boolean deleteStudent(StudentDTO student, Connection connection) throws SQLException {
+    public boolean updateStudentState(String tuiton, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATE)) {
+            statement.setInt(1, 1);
+            statement.setString(2, tuiton);
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteStudent(String tuiton, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            statement.setString(1, student.getTuiton());
+            statement.setString(1, tuiton);
             return statement.executeUpdate() > 0;
         }
     }

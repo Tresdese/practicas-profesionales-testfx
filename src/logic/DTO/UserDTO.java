@@ -10,7 +10,7 @@ public class UserDTO {
     private String password;
     private Role role;
 
-    public UserDTO () {
+    public UserDTO (String s) {
         this.idUser = "";
         this.state = 1;
         this.numberOffStaff = "";
