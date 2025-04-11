@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.UserDAO;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.utils.PasswordHasher;

@@ -1,4 +1,4 @@
-package data_access.DAO;
+package logic.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +11,11 @@ import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.interfaces.ICriterionSelfAssessmentDAO;
 
 public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
-    private final static String SQL_INSERT = "INSERT INTO criterio_autoevaluacion (idAutoevaluacion, idCriterios) VALUES (?, ?)";
-    private final static String SQL_UPDATE = "UPDATE criterio_autoevaluacion SET idCriterios = ? WHERE idAutoevaluacion = ?";
-    private final static String SQL_DELETE = "DELETE FROM criterio_autoevaluacion WHERE idAutoevaluacion = ? AND idCriterios = ?";
-    private final static String SQL_SELECT = "SELECT * FROM criterio_autoevaluacion WHERE idAutoevaluacion = ? AND idCriterios = ?";
-    private final static String SQL_SELECT_ALL = "SELECT * FROM criterio_autoevaluacion";
+    private final static String SQL_INSERT = "INSERT INTO autoevaluacion_criterio (idAutoevaluacion, idCriterios) VALUES (?, ?)";
+    private final static String SQL_UPDATE = "UPDATE autoevaluacion_criterio SET idCriterios = ? WHERE idAutoevaluacion = ?";
+    private final static String SQL_DELETE = "DELETE FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
+    private final static String SQL_SELECT = "SELECT * FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
+    private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion_criterio";
 
     public boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {

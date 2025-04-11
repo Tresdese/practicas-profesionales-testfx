@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.EvaluationCriteriaDAO;
 import logic.DTO.EvaluationCriteriaDTO;
 import org.junit.jupiter.api.*;
 
