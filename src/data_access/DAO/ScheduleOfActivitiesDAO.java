@@ -17,6 +17,11 @@ public class ScheduleOfActivitiesDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_de_actividades";
 
     public boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException {
+        ScheduleOfActivitiesDTO existingScheduleOfActivities = getScheduleOfActivities(schedule.getIdSchedule(), connection);
+        if (existingScheduleOfActivities != null) {
+            return schedule.getIdSchedule().equals(existingScheduleOfActivities.getIdSchedule());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, schedule.getIdSchedule());
             statement.setString(2, schedule.getMilestone());

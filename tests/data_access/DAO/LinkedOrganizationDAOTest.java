@@ -39,16 +39,22 @@ class LinkedOrganizationDAOTest {
         organizationDAO = new LinkedOrganizationDAO();
     }
 
-    private int insertTestOrganization(String nombre, String direccion) throws SQLException {
-        String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
+    private String insertTestOrganization(String idOrganization, String nombre, String direccion) throws SQLException {
+        LinkedOrganizationDTO existingOrganization = organizationDAO.getLinkedOrganization(idOrganization, connection);
+        if (existingOrganization != null) {
+            return idOrganization;
+        }
+
+        String sql = "INSERT INTO organizacion_vinculada (idOrganizacion, nombre, direccion) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, nombre);
-            stmt.setString(2, direccion);
+            stmt.setString(1, idOrganization);
+            stmt.setString(2, nombre);
+            stmt.setString(3, direccion);
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return String.valueOf(rs.getInt(1));
                 } else {
                     throw new SQLException("No se generó ID para la organización");
                 }
@@ -85,7 +91,7 @@ class LinkedOrganizationDAOTest {
     void testGetLinkedOrganization() {
         try {
             String uniqueName = "Organización Consulta " + UUID.randomUUID().toString().substring(0, 5);
-            int testOrganizationId = insertTestOrganization(uniqueName, "Dirección Consulta");
+            String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Consulta");
 
             LinkedOrganizationDTO org = organizationDAO.getLinkedOrganization(String.valueOf(testOrganizationId), connection);
             assertNotNull(org, "Debería encontrar la organización");
@@ -100,7 +106,7 @@ class LinkedOrganizationDAOTest {
     void testUpdateLinkedOrganization() {
         try {
             String uniqueName = "Organización Update " + UUID.randomUUID().toString().substring(0, 5);
-            int testOrganizationId = insertTestOrganization(uniqueName, "Dirección Original");
+            String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Original");
 
             LinkedOrganizationDTO orgToUpdate = new LinkedOrganizationDTO(
                     String.valueOf(testOrganizationId),
@@ -124,7 +130,7 @@ class LinkedOrganizationDAOTest {
     void testGetAllLinkedOrganizations() {
         try {
             String uniqueName = "Organización Lista " + UUID.randomUUID().toString().substring(0, 5);
-            int testOrganizationId = insertTestOrganization(uniqueName, "Dirección Lista");
+            String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Lista");
 
             List<LinkedOrganizationDTO> organizations = organizationDAO.getAllLinkedOrganizations(connection);
             assertNotNull(organizations, "La lista no debería ser nula");
@@ -142,7 +148,7 @@ class LinkedOrganizationDAOTest {
     void testDeleteLinkedOrganization() {
         try {
             String uniqueName = "Organización Delete " + UUID.randomUUID().toString().substring(0, 5);
-            int deleteId = insertTestOrganization(uniqueName, "Dirección Delete");
+            String deleteId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Delete");
 
             LinkedOrganizationDTO beforeDelete = organizationDAO.getLinkedOrganization(String.valueOf(deleteId), connection);
             assertNotNull(beforeDelete, "La organización debería existir antes de eliminarla");

@@ -17,6 +17,11 @@ public class SelfAssessmentDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion";
 
     public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException {
+        SelfAssessmentDTO existingSelfAssessment = getSelfAssessment(selfAssessment.getSelfAssessmentId(), connection);
+        if (existingSelfAssessment != null) {
+            return selfAssessment.getSelfAssessmentId().equals(existingSelfAssessment.getSelfAssessmentId());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, selfAssessment.getSelfAssessmentId());
             statement.setString(2, selfAssessment.getComments());

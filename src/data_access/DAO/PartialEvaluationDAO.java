@@ -17,6 +17,11 @@ public class PartialEvaluationDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evaluacion_parcial";
 
     public boolean insertPartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException {
+        PartialEvaluationDTO existingPartialEvaluation = getPartialEvaluation(evaluation.getIdEvaluation(), connection);
+        if (existingPartialEvaluation != null) {
+            return evaluation.getIdEvaluation().equals(existingPartialEvaluation.getIdEvaluation());
+        }
+        
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, evaluation.getIdEvaluation());
             statement.setDouble(2, evaluation.getAverage());

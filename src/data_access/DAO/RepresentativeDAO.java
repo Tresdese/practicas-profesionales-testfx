@@ -11,13 +11,18 @@ import logic.DTO.RepresentativeDTO;
 import logic.interfaces.IRepresentativeDAO;
 
 public class RepresentativeDAO implements IRepresentativeDAO {
-    private final static String SQL_INSERT = "INSERT INTO representative (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE representative SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ? WHERE idRepresentante = ?";
-    private final static String SQL_DELETE = "DELETE FROM representative WHERE idRepresentante = ?";
-    private final static String SQL_SELECT = "SELECT * FROM representative WHERE idRepresentante = ?";
-    private final static String SQL_SELECT_ALL = "SELECT * FROM representative";
+    private final static String SQL_INSERT = "INSERT INTO representante (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ? WHERE idRepresentante = ?";
+    private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
+    private final static String SQL_SELECT = "SELECT * FROM representante WHERE idRepresentante = ?";
+    private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public boolean insertRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException {
+        RepresentativeDTO existingRepresentative = getRepresentative(representative.getIdRepresentative(), connection);
+        if (existingRepresentative != null) {
+            return representative.getIdRepresentative().equals(existingRepresentative.getIdRepresentative());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, representative.getIdRepresentative());
             statement.setString(2, representative.getNames());

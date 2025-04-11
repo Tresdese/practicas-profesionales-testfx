@@ -18,6 +18,11 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
 
     public boolean insertLinkedOrganization(LinkedOrganizationDTO organization, Connection connection) throws SQLException {
+        LinkedOrganizationDTO existingOrganization = getLinkedOrganization(organization.getIddOrganization(), connection);
+        if (existingOrganization != null) {
+            return organization.getIddOrganization().equals(existingOrganization.getIddOrganization());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, organization.getIddOrganization());
             statement.setString(2, organization.getName());

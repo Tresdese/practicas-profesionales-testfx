@@ -17,6 +17,11 @@ public class ReportDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM reporte";
 
     public boolean insertReport(ReportDTO report, Connection connection) throws SQLException {
+        ReportDTO existingReport = getReport(report.getNumberReport(), connection);
+        if (existingReport != null) {
+            return report.getNumberReport().equals(existingReport.getNumberReport());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, report.getNumberReport());
             statement.setString(2, report.getObservations());

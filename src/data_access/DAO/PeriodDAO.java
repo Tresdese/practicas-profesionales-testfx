@@ -17,6 +17,11 @@ public class PeriodDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
 
     public boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException {
+        PeriodDTO existingPeriod = getPeriod(period.getIdPeriod(), connection);
+        if (existingPeriod != null) {
+            return period.getIdPeriod().equals(existingPeriod.getIdPeriod());
+        }
+
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, period.getIdPeriod());
             statement.setString(2, period.getName());
