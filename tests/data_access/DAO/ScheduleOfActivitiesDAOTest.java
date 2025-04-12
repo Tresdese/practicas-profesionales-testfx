@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+
+import logic.DAO.ScheduleOfActivitiesDAO;
 import logic.DTO.ScheduleOfActivitiesDTO;
 
 

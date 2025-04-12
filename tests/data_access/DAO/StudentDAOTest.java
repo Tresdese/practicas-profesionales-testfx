@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import org.junit.jupiter.api.*;
 import java.sql.Connection;
@@ -64,7 +65,7 @@ class StudentDAOTest {
             StudentDTO student = new StudentDTO("12351", 1, "Juan", "Perez", "1234567890", "juan.perez@ejemplo.com", "juanperez_unique", "password", "11111", "50");
             boolean result = studentDAO.insertStudent(student, connection);
             assertTrue(result, "La inserción debería ser exitosa");
-
+//TODO se ouede dividir esta prueba
             StudentDTO insertedStudent = studentDAO.getStudent("12351", connection);
             assertNotNull(insertedStudent, "El estudiante debería existir en la base de datos");
             assertEquals("Juan", insertedStudent.getNames(), "El nombre debería coincidir");

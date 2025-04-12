@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.GroupDAO;
 import logic.DTO.GroupDTO;
 import org.junit.jupiter.api.*;
 import java.sql.Connection;

@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.StudentProjectDAO;
 import logic.DTO.StudentProjectDTO;
 import org.junit.jupiter.api.*;
 

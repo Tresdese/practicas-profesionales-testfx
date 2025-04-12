@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
 import org.junit.jupiter.api.*;
 

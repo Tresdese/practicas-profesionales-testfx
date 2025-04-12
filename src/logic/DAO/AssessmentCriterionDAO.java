@@ -1,4 +1,4 @@
-package data_access.DAO;
+package logic.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,7 +51,7 @@ public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
                 }
             }
         }
-        return null;
+        return null; //TODO mala practica
     }
 
     public List<AssessmentCriterionDTO> getAllAssessmentCriteria(Connection connection) throws SQLException {

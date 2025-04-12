@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
+import logic.DAO.SelfAssessmentDAO;
 import logic.DTO.SelfAssessmentDTO;
 
 class SelfAssessmentDAOTest {

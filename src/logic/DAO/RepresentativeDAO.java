@@ -1,4 +1,4 @@
-package data_access.DAO;
+package logic.DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

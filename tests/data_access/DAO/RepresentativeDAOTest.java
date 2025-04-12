@@ -1,6 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DAO.RepresentativeDAO;
 import logic.DTO.RepresentativeDTO;
 
 import org.junit.jupiter.api.*;

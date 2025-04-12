@@ -2,6 +2,7 @@ package data_access.DAO;
 
 import java.util.Date;
 import data_access.ConecctionDataBase;
+import logic.DAO.EvidenceDAO;
 import logic.DTO.EvidenceDTO;
 import org.junit.jupiter.api.*;
 
