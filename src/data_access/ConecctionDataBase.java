@@ -1,5 +1,9 @@
 package data_access;
 
+import logic.TestApp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -13,6 +17,8 @@ public class ConecctionDataBase {
     private String USER;
     private String PASSWORD;
     private Connection connection = null;
+
+    private static final Logger logger = LogManager.getLogger(TestApp.class);
 
     public ConecctionDataBase() {
         Properties properties = new Properties();
@@ -29,9 +35,9 @@ public class ConecctionDataBase {
     public Connection connectDB() throws SQLException {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Conexión exitosa a la base de datos.");
+            logger.info("Conexión exitosa a la base de datos.");
         } catch (SQLException e) {
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+            logger.error("Error al conectar a la base de datos: " + e.getMessage());
             throw e;
         }
         return connection;
@@ -42,7 +48,7 @@ public class ConecctionDataBase {
             try {
                 connection.close();
             } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                logger.error("Error al cerrar la conexión: " + e.getMessage());
             }
         }
     }

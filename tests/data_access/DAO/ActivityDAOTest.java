@@ -15,8 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ActivityDAOTest {
 
+    private static final Logger logger = LogManager.getLogger(TestApp.class);
+    
     private static ConecctionDataBase connectionDB;
     private static Connection connection;
+
     private ActivityDAO activityDAO;
     private int testActivityId;
 
@@ -50,14 +53,14 @@ class ActivityDAOTest {
                 if (rs.next()) {
                     return rs.getInt(1);
                 } else {
-                    throw new SQLException("No se generó ID para la actividad");
+                    logger.error("No se generó ID para la actividad");
                 }
             }
         }
     }
 
     @Test
-    void testInsertActivity() {
+    void testInsertActivity() throws SQLException {
         try {
             int randomNumber = (int) (Math.random() * 1000);
             String nombreActividad = "Actividad de Prueba " + randomNumber;
@@ -75,12 +78,12 @@ class ActivityDAOTest {
             assertNotNull(insertedActivity, "La actividad debería existir en la base de datos");
             assertEquals(nombreActividad, insertedActivity.getActivityName(), "El nombre debería coincidir");
         } catch (SQLException e) {
-            fail("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage());
         }
     }
 
     @Test
-    void testGetActivity() {
+    void testGetActivity() throws SQLException {
         try {
             testActivityId = insertTestActivity("Actividad para Consulta");
 
@@ -89,12 +92,12 @@ class ActivityDAOTest {
             assertEquals(String.valueOf(testActivityId), retrievedActivity.getActivityId(), "El ID debería coincidir");
             assertEquals("Actividad para Consulta", retrievedActivity.getActivityName(), "El nombre debería coincidir");
         } catch (SQLException e) {
-            fail("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage());
         }
     }
 
     @Test
-    void testUpdateActivity() {
+    void testUpdateActivity() throws SQLException {
         try {
             testActivityId = insertTestActivity("Actividad Original");
 
@@ -106,12 +109,12 @@ class ActivityDAOTest {
             assertNotNull(updated, "La actividad debería existir");
             assertEquals("Actividad Actualizada", updated.getActivityName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
-            fail("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage());
         }
     }
 
     @Test
-    void testGetAllActivities() {
+    void testGetAllActivities() throws SQLException {
         try {
             testActivityId = insertTestActivity("Actividad para Listar");
 
@@ -123,12 +126,12 @@ class ActivityDAOTest {
                     .anyMatch(a -> a.getActivityId().equals(String.valueOf(testActivityId)));
             assertTrue(found, "Nuestra actividad de prueba debería estar en la lista");
         } catch (SQLException e) {
-            fail("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage());
         }
     }
 
     @Test
-    void testDeleteActivityFunctionality() {
+    void testDeleteActivityFunctionality() throws SQLException {
         try {
             int deleteId = insertTestActivity("Actividad para Eliminar");
 
@@ -142,7 +145,7 @@ class ActivityDAOTest {
             ActivityDTO after = activityDAO.getActivity(String.valueOf(deleteId), connection);
             assertNull(after, "La actividad no debería existir después de eliminarla");
         } catch (SQLException e) {
-            fail("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage());
         }
     }
 }

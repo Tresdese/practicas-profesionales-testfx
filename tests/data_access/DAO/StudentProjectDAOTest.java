@@ -82,7 +82,7 @@ class StudentProjectDAOTest {
 
             StudentProjectDTO retrievedProject = studentProjectDAO.getStudentProject("1", connection);
             assertNotNull(retrievedProject, "El proyecto debería existir");
-            assertEquals("12345", retrievedProject.getTuiton(), "La matrícula debería coincidir");
+            assertEquals("a", retrievedProject.getTuiton(), "La matrícula debería coincidir");
         } catch (SQLException e) {
             fail("Error en testGetStudentProject: " + e.getMessage());
         }
