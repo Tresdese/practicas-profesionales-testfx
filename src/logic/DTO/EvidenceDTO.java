@@ -53,4 +53,27 @@ public class EvidenceDTO {
     public void setRoute(String route) {
         this.route = route;
     }
+
+    @Override
+    public String toString() {
+        return "EvidenceDTO{" +
+                "idEvidence=" + idEvidence +
+                ", evidenceName='" + evidenceName + '\'' +
+                ", deliveryDate=" + deliveryDate +
+                ", route='" + route + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        EvidenceDTO that = (EvidenceDTO) obj;
+
+        if (idEvidence != that.idEvidence) return false;
+        if (!evidenceName.equals(that.evidenceName)) return false;
+        if (!deliveryDate.equals(that.deliveryDate)) return false;
+        return route.equals(that.route);
+    }
 }

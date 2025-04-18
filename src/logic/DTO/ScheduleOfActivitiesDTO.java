@@ -64,4 +64,29 @@ public class ScheduleOfActivitiesDTO {
     public void setIdEvidence(String idEvidence) {
         this.idEvidence = idEvidence;
     }
+
+    @Override
+    public String toString() {
+        return "ScheduleOfActivitiesDTO{" +
+                "idSchedule='" + idSchedule + '\'' +
+                ", milestone='" + milestone + '\'' +
+                ", estimatedDate=" + estimatedDate +
+                ", tuiton='" + tuiton + '\'' +
+                ", idEvidence='" + idEvidence + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ScheduleOfActivitiesDTO that = (ScheduleOfActivitiesDTO) obj;
+
+        if (!idSchedule.equals(that.idSchedule)) return false;
+        if (!milestone.equals(that.milestone)) return false;
+        if (!estimatedDate.equals(that.estimatedDate)) return false;
+        if (!tuiton.equals(that.tuiton)) return false;
+        return idEvidence.equals(that.idEvidence);
+    }
 }

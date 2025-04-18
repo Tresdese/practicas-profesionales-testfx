@@ -40,4 +40,25 @@ public class LinkedOrganizationDTO {
     public void setAdddress(String adddress) {
         this.adddress = adddress;
     }
+
+    @Override
+    public String toString() {
+        return "LinkedOrganizationDTO{" +
+                "iddOrganization='" + iddOrganization + '\'' +
+                ", name='" + name + '\'' +
+                ", adddress='" + adddress + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        LinkedOrganizationDTO that = (LinkedOrganizationDTO) obj;
+
+        if (!iddOrganization.equals(that.iddOrganization)) return false;
+        if (!name.equals(that.name)) return false;
+        return adddress.equals(that.adddress);
+    }
 }

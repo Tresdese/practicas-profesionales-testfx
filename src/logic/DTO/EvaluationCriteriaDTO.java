@@ -29,4 +29,23 @@ public class EvaluationCriteriaDTO {
     public void setIdCriterion(String idCriterion) {
         this.idCriterion = idCriterion;
     }
+
+    @Override
+    public String toString() {
+        return "EvaluationCriteriaDTO{" +
+                "idEvaluation='" + idEvaluation + '\'' +
+                ", idCriterion='" + idCriterion + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        EvaluationCriteriaDTO that = (EvaluationCriteriaDTO) obj;
+
+        if (!idEvaluation.equals(that.idEvaluation)) return false;
+        return idCriterion.equals(that.idCriterion);
+    }
 }

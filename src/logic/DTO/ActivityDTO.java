@@ -37,4 +37,15 @@ public class ActivityDTO {
                 ", activityName='" + activityName + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ActivityDTO that = (ActivityDTO) obj;
+
+        if (!activityId.equals(that.activityId)) return false;
+        return activityName.equals(that.activityName);
+    }
 }

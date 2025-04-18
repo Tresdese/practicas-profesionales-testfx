@@ -29,4 +29,23 @@ public class StudentProjectDTO {
     public void setTuiton(String tuiton) {
         this.tuiton = tuiton;
     }
+
+    @Override
+    public String toString() {
+        return "StudentProjectDTO{" +
+                "idProject='" + idProject + '\'' +
+                ", tuiton='" + tuiton + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        StudentProjectDTO that = (StudentProjectDTO) obj;
+
+        if (!idProject.equals(that.idProject)) return false;
+        return tuiton.equals(that.tuiton);
+    }
 }

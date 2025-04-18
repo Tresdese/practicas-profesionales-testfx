@@ -40,4 +40,25 @@ public class AssessmentCriterionDTO {
     public void setGrade(double grade) {
         this.grade = grade;
     }
+
+    @Override
+    public String toString() {
+        return "AssessmentCriterionDTO{" +
+                "idCriterion='" + idCriterion + '\'' +
+                ", nameCriterion='" + nameCriterion + '\'' +
+                ", grade=" + grade +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        AssessmentCriterionDTO that = (AssessmentCriterionDTO) obj;
+
+        if (Double.compare(that.grade, grade) != 0) return false;
+        if (!idCriterion.equals(that.idCriterion)) return false;
+        return nameCriterion.equals(that.nameCriterion);
+    }
 }

@@ -29,4 +29,23 @@ public class ActivityReportDTO {
     public void setIdActivity(String idActivity) {
         this.idActivity = idActivity;
     }
+
+    @Override
+    public String toString() {
+        return "ActivityReportDTO{" +
+                "numberReport='" + numberReport + '\'' +
+                ", idActivity='" + idActivity + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ActivityReportDTO that = (ActivityReportDTO) obj;
+
+        if (!numberReport.equals(that.numberReport)) return false;
+        return idActivity.equals(that.idActivity);
+    }
 }

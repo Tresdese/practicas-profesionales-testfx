@@ -118,4 +118,37 @@ public class StudentDTO {
     public void setCreditAdvance(String creditAdvance) {
         this.creditAdvance = creditAdvance;
     }
+
+    @Override
+    public String toString() {
+        return "StudentDTO{" +
+                "tuiton='" + tuiton + '\'' +
+                ", state=" + state +
+                ", names='" + names + '\'' +
+                ", surnames='" + surnames + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + password + '\'' +
+                ", NRC='" + NRC + '\'' +
+                ", creditAdvance='" + creditAdvance + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof StudentDTO)) return false;
+        StudentDTO that = (StudentDTO) obj;
+        return state == that.state &&
+                tuiton.equals(that.tuiton) &&
+                names.equals(that.names) &&
+                surnames.equals(that.surnames) &&
+                phone.equals(that.phone) &&
+                email.equals(that.email) &&
+                user.equals(that.user) &&
+                password.equals(that.password) &&
+                NRC.equals(that.NRC) &&
+                creditAdvance.equals(that.creditAdvance);
+    }
 }

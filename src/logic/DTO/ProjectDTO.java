@@ -75,4 +75,31 @@ public class ProjectDTO {
     public void setIdUser(String idUser) {
         this.idUser = idUser;
     }
+
+    @Override
+    public String toString() {
+        return "ProjectDTO{" +
+                "idProject='" + idProject + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", approximateDate=" + approximateDate +
+                ", startDate=" + startDate +
+                ", idUser='" + idUser + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ProjectDTO that = (ProjectDTO) obj;
+
+        if (!idProject.equals(that.idProject)) return false;
+        if (!name.equals(that.name)) return false;
+        if (!description.equals(that.description)) return false;
+        if (!approximateDate.equals(that.approximateDate)) return false;
+        if (!startDate.equals(that.startDate)) return false;
+        return idUser.equals(that.idUser);
+    }
 }

@@ -62,4 +62,23 @@ public class RepresentativeDTO {
     public void setIdOrganization(String idOrganization) {
         this.idOrganization = idOrganization;
     }
+
+    @Override
+    public String toString() {
+        return "RepresentativeDTO{" +
+                "idRepresentative='" + idRepresentative + '\'' +
+                ", names='" + names + '\'' +
+                ", surnames='" + surnames + '\'' +
+                ", email='" + email + '\'' +
+                ", idOrganization='" + idOrganization + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RepresentativeDTO)) return false;
+        RepresentativeDTO that = (RepresentativeDTO) obj;
+        return idRepresentative.equals(that.idRepresentative);
+    }
 }

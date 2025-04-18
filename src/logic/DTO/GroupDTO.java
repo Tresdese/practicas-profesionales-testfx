@@ -51,4 +51,27 @@ public class GroupDTO {
     public void setIdPeriod(String idPeriod) {
         this.idPeriod = idPeriod;
     }
+
+    @Override
+    public String toString() {
+        return "GroupDTO{" +
+                "NRC='" + NRC + '\'' +
+                ", name='" + name + '\'' +
+                ", idUser='" + idUser + '\'' +
+                ", idPeriod='" + idPeriod + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        GroupDTO groupDTO = (GroupDTO) obj;
+
+        if (!NRC.equals(groupDTO.NRC)) return false;
+        if (!name.equals(groupDTO.name)) return false;
+        if (!idUser.equals(groupDTO.idUser)) return false;
+        return idPeriod.equals(groupDTO.idPeriod);
+    }
 }

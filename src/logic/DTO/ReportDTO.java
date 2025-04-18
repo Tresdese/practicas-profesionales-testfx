@@ -40,4 +40,25 @@ public class ReportDTO {
     public void setIdEvidence(String idEvidence) {
         this.idEvidence = idEvidence;
     }
+
+    @Override
+    public String toString() {
+        return "ReportDTO{" +
+                "numberReport='" + numberReport + '\'' +
+                ", observations='" + observations + '\'' +
+                ", idEvidence='" + idEvidence + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ReportDTO that = (ReportDTO) obj;
+
+        if (!numberReport.equals(that.numberReport)) return false;
+        if (!observations.equals(that.observations)) return false;
+        return idEvidence.equals(that.idEvidence);
+    }
 }

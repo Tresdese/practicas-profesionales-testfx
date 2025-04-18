@@ -40,4 +40,25 @@ public class SelfAssessmentCriteriaDTO {
     public void setGrade(double grade) {
         this.grade = grade;
     }
+
+    @Override
+    public String toString() {
+        return "SelfAssessmentCriteriaDTO{" +
+                "idCriteria='" + idCriteria + '\'' +
+                ", nameCriteria='" + nameCriteria + '\'' +
+                ", grade=" + grade +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        SelfAssessmentCriteriaDTO that = (SelfAssessmentCriteriaDTO) obj;
+
+        if (Double.compare(that.grade, grade) != 0) return false;
+        if (!idCriteria.equals(that.idCriteria)) return false;
+        return nameCriteria.equals(that.nameCriteria);
+    }
 }

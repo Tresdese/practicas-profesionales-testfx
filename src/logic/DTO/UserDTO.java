@@ -112,4 +112,35 @@ public class UserDTO {
             System.out.println("Rol no asignado");
         }
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "idUser='" + idUser + '\'' +
+                ", state=" + state +
+                ", numberOffStaff='" + numberOffStaff + '\'' +
+                ", names='" + names + '\'' +
+                ", surname='" + surname + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        UserDTO userDTO = (UserDTO) obj;
+
+        if (state != userDTO.state) return false;
+        if (!idUser.equals(userDTO.idUser)) return false;
+        if (!numberOffStaff.equals(userDTO.numberOffStaff)) return false;
+        if (!names.equals(userDTO.names)) return false;
+        if (!surname.equals(userDTO.surname)) return false;
+        if (!userName.equals(userDTO.userName)) return false;
+        if (!password.equals(userDTO.password)) return false;
+        return role != null ? role.equals(userDTO.role) : userDTO.role == null;
+    }
 }

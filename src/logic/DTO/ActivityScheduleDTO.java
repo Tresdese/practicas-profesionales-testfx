@@ -29,4 +29,23 @@ public class ActivityScheduleDTO {
     public void setIdActivity(String idActivity) {
         this.idActivity = idActivity;
     }
+
+    @Override
+    public String toString() {
+        return "ActivityScheduleDTO{" +
+                "idSchedule='" + idSchedule + '\'' +
+                ", idActivity='" + idActivity + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ActivityScheduleDTO that = (ActivityScheduleDTO) obj;
+
+        if (!idSchedule.equals(that.idSchedule)) return false;
+        return idActivity.equals(that.idActivity);
+    }
 }

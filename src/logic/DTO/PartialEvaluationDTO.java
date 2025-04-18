@@ -51,4 +51,27 @@ public class PartialEvaluationDTO {
     public void setEvidence(String evidence) {
         this.evidence = evidence;
     }
+
+    @Override
+    public String toString() {
+        return "PartialEvaluationDTO{" +
+                "idEvaluation='" + idEvaluation + '\'' +
+                ", average=" + average +
+                ", tuiton='" + tuiton + '\'' +
+                ", evidence='" + evidence + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        PartialEvaluationDTO that = (PartialEvaluationDTO) obj;
+
+        if (Double.compare(that.average, average) != 0) return false;
+        if (!idEvaluation.equals(that.idEvaluation)) return false;
+        if (!tuiton.equals(that.tuiton)) return false;
+        return evidence.equals(that.evidence);
+    }
 }

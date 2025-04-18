@@ -53,4 +53,27 @@ public class PeriodDTO {
     public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
+
+    @Override
+    public String toString() {
+        return "PeriodDTO{" +
+                "idPeriod='" + idPeriod + '\'' +
+                ", name='" + name + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        PeriodDTO periodDTO = (PeriodDTO) obj;
+
+        if (!idPeriod.equals(periodDTO.idPeriod)) return false;
+        if (!name.equals(periodDTO.name)) return false;
+        if (!startDate.equals(periodDTO.startDate)) return false;
+        return endDate.equals(periodDTO.endDate);
+    }
 }

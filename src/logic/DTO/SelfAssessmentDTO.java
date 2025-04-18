@@ -62,4 +62,29 @@ public class SelfAssessmentDTO {
     public void setEvidenceId(String evidenceId) {
         this.evidenceId = evidenceId;
     }
+
+    @Override
+    public String toString() {
+        return "SelfAssessmentDTO{" +
+                "selfAssessmentId='" + selfAssessmentId + '\'' +
+                ", comments='" + comments + '\'' +
+                ", grade=" + grade +
+                ", registration='" + registration + '\'' +
+                ", evidenceId='" + evidenceId + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        SelfAssessmentDTO that = (SelfAssessmentDTO) obj;
+
+        if (Double.compare(that.grade, grade) != 0) return false;
+        if (!selfAssessmentId.equals(that.selfAssessmentId)) return false;
+        if (!comments.equals(that.comments)) return false;
+        if (!registration.equals(that.registration)) return false;
+        return evidenceId.equals(that.evidenceId);
+    }
 }
