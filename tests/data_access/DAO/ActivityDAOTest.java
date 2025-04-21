@@ -3,6 +3,8 @@ package data_access.DAO;
 import data_access.ConecctionDataBase;
 import logic.DAO.ActivityDAO;
 import logic.DTO.ActivityDTO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -15,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ActivityDAOTest {
 
-    private static final Logger logger = LogManager.getLogger(TestApp.class);
-    
+    private static final Logger logger = LogManager.getLogger(ActivityDAOTest.class);
+
     private static ConecctionDataBase connectionDB;
     private static Connection connection;
 
@@ -57,6 +59,7 @@ class ActivityDAOTest {
                 }
             }
         }
+        return -1; // Retorno por defecto en caso de error
     }
 
     @Test
