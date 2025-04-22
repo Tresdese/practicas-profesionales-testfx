@@ -2,10 +2,34 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="302.0" prefWidth="479.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegistrarEstudiante">
+<AnchorPane prefHeight="419.0" prefWidth="656.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterStudentController">
    <children>
-      <Label layoutX="196.0" layoutY="75.0" text="Label de prueba" />
+      <Label fx:id="label" layoutX="258.0" layoutY="41.0" text="Registrar Estudiante" textAlignment="CENTER">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="fieldTuiton" layoutX="167.0" layoutY="89.0" promptText="Ejem: S23014069" />
+      <TextField fx:id="fieldNames" layoutX="167.0" layoutY="130.0" />
+      <TextField fx:id="fieldSurnames" layoutX="167.0" layoutY="171.0" />
+      <TextField fx:id="fieldPhone" layoutX="167.0" layoutY="212.0" />
+      <TextField fx:id="fieldEmail" layoutX="462.0" layoutY="89.0" />
+      <Label layoutX="52.0" layoutY="93.0" text="Matricula" />
+      <Label layoutX="52.0" layoutY="134.0" text="Nombres" />
+      <Label layoutX="52.0" layoutY="175.0" text="Apellidos" />
+      <Label layoutX="53.0" layoutY="216.0" text="Telefono" />
+      <Label layoutX="347.0" layoutY="93.0" text="Correo" />
+      <TextField fx:id="fieldUser" layoutX="463.0" layoutY="133.0" />
+      <TextField fx:id="fieldPassword" layoutX="463.0" layoutY="172.0" />
+      <TextField fx:id="fieldNRC" layoutX="464.0" layoutY="216.0" />
+      <TextField fx:id="fieldCreditAdvance" layoutX="302.0" layoutY="269.0" />
+      <Label layoutX="347.0" layoutY="137.0" text="Usuario" />
+      <Label layoutX="347.0" layoutY="176.0" text="Contraseña" />
+      <Label layoutX="347.0" layoutY="220.0" text="NRC" />
+      <Label layoutX="181.0" layoutY="273.0" text="Avance Crediticio" />
+      <Button fx:id="buttonRegisterStudent" layoutX="267.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleRegisterStudent" text="Registrar Estudiante" />
+      <Label fx:id="statusLabel" layoutX="216.0" layoutY="371.0" prefWidth="440.0" text="" textFill="red" />
    </children>
 </AnchorPane>

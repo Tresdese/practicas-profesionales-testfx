@@ -1,18 +1,10 @@
 package logic;
 
-import data_access.ConecctionDataBase;
+import gui.GUI_RegisterStudent;
+import javafx.application.Application;
 
 public class Main {
     public static void main(String[] args) {
-        ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-        try {
-            connectionDataBase.connectDB();
-            System.out.println("Conexión exitosa a la base de datos.");
-        } catch (Exception e) {
-            System.err.println("Error al conectar a la base de datos: " + e.getMessage());
-        } finally {
-            connectionDataBase.closeConnection();
-            System.out.println("Conexión cerrada.");
-        }
+        Application.launch(GUI_RegisterStudent.class, args);
     }
 }

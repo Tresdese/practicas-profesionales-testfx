@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.StudentDTO;
+import logic.exceptions.RepeatedTuiton;
 
 public class StudentDAO {
     private final static String SQL_INSERT = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -18,9 +19,8 @@ public class StudentDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM estudiante";
 
     public boolean insertStudent(StudentDTO student, Connection connection) throws SQLException {
-        StudentDTO existingStudent = getStudent(student.getTuiton(), connection);
-        if (existingStudent != null) {
-            return student.getTuiton().equals(existingStudent.getTuiton());
+        if (isTuitonRegistered(student.getTuiton(), connection)) {
+            throw new RepeatedTuiton();
         }
 
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -75,16 +75,16 @@ public class StudentDAO {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new StudentDTO(
-                        resultSet.getString("matricula"),
-                        resultSet.getInt("estado"),
-                        resultSet.getString("nombres"),
-                        resultSet.getString("apellidos"),
-                        resultSet.getString("telefono"),
-                        resultSet.getString("correo"),
-                        resultSet.getString("usuario"),
-                        resultSet.getString("contraseña"),
-                        resultSet.getString("NRC"),
-                        resultSet.getString("avanceCrediticio")
+                            resultSet.getString("matricula"),
+                            resultSet.getInt("estado"),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("telefono"),
+                            resultSet.getString("correo"),
+                            resultSet.getString("usuario"),
+                            resultSet.getString("contraseña"),
+                            resultSet.getString("NRC"),
+                            resultSet.getString("avanceCrediticio")
                     );
                 }
             }
@@ -98,19 +98,32 @@ public class StudentDAO {
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 students.add(new StudentDTO(
-                    resultSet.getString("matricula"),
-                    resultSet.getInt("estado"),
-                    resultSet.getString("nombres"),
-                    resultSet.getString("apellidos"),
-                    resultSet.getString("telefono"),
-                    resultSet.getString("correo"),
-                    resultSet.getString("usuario"),
-                    resultSet.getString("contraseña"),
-                    resultSet.getString("NRC"),
-                    resultSet.getString("avanceCrediticio")
+                        resultSet.getString("matricula"),
+                        resultSet.getInt("estado"),
+                        resultSet.getString("nombres"),
+                        resultSet.getString("apellidos"),
+                        resultSet.getString("telefono"),
+                        resultSet.getString("correo"),
+                        resultSet.getString("usuario"),
+                        resultSet.getString("contraseña"),
+                        resultSet.getString("NRC"),
+                        resultSet.getString("avanceCrediticio")
                 ));
             }
         }
         return students;
+    }
+
+    public boolean isTuitonRegistered(String tuiton, Connection connection) throws SQLException {
+        String query = "SELECT COUNT(*) FROM estudiante WHERE matricula = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, tuiton);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }
