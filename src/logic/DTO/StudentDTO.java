@@ -28,7 +28,6 @@ public class StudentDTO {
     public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance) {
         this.tuiton = tuiton;
         this.state = state;
-        this.state = 1;
         this.names = names;
         this.surnames = surnames;
         this.phone = phone;

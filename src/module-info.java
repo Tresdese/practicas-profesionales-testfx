@@ -5,6 +5,9 @@ module proyecto.practicas {
     requires org.apache.logging.log4j;
 
     opens gui to javafx.fxml;
+    opens logic.DTO to javafx.base;
+
     exports gui;
     exports data_access;
+    exports logic.DTO;
 }

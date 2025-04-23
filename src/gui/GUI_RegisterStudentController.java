@@ -33,7 +33,6 @@ public class GUI_RegisterStudentController {
 
     @FXML
     public void initialize() {
-        // Se eliminó el mensaje de inicialización
     }
 
     @FXML
@@ -48,7 +47,6 @@ public class GUI_RegisterStudentController {
         String nrc = fieldNRC.getText();
         String creditAdvance = fieldCreditAdvance.getText();
 
-        // Cifrar la contraseña
         String hashedPassword = PasswordHasher.hashPassword(password);
 
         StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
@@ -66,11 +64,9 @@ public class GUI_RegisterStudentController {
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             }
         } catch (RepeatedTuiton e) {
-            // Mostrar el mensaje de la excepción en el label
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
 
-            // Registrar la excepción en el log
             logger.error("Error al registrar el estudiante: {}", e.getMessage(), e);
         } catch (SQLException e) {
             statusLabel.setText("Error al registrar el estudiante: " + e.getMessage());
