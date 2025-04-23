@@ -30,6 +30,6 @@
       <Label layoutX="347.0" layoutY="220.0" text="NRC" />
       <Label layoutX="181.0" layoutY="273.0" text="Avance Crediticio" />
       <Button fx:id="buttonRegisterStudent" layoutX="267.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleRegisterStudent" text="Registrar Estudiante" />
-      <Label fx:id="statusLabel" layoutX="216.0" layoutY="371.0" prefWidth="440.0" text="" textFill="red" />
+      <Label fx:id="statusLabel" layoutX="108.0" layoutY="372.0" prefWidth="440.0" text="" textAlignment="CENTER" textFill="red" />
    </children>
 </AnchorPane>

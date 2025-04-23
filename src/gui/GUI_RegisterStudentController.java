@@ -7,7 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
-import logic.exceptions.RepeatedTuiton;
+import logic.exceptions.EmptyFields;
+import logic.exceptions.InvalidData;
+import logic.utils.EmailValidator;
+import logic.utils.PhoneValidator;
+import logic.utils.TuitonValidator;
 import logic.utils.PasswordHasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,45 +41,64 @@ public class GUI_RegisterStudentController {
 
     @FXML
     private void handleRegisterStudent() {
-        String tuiton = fieldTuiton.getText();
-        String names = fieldNames.getText();
-        String surnames = fieldSurnames.getText();
-        String phone = fieldPhone.getText();
-        String email = fieldEmail.getText();
-        String user = fieldUser.getText();
-        String password = fieldPassword.getText();
-        String nrc = fieldNRC.getText();
-        String creditAdvance = fieldCreditAdvance.getText();
-
-        String hashedPassword = PasswordHasher.hashPassword(password);
-
-        StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
-
-        ConecctionDataBase connectionDB = new ConecctionDataBase();
-        try (Connection connection = connectionDB.connectDB()) {
-            StudentDAO studentDAO = new StudentDAO();
-            boolean success = studentDAO.insertStudent(student, connection);
-
-            if (success) {
-                statusLabel.setText("¡Estudiante registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-            } else {
-                statusLabel.setText("El estudiante ya existe o ocurrió un error.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        try {
+            // Validar si algún campo está vacío
+            if (fieldTuiton.getText().isEmpty() || fieldNames.getText().isEmpty() || fieldSurnames.getText().isEmpty() ||
+                    fieldPhone.getText().isEmpty() || fieldEmail.getText().isEmpty() || fieldUser.getText().isEmpty() ||
+                    fieldPassword.getText().isEmpty() || fieldNRC.getText().isEmpty() || fieldCreditAdvance.getText().isEmpty()) {
+                throw new EmptyFields("Todos los campos deben estar llenos.");
             }
-        } catch (RepeatedTuiton e) {
+
+            // Validar matrícula
+            String tuiton = fieldTuiton.getText();
+            TuitonValidator.validate(tuiton);
+
+            // Validar correo electrónico
+            String email = fieldEmail.getText();
+            EmailValidator.validate(email);
+
+            // Validar número de teléfono
+            String phone = fieldPhone.getText();
+            PhoneValidator.validate(phone);
+
+            // Obtener los demás valores de los campos
+            String names = fieldNames.getText();
+            String surnames = fieldSurnames.getText();
+            String user = fieldUser.getText();
+            String password = fieldPassword.getText();
+            String nrc = fieldNRC.getText();
+            String creditAdvance = fieldCreditAdvance.getText();
+
+            // Hashear la contraseña
+            String hashedPassword = PasswordHasher.hashPassword(password);
+
+            // Crear el objeto StudentDTO
+            StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
+
+            // Conectar a la base de datos y registrar al estudiante
+            ConecctionDataBase connectionDB = new ConecctionDataBase();
+            try (Connection connection = connectionDB.connectDB()) {
+                StudentDAO studentDAO = new StudentDAO();
+                boolean success = studentDAO.insertStudent(student, connection);
+
+                if (success) {
+                    statusLabel.setText("¡Estudiante registrado exitosamente!");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                } else {
+                    statusLabel.setText("El estudiante ya existe.");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                }
+            } catch (SQLException e) {
+                statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                logger.error("Error de SQL al registrar el estudiante: {}", e.getMessage(), e);
+            } finally {
+                connectionDB.closeConnection();
+            }
+        } catch (EmptyFields | InvalidData e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-
-            logger.error("Error al registrar el estudiante: {}", e.getMessage(), e);
-        } catch (SQLException e) {
-            statusLabel.setText("Error al registrar el estudiante: " + e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-
-            // Registrar la excepción en el log
-            logger.error("Error de SQL al registrar el estudiante: {}", e.getMessage(), e);
-        } finally {
-            connectionDB.closeConnection();
+            logger.error("Error: {}", e.getMessage(), e);
         }
     }
 }
