@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
@@ -29,7 +30,13 @@
       <Label layoutX="347.0" layoutY="176.0" text="Contraseña" />
       <Label layoutX="347.0" layoutY="220.0" text="NRC" />
       <Label layoutX="181.0" layoutY="273.0" text="Avance Crediticio" />
-      <Button fx:id="buttonRegisterStudent" layoutX="267.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleRegisterStudent" text="Registrar Estudiante" />
-      <Label fx:id="statusLabel" layoutX="108.0" layoutY="372.0" prefWidth="440.0" text="" textAlignment="CENTER" textFill="red" />
+      <Button fx:id="buttonRegisterStudent" layoutX="267.0" layoutY="334.0" mnemonicParsing="false" onAction="#handleRegisterStudent" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE">
+         <opaqueInsets>
+            <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
+         </opaqueInsets></Button>
+      <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="108.0" layoutY="372.0" prefWidth="440.0" textFill="red" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </children>
 </AnchorPane>

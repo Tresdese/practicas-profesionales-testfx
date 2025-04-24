@@ -7,8 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
-import logic.exceptions.EmptyFields;
-import logic.exceptions.InvalidData;
+import logic.exceptions.*;
 import logic.utils.EmailValidator;
 import logic.utils.PhoneValidator;
 import logic.utils.TuitonValidator;
@@ -79,6 +78,23 @@ public class GUI_RegisterStudentController {
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
                 StudentDAO studentDAO = new StudentDAO();
+
+                // Verificar si la matrícula ya está registrada
+                if (studentDAO.isTuitonRegistered(tuiton, connection)) {
+                    throw new RepeatedTuiton("La matrícula ya está registrada.");
+                }
+
+                // Verificar si el número de teléfono ya está registrado
+                if (studentDAO.isPhoneRegistered(phone, connection)) {
+                    throw new RepeatedPhone("El número de teléfono ya está registrado.");
+                }
+
+                // Verificar si el correo ya está registrado
+                if (studentDAO.isEmailRegistered(email, connection)) {
+                    throw new RepeatedEmail("El correo electrónico ya está registrado.");
+                }
+
+                // Insertar al estudiante
                 boolean success = studentDAO.insertStudent(student, connection);
 
                 if (success) {
@@ -95,7 +111,7 @@ public class GUI_RegisterStudentController {
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData e) {
+        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);

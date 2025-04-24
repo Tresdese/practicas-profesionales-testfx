@@ -126,4 +126,30 @@ public class StudentDAO {
         }
         return false;
     }
+
+    public boolean isPhoneRegistered(String phone, Connection connection) throws SQLException {
+        String query = "SELECT COUNT(*) FROM estudiante WHERE telefono = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, phone);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isEmailRegistered (String email, Connection connection) throws SQLException {
+        String query = "SELECT COUNT(*) FROM estudiante WHERE correo = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }
