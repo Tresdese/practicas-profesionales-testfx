@@ -2,9 +2,7 @@ package gui;
 
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import logic.exceptions.*;
@@ -29,13 +27,52 @@ public class GUI_RegisterStudentController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPassword, fieldNRC, fieldCreditAdvance;
+    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldNRC, fieldCreditAdvance;
 
     @FXML
-    private Button buttonRegisterStudent;
+    private PasswordField fieldPassword, fieldConfirmPassword;
+
+    @FXML
+    private Button buttonRegisterStudent, togglePasswordVisibility;
+
+    private boolean isPasswordVisible = false;
 
     @FXML
     public void initialize() {
+        togglePasswordVisibility.setText("🙈");
+        togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
+    }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Cambiar a modo oculto
+            fieldPassword.setText(fieldPasswordVisible.getText());
+            fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
+            fieldPasswordVisible.setVisible(false);
+            fieldPasswordVisible.setManaged(false);
+            fieldConfirmPasswordVisible.setVisible(false);
+            fieldConfirmPasswordVisible.setManaged(false);
+            fieldPassword.setVisible(true);
+            fieldPassword.setManaged(true);
+            fieldConfirmPassword.setVisible(true);
+            fieldConfirmPassword.setManaged(true);
+            togglePasswordVisibility.setText("🙈");
+        } else {
+            // Cambiar a modo visible
+            fieldPasswordVisible.setText(fieldPassword.getText());
+            fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
+            fieldPassword.setVisible(false);
+            fieldPassword.setManaged(false);
+            fieldConfirmPassword.setVisible(false);
+            fieldConfirmPassword.setManaged(false);
+            fieldPasswordVisible.setVisible(true);
+            fieldPasswordVisible.setManaged(true);
+            fieldConfirmPasswordVisible.setVisible(true);
+            fieldConfirmPasswordVisible.setManaged(true);
+            togglePasswordVisibility.setText("👁");
+        }
+        isPasswordVisible = !isPasswordVisible;
     }
 
     @FXML
@@ -57,7 +94,13 @@ public class GUI_RegisterStudentController {
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
             String user = fieldUser.getText();
-            String password = fieldPassword.getText();
+            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
+            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
+
+            if (!password.equals(confirmPassword)) {
+                throw new PasswordDoesNotMatch();
+            }
+
             String nrc = fieldNRC.getText();
             String creditAdvance = fieldCreditAdvance.getText();
 
@@ -96,7 +139,7 @@ public class GUI_RegisterStudentController {
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail e) {
+        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
@@ -110,7 +153,8 @@ public class GUI_RegisterStudentController {
                 !fieldPhone.getText().isEmpty() &&
                 !fieldEmail.getText().isEmpty() &&
                 !fieldUser.getText().isEmpty() &&
-                !fieldPassword.getText().isEmpty() &&
+                (!fieldPassword.getText().isEmpty() || !fieldPasswordVisible.getText().isEmpty()) &&
+                (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty()) &&
                 !fieldNRC.getText().isEmpty() &&
                 !fieldCreditAdvance.getText().isEmpty();
     }

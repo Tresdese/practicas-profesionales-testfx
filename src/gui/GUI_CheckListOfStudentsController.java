@@ -131,14 +131,14 @@ public class GUI_CheckListOfStudentsController {
                 detailsButton.setOnAction(event -> {
                     StudentDTO student = getTableView().getItems().get(getIndex());
                     System.out.println("Detalles de: " + student.getTuiton());
-                    //TODO Lógica para mostrar detalles del estudiante
+                    // TODO Lógica para mostrar detalles del estudiante
                 });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableView().getItems().get(getIndex()) != selectedStudent) {
+                if (empty || selectedStudent == null || getTableView().getItems().get(getIndex()) != selectedStudent) {
                     setGraphic(null);
                 } else {
                     setGraphic(detailsButton);
@@ -156,15 +156,14 @@ public class GUI_CheckListOfStudentsController {
             {
                 manageButton.setOnAction(event -> {
                     StudentDTO student = getTableView().getItems().get(getIndex());
-                    System.out.println("Gestionar: " + student.getTuiton());
-                    //TODO Lógica para gestionar al estudiante
+                    openManageStudentWindow(student);
                 });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableView().getItems().get(getIndex()) != selectedStudent) {
+                if (empty || selectedStudent == null || getTableView().getItems().get(getIndex()) != selectedStudent) {
                     setGraphic(null);
                 } else {
                     setGraphic(manageButton);
@@ -173,5 +172,16 @@ public class GUI_CheckListOfStudentsController {
         };
 
         columnManagement.setCellFactory(cellFactory);
+    }
+
+    private void openManageStudentWindow(StudentDTO student) {
+        try {
+            GUI_ManageStudent.setStudent(student);
+            GUI_ManageStudent manageStudentApp = new GUI_ManageStudent();
+            Stage stage = new Stage();
+            manageStudentApp.start(stage);
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+        }
     }
 }
