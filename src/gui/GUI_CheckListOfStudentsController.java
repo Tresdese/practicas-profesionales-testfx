@@ -53,6 +53,9 @@ public class GUI_CheckListOfStudentsController {
     @FXML
     private Button buttonRegisterStudent;
 
+    @FXML
+    private Label statusLabel;
+
     private StudentDTO selectedStudent;
 
     public void initialize() {
@@ -94,7 +97,9 @@ public class GUI_CheckListOfStudentsController {
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
             List<StudentDTO> students = studentDAO.getAllStudents(connection);
             studentList.addAll(students);
+            statusLabel.setText("");
         } catch (SQLException e) {
+            statusLabel.setText("Error al conectar a la base de datos.");
             logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
         }
 
@@ -117,6 +122,7 @@ public class GUI_CheckListOfStudentsController {
                 filteredList.add(student);
             }
         } catch (SQLException e) {
+            statusLabel.setText("Error al buscar el estudiante.");
             logger.error("Error al buscar el estudiante: {}", e.getMessage(), e);
         }
 
