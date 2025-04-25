@@ -16,6 +16,8 @@ public class UserDAO {
     private final static String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";
     private final static String SQL_SELECT = "SELECT * FROM usuario WHERE idUsuario = ?";
+    private final static String SQL_SELECT_BY_ID = "SELECT * FROM usuario WHERE idUsuario = ?";
+    private final static String SQL_SELECT_BY_USERNAME = "SELECT * FROM usuario WHERE nombreUsuario = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM usuario";
 
     public boolean insertUser(UserDTO user, Connection connection) throws SQLException {
@@ -77,6 +79,30 @@ public class UserDAO {
             }
         }
         return null;
+    }
+
+    public boolean idIsRegistered(String idUser, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, idUser);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isUserNameRegistered (String username, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 
     public List<UserDTO> getAllUsers(Connection connection) throws SQLException {

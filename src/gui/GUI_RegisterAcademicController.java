@@ -3,37 +3,40 @@ package gui;
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import logic.DAO.StudentDAO;
-import logic.DTO.StudentDTO;
+import logic.DAO.UserDAO;
+import logic.DTO.Role;
+import logic.DTO.UserDTO;
 import logic.exceptions.*;
+import logic.utils.AcademicNumberValidator;
 import logic.utils.PasswordHasher;
-import logic.utils.TuitonValidator;
-import logic.utils.EmailValidator;
-import logic.utils.PhoneValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class GUI_RegisterStudentController {
+public class GUI_RegisterAcademicController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
+    private static final Logger logger = LogManager.getLogger(GUI_RegisterAcademicController.class);
 
     @FXML
     private Label label;
+    private Label roleLabel;
+
+    @FXML
+    private ChoiceBox <String> roleBox;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldNRC, fieldCreditAdvance;
+    private TextField fieldNumberOffStaff, fieldNames, fieldSurnames, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible;
 
     @FXML
     private PasswordField fieldPassword, fieldConfirmPassword;
 
     @FXML
-    private Button buttonStudentAcademic, togglePasswordVisibility;
+    private Button buttonRegisterAcademic, togglePasswordVisibility;
 
     private boolean isPasswordVisible = false;
 
@@ -41,12 +44,13 @@ public class GUI_RegisterStudentController {
     public void initialize() {
         togglePasswordVisibility.setText("🙈");
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
+
+        roleBox.getItems().addAll("Académico", "Académico Evaluador", "Coordinador");
     }
 
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Cambiar a modo oculto
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
             fieldPasswordVisible.setVisible(false);
@@ -59,7 +63,6 @@ public class GUI_RegisterStudentController {
             fieldConfirmPassword.setManaged(true);
             togglePasswordVisibility.setText("🙈");
         } else {
-            // Cambiar a modo visible
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
             fieldPassword.setVisible(false);
@@ -76,24 +79,19 @@ public class GUI_RegisterStudentController {
     }
 
     @FXML
-    private void handleRegisterStudent() {
+    private void handleRegisterAcademic() {
         try {
             if (!areFieldsFilled()) {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
-
-            String tuiton = fieldTuiton.getText();
-            TuitonValidator.validate(tuiton);
-
-            String email = fieldEmail.getText();
-            EmailValidator.validate(email);
-
-            String phone = fieldPhone.getText();
-            PhoneValidator.validate(phone);
+            String numberOffStaff = fieldNumberOffStaff.getText();
+            AcademicNumberValidator.validate(numberOffStaff);
 
             String names = fieldNames.getText();
-            String surnames = fieldSurnames.getText();
-            String user = fieldUser.getText();
+            String surname = fieldSurnames.getText();
+            String selectedRoleText = roleBox.getValue();
+            Role role = getRoleFromText(selectedRoleText);
+            String userName = fieldUser.getText();
             String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
             String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
 
@@ -101,45 +99,35 @@ public class GUI_RegisterStudentController {
                 throw new PasswordDoesNotMatch();
             }
 
-            String nrc = fieldNRC.getText();
-            String creditAdvance = fieldCreditAdvance.getText();
-
             String hashedPassword = PasswordHasher.hashPassword(password);
 
-            StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
+            UserDTO academic = new UserDTO("0", numberOffStaff, names, surname, userName, hashedPassword, role);
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                StudentDAO studentDAO = new StudentDAO();
+                UserDAO userDAO = new UserDAO();
 
-                if (studentDAO.isTuitonRegistered(tuiton, connection)) {
-                    throw new RepeatedTuiton("La matrícula ya está registrada.");
+                if (userDAO.idIsRegistered(numberOffStaff, connection)) {
+                    throw new RepeatedId("El ID ya está registrado.");
                 }
 
-                if (studentDAO.isPhoneRegistered(phone, connection)) {
-                    throw new RepeatedPhone("El número de teléfono ya está registrado.");
-                }
-
-                if (studentDAO.isEmailRegistered(email, connection)) {
-                    throw new RepeatedEmail("El correo electrónico ya está registrado.");
-                }
-                boolean success = studentDAO.insertStudent(student, connection);
+                boolean success = userDAO.insertUser(academic, connection);
 
                 if (success) {
-                    statusLabel.setText("¡Estudiante registrado exitosamente!");
+                    statusLabel.setText("¡Académico registrado exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
                 } else {
-                    statusLabel.setText("El estudiante ya existe.");
+                    statusLabel.setText("El académico ya existe.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 }
             } catch (SQLException e) {
                 statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                logger.error("Error de SQL al registrar el estudiante: {}", e.getMessage(), e);
+                logger.error("Error de SQL al registrar el académico: {}", e.getMessage(), e);
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
+        } catch (EmptyFields | InvalidData | RepeatedId | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
@@ -147,15 +135,24 @@ public class GUI_RegisterStudentController {
     }
 
     public boolean areFieldsFilled() {
-        return !fieldTuiton.getText().isEmpty() &&
+        return  !fieldNumberOffStaff.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
-                !fieldPhone.getText().isEmpty() &&
-                !fieldEmail.getText().isEmpty() &&
                 !fieldUser.getText().isEmpty() &&
                 (!fieldPassword.getText().isEmpty() || !fieldPasswordVisible.getText().isEmpty()) &&
-                (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty()) &&
-                !fieldNRC.getText().isEmpty() &&
-                !fieldCreditAdvance.getText().isEmpty();
+                (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty());
+    }
+
+    private Role getRoleFromText(String text) {
+        switch (text) {
+            case "Académico":
+                return Role.ACADEMICO;
+            case "Académico Evaluador":
+                return Role.ACADEMICO_EVALUADOR;
+            case "Coordinador":
+                return Role.COORDINADOR;
+            default:
+                throw new IllegalArgumentException("Rol no válido: " + text);
+        }
     }
 }
