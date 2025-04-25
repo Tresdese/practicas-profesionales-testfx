@@ -1,6 +1,5 @@
 package logic;
 
-import gui.GUI_CheckListOfStudents;
 import gui.GUI_RegisterStudent;
 import javafx.application.Application;
 

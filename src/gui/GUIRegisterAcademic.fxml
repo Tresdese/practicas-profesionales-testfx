@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="348.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterAcademicController">
+    <children>
+        <Label fx:id="label" layoutX="258.0" layoutY="20.0" text="Registrar usuario" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label id="roleLabel" layoutX="52.0" layoutY="180.0" text="Rol" />
+        <ChoiceBox fx:id="roleBox" layoutX="167.0" layoutY="176.0" prefWidth="150.0"/>
+        <TextField fx:id="fieldNumberOffStaff" layoutX="167.0" layoutY="60.0" promptText="Ejem: 12345" />
+        <TextField fx:id="fieldNames" layoutX="167.0" layoutY="100.0" />
+        <TextField fx:id="fieldSurnames" layoutX="167.0" layoutY="140.0" />
+        <Label layoutX="52.0" layoutY="64.0" text="Numero de personal" />
+        <Label layoutX="52.0" layoutY="104.0" text="Nombres" />
+        <Label layoutX="52.0" layoutY="144.0" text="Apellidos" />
+        <TextField fx:id="fieldUser" layoutX="463.0" layoutY="60.0" />
+        <PasswordField fx:id="fieldPassword" layoutX="463.0" layoutY="100.0" />
+        <TextField fx:id="fieldPasswordVisible" layoutX="463.0" layoutY="140.0" managed="false" visible="false" />
+        <PasswordField fx:id="fieldConfirmPassword" layoutX="463.0" layoutY="140.0" />
+        <TextField fx:id="fieldConfirmPasswordVisible" layoutX="463.0" layoutY="140.0" managed="false" visible="false" />
+        <Button fx:id="togglePasswordVisibility" layoutX="622.0" layoutY="100.0" mnemonicParsing="false" text="🙈" />
+        <Label layoutX="338.0" layoutY="64.0" text="Usuario" />
+        <Label layoutX="338.0" layoutY="104.0" text="Contraseña" />
+        <Label layoutX="341.0" layoutY="144.0" text="Confirmar Contraseña" />
+        <Button fx:id="buttonRegisterUser" layoutX="288.0" layoutY="266.0" mnemonicParsing="false" onAction="#handleRegisterAcademic" style="-fx-background-color: #2772d3;" text="Registrar academico" textFill="WHITE">
+            <opaqueInsets>
+                <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
+            </opaqueInsets></Button>
+        <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="108.0" layoutY="350.0" prefWidth="500.0" textFill="red" wrapText="true">
+            <font>
+                <Font size="18.0" />
+            </font></Label>
+    </children>
+</AnchorPane>
