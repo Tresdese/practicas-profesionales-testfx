@@ -4,31 +4,34 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="442.0" prefWidth="661.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListOfStudentsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListOfStudentsController">
     <children>
-        <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="300.0" prefWidth="591.0">
+        <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
-                <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnTuiton" prefWidth="123.79999160766602" text="Matricula" />
-                        <TableColumn fx:id="columnNames" prefWidth="121.79997253417969" text="Nombres" />
-                        <TableColumn fx:id="columnSurnames" prefWidth="128.800048828125" text="Apellidos" />
-                        <TableColumn fx:id="columnEmail" prefWidth="111.5999755859375" text="Correo" />
-                        <TableColumn fx:id="columnnNRC" prefWidth="111.0" text="NRC" />
+                        <TableColumn fx:id="columnTuiton" prefWidth="120.0" text="Matricula" />
+                        <TableColumn fx:id="columnNames" prefWidth="150.0" text="Nombres" />
+                        <TableColumn fx:id="columnSurnames" prefWidth="150.0" text="Apellidos" />
+                        <TableColumn fx:id="columnEmail" prefWidth="150.0" text="Correo" />
+                        <TableColumn fx:id="columnnNRC" prefWidth="100.0" text="NRC" />
+                        <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
+                        <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
         </BorderPane>
-        <TextField fx:id="searchField" layoutX="35.0" layoutY="46.0" prefHeight="26.0" prefWidth="495.0" promptText="Ejem: S23155487" />
-        <Button fx:id="searchButton" layoutX="530.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="95.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
+        <TextField fx:id="searchField" layoutX="35.0" layoutY="46.0" prefHeight="26.0" prefWidth="800.0" promptText="Ejem: S23155487" />
+        <Button fx:id="searchButton" layoutX="850.0" layoutY="46.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
             <font>
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Button>
-        <Label layoutX="200.0" text="Lista de Estudiantes">
+        <Label layoutX="400.0" layoutY="10.0" text="Lista de Estudiantes">
             <font>
                 <Font size="30.0" />
             </font>
         </Label>
+        <Button fx:id="buttonRegisterStudent" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
     </children>
 </AnchorPane>

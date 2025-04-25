@@ -3,11 +3,10 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import javafx.util.Callback;
 import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
@@ -40,10 +39,21 @@ public class GUI_CheckListOfStudentsController {
     private TableColumn<StudentDTO, String> columnnNRC;
 
     @FXML
+    private TableColumn<StudentDTO, Void> columnDetails;
+
+    @FXML
+    private TableColumn<StudentDTO, Void> columnManagement;
+
+    @FXML
     private TextField searchField;
 
     @FXML
     private Button searchButton;
+
+    @FXML
+    private Button buttonRegisterStudent;
+
+    private StudentDTO selectedStudent;
 
     public void initialize() {
         columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
@@ -52,9 +62,29 @@ public class GUI_CheckListOfStudentsController {
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         columnnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
 
+        addDetailsButtonToTable();
+        addManagementButtonToTable();
+
         loadStudentData();
 
         searchButton.setOnAction(event -> searchStudent());
+
+        buttonRegisterStudent.setOnAction(event -> openRegisterStudentWindow());
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedStudent = newValue;
+            tableView.refresh();
+        });
+    }
+
+    private void openRegisterStudentWindow() {
+        try {
+            GUI_RegisterStudent registerStudentApp = new GUI_RegisterStudent();
+            Stage stage = new Stage();
+            registerStudentApp.start(stage);
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
+        }
     }
 
     private void loadStudentData() {
@@ -82,7 +112,7 @@ public class GUI_CheckListOfStudentsController {
         StudentDAO studentDAO = new StudentDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            StudentDTO student = studentDAO.getStudent(searchQuery, connection);
+            StudentDTO student = studentDAO.searchStudentByTuiton(searchQuery, connection);
             if (student != null) {
                 filteredList.add(student);
             }
@@ -91,5 +121,57 @@ public class GUI_CheckListOfStudentsController {
         }
 
         tableView.setItems(filteredList);
+    }
+
+    private void addDetailsButtonToTable() {
+        Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
+            private final Button detailsButton = new Button("Ver detalles");
+
+            {
+                detailsButton.setOnAction(event -> {
+                    StudentDTO student = getTableView().getItems().get(getIndex());
+                    System.out.println("Detalles de: " + student.getTuiton());
+                    //TODO Lógica para mostrar detalles del estudiante
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableView().getItems().get(getIndex()) != selectedStudent) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(detailsButton);
+                }
+            }
+        };
+
+        columnDetails.setCellFactory(cellFactory);
+    }
+
+    private void addManagementButtonToTable() {
+        Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
+            private final Button manageButton = new Button("Gestionar Estudiante");
+
+            {
+                manageButton.setOnAction(event -> {
+                    StudentDTO student = getTableView().getItems().get(getIndex());
+                    System.out.println("Gestionar: " + student.getTuiton());
+                    //TODO Lógica para gestionar al estudiante
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableView().getItems().get(getIndex()) != selectedStudent) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(manageButton);
+                }
+            }
+        };
+
+        columnManagement.setCellFactory(cellFactory);
     }
 }

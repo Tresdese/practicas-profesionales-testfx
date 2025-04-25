@@ -41,26 +41,19 @@ public class GUI_RegisterStudentController {
     @FXML
     private void handleRegisterStudent() {
         try {
-            // Validar si algún campo está vacío
-            if (fieldTuiton.getText().isEmpty() || fieldNames.getText().isEmpty() || fieldSurnames.getText().isEmpty() ||
-                    fieldPhone.getText().isEmpty() || fieldEmail.getText().isEmpty() || fieldUser.getText().isEmpty() ||
-                    fieldPassword.getText().isEmpty() || fieldNRC.getText().isEmpty() || fieldCreditAdvance.getText().isEmpty()) {
+            if (!areFieldsFilled()) {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
 
-            // Validar matrícula
             String tuiton = fieldTuiton.getText();
             TuitonValidator.validate(tuiton);
 
-            // Validar correo electrónico
             String email = fieldEmail.getText();
             EmailValidator.validate(email);
 
-            // Validar número de teléfono
             String phone = fieldPhone.getText();
             PhoneValidator.validate(phone);
 
-            // Obtener los demás valores de los campos
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
             String user = fieldUser.getText();
@@ -68,33 +61,25 @@ public class GUI_RegisterStudentController {
             String nrc = fieldNRC.getText();
             String creditAdvance = fieldCreditAdvance.getText();
 
-            // Hashear la contraseña
             String hashedPassword = PasswordHasher.hashPassword(password);
 
-            // Crear el objeto StudentDTO
             StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
 
-            // Conectar a la base de datos y registrar al estudiante
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
                 StudentDAO studentDAO = new StudentDAO();
 
-                // Verificar si la matrícula ya está registrada
                 if (studentDAO.isTuitonRegistered(tuiton, connection)) {
                     throw new RepeatedTuiton("La matrícula ya está registrada.");
                 }
 
-                // Verificar si el número de teléfono ya está registrado
                 if (studentDAO.isPhoneRegistered(phone, connection)) {
                     throw new RepeatedPhone("El número de teléfono ya está registrado.");
                 }
 
-                // Verificar si el correo ya está registrado
                 if (studentDAO.isEmailRegistered(email, connection)) {
                     throw new RepeatedEmail("El correo electrónico ya está registrado.");
                 }
-
-                // Insertar al estudiante
                 boolean success = studentDAO.insertStudent(student, connection);
 
                 if (success) {
@@ -116,5 +101,17 @@ public class GUI_RegisterStudentController {
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
         }
+    }
+
+    public boolean areFieldsFilled() {
+        return !fieldTuiton.getText().isEmpty() &&
+                !fieldNames.getText().isEmpty() &&
+                !fieldSurnames.getText().isEmpty() &&
+                !fieldPhone.getText().isEmpty() &&
+                !fieldEmail.getText().isEmpty() &&
+                !fieldUser.getText().isEmpty() &&
+                !fieldPassword.getText().isEmpty() &&
+                !fieldNRC.getText().isEmpty() &&
+                !fieldCreditAdvance.getText().isEmpty();
     }
 }

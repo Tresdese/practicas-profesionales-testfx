@@ -69,7 +69,7 @@ public class StudentDAO {
         }
     }
 
-    public StudentDTO getStudent(String tuiton, Connection connection) throws SQLException {
+    public StudentDTO searchStudentByTuiton(String tuiton, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
