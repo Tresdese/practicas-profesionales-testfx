@@ -24,7 +24,7 @@ public class GUI_RegisterAcademicController {
     private Label roleLabel;
 
     @FXML
-    private ChoiceBox <String> roleBox;
+    private ChoiceBox<String> roleBox;
 
     @FXML
     private Label statusLabel;
@@ -51,28 +51,36 @@ public class GUI_RegisterAcademicController {
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
+            // Cambiar a modo oculto
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
+
             fieldPasswordVisible.setVisible(false);
             fieldPasswordVisible.setManaged(false);
             fieldConfirmPasswordVisible.setVisible(false);
             fieldConfirmPasswordVisible.setManaged(false);
+
             fieldPassword.setVisible(true);
             fieldPassword.setManaged(true);
             fieldConfirmPassword.setVisible(true);
             fieldConfirmPassword.setManaged(true);
+
             togglePasswordVisibility.setText("🙈");
         } else {
+            // Cambiar a modo visible
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
+
             fieldPassword.setVisible(false);
             fieldPassword.setManaged(false);
             fieldConfirmPassword.setVisible(false);
             fieldConfirmPassword.setManaged(false);
+
             fieldPasswordVisible.setVisible(true);
             fieldPasswordVisible.setManaged(true);
             fieldConfirmPasswordVisible.setVisible(true);
             fieldConfirmPasswordVisible.setManaged(true);
+
             togglePasswordVisibility.setText("👁");
         }
         isPasswordVisible = !isPasswordVisible;
@@ -93,11 +101,6 @@ public class GUI_RegisterAcademicController {
             Role role = getRoleFromText(selectedRoleText);
             String userName = fieldUser.getText();
             String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
-            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
-
-            if (!password.equals(confirmPassword)) {
-                throw new PasswordDoesNotMatch();
-            }
 
             String hashedPassword = PasswordHasher.hashPassword(password);
 
@@ -127,7 +130,7 @@ public class GUI_RegisterAcademicController {
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedId | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
+        } catch (EmptyFields | InvalidData | RepeatedId | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
@@ -135,7 +138,7 @@ public class GUI_RegisterAcademicController {
     }
 
     public boolean areFieldsFilled() {
-        return  !fieldNumberOffStaff.getText().isEmpty() &&
+        return !fieldNumberOffStaff.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
                 !fieldUser.getText().isEmpty() &&

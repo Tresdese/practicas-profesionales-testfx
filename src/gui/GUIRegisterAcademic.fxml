@@ -26,14 +26,14 @@
         <Label layoutX="52.0" layoutY="144.0" text="Apellidos" />
         <TextField fx:id="fieldUser" layoutX="463.0" layoutY="60.0" />
         <PasswordField fx:id="fieldPassword" layoutX="463.0" layoutY="100.0" />
-        <TextField fx:id="fieldPasswordVisible" layoutX="463.0" layoutY="140.0" managed="false" visible="false" />
+        <TextField fx:id="fieldPasswordVisible" layoutX="463.0" layoutY="100.0" managed="false" visible="false" />
         <PasswordField fx:id="fieldConfirmPassword" layoutX="463.0" layoutY="140.0" />
         <TextField fx:id="fieldConfirmPasswordVisible" layoutX="463.0" layoutY="140.0" managed="false" visible="false" />
-        <Button fx:id="togglePasswordVisibility" layoutX="622.0" layoutY="100.0" mnemonicParsing="false" text="🙈" />
+        <Button fx:id="togglePasswordVisibility" layoutX="622.0" layoutY="120.0" mnemonicParsing="false" text="🙈" />
         <Label layoutX="338.0" layoutY="64.0" text="Usuario" />
         <Label layoutX="338.0" layoutY="104.0" text="Contraseña" />
-        <Label layoutX="341.0" layoutY="144.0" text="Confirmar Contraseña" />
-        <Button fx:id="buttonRegisterUser" layoutX="288.0" layoutY="266.0" mnemonicParsing="false" onAction="#handleRegisterAcademic" style="-fx-background-color: #2772d3;" text="Registrar academico" textFill="WHITE">
+        <Label layoutX="338.0" layoutY="144.0" text="Confirmar Contraseña" />
+        <Button fx:id="buttonRegisterUser" layoutX="288.0" layoutY="266.0" mnemonicParsing="false" onAction="#handleRegisterAcademic" style="-fx-background-color: #2772d3;" text="Registrar académico" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
             </opaqueInsets></Button>
