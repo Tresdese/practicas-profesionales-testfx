@@ -7,6 +7,7 @@ import logic.DAO.UserDAO;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.exceptions.*;
+import logic.utils.AcademicNumberValidator;
 import logic.utils.PasswordHasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,6 +85,7 @@ public class GUI_RegisterAcademicController {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
             String numberOffStaff = fieldNumberOffStaff.getText();
+            AcademicNumberValidator.validate(numberOffStaff);
 
             String names = fieldNames.getText();
             String surname = fieldSurnames.getText();
