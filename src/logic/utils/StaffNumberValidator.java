@@ -2,7 +2,7 @@ package logic.utils;
 
 import logic.exceptions.InvalidData;
 
-public class AcademicNumberValidator {
+public class StaffNumberValidator {
 
     public static void validate(String id) {
         if (!id.matches("^\\d{5}$")) {
