@@ -123,4 +123,24 @@ public class UserDAO {
         }
         return users;
     }
+
+    public UserDTO searchUserById(String idUser, Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, idUser);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new UserDTO(
+                        resultSet.getString("idUsuario"),
+                        resultSet.getString("numeroDePersonal"),
+                        resultSet.getString("nombres"),
+                        resultSet.getString("apellidos"),
+                        resultSet.getString("nombreUsuario"),
+                        resultSet.getString("contraseña"),
+                        Role.valueOf(resultSet.getString("rol"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageAcademicController">
+    <children>
+        <Label layoutX="103.0" layoutY="20.0" text="Gestionar Académico">
+            <font>
+                <Font size="20.0" />
+            </font></Label>
+
+        <Label layoutX="69.0" layoutY="58.0" text="ID Usuario:" />
+        <TextField fx:id="fieldIdUser" layoutX="169.0" layoutY="58.0" />
+        <Label layoutX="69.0" layoutY="98.0" text="Estado:" />
+        <TextField fx:id="fieldState" layoutX="169.0" layoutY="98.0" />
+        <Label layoutX="69.0" layoutY="138.0" text="Número de Personal:" />
+        <TextField fx:id="fieldNumberOffStaff" layoutX="169.0" layoutY="138.0" />
+        <Label layoutX="69.0" layoutY="58.0" text="Nombres:" />
+        <TextField fx:id="fieldNames" layoutX="169.0" layoutY="58.0" />
+        <Label layoutX="69.0" layoutY="98.0" text="Apellidos:" />
+        <TextField fx:id="fieldSurnames" layoutX="169.0" layoutY="98.0" />
+        <Label layoutX="69.0" layoutY="138.0" text="Nombre de Usuario:" />
+        <TextField fx:id="fieldUserName" layoutX="169.0" layoutY="138.0" />
+        <Label layoutX="69.0" layoutY="178.0" text="Contraseña:" />
+        <TextField fx:id="fieldPassword" layoutX="169.0" layoutY="178.0" />
+        <Label layoutX="69.0" layoutY="218.0" text="Rol:" />
+        <TextField fx:id="fieldRole" layoutX="169.0" layoutY="218.0" />
+        <Button layoutX="140.0" layoutY="247.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+        <Label fx:id="statusLabel" layoutX="20.0" layoutY="260.0" textFill="RED" />
+    </children>
+</AnchorPane>

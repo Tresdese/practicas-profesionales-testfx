@@ -35,7 +35,7 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterStudent" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
+        <Button fx:id="buttonRegisterAcademic" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Académico" textFill="WHITE" />
     </children>
 
 </AnchorPane>
