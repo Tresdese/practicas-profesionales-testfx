@@ -13,7 +13,7 @@ public interface IActivityScheduleDAO {
 
     boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
 
-    ActivityScheduleDTO getActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
+    ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
 
     List<ActivityScheduleDTO> getAllActivitySchedules(Connection connection) throws SQLException;
 }

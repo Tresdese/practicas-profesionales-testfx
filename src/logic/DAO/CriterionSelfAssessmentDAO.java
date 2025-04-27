@@ -41,17 +41,18 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         }
     }
 
-    public CriterionSelfAssessmentDTO getCriterionSelfAssessment(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException {
+    public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException {
+        CriterionSelfAssessmentDTO selfAssessment = new CriterionSelfAssessmentDTO("N/A","N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idSelfAssessment);
             statement.setString(2, idCriteria);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new CriterionSelfAssessmentDTO(resultSet.getString("idAutoevaluacion"), resultSet.getString("idCriterios"));
+                    selfAssessment = new CriterionSelfAssessmentDTO(resultSet.getString("idAutoevaluacion"), resultSet.getString("idCriterios"));
                 }
             }
         }
-        return null;
+        return selfAssessment;
     }
 
     public List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments(Connection connection) throws SQLException {

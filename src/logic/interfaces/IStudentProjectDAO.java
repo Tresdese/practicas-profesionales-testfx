@@ -12,7 +12,7 @@ public interface IStudentProjectDAO {
 
     boolean deleteStudentProject(StudentProjectDTO studentProject, Connection connection) throws SQLException;
 
-    StudentProjectDTO getStudentProject(String idProject, Connection connection) throws SQLException;
+    StudentProjectDTO searchStudentProjectByIdProject(String idProject, Connection connection) throws SQLException;
 
     List<StudentProjectDTO> getAllStudentProjects(Connection connection) throws SQLException;
 }

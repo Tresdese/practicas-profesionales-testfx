@@ -18,7 +18,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public boolean insertRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException {
-        RepresentativeDTO existingRepresentative = getRepresentative(representative.getIdRepresentative(), connection);
+        RepresentativeDTO existingRepresentative = searchRepresentativeById(representative.getIdRepresentative(), connection);
         if (existingRepresentative != null) {
             return representative.getIdRepresentative().equals(existingRepresentative.getIdRepresentative());
         }
@@ -52,8 +52,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public RepresentativeDTO getRepresentative(String idRepresentative, Connection connection) throws SQLException {
-        RepresentativeDTO representative = null;
+    public RepresentativeDTO searchRepresentativeById(String idRepresentative, Connection connection) throws SQLException {
+        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idRepresentative);
             ResultSet resultSet = statement.executeQuery();

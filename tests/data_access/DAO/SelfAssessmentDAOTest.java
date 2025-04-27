@@ -39,7 +39,7 @@ class SelfAssessmentDAOTest {
     }
 
     private String insertTestSelfAssessment(String id, String comments, double grade, String registration, String evidenceId) throws SQLException {
-        SelfAssessmentDTO existingSelfAssessment = selfAssessmentDAO.getSelfAssessment(id, connection);
+        SelfAssessmentDTO existingSelfAssessment = selfAssessmentDAO.searchSelfAssessmentById(id, connection);
         if (existingSelfAssessment != null) {
             return id;
         }
@@ -63,7 +63,7 @@ class SelfAssessmentDAOTest {
             boolean result = selfAssessmentDAO.insertSelfAssessment(selfAssessment, connection);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            SelfAssessmentDTO insertedSelfAssessment = selfAssessmentDAO.getSelfAssessment("1", connection);
+            SelfAssessmentDTO insertedSelfAssessment = selfAssessmentDAO.searchSelfAssessmentById("1", connection);
             assertNotNull(insertedSelfAssessment, "La autoevaluación debería existir en la base de datos");
             assertEquals("Buen trabajo", insertedSelfAssessment.getComments(), "Los comentarios deberían coincidir");
         } catch (SQLException e) {
@@ -72,11 +72,11 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testGetSelfAssessment() {
+    void testSearchSelfAssessmentById() {
         try {
             String id = insertTestSelfAssessment("2", "Excelente", 10.0, "54331", "2");
 
-            SelfAssessmentDTO retrievedSelfAssessment = selfAssessmentDAO.getSelfAssessment(id, connection);
+            SelfAssessmentDTO retrievedSelfAssessment = selfAssessmentDAO.searchSelfAssessmentById(id, connection);
             assertNotNull(retrievedSelfAssessment, "Debería encontrar la autoevaluación");
             assertEquals(id, retrievedSelfAssessment.getSelfAssessmentId(), "El ID debería coincidir");
             assertEquals("Excelente", retrievedSelfAssessment.getComments(), "Los comentarios deberían coincidir");
@@ -94,7 +94,7 @@ class SelfAssessmentDAOTest {
             boolean updateResult = selfAssessmentDAO.updateSelfAssessment(updatedSelfAssessment, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            SelfAssessmentDTO retrievedSelfAssessment = selfAssessmentDAO.getSelfAssessment(id, connection);
+            SelfAssessmentDTO retrievedSelfAssessment = selfAssessmentDAO.searchSelfAssessmentById(id, connection);
             assertNotNull(retrievedSelfAssessment, "La autoevaluación debería existir");
             assertEquals("Actualizado", retrievedSelfAssessment.getComments(), "Los comentarios deberían actualizarse");
         } catch (SQLException e) {
@@ -124,13 +124,13 @@ class SelfAssessmentDAOTest {
         try {
             String id = insertTestSelfAssessment("5", "Eliminar", 5.0, "12351", "6");
 
-            SelfAssessmentDTO before = selfAssessmentDAO.getSelfAssessment(id, connection);
+            SelfAssessmentDTO before = selfAssessmentDAO.searchSelfAssessmentById(id, connection);
             assertNotNull(before, "La autoevaluación debería existir antes de eliminarla");
 
             boolean deleted = selfAssessmentDAO.deleteSelfAssessment(before, connection);
             assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            SelfAssessmentDTO after = selfAssessmentDAO.getSelfAssessment(id, connection);
+            SelfAssessmentDTO after = selfAssessmentDAO.searchSelfAssessmentById(id, connection);
             assertNull(after, "La autoevaluación no debería existir después de eliminarla");
         } catch (SQLException e) {
             fail("Error: " + e.getMessage());

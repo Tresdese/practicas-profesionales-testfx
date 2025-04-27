@@ -13,7 +13,7 @@ public interface IActivityReportDAO {
 
     boolean deleteActivityReport(String reportNumber, Connection connection) throws SQLException;
 
-    ActivityReportDTO getActivityReport(String reportNumber, Connection connection) throws SQLException;
+    ActivityReportDTO searchActivityReportByReportNumber(String reportNumber, Connection connection) throws SQLException;
 
     List<ActivityReportDTO> getAllActivityReports(Connection connection) throws SQLException;
 }

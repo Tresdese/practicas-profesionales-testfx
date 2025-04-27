@@ -12,7 +12,7 @@ public interface IGroupDAO {
 
     boolean deleteGroup(String NRC, Connection connection) throws SQLException;
 
-    GroupDTO getGroup(String NRC, Connection connection) throws SQLException;
+    GroupDTO searchGroupById(String NRC, Connection connection) throws SQLException;
 
     List<GroupDTO> getAllGroups(Connection connection) throws SQLException;
 }

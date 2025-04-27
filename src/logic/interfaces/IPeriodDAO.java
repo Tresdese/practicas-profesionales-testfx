@@ -12,7 +12,7 @@ public interface IPeriodDAO {
 
     boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException;
 
-    PeriodDTO getPeriod(String idPeriod, Connection connection) throws SQLException;
+    PeriodDTO searchPeriodById(String idPeriod, Connection connection) throws SQLException;
 
     List<PeriodDTO> getAllPeriods(Connection connection) throws SQLException;
 }

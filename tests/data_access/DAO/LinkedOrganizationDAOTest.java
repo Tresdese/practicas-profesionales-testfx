@@ -41,7 +41,7 @@ class LinkedOrganizationDAOTest {
     }
 
     private String insertTestOrganization(String idOrganization, String nombre, String direccion) throws SQLException {
-        LinkedOrganizationDTO existingOrganization = organizationDAO.getLinkedOrganization(idOrganization, connection);
+        LinkedOrganizationDTO existingOrganization = organizationDAO.searchLinkedOrganizationById(idOrganization, connection);
         if (existingOrganization != null) {
             return idOrganization;
         }
@@ -79,7 +79,7 @@ class LinkedOrganizationDAOTest {
 
             assertNotNull(organization.getIddOrganization(), "El ID generado no debería ser nulo");
 
-            LinkedOrganizationDTO insertedOrg = organizationDAO.getLinkedOrganization(organization.getIddOrganization(), connection);
+            LinkedOrganizationDTO insertedOrg = organizationDAO.searchLinkedOrganizationById(organization.getIddOrganization(), connection);
             assertNotNull(insertedOrg, "La organización debería existir en la base de datos");
             assertEquals(uniqueName, insertedOrg.getName(), "El nombre debería coincidir");
             assertEquals("Dirección Test 123", insertedOrg.getAdddress(), "La dirección debería coincidir");
@@ -94,7 +94,7 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Consulta " + UUID.randomUUID().toString().substring(0, 5);
             String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Consulta");
 
-            LinkedOrganizationDTO org = organizationDAO.getLinkedOrganization(String.valueOf(testOrganizationId), connection);
+            LinkedOrganizationDTO org = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId), connection);
             assertNotNull(org, "Debería encontrar la organización");
             assertEquals(uniqueName, org.getName(), "El nombre debería coincidir");
             assertEquals("Dirección Consulta", org.getAdddress(), "La dirección debería coincidir");
@@ -118,7 +118,7 @@ class LinkedOrganizationDAOTest {
             boolean updateResult = organizationDAO.updateLinkedOrganization(orgToUpdate, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            LinkedOrganizationDTO updatedOrg = organizationDAO.getLinkedOrganization(String.valueOf(testOrganizationId), connection);
+            LinkedOrganizationDTO updatedOrg = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId), connection);
             assertNotNull(updatedOrg, "La organización debería existir después de actualizar");
             assertEquals("Nombre Actualizado", updatedOrg.getName(), "El nombre debería actualizarse");
             assertEquals("Dirección Actualizada", updatedOrg.getAdddress(), "La dirección debería actualizarse");
@@ -151,13 +151,13 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Delete " + UUID.randomUUID().toString().substring(0, 5);
             String deleteId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Delete");
 
-            LinkedOrganizationDTO beforeDelete = organizationDAO.getLinkedOrganization(String.valueOf(deleteId), connection);
+            LinkedOrganizationDTO beforeDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId), connection);
             assertNotNull(beforeDelete, "La organización debería existir antes de eliminarla");
 
             boolean deleteResult = organizationDAO.deleteLinkedOrganization(String.valueOf(deleteId), connection);
             assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-            LinkedOrganizationDTO afterDelete = organizationDAO.getLinkedOrganization(String.valueOf(deleteId), connection);
+            LinkedOrganizationDTO afterDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId), connection);
             assertNull(afterDelete, "La organización no debería existir después de eliminarla");
         } catch (SQLException e) {
             fail("Error en testDeleteLinkedOrganization: " + e.getMessage());

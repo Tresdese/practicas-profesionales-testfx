@@ -36,7 +36,7 @@ class ReportDAOTest {
     }
 
     private String insertTestReport(String numReporte, String observaciones, String idEvidencia) throws SQLException {
-        ReportDTO existingReport = reportDAO.getReport(numReporte, connection);
+        ReportDTO existingReport = reportDAO.searchReportById(numReporte, connection);
         if (existingReport != null) {
             return numReporte;
         }
@@ -77,7 +77,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void testGetReport() {
+    void testSearchReportById() {
         try {
             String numReporte = "2";
             String observaciones = "Observaciones para obtener";
@@ -85,7 +85,7 @@ class ReportDAOTest {
 
             insertTestReport(numReporte, observaciones, idEvidencia);
 
-            ReportDTO report = reportDAO.getReport(numReporte, connection);
+            ReportDTO report = reportDAO.searchReportById(numReporte, connection);
             assertNotNull(report, "Debería encontrar el reporte");
             assertEquals(observaciones, report.getObservations(), "Las observaciones deberían coincidir");
             assertEquals(idEvidencia, report.getIdEvidence(), "El ID de evidencia debería coincidir");
@@ -107,7 +107,7 @@ class ReportDAOTest {
             boolean result = reportDAO.updateReport(reportToUpdate, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            ReportDTO updatedReport = reportDAO.getReport(numReporte, connection);
+            ReportDTO updatedReport = reportDAO.searchReportById(numReporte, connection);
             assertNotNull(updatedReport, "El reporte debería existir después de actualizar");
             assertEquals("Observaciones actualizadas", updatedReport.getObservations(), "Las observaciones deberían actualizarse");
             assertEquals("4", updatedReport.getIdEvidence(), "El ID de evidencia debería actualizarse");
@@ -128,7 +128,7 @@ class ReportDAOTest {
             boolean result = reportDAO.deleteReport(numReporte, connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            ReportDTO deletedReport = reportDAO.getReport(numReporte, connection);
+            ReportDTO deletedReport = reportDAO.searchReportById(numReporte, connection);
             assertNull(deletedReport, "El reporte eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteReport: " + e.getMessage());

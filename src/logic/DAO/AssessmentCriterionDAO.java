@@ -42,16 +42,17 @@ public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
         }
     }
 
-    public AssessmentCriterionDTO getAssessmentCriterion(String idCriterion, Connection connection) throws SQLException {
+    public AssessmentCriterionDTO searchAssessmentCriterionById(String idCriterion, Connection connection) throws SQLException {
+        AssessmentCriterionDTO assessmentCriterion = new AssessmentCriterionDTO("N/A","N/A",-1);
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idCriterion);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new AssessmentCriterionDTO(resultSet.getString("idCriterio"), resultSet.getString("nombreCriterio"), resultSet.getDouble("calificacion"));
+                    assessmentCriterion = new AssessmentCriterionDTO(resultSet.getString("idCriterio"), resultSet.getString("nombreCriterio"), resultSet.getDouble("calificacion"));
                 }
             }
         }
-        return null; //TODO mala practica
+        return assessmentCriterion;
     }
 
     public List<AssessmentCriterionDTO> getAllAssessmentCriteria(Connection connection) throws SQLException {

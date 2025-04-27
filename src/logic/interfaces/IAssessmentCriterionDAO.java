@@ -13,7 +13,7 @@ public interface IAssessmentCriterionDAO {
 
     boolean deleteAssessmentCriterion(String idCriterion, Connection connection) throws SQLException;
 
-    AssessmentCriterionDTO getAssessmentCriterion(String idCriterion, Connection connection) throws SQLException;
+    AssessmentCriterionDTO searchAssessmentCriterionById(String idCriterion, Connection connection) throws SQLException;
 
     List<AssessmentCriterionDTO> getAllAssessmentCriteria(Connection connection) throws SQLException;
 }

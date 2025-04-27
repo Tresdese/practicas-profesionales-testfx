@@ -12,7 +12,7 @@ public interface IScheduleOfActivitiesDAO {
 
     boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException;
 
-    ScheduleOfActivitiesDTO getScheduleOfActivities(String idSchedule, Connection connection) throws SQLException;
+    ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule, Connection connection) throws SQLException;
 
     List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities(Connection connection) throws SQLException;
 }

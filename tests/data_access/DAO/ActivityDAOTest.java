@@ -90,7 +90,7 @@ class ActivityDAOTest {
         try {
             testActivityId = insertTestActivity("Actividad para Consulta");
 
-            ActivityDTO retrievedActivity = activityDAO.getActivity(String.valueOf(testActivityId), connection);
+            ActivityDTO retrievedActivity = activityDAO.searchActivityById(String.valueOf(testActivityId), connection);
             assertNotNull(retrievedActivity, "Debería encontrar la actividad");
             assertEquals(String.valueOf(testActivityId), retrievedActivity.getActivityId(), "El ID debería coincidir");
             assertEquals("Actividad para Consulta", retrievedActivity.getActivityName(), "El nombre debería coincidir");
@@ -108,7 +108,7 @@ class ActivityDAOTest {
             boolean updateResult = activityDAO.updateActivity(activity, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            ActivityDTO updated = activityDAO.getActivity(String.valueOf(testActivityId), connection);
+            ActivityDTO updated = activityDAO.searchActivityById(String.valueOf(testActivityId), connection);
             assertNotNull(updated, "La actividad debería existir");
             assertEquals("Actividad Actualizada", updated.getActivityName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -138,14 +138,14 @@ class ActivityDAOTest {
         try {
             int deleteId = insertTestActivity("Actividad para Eliminar");
 
-            ActivityDTO before = activityDAO.getActivity(String.valueOf(deleteId), connection);
+            ActivityDTO before = activityDAO.searchActivityById(String.valueOf(deleteId), connection);
             assertNotNull(before, "La actividad debería existir antes de eliminarla");
 
             ActivityDTO toDelete = new ActivityDTO(String.valueOf(deleteId), "Actividad para Eliminar");
             boolean deleted = activityDAO.deleteActivity(toDelete, connection);
             assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            ActivityDTO after = activityDAO.getActivity(String.valueOf(deleteId), connection);
+            ActivityDTO after = activityDAO.searchActivityById(String.valueOf(deleteId), connection);
             assertNull(after, "La actividad no debería existir después de eliminarla");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());

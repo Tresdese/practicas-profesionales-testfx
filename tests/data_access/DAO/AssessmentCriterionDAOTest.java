@@ -79,11 +79,11 @@ class AssessmentCriterionDAOTest {
     }
 
     @Test
-    void testGetAssessmentCriterion() {
+    void testSearchAssessmentCriterionById() {
         try {
             String idCriterio = insertTestCriterion("Criterio para Consulta", 90.0);
 
-            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.getAssessmentCriterion(idCriterio, connection);
+            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio, connection);
             assertNotNull(retrievedCriterion, "Debería encontrar el criterio");
             assertEquals(idCriterio, retrievedCriterion.getIdCriterion(), "El ID debería coincidir");
             assertEquals("Criterio para Consulta", retrievedCriterion.getNameCriterion(), "El nombre debería coincidir");
@@ -102,7 +102,7 @@ class AssessmentCriterionDAOTest {
             boolean updateResult = assessmentCriterionDAO.updateAssessmentCriterion(criterion, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            AssessmentCriterionDTO updated = assessmentCriterionDAO.getAssessmentCriterion(idCriterio, connection);
+            AssessmentCriterionDTO updated = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio, connection);
             assertNotNull(updated, "El criterio debería existir");
             assertEquals("Criterio Actualizado", updated.getNameCriterion(), "El nombre debería actualizarse");
             assertEquals(95.0, updated.getGrade(), "La calificación debería actualizarse");
@@ -133,13 +133,13 @@ class AssessmentCriterionDAOTest {
         try {
             String idCriterio = insertTestCriterion("Criterio para Eliminar", 70.0);
 
-            AssessmentCriterionDTO before = assessmentCriterionDAO.getAssessmentCriterion(idCriterio, connection);
+            AssessmentCriterionDTO before = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio, connection);
             assertNotNull(before, "El criterio debería existir antes de eliminarlo");
 
             boolean deleted = assessmentCriterionDAO.deleteAssessmentCriterion(idCriterio, connection);
             assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            AssessmentCriterionDTO after = assessmentCriterionDAO.getAssessmentCriterion(idCriterio, connection);
+            AssessmentCriterionDTO after = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio, connection);
             assertNull(after, "El criterio no debería existir después de eliminarlo");
         } catch (SQLException e) {
             fail("Error: " + e.getMessage());

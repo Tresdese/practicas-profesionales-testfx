@@ -14,7 +14,7 @@ public interface IActivityDAO {
 
     boolean deleteActivity(ActivityDTO activity, Connection connection) throws SQLException;
 
-    ActivityDTO getActivity(String idActivity, Connection connection) throws SQLException;
+    ActivityDTO searchActivityById(String idActivity, Connection connection) throws SQLException;
 
     List<ActivityDTO> getAllActivities(Connection connection) throws SQLException;
 }

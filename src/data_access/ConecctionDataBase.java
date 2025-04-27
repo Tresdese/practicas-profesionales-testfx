@@ -28,7 +28,7 @@ public class ConecctionDataBase {
             this.USER = properties.getProperty("db.user");
             this.PASSWORD = properties.getProperty("db.password");
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //TODO mandar al logger
         }
     }
 

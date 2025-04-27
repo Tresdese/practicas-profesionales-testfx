@@ -12,7 +12,7 @@ public interface IPartialEvaluationDAO {
 
     boolean deletePartialEvaluation(String idEvaluation, Connection connection) throws SQLException;
 
-    PartialEvaluationDTO getPartialEvaluation(String idEvaluation, Connection connection) throws SQLException;
+    PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation, Connection connection) throws SQLException;
 
     List<PartialEvaluationDTO> getAllPartialEvaluations(Connection connection) throws SQLException;
 }

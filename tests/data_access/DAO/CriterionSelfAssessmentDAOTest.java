@@ -60,7 +60,7 @@ class CriterionSelfAssessmentDAOTest {
     }
 
     @Test
-    void testGetCriterionSelfAssessment() {
+    void testSearchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria() {
         try {
             CriterionSelfAssessmentDTO criterion = new CriterionSelfAssessmentDTO(
                     "1",
@@ -69,7 +69,7 @@ class CriterionSelfAssessmentDAOTest {
 
             criterionDAO.insertCriterionSelfAssessment(criterion, connection);
 
-            CriterionSelfAssessmentDTO retrievedCriterion = criterionDAO.getCriterionSelfAssessment("1", "1", connection);
+            CriterionSelfAssessmentDTO retrievedCriterion = criterionDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria("1", "1", connection);
             assertNotNull(retrievedCriterion, "El criterio debería existir en la base de datos");
             assertEquals("1", retrievedCriterion.getIdCriteria(), "El ID del criterio debería coincidir");
         } catch (SQLException e) {
@@ -95,7 +95,7 @@ class CriterionSelfAssessmentDAOTest {
             boolean result = criterionDAO.updateCriterionSelfAssessment(updatedCriterion, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            CriterionSelfAssessmentDTO retrievedCriterion = criterionDAO.getCriterionSelfAssessment("1", "2", connection);
+            CriterionSelfAssessmentDTO retrievedCriterion = criterionDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria("1", "2", connection);
             assertNotNull(retrievedCriterion, "El criterio debería existir después de actualizar");
             assertEquals("2", retrievedCriterion.getIdCriteria(), "El ID del criterio debería actualizarse");
         } catch (SQLException e) {
@@ -116,7 +116,7 @@ class CriterionSelfAssessmentDAOTest {
             boolean result = criterionDAO.deleteCriterionSelfAssessment("1", "1", connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            CriterionSelfAssessmentDTO deletedCriterion = criterionDAO.getCriterionSelfAssessment("1", "1", connection);
+            CriterionSelfAssessmentDTO deletedCriterion = criterionDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria("1", "1", connection);
             assertNull(deletedCriterion, "El criterio eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteCriterionSelfAssessment: " + e.getMessage());

@@ -12,7 +12,7 @@ public interface IRepresentativeDAO {
 
     boolean deleteRepresentative(String idRepresentative, Connection connection) throws SQLException;
 
-    RepresentativeDTO getRepresentative(String idRepresentative, Connection connection) throws SQLException;
+    RepresentativeDTO searchRepresentativeById(String idRepresentative, Connection connection) throws SQLException;
 
     List<RepresentativeDTO> getAllRepresentatives(Connection connection) throws SQLException;
 }

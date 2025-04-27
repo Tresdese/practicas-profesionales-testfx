@@ -39,16 +39,17 @@ public class ActivityDAO implements IActivityDAO {
         }
     }
 
-    public ActivityDTO getActivity(String idActivity, Connection connection) throws SQLException {
+    public ActivityDTO searchActivityById(String idActivity, Connection connection) throws SQLException {
+        ActivityDTO activity = new ActivityDTO("invalido","invalido");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idActivity);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ActivityDTO(resultSet.getString("idActividad"), resultSet.getString("nombreActividad"));
+                    activity = new ActivityDTO (resultSet.getString("idActividad"), resultSet.getString("nombreActividad"));
                 }
             }
         }
-        return null;
+        return activity;
     }
 
     public List<ActivityDTO> getAllActivities(Connection connection) throws SQLException {

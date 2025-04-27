@@ -90,7 +90,7 @@ class EvidenceDAOTest {
 
             testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
 
-            EvidenceDTO evidence = evidenceDAO.getEvidence(testEvidenceId, connection);
+            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
             assertNotNull(evidence, "Debería encontrar la evidencia");
             assertEquals(nombreEvidencia, evidence.getEvidenceName(), "El nombre de la evidencia debería coincidir");
             assertEquals(ruta, evidence.getRoute(), "La ruta debería coincidir");
@@ -112,7 +112,7 @@ class EvidenceDAOTest {
             boolean result = evidenceDAO.updateEvidence(evidenceToUpdate, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            EvidenceDTO updatedEvidence = evidenceDAO.getEvidence(testEvidenceId, connection);
+            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
             assertNotNull(updatedEvidence, "La evidencia debería existir después de actualizar");
             assertEquals("Evidencia Actualizada", updatedEvidence.getEvidenceName(), "El nombre debería actualizarse");
             assertEquals("/ruta/actualizada", updatedEvidence.getRoute(), "La ruta debería actualizarse");
@@ -133,7 +133,7 @@ class EvidenceDAOTest {
             boolean result = evidenceDAO.deleteEvidence(testEvidenceId, connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            EvidenceDTO deletedEvidence = evidenceDAO.getEvidence(testEvidenceId, connection);
+            EvidenceDTO deletedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
             assertNull(deletedEvidence, "La evidencia eliminada no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteEvidence: " + e.getMessage());

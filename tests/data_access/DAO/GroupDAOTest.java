@@ -37,7 +37,7 @@ class GroupDAOTest {
     }
 
     private String insertTestGroup(String nrc, String name, String idUser, String idPeriod) throws SQLException {
-        GroupDTO existingGroup = groupDAO.getGroup(nrc, connection);
+        GroupDTO existingGroup = groupDAO.searchGroupById(nrc, connection);
         if (existingGroup != null) {
             return nrc;
         }
@@ -65,7 +65,7 @@ class GroupDAOTest {
             boolean result = groupDAO.insertGroup(group, connection);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            GroupDTO insertedGroup = groupDAO.getGroup(nrc, connection);
+            GroupDTO insertedGroup = groupDAO.searchGroupById(nrc, connection);
             assertNotNull(insertedGroup, "El grupo debería existir en la base de datos");
             assertEquals(name, insertedGroup.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -74,11 +74,11 @@ class GroupDAOTest {
     }
 
     @Test
-    void testGetGroup() {
+    void testSearchGroupById() {
         try {
             String nrc = insertTestGroup("54321", "Grupo para Consulta", "2", "222601"); // Actualizado a 222601
 
-            GroupDTO retrievedGroup = groupDAO.getGroup(nrc, connection);
+            GroupDTO retrievedGroup = groupDAO.searchGroupById(nrc, connection);
             assertNotNull(retrievedGroup, "Debería encontrar el grupo");
             assertEquals(nrc, retrievedGroup.getNRC(), "El NRC debería coincidir");
             assertEquals("Grupo para Consulta", retrievedGroup.getName(), "El nombre debería coincidir");
@@ -96,7 +96,7 @@ class GroupDAOTest {
             boolean updateResult = groupDAO.updateGroup(group, connection);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            GroupDTO updatedGroup = groupDAO.getGroup(nrc, connection);
+            GroupDTO updatedGroup = groupDAO.searchGroupById(nrc, connection);
             assertNotNull(updatedGroup, "El grupo debería existir");
             assertEquals("Grupo Actualizado", updatedGroup.getName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -126,13 +126,13 @@ class GroupDAOTest {
         try {
             String nrc = insertTestGroup("22222", "Grupo para Eliminar", "7", "222601"); // Actualizado a 222601
 
-            GroupDTO before = groupDAO.getGroup(nrc, connection);
+            GroupDTO before = groupDAO.searchGroupById(nrc, connection);
             assertNotNull(before, "El grupo debería existir antes de eliminarlo");
 
             boolean deleted = groupDAO.deleteGroup(nrc, connection);
             assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            GroupDTO after = groupDAO.getGroup(nrc, connection);
+            GroupDTO after = groupDAO.searchGroupById(nrc, connection);
             assertNull(after, "El grupo no debería existir después de eliminarlo");
         } catch (SQLException e) {
             fail("Error: " + e.getMessage());

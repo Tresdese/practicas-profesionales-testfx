@@ -75,12 +75,12 @@ class StudentProjectDAOTest {
 
 
     @Test
-    void testGetStudentProject() {
+    void testSearchStudentProjectByIdProject() {
         try {
             StudentProjectDTO studentProject = new StudentProjectDTO("1", "12345");
             studentProjectDAO.insertStudentProject(studentProject, connection);
 
-            StudentProjectDTO retrievedProject = studentProjectDAO.getStudentProject("1", connection);
+            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
             assertNotNull(retrievedProject, "El proyecto debería existir");
             assertEquals("a", retrievedProject.getTuiton(), "La matrícula debería coincidir");
         } catch (SQLException e) {
@@ -98,7 +98,7 @@ class StudentProjectDAOTest {
             boolean result = studentProjectDAO.updateStudentProject(updatedProject, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            StudentProjectDTO retrievedProject = studentProjectDAO.getStudentProject("1", connection);
+            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
             assertNotNull(retrievedProject, "El proyecto debería existir");
             assertEquals("54321", retrievedProject.getTuiton(), "La matrícula debería actualizarse");
         } catch (SQLException e) {
@@ -115,7 +115,7 @@ class StudentProjectDAOTest {
             boolean result = studentProjectDAO.deleteStudentProject(studentProject, connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            StudentProjectDTO deletedProject = studentProjectDAO.getStudentProject("1", connection);
+            StudentProjectDTO deletedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
             assertNull(deletedProject, "El proyecto eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteStudentProject: " + e.getMessage());

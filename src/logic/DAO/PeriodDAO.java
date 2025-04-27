@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.PeriodDTO;
+import logic.interfaces.IPeriodDAO;
 
-public class PeriodDAO {
+public class PeriodDAO implements IPeriodDAO {
     private final static String SQL_INSERT = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE periodo SET nombre = ?, fechaInicio = ?, fechaFin = ? WHERE idPeriodo = ?";
     private final static String SQL_DELETE = "DELETE FROM periodo WHERE idPeriodo = ?";
@@ -17,7 +18,7 @@ public class PeriodDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
 
     public boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException {
-        PeriodDTO existingPeriod = getPeriod(period.getIdPeriod(), connection);
+        PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod(), connection);
         if (existingPeriod != null) {
             return period.getIdPeriod().equals(existingPeriod.getIdPeriod());
         }
@@ -41,23 +42,24 @@ public class PeriodDAO {
         }
     }
 
-    public boolean deletePeriod(String idPeriod, Connection connection) throws SQLException {
+    public boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idPeriod);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public PeriodDTO getPeriod(String idPeriod, Connection connection) throws SQLException {
+    public PeriodDTO searchPeriodById(String idPeriod, Connection connection) throws SQLException {
+        PeriodDTO period = new PeriodDTO("N/A", "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), java.sql.Timestamp.valueOf("0404-01-01 00:00:00"));
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idPeriod);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new PeriodDTO(resultSet.getString("idPeriodo"), resultSet.getString("nombre"), resultSet.getTimestamp("fechaInicio"), resultSet.getTimestamp("fechaFin"));
+                    period = new PeriodDTO(resultSet.getString("idPeriodo"), resultSet.getString("nombre"), resultSet.getTimestamp("fechaInicio"), resultSet.getTimestamp("fechaFin"));
                 }
             }
         }
-        return null;
+        return period;
     }
 
     public List<PeriodDTO> getAllPeriods(Connection connection) throws SQLException {

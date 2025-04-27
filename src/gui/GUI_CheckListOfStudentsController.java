@@ -3,6 +3,9 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -82,15 +85,21 @@ public class GUI_CheckListOfStudentsController {
 
     private void openRegisterStudentWindow() {
         try {
-            GUI_RegisterStudent registerStudentApp = new GUI_RegisterStudent();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUIRegisterStudent.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterStudentController registerController = loader.getController();
+            registerController.setParentController(this); // Pasar referencia
+
             Stage stage = new Stage();
-            registerStudentApp.start(stage);
+            stage.setScene(new Scene(root));
+            stage.show();
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
         }
     }
 
-    private void loadStudentData() {
+    public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
         StudentDAO studentDAO = new StudentDAO();
 

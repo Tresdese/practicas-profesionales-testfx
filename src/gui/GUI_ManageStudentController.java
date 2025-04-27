@@ -26,7 +26,6 @@ public class GUI_ManageStudentController {
 
         this.student = student;
 
-        // Mostrar los datos del estudiante en los campos
         fieldNames.setText(student.getNames() != null ? student.getNames() : "");
         fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
         fieldNRC.setText(student.getNRC() != null ? student.getNRC() : "");
@@ -50,7 +49,6 @@ public class GUI_ManageStudentController {
             student.setNRC(nrc);
             student.setCreditAdvance(creditAdvance);
 
-            // Aquí se implementaría la lógica para guardar los cambios en la base de datos
             statusLabel.setText("¡Estudiante actualizado exitosamente!");
             statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
         } catch (Exception e) {

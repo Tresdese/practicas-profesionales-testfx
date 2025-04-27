@@ -30,7 +30,6 @@ public class GUI_ManageStudent extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageStudent.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador y pasar los datos del estudiante
             GUI_ManageStudentController controller = loader.getController();
             controller.setStudentData(student);
 

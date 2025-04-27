@@ -12,7 +12,7 @@ public interface ISelfAssessmentCriterialDAO {
 
     boolean deleteSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException;
 
-    SelfAssessmentCriteriaDTO getSelfAssessmentCriteria(String idCriteria, Connection connection) throws SQLException;
+    SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria, Connection connection) throws SQLException;
 
     List<SelfAssessmentCriteriaDTO> getAllSelfAssessmentCriteria(Connection connection) throws SQLException;
 }

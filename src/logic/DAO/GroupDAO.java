@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.GroupDTO;
+import logic.interfaces.IGroupDAO;
 
-public class GroupDAO {
+public class GroupDAO  implements IGroupDAO {
     private final static String SQL_INSERT = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE grupo SET nombre = ?, idUsuario = ?, idPeriodo = ? WHERE NRC = ?";
     private final static String SQL_DELETE = "DELETE FROM grupo WHERE NRC = ?";
@@ -17,7 +18,7 @@ public class GroupDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM grupo";
 
     public boolean insertGroup(GroupDTO group, Connection connection) throws SQLException {
-        GroupDTO existingGroup = getGroup(group.getNRC(), connection);
+        GroupDTO existingGroup = searchGroupById(group.getNRC(), connection);
         if (existingGroup != null) {
             return group.getNRC().equals(existingGroup.getNRC());
         }
@@ -48,16 +49,17 @@ public class GroupDAO {
         }
     }
 
-    public GroupDTO getGroup(String NRC, Connection connection) throws SQLException {
+    public GroupDTO searchGroupById(String NRC, Connection connection) throws SQLException {
+        GroupDTO group = new GroupDTO("N/A", "N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, NRC);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new GroupDTO(resultSet.getString("NRC"), resultSet.getString("nombre"), resultSet.getString("idUsuario"), resultSet.getString("idPeriodo"));
+                    group = new GroupDTO(resultSet.getString("NRC"), resultSet.getString("nombre"), resultSet.getString("idUsuario"), resultSet.getString("idPeriodo"));
                 }
             }
         }
-        return null;
+        return group;
     }
 
     public List<GroupDTO> getAllGroups(Connection connection) throws SQLException {

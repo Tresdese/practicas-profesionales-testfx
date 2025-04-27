@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.PartialEvaluationDTO;
+import logic.interfaces.IPartialEvaluationDAO;
 
-public class PartialEvaluationDAO {
+public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     private final static String SQL_INSERT = "INSERT INTO evaluacion_parcial (idEvaluacion, promedio, matricula, IdEvidencia) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE evaluacion_parcial SET promedio = ?, matricula = ?, IdEvidencia = ? WHERE idEvaluacion = ?";
     private final static String SQL_DELETE = "DELETE FROM evaluacion_parcial WHERE idEvaluacion = ?";
@@ -17,11 +18,6 @@ public class PartialEvaluationDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evaluacion_parcial";
 
     public boolean insertPartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException {
-        PartialEvaluationDTO existingPartialEvaluation = getPartialEvaluation(evaluation.getIdEvaluation(), connection);
-        if (existingPartialEvaluation != null) {
-            return evaluation.getIdEvaluation().equals(existingPartialEvaluation.getIdEvaluation());
-        }
-        
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, evaluation.getIdEvaluation());
             statement.setDouble(2, evaluation.getAverage());
@@ -48,16 +44,17 @@ public class PartialEvaluationDAO {
         }
     }
 
-    public PartialEvaluationDTO getPartialEvaluation(String idEvaluation, Connection connection) throws SQLException {
+    public PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation, Connection connection) throws SQLException {
+        PartialEvaluationDTO partialEvaluation = new PartialEvaluationDTO("N/A", -1, "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idEvaluation);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new PartialEvaluationDTO(resultSet.getString("idEvaluacion"), resultSet.getDouble("promedio"), resultSet.getString("matricula"), resultSet.getString("IdEvidencia"));
+                    partialEvaluation = new PartialEvaluationDTO(resultSet.getString("idEvaluacion"), resultSet.getDouble("promedio"), resultSet.getString("matricula"), resultSet.getString("IdEvidencia"));
                 }
             }
         }
-        return null;
+        return partialEvaluation;
     }
 
     public List<PartialEvaluationDTO> getAllPartialEvaluations(Connection connection) throws SQLException {
@@ -70,4 +67,6 @@ public class PartialEvaluationDAO {
         }
         return evaluations;
     }
+
+    //TODO hacer metodo de verificacion de existencia de una evaluacion parcial
 }

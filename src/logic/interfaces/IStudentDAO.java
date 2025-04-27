@@ -10,9 +10,9 @@ public interface IStudentDAO {
 
     boolean updateStudent(StudentDTO student, Connection connection) throws SQLException;
 
-    boolean deleteStudent(StudentDTO student, Connection connection) throws SQLException;
+    boolean deleteStudent(String tuiton, Connection connection) throws SQLException;
 
-    StudentDTO getStudent(String tuiton, Connection connection) throws SQLException;
+    StudentDTO searchStudentByTuiton(String tuiton, Connection connection) throws SQLException;
 
     List<StudentDTO> getAllStudents(Connection connection) throws SQLException;
 }

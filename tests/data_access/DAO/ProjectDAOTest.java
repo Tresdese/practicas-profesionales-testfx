@@ -54,7 +54,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void testGetProject() {
+    void testSearchProjectById() {
         try {
             ProjectDTO project = new ProjectDTO("0", "Proyecto Consulta", "Descripción consulta",
                     Timestamp.valueOf("2023-12-02 10:00:00"), Timestamp.valueOf("2023-12-06 10:00:00"), "2");
@@ -93,7 +93,7 @@ class ProjectDAOTest {
             boolean result = projectDAO.updateProject(updatedProject, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            ProjectDTO retrievedProject = projectDAO.getProject(existingProject.getIdProject(), connection);
+            ProjectDTO retrievedProject = projectDAO.searchProjectById(existingProject.getIdProject(), connection);
             assertNotNull(retrievedProject, "El proyecto debería existir después de actualizarlo");
             assertEquals("Proyecto Actualizado", retrievedProject.getName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -119,7 +119,7 @@ class ProjectDAOTest {
             boolean result = projectDAO.deleteProject(existingProject.getIdProject(), connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            ProjectDTO deletedProject = projectDAO.getProject(existingProject.getIdProject(), connection);
+            ProjectDTO deletedProject = projectDAO.searchProjectById(existingProject.getIdProject(), connection);
             assertNull(deletedProject, "El proyecto eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteProject: " + e.getMessage());

@@ -21,9 +21,6 @@ public class GUI_RegisterStudentController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
 
     @FXML
-    private Label label;
-
-    @FXML
     private Label statusLabel;
 
     @FXML
@@ -33,9 +30,11 @@ public class GUI_RegisterStudentController {
     private PasswordField fieldPassword, fieldConfirmPassword;
 
     @FXML
-    private Button buttonStudentAcademic, togglePasswordVisibility;
+    private Button togglePasswordVisibility;
 
     private boolean isPasswordVisible = false;
+
+    private GUI_CheckListOfStudentsController parentController; // Referencia al controlador de la tabla
 
     @FXML
     public void initialize() {
@@ -43,10 +42,13 @@ public class GUI_RegisterStudentController {
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
     }
 
+    public void setParentController(GUI_CheckListOfStudentsController parentController) {
+        this.parentController = parentController;
+    }
+
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Cambiar a modo oculto
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
             fieldPasswordVisible.setVisible(false);
@@ -59,7 +61,6 @@ public class GUI_RegisterStudentController {
             fieldConfirmPassword.setManaged(true);
             togglePasswordVisibility.setText("🙈");
         } else {
-            // Cambiar a modo visible
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
             fieldPassword.setVisible(false);
@@ -82,6 +83,7 @@ public class GUI_RegisterStudentController {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
 
+            // Validaciones de datos
             String tuiton = fieldTuiton.getText();
             TuitonValidator.validate(tuiton);
 
@@ -91,22 +93,17 @@ public class GUI_RegisterStudentController {
             String phone = fieldPhone.getText();
             PhoneValidator.validate(phone);
 
-            String names = fieldNames.getText();
-            String surnames = fieldSurnames.getText();
-            String user = fieldUser.getText();
             String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
             String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
 
             if (!password.equals(confirmPassword)) {
-                throw new PasswordDoesNotMatch();
+                throw new PasswordDoesNotMatch("Las contraseñas no coinciden.");
             }
 
-            String nrc = fieldNRC.getText();
-            String creditAdvance = fieldCreditAdvance.getText();
-
-            String hashedPassword = PasswordHasher.hashPassword(password);
-
-            StudentDTO student = new StudentDTO(tuiton, 1, names, surnames, phone, email, user, hashedPassword, nrc, creditAdvance);
+            StudentDTO student = new StudentDTO(
+                    tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
+                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText()
+            );
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
@@ -123,26 +120,35 @@ public class GUI_RegisterStudentController {
                 if (studentDAO.isEmailRegistered(email, connection)) {
                     throw new RepeatedEmail("El correo electrónico ya está registrado.");
                 }
+
                 boolean success = studentDAO.insertStudent(student, connection);
 
                 if (success) {
                     statusLabel.setText("¡Estudiante registrado exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+
+                    if (parentController != null) {
+                        parentController.loadStudentData();
+                    }
                 } else {
-                    statusLabel.setText("El estudiante ya existe.");
+                    statusLabel.setText("No se pudo registrar el estudiante.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 }
             } catch (SQLException e) {
-                statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 logger.error("Error de SQL al registrar el estudiante: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             } finally {
                 connectionDB.closeConnection();
             }
         } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
+            logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
         }
     }
 

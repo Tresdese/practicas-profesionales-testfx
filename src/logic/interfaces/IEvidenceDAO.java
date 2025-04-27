@@ -12,7 +12,7 @@ public interface IEvidenceDAO {
 
     boolean deleteEvidence(int idEvidence, Connection connection) throws SQLException;
 
-    EvidenceDTO getEvidence(int idEvidence, Connection connection) throws SQLException;
+    EvidenceDTO searchEvidenceById(int idEvidence, Connection connection) throws SQLException;
 
     List<EvidenceDTO> getAllEvidences(Connection connection) throws SQLException;
 }

@@ -10,9 +10,9 @@ public interface ILinkedOrganizationDAO {
 
     boolean updateLinkedOrganization(LinkedOrganizationDTO organization, Connection connection) throws SQLException;
 
-    boolean deleteLinkedOrganization(String iddOrganization, Connection connection) throws SQLException;
+    boolean deleteLinkedOrganization(String idOrganization, Connection connection) throws SQLException;
 
-    LinkedOrganizationDTO getLinkedOrganization(String iddOrganization, Connection connection) throws SQLException;
+    LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization, Connection connection) throws SQLException;
 
     List<LinkedOrganizationDTO> getAllLinkedOrganizations(Connection connection) throws SQLException;
 }

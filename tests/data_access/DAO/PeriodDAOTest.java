@@ -61,7 +61,7 @@ class PeriodDAOTest {
             boolean result = periodDAO.insertPeriod(period, connection);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            PeriodDTO insertedPeriod = periodDAO.getPeriod("222601", connection);
+            PeriodDTO insertedPeriod = periodDAO.searchPeriodById("222601", connection);
             assertNotNull(insertedPeriod, "El periodo debería existir en la base de datos");
             assertEquals("Agosto 25 Enero 26", insertedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -70,7 +70,7 @@ class PeriodDAOTest {
     }
 
     @Test
-    void testGetPeriod() {
+    void testSearchPeriodById() {
         try {
             PeriodDTO period = createTestPeriod(
                     "222651",
@@ -81,7 +81,7 @@ class PeriodDAOTest {
 
             periodDAO.insertPeriod(period, connection);
 
-            PeriodDTO retrievedPeriod = periodDAO.getPeriod("222651", connection);
+            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById("222651", connection);
             assertNotNull(retrievedPeriod, "El periodo debería existir en la base de datos");
             assertEquals("Febrero 26 Julio 26", retrievedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -111,7 +111,7 @@ class PeriodDAOTest {
             boolean result = periodDAO.updatePeriod(updatedPeriod, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            PeriodDTO retrievedPeriod = periodDAO.getPeriod("222701", connection);
+            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById("222701", connection);
             assertNotNull(retrievedPeriod, "El periodo debería existir después de actualizar");
             assertEquals("Agosto 26 Febrero 27", retrievedPeriod.getName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -134,7 +134,7 @@ class PeriodDAOTest {
             boolean result = periodDAO.deletePeriod("222651", connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            PeriodDTO deletedPeriod = periodDAO.getPeriod("222651", connection);
+            PeriodDTO deletedPeriod = periodDAO.searchPeriodById("222651", connection);
             assertNull(deletedPeriod, "El periodo eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeletePeriod: " + e.getMessage());

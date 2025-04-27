@@ -12,7 +12,7 @@ public interface IReportDAO {
 
     boolean deleteReport(String numberReport, Connection connection) throws SQLException;
 
-    ReportDTO getReport(String numberReport, Connection connection) throws SQLException;
+    ReportDTO searchReportById(String numberReport, Connection connection) throws SQLException;
 
     List<ReportDTO> getAllReports(Connection connection) throws SQLException;
 }

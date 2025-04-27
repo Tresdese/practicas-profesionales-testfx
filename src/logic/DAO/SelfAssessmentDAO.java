@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.SelfAssessmentDTO;
+import logic.interfaces.ISelfAssessmentDAO;
 
-public class SelfAssessmentDAO {
+public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_INSERT = "INSERT INTO autoevaluacion (idAutoevaluacion, comentarios, calificacion, matricula, idEvidencia) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE autoevaluacion SET comentarios = ?, calificacion = ?, matricula = ?, idEvidencia = ? WHERE idAutoevaluacion = ?";
     private final static String SQL_DELETE = "DELETE FROM autoevaluacion WHERE idAutoevaluacion = ?";
@@ -17,11 +18,6 @@ public class SelfAssessmentDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion";
 
     public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException {
-        SelfAssessmentDTO existingSelfAssessment = getSelfAssessment(selfAssessment.getSelfAssessmentId(), connection);
-        if (existingSelfAssessment != null) {
-            return selfAssessment.getSelfAssessmentId().equals(existingSelfAssessment.getSelfAssessmentId());
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, selfAssessment.getSelfAssessmentId());
             statement.setString(2, selfAssessment.getComments());
@@ -50,12 +46,19 @@ public class SelfAssessmentDAO {
         }
     }
 
-    public SelfAssessmentDTO getSelfAssessment(String selfAssessmentId, Connection connection) throws SQLException {
+    public SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId, Connection connection) throws SQLException {
+        SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
+                "N/A",
+                "N/A",
+                -1,
+                "N/A",
+                "N/A"
+        );
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, selfAssessmentId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new SelfAssessmentDTO(
+                    selfAssessment = new SelfAssessmentDTO(
                         resultSet.getString("idAutoevaluacion"),
                         resultSet.getString("comentarios"),
                         resultSet.getDouble("calificacion"),
@@ -65,7 +68,7 @@ public class SelfAssessmentDAO {
                 }
             }
         }
-        return null;
+        return selfAssessment;
     }
 
     public List<SelfAssessmentDTO> getAllSelfAssessments(Connection connection) throws SQLException {
@@ -84,4 +87,6 @@ public class SelfAssessmentDAO {
         }
         return selfAssessments;
     }
+
+    //TODO hacer metodo para verificar si existe
 }

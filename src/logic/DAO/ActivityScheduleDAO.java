@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.ActivityScheduleDTO;
+import logic.interfaces.IActivityScheduleDAO;
 
-public class ActivityScheduleDAO {
+public class ActivityScheduleDAO implements IActivityScheduleDAO {
     private final static String SQL_INSERT = "INSERT INTO actividad_programada (idHorario, idActividad) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE actividad_programada SET idHorario = ?, idActividad = ? WHERE idHorario = ? AND idActividad = ?";
     private final static String SQL_DELETE = "DELETE FROM actividad_programada WHERE idHorario = ? AND idActividad = ?";
@@ -42,7 +43,7 @@ public class ActivityScheduleDAO {
         }
     }
 
-    public ActivityScheduleDTO getActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
+    public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, activitySchedule.getIdSchedule());
             statement.setString(2, activitySchedule.getIdActivity());

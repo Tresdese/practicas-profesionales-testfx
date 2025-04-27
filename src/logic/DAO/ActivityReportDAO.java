@@ -40,16 +40,17 @@ public class ActivityReportDAO implements IActivityReportDAO {
         }
     }
 
-    public ActivityReportDTO getActivityReport(String reportNumber, Connection connection) throws SQLException {
+    public ActivityReportDTO searchActivityReportByReportNumber(String reportNumber, Connection connection) throws SQLException {
+        ActivityReportDTO activityReport = new ActivityReportDTO("N/A","N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, reportNumber);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ActivityReportDTO(resultSet.getString("numReporte"), resultSet.getString("idActividad"));
+                    activityReport = new ActivityReportDTO(resultSet.getString("numReporte"), resultSet.getString("idActividad"));
                 }
             }
         }
-        return null;
+        return activityReport;
     }
 
     public List<ActivityReportDTO> getAllActivityReports(Connection connection) throws SQLException {

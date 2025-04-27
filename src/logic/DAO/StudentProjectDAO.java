@@ -40,16 +40,17 @@ public class StudentProjectDAO implements IStudentProjectDAO {
         }
     }
 
-    public StudentProjectDTO getStudentProject(String idProject, Connection connection) throws SQLException {
+    public StudentProjectDTO searchStudentProjectByIdProject(String idProject, Connection connection) throws SQLException {
+        StudentProjectDTO studentProject = new StudentProjectDTO("N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new StudentProjectDTO(resultSet.getString("idProyecto"), resultSet.getString("matricula"));
+                    studentProject = new StudentProjectDTO(resultSet.getString("idProyecto"), resultSet.getString("matricula"));
                 }
             }
         }
-        return null;
+        return studentProject;
     }
 
     public List<StudentProjectDTO> getAllStudentProjects(Connection connection) throws SQLException {

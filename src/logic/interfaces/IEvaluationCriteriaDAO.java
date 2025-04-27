@@ -12,7 +12,7 @@ public interface IEvaluationCriteriaDAO {
 
     boolean deleteEvaluationCriteria(String idEvaluation, String idCriterion, Connection connection) throws SQLException;
 
-    EvaluationCriteriaDTO getEvaluationCriteria(String idEvaluation, String idCriterion, Connection connection) throws SQLException;
+    EvaluationCriteriaDTO searchEvaluationCriteriaById(String idEvaluation, String idCriterion, Connection connection) throws SQLException;
 
     List<EvaluationCriteriaDTO> getAllEvaluationCriteria(Connection connection) throws SQLException;
 }

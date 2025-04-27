@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.ReportDTO;
+import logic.interfaces.IReportDAO;
 
-public class ReportDAO {
+public class ReportDAO implements IReportDAO {
     private final static String SQL_INSERT = "INSERT INTO reporte (numReporte, observaciones, idEvidencia) VALUES (?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE reporte SET observaciones = ?, idEvidencia = ? WHERE numReporte = ?";
     private final static String SQL_DELETE = "DELETE FROM reporte WHERE numReporte = ?";
@@ -17,11 +18,6 @@ public class ReportDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM reporte";
 
     public boolean insertReport(ReportDTO report, Connection connection) throws SQLException {
-        ReportDTO existingReport = getReport(report.getNumberReport(), connection);
-        if (existingReport != null) {
-            return report.getNumberReport().equals(existingReport.getNumberReport());
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, report.getNumberReport());
             statement.setString(2, report.getObservations());
@@ -46,16 +42,17 @@ public class ReportDAO {
         }
     }
 
-    public ReportDTO getReport(String numberReport, Connection connection) throws SQLException {
+    public ReportDTO searchReportById(String numberReport, Connection connection) throws SQLException {
+        ReportDTO report = new ReportDTO("N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, numberReport);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ReportDTO(resultSet.getString("numReporte"), resultSet.getString("observaciones"), resultSet.getString("idEvidencia"));
+                    report = new ReportDTO(resultSet.getString("numReporte"), resultSet.getString("observaciones"), resultSet.getString("idEvidencia"));
                 }
             }
         }
-        return null;
+        return report;
     }
 
     public List<ReportDTO> getAllReports(Connection connection) throws SQLException {
@@ -69,4 +66,5 @@ public class ReportDAO {
         return reports;
     }
 
+    //TODO hacer metodo que verifique si existe el reporte
 }

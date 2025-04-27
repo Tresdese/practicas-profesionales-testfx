@@ -41,17 +41,18 @@ public class EvaluationCriteriaDAO implements IEvaluationCriteriaDAO {
         }
     }
 
-    public EvaluationCriteriaDTO getEvaluationCriteria(String idEvaluation, String idCriterion, Connection connection) throws SQLException {
+    public EvaluationCriteriaDTO searchEvaluationCriteriaById(String idEvaluation, String idCriterion, Connection connection) throws SQLException {
+        EvaluationCriteriaDTO evaluationCriteria = new EvaluationCriteriaDTO("N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idEvaluation);
             statement.setString(2, idCriterion);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new EvaluationCriteriaDTO(resultSet.getString("idEvaluacion"), resultSet.getString("idCriterio"));
+                    evaluationCriteria = new EvaluationCriteriaDTO(resultSet.getString("idEvaluacion"), resultSet.getString("idCriterio"));
                 }
             }
         }
-        return null;
+        return evaluationCriteria;
     }
 
     public List<EvaluationCriteriaDTO> getAllEvaluationCriteria(Connection connection) throws SQLException {

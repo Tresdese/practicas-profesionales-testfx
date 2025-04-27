@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.EvidenceDTO;
+import logic.interfaces.IEvidenceDAO;
 
-public class EvidenceDAO {
+public class EvidenceDAO implements IEvidenceDAO {
     private final static String SQL_INSERT = "INSERT INTO evidencia (idEvidencia, nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE evidencia SET nombreEvidencia = ?, fechaEntrega = ?, ruta = ? WHERE idEvidencia = ?";
     private final static String SQL_DELETE = "DELETE FROM evidencia WHERE idEvidencia = ?";
@@ -43,16 +44,17 @@ public class EvidenceDAO {
         }
     }
 
-    public EvidenceDTO getEvidence(int idEvidence, Connection connection) throws SQLException {
+    public EvidenceDTO searchEvidenceById(int idEvidence, Connection connection) throws SQLException {
+        EvidenceDTO evidence = new EvidenceDTO(-1, "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, idEvidence);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new EvidenceDTO(resultSet.getInt("idEvidencia"), resultSet.getString("nombreEvidencia"),resultSet.getDate("fechaEntrega"), resultSet.getString("ruta"));
+                    evidence = new EvidenceDTO(resultSet.getInt("idEvidencia"), resultSet.getString("nombreEvidencia"),resultSet.getDate("fechaEntrega"), resultSet.getString("ruta"));
                 }
             }
         }
-        return null;
+        return evidence;
     }
 
     public List<EvidenceDTO> getAllEvidences(Connection connection) throws SQLException {

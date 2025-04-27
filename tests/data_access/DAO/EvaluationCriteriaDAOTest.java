@@ -68,7 +68,7 @@ class EvaluationCriteriaDAOTest {
             boolean result = criteriaDAO.insertEvaluationCriteria(criteria, connection);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            EvaluationCriteriaDTO insertedCriteria = criteriaDAO.getEvaluationCriteria("10000", "1", connection);
+            EvaluationCriteriaDTO insertedCriteria = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
             assertNotNull(insertedCriteria, "El criterio debería existir en la base de datos");
             assertEquals("10000", insertedCriteria.getIdEvaluation(), "El ID de evaluación debería coincidir");
             assertEquals("1", insertedCriteria.getIdCriterion(), "El ID de criterio debería coincidir");
@@ -100,7 +100,7 @@ class EvaluationCriteriaDAOTest {
             boolean result = criteriaDAO.deleteEvaluationCriteria("10000", "1", connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            EvaluationCriteriaDTO deletedCriteria = criteriaDAO.getEvaluationCriteria("10000", "1", connection);
+            EvaluationCriteriaDTO deletedCriteria = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
             assertNull(deletedCriteria, "El criterio eliminado no debería existir en la base de datos");
         } catch (SQLException e) {
             fail("Error en testDeleteEvaluationCriteria: " + e.getMessage());

@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.ProjectDTO;
+import logic.interfaces.IProjectDAO;
 
-public class ProjectDAO {
+public class ProjectDAO implements IProjectDAO {
     private final static String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ? WHERE idProyecto = ?";
     private final static String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
@@ -46,12 +47,18 @@ public class ProjectDAO {
         }
     }
 
-    public ProjectDTO getProject(String idProject, Connection connection) throws SQLException {
+    public ProjectDTO searchProjectById(String idProject, Connection connection) throws SQLException {
+        ProjectDTO project = new ProjectDTO("N/A",
+                "N/A",
+                "N/A",
+                java.sql.Timestamp.valueOf("0404-01-01 00:00:00"),
+                java.sql.Timestamp.valueOf("0404-01-01 00:00:00"),
+                "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ProjectDTO(
+                    project = new ProjectDTO(
                         resultSet.getString("idProyecto"),
                         resultSet.getString("nombre"),
                         resultSet.getString("descripcion"),
@@ -62,7 +69,7 @@ public class ProjectDAO {
                 }
             }
         }
-        return null;
+        return project;
     }
 
     public List<ProjectDTO> getAllProjects(Connection connection) throws SQLException {

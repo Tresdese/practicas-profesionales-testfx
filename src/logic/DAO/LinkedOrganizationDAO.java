@@ -18,7 +18,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
 
     public boolean insertLinkedOrganization(LinkedOrganizationDTO organization, Connection connection) throws SQLException {
-        LinkedOrganizationDTO existingOrganization = getLinkedOrganization(organization.getIddOrganization(), connection);
+        LinkedOrganizationDTO existingOrganization = searchLinkedOrganizationById(organization.getIddOrganization(), connection);
         if (existingOrganization != null) {
             return organization.getIddOrganization().equals(existingOrganization.getIddOrganization());
         }
@@ -40,23 +40,24 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean deleteLinkedOrganization(String iddOrganization, Connection connection) throws SQLException {
+    public boolean deleteLinkedOrganization(String idOrganization, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            statement.setString(1, iddOrganization);
+            statement.setString(1, idOrganization);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public LinkedOrganizationDTO getLinkedOrganization(String iddOrganization, Connection connection) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization, Connection connection) throws SQLException {
+        LinkedOrganizationDTO group = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
-            statement.setString(1, iddOrganization);
+            statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new LinkedOrganizationDTO(resultSet.getString("idOrganizacion"), resultSet.getString("nombre"), resultSet.getString("direccion"));
+                    group = new LinkedOrganizationDTO(resultSet.getString("idOrganizacion"), resultSet.getString("nombre"), resultSet.getString("direccion"));
                 }
             }
         }
-        return null;
+        return group;
     }
 
     public List<LinkedOrganizationDTO> getAllLinkedOrganizations(Connection connection) throws SQLException {

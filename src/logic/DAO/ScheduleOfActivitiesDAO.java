@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.DTO.ScheduleOfActivitiesDTO;
+import logic.interfaces.IScheduleOfActivitiesDAO;
 
-public class ScheduleOfActivitiesDAO {
+public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
     private final static String SQL_INSERT = "INSERT INTO cronograma_de_actividades (idCronograma, hito, fechaEstimada, matricula, idEvidencia) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE cronograma_de_actividades SET hito = ?, fechaEstimada = ?, matricula = ?, idEvidencia = ? WHERE idCronograma = ?";
     private final static String SQL_DELETE = "DELETE FROM cronograma_de_actividades WHERE idCronograma = ?";
@@ -17,11 +18,6 @@ public class ScheduleOfActivitiesDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_de_actividades";
 
     public boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException {
-        ScheduleOfActivitiesDTO existingScheduleOfActivities = getScheduleOfActivities(schedule.getIdSchedule(), connection);
-        if (existingScheduleOfActivities != null) {
-            return schedule.getIdSchedule().equals(existingScheduleOfActivities.getIdSchedule());
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, schedule.getIdSchedule());
             statement.setString(2, schedule.getMilestone());
@@ -50,12 +46,19 @@ public class ScheduleOfActivitiesDAO {
         }
     }
 
-    public ScheduleOfActivitiesDTO getScheduleOfActivities(String idSchedule, Connection connection) throws SQLException {
+    public ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule, Connection connection) throws SQLException {
+        ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                "N/A",
+                "N/A",
+                java.sql.Timestamp.valueOf("0404-01-01 00:00:00"),
+                "N/A",
+                "N/A"
+        );
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idSchedule);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ScheduleOfActivitiesDTO(
+                    schedule = new ScheduleOfActivitiesDTO(
                         resultSet.getString("idCronograma"),
                         resultSet.getString("hito"),
                         resultSet.getTimestamp("fechaEstimada"),
@@ -65,7 +68,7 @@ public class ScheduleOfActivitiesDAO {
                 }
             }
         }
-        return null;
+        return schedule;
     }
 
     public List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities(Connection connection) throws SQLException {
@@ -84,4 +87,6 @@ public class ScheduleOfActivitiesDAO {
         }
         return schedules;
     }
+
+    //TODO hacer metodo para verificar si existe un cronograma de actividades
 }

@@ -1,5 +1,9 @@
 package logic.DAO;
 
+import logic.DTO.StudentDTO;
+import logic.exceptions.RepeatedTuiton;
+import logic.interfaces.IStudentDAO;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,10 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logic.DTO.StudentDTO;
-import logic.exceptions.RepeatedTuiton;
-
-public class StudentDAO {
+public class StudentDAO implements IStudentDAO {
     private final static String SQL_INSERT = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE estudiante SET estado = ?, nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ? WHERE matricula = ?";
     private final static String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
@@ -19,10 +20,6 @@ public class StudentDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM estudiante";
 
     public boolean insertStudent(StudentDTO student, Connection connection) throws SQLException {
-        if (isTuitonRegistered(student.getTuiton(), connection)) {
-            throw new RepeatedTuiton();
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, student.getTuiton());
             statement.setInt(2, student.getState());
@@ -70,11 +67,12 @@ public class StudentDAO {
     }
 
     public StudentDTO searchStudentByTuiton(String tuiton, Connection connection) throws SQLException {
+        StudentDTO student = new StudentDTO("N/A", -1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new StudentDTO(
+                    student = new StudentDTO(
                             resultSet.getString("matricula"),
                             resultSet.getInt("estado"),
                             resultSet.getString("nombres"),
@@ -89,7 +87,7 @@ public class StudentDAO {
                 }
             }
         }
-        return null;
+        return student;
     }
 
     public List<StudentDTO> getAllStudents(Connection connection) throws SQLException {
@@ -114,7 +112,7 @@ public class StudentDAO {
         return students;
     }
 
-    public boolean isTuitonRegistered(String tuiton, Connection connection) throws SQLException {
+    public boolean isTuitonRegistered(String tuiton, Connection connection) throws SQLException  {
         String query = "SELECT COUNT(*) FROM estudiante WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, tuiton);
@@ -140,7 +138,7 @@ public class StudentDAO {
         return false;
     }
 
-    public boolean isEmailRegistered (String email, Connection connection) throws SQLException {
+    public boolean isEmailRegistered(String email, Connection connection) throws SQLException {
         String query = "SELECT COUNT(*) FROM estudiante WHERE correo = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, email);
