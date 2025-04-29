@@ -96,7 +96,7 @@ class UserDAOTest {
                     UserDTO retrievedUser = userDAO.getUser(new UserDTO(String.valueOf(insertedId)), connection);
                     assertNotNull(retrievedUser, "El usuario debería existir en la base de datos");
                     assertEquals(nombreUsuario, retrievedUser.getUserName(), "El nombre de usuario debería coincidir");
-                    assertEquals(String.valueOf(numeroPersonal), retrievedUser.getNumberOffStaff(), "El número de personal debería coincidir");
+                    assertEquals(String.valueOf(numeroPersonal), retrievedUser.getStaffNumber(), "El número de personal debería coincidir");
                     assertTrue(PasswordHasher.verifyPassword("password123", hashedPassword), "La contraseña debería estar correctamente cifrada");
                 }
             }
@@ -124,7 +124,7 @@ class UserDAOTest {
             assertNotNull(user, "Debería encontrar al usuario");
             assertEquals("Juan", user.getNames(), "El nombre debería coincidir");
             assertEquals("Pérez", user.getSurname(), "El apellido debería coincidir");
-            assertEquals(String.valueOf(numeroPersonal), user.getNumberOffStaff(), "El número de personal debería coincidir");
+            assertEquals(String.valueOf(numeroPersonal), user.getStaffNumber(), "El número de personal debería coincidir");
         } catch (SQLException e) {
             fail("Error en testGetUser: " + e.getMessage());
         }
@@ -175,7 +175,7 @@ class UserDAOTest {
             UserDTO updatedUser = userDAO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
             assertNotNull(updatedUser, "El usuario debería existir después de actualizar");
             assertEquals("María Actualizada", updatedUser.getNames(), "El nombre debería actualizarse");
-            assertEquals(String.valueOf(nuevoNumeroPersonal), updatedUser.getNumberOffStaff(), "El número de personal debería actualizarse");
+            assertEquals(String.valueOf(nuevoNumeroPersonal), updatedUser.getStaffNumber(), "El número de personal debería actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdateUser: " + e.getMessage());
         }
@@ -251,8 +251,8 @@ class UserDAOTest {
 
             assertEquals(username1, remainingUser1.getUserName(), "El nombre de usuario del profesor debería permanecer igual");
             assertEquals(username3, remainingUser3.getUserName(), "El nombre de usuario del coordinador debería permanecer igual");
-            assertEquals(String.valueOf(numeroPersonal1), remainingUser1.getNumberOffStaff(), "El número de personal del profesor debería permanecer igual");
-            assertEquals(String.valueOf(numeroPersonal3), remainingUser3.getNumberOffStaff(), "El número de personal del coordinador debería permanecer igual");
+            assertEquals(String.valueOf(numeroPersonal1), remainingUser1.getStaffNumber(), "El número de personal del profesor debería permanecer igual");
+            assertEquals(String.valueOf(numeroPersonal3), remainingUser3.getStaffNumber(), "El número de personal del coordinador debería permanecer igual");
 
             List<UserDTO> allRemainingUsers = userDAO.getAllUsers(connection);
             assertTrue(allRemainingUsers.size() >= 2, "Deberían quedar al menos los dos usuarios no eliminados");

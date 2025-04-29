@@ -131,7 +131,7 @@ class PeriodDAOTest {
 
             periodDAO.insertPeriod(period, connection);
 
-            boolean result = periodDAO.deletePeriod("222651", connection);
+            boolean result = periodDAO.deletePeriodById("222651", connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
             PeriodDTO deletedPeriod = periodDAO.searchPeriodById("222651", connection);
