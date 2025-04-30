@@ -3,7 +3,7 @@ package logic.DTO;
 public class UserDTO {
     private String idUser;
     private int state;
-    private String numberOffStaff;
+    private String staffNumber;
     private String names;
     private String surname;
     private String userName;
@@ -13,7 +13,7 @@ public class UserDTO {
     public UserDTO (String s) {
         this.idUser = "";
         this.state = 1;
-        this.numberOffStaff = "";
+        this.staffNumber = "";
         this.names = "";
         this.surname = "";
         this.userName = "";
@@ -21,10 +21,10 @@ public class UserDTO {
         this.role = null;
     }
 
-    public UserDTO(String idUser, String numberOffStaff, String names, String surname, String userName, String password, Role role) {
+    public UserDTO(String idUser, String staffNumber, String names, String surname, String userName, String password, Role role) {
         this.idUser = idUser;
         this.state = 1;
-        this.numberOffStaff = numberOffStaff;
+        this.staffNumber = staffNumber;
         this.names = names;
         this.surname = surname;
         this.userName = userName;
@@ -48,12 +48,12 @@ public class UserDTO {
         this.state = state;
     }
 
-    public String getNumberOffStaff() {
-        return numberOffStaff;
+    public String getStaffNumber() {
+        return staffNumber;
     }
 
-    public void setNumberOffStaff(String numberOffStaff) {
-        this.numberOffStaff = numberOffStaff;
+    public void setStaffNumber(String staffNumber) {
+        this.staffNumber = staffNumber;
     }
 
     public String getNames() {
@@ -64,11 +64,11 @@ public class UserDTO {
         this.names = names;
     }
 
-    public String getSurname() {
+    public String getSurnames() {
         return surname;
     }
 
-    public void setSurname(String surname) {
+    public void setSurnames(String surname) {
         this.surname = surname;
     }
 
@@ -118,7 +118,7 @@ public class UserDTO {
         return "UserDTO{" +
                 "idUser='" + idUser + '\'' +
                 ", state=" + state +
-                ", numberOffStaff='" + numberOffStaff + '\'' +
+                ", numberOffStaff='" + staffNumber + '\'' +
                 ", names='" + names + '\'' +
                 ", surname='" + surname + '\'' +
                 ", userName='" + userName + '\'' +
@@ -136,7 +136,7 @@ public class UserDTO {
 
         if (state != userDTO.state) return false;
         if (!idUser.equals(userDTO.idUser)) return false;
-        if (!numberOffStaff.equals(userDTO.numberOffStaff)) return false;
+        if (!staffNumber.equals(userDTO.staffNumber)) return false;
         if (!names.equals(userDTO.names)) return false;
         if (!surname.equals(userDTO.surname)) return false;
         if (!userName.equals(userDTO.userName)) return false;

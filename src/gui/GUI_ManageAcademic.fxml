@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageAcademicController">
+<AnchorPane prefHeight="477.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageAcademicController">
     <children>
         <Label layoutX="103.0" layoutY="20.0" text="Gestionar Académico">
             <font>
                 <Font size="20.0" />
             </font></Label>
 
-        <Label layoutX="69.0" layoutY="58.0" text="ID Usuario:" />
-        <TextField fx:id="fieldIdUser" layoutX="169.0" layoutY="58.0" />
-        <Label layoutX="69.0" layoutY="98.0" text="Estado:" />
-        <TextField fx:id="fieldState" layoutX="169.0" layoutY="98.0" />
-        <Label layoutX="69.0" layoutY="138.0" text="Número de Personal:" />
-        <TextField fx:id="fieldNumberOffStaff" layoutX="169.0" layoutY="138.0" />
-        <Label layoutX="69.0" layoutY="58.0" text="Nombres:" />
-        <TextField fx:id="fieldNames" layoutX="169.0" layoutY="58.0" />
-        <Label layoutX="69.0" layoutY="98.0" text="Apellidos:" />
-        <TextField fx:id="fieldSurnames" layoutX="169.0" layoutY="98.0" />
-        <Label layoutX="69.0" layoutY="138.0" text="Nombre de Usuario:" />
-        <TextField fx:id="fieldUserName" layoutX="169.0" layoutY="138.0" />
-        <Label layoutX="69.0" layoutY="178.0" text="Contraseña:" />
-        <TextField fx:id="fieldPassword" layoutX="169.0" layoutY="178.0" />
-        <Label layoutX="69.0" layoutY="218.0" text="Rol:" />
-        <TextField fx:id="fieldRole" layoutX="169.0" layoutY="218.0" />
-        <Button layoutX="140.0" layoutY="247.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
-        <Label fx:id="statusLabel" layoutX="20.0" layoutY="260.0" textFill="RED" />
+        <Label layoutX="38.0" layoutY="79.0" text="Número de Personal:" />
+        <TextField fx:id="fieldNumberOffStaff" layoutX="172.0" layoutY="75.0" />
+
+        <Label layoutX="68.0" layoutY="118.0" text="Nombres:" />
+        <TextField fx:id="fieldNames" layoutX="172.0" layoutY="114.0" />
+
+        <Label layoutX="68.0" layoutY="156.0" text="Apellidos:" />
+        <TextField fx:id="fieldSurnames" layoutX="172.0" layoutY="152.0" />
+
+        <Label layoutX="40.0" layoutY="194.0" text="Nombre de Usuario:" />
+        <TextField fx:id="fieldUserName" layoutX="172.0" layoutY="190.0" />
+
+        <Label layoutX="62.0" layoutY="236.0" text="Contraseña:" />
+        <TextField fx:id="fieldPassword" layoutX="172.0" layoutY="232.0" />
+
+        <Label layoutX="84.0" layoutY="280.0" text="Rol:" />
+        <ChoiceBox fx:id="roleBox" layoutX="172.0" layoutY="276.0" prefWidth="150.0" />
+
+        <Button layoutX="143.0" layoutY="402.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+
+        <Label fx:id="statusLabel" layoutX="36.0" layoutY="345.0" prefHeight="17.0" prefWidth="0.0" textFill="RED" />
     </children>
 </AnchorPane>

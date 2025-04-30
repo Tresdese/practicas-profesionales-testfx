@@ -1,23 +1,41 @@
 package gui;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import logic.DAO.UserDAO;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GUI_ManageAcademicController {
+import java.net.URL;
+import java.sql.Connection;
+import java.util.ResourceBundle;
+
+public class GUI_ManageAcademicController implements Initializable {
 
     private static final Logger logger = LogManager.getLogger(GUI_ManageAcademicController.class);
 
     @FXML
-    private TextField fieldIdUser, fieldState, fieldNumberOffStaff, fieldNames, fieldSurnames, fieldUserName, fieldPassword, fieldRole;
+    private TextField fieldNumberOffStaff, fieldNames, fieldSurnames, fieldUserName, fieldPassword;
+
+    @FXML
+    private ChoiceBox<Role> roleBox;
 
     @FXML
     private Label statusLabel;
 
     private UserDTO academic;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Cargar todos los valores del enum Role en el ChoiceBox
+        roleBox.setItems(FXCollections.observableArrayList(Role.values()));
+    }
 
     public void setAcademicData(UserDTO academic) {
         if (academic == null) {
@@ -27,43 +45,43 @@ public class GUI_ManageAcademicController {
 
         this.academic = academic;
 
-        fieldIdUser.setText(academic.getIdUser() != null ? academic.getIdUser() : "");
-        fieldState.setText(academic.getState() != 0 ? String.valueOf(academic.getState()) : "");
-        fieldNumberOffStaff.setText(academic.getNumberOffStaff() != null ? academic.getNumberOffStaff() : "");
+        fieldNumberOffStaff.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
         fieldNames.setText(academic.getNames() != null ? academic.getNames() : "");
-        fieldSurnames.setText(academic.getSurname() != null ? academic.getSurname() : "");
+        fieldSurnames.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
         fieldUserName.setText(academic.getUserName() != null ? academic.getUserName() : "");
         fieldPassword.setText(academic.getPassword() != null ? academic.getPassword() : "");
-        fieldRole.setText(academic.getRole() != null ? academic.getRole().toString() : "");
+        roleBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
 
     }
 
     @FXML
     private void handleSaveChanges() {
-        try {
+        UserDAO userDAO = new UserDAO();
+
+        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
             String NumberOffStaff = fieldNumberOffStaff.getText();
-            int state = Integer.parseInt(fieldState.getText());
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
             String userName = fieldUserName.getText();
             String password = fieldPassword.getText();
-            Role role = Role.valueOf(fieldRole.getText().toUpperCase());
+            Role role = roleBox.getValue();
 
-            academic.setState(state);
-            academic.setNumberOffStaff(NumberOffStaff);
+            academic.setStaffNumber(NumberOffStaff);
             academic.setNames(names);
-            academic.setSurname(surnames);
+            academic.setSurnames(surnames);
             academic.setUserName(userName);
             academic.setPassword(password);
             academic.setRole(role);
 
-            // Aquí se implementaría la lógica para guardar los cambios en la base de datos
             statusLabel.setText("¡Académico actualizado exitosamente!");
             statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+
+            userDAO.updateUser(academic, connection);
+
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -72,13 +90,26 @@ public class GUI_ManageAcademicController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldState.getText().isEmpty() &&
-                !fieldNumberOffStaff.getText().isEmpty() &&
+        return !fieldNumberOffStaff.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
                 !fieldUserName.getText().isEmpty() &&
                 !fieldPassword.getText().isEmpty() &&
-                !fieldRole.getText().isEmpty();
+                roleBox.getValue() != null;
 
     }
+
+    private Role getRoleFromText(String text) {
+        switch (text) {
+            case "Académico":
+                return Role.ACADEMICO;
+            case "Académico Evaluador":
+                return Role.ACADEMICO_EVALUADOR;
+            case "Coordinador":
+                return Role.COORDINADOR;
+            default:
+                throw new IllegalArgumentException("Rol no válido: " + text);
+        }
+    }
 }
+

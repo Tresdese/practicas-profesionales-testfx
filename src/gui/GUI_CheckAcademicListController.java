@@ -1,5 +1,6 @@
 package gui;
 
+import com.mysql.cj.xdevapi.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,8 +8,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import logic.DAO.StudentDAO;
 import logic.DAO.UserDAO;
+import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
+import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +40,7 @@ public class GUI_CheckAcademicListController {
     private TableColumn<UserDTO, String> columnUserNames;
 
     @FXML
-    private TableColumn<UserDTO, String> columnnRole;
+    private TableColumn<UserDTO, Role> columnnRole;
 
     @FXML
     private TableColumn<UserDTO, Void> columnDetails;
@@ -66,6 +70,10 @@ public class GUI_CheckAcademicListController {
         columnUserNames.setCellValueFactory(new PropertyValueFactory<>("userName"));
         columnnRole.setCellValueFactory(new PropertyValueFactory<>("role"));
 
+
+        addDetailsButtonToTable();
+        addManagementButtonToTable();
+
         loadAcademicData();
 
         searchButton.setOnAction(event -> searchAcademic());
@@ -89,17 +97,19 @@ public class GUI_CheckAcademicListController {
     }
 
     public void loadAcademicData() {
-        ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
+        ObservableList<UserDTO> userList = FXCollections.observableArrayList();
         UserDAO userDAO = new UserDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
             List<UserDTO> users = userDAO.getAllUsers(connection);
-            academicList.addAll(users);
+            userList.addAll(users);
             statusLabel.setText("");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             statusLabel.setText("Error al conectar a la base de datos.");
-            logger.error("Error al cargar la lista de académicos: {}", e.getMessage(), e);
+            logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
         }
+
+        tableView.setItems(userList);
     }
 
     public void searchAcademic() {
@@ -118,7 +128,7 @@ public class GUI_CheckAcademicListController {
                 filteredList.add(user);
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
+            statusLabel.setText("Error al buscar académicos.");
             logger.error("Error al buscar académicos: {}", e.getMessage(), e);
         }
 
@@ -186,3 +196,4 @@ public class GUI_CheckAcademicListController {
         }
     }
 }
+
