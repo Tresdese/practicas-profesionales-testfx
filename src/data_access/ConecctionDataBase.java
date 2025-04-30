@@ -28,7 +28,7 @@ public class ConecctionDataBase {
             this.USER = properties.getProperty("db.user");
             this.PASSWORD = properties.getProperty("db.password");
         } catch (IOException e) {
-            logger.error("Error al leer el archivo: " + e.getMessage());
+            e.printStackTrace(); //TODO mandar al logger
         }
     }
 

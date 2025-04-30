@@ -160,7 +160,7 @@ public class UserDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("nombreUsuario"),
                             resultSet.getString("contraseña"),
-                            Role.valueOf(resultSet.getString("rol"))
+                            Role.valueOf(resultSet.getString("rol").toUpperCase())
                     );
                 }
             }
