@@ -2,10 +2,13 @@ package gui;
 
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
 import logic.exceptions.InvalidCredential;
@@ -50,6 +53,14 @@ public class GUI_LoginController {
                 StudentDTO student = (StudentDTO) user;
                 statusLabel.setText("Bienvenido estudiante, " + student.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuStudent.fxml"));
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setScene(new Scene(loader.load()));
+                GUI_MenuStudentController controller = loader.getController();
+                controller.setStudentName(student.getNames());
+                controller.setProfileImage();
+                stage.setTitle("Menú Estudiante");
+                stage.show();
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");

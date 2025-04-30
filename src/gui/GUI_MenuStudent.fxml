@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_MenuStudentController">
+    <top>
+        <Pane>
+            <ImageView fx:id="profileImageView" fitHeight="40.0" fitWidth="38.0" layoutX="10.0" layoutY="5.0" />
+            <Label fx:id="welcomeLabel" layoutX="61.0" layoutY="9.0" prefHeight="27.0" prefWidth="196.0" style="-fx-font-size: 18px; -fx-text-fill: blue;" text="Hola, Estudiante">
+                <font>
+                    <Font size="8.0" />
+                </font>
+            </Label>
+        </Pane>
+    </top>
+    <center>
+        <Pane>
+            <Button layoutX="200.0" layoutY="100.0" onAction="#handleViewCourses" text="Ver Cursos" />
+            <Button layoutX="200.0" layoutY="150.0" onAction="#handleViewProgress" text="Consultar Avance" />
+        </Pane>
+    </center>
+</BorderPane>
