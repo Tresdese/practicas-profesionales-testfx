@@ -48,7 +48,9 @@ public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
             statement.setString(1, idCriterion);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    assessmentCriterion = new AssessmentCriterionDTO(resultSet.getString("idCriterio"), resultSet.getString("nombreCriterio"), resultSet.getDouble("calificacion"));
+                    assessmentCriterion = new AssessmentCriterionDTO(resultSet.getString("idCriterio"),
+                            resultSet.getString("nombreCriterio"),
+                            resultSet.getDouble("calificacion"));
                 }
             }
         }

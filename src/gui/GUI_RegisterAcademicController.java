@@ -51,7 +51,6 @@ public class GUI_RegisterAcademicController {
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Cambiar a modo oculto
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
 
@@ -67,7 +66,6 @@ public class GUI_RegisterAcademicController {
 
             togglePasswordVisibility.setText("🙈");
         } else {
-            // Cambiar a modo visible
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
 
@@ -90,7 +88,7 @@ public class GUI_RegisterAcademicController {
     private void handleRegisterAcademic() {
         try {
             if (!areFieldsFilled()) {
-                throw new EmptyFields("Todos los campos deben estar llenos.");
+                throw new EmptyFields("Todos los campos deben estar llenos.");//TODO reparar porque no debe lanzar excepción
             }
             String numberOffStaff = fieldNumberOffStaff.getText();
             StaffNumberValidator.validate(numberOffStaff);

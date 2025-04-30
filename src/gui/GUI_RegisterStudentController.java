@@ -3,13 +3,11 @@ package gui;
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import logic.exceptions.*;
+import logic.services.StudentService;
+import logic.validators.StudentValidator;
 import logic.utils.PasswordHasher;
-import logic.utils.TuitonValidator;
-import logic.utils.EmailValidator;
-import logic.utils.PhoneValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +32,7 @@ public class GUI_RegisterStudentController {
 
     private boolean isPasswordVisible = false;
 
-    private GUI_CheckListOfStudentsController parentController; // Referencia al controlador de la tabla
+    private GUI_CheckListOfStudentsController parentController;
 
     @FXML
     public void initialize() {
@@ -81,17 +79,12 @@ public class GUI_RegisterStudentController {
         try {
             if (!areFieldsFilled()) {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
-            }
+            }//TODO no propagar en la capa grafica, si no solo cachar el error y mostrar un mensaje al usuario
 
-            // Validaciones de datos
             String tuiton = fieldTuiton.getText();
-            TuitonValidator.validate(tuiton);
-
             String email = fieldEmail.getText();
-            EmailValidator.validate(email);
-
             String phone = fieldPhone.getText();
-            PhoneValidator.validate(phone);
+            StudentValidator.validateStudentData(tuiton, email, phone);
 
             String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
             String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
@@ -107,41 +100,23 @@ public class GUI_RegisterStudentController {
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                StudentDAO studentDAO = new StudentDAO();
+                StudentService studentService = new StudentService();
+                studentService.registerStudent(student, connection);
 
-                if (studentDAO.isTuitonRegistered(tuiton, connection)) {
-                    throw new RepeatedTuiton("La matrícula ya está registrada.");
+                statusLabel.setText("¡Estudiante registrado exitosamente!");
+                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+
+                if (parentController != null) {
+                    parentController.loadStudentData();
                 }
-
-                if (studentDAO.isPhoneRegistered(phone, connection)) {
-                    throw new RepeatedPhone("El número de teléfono ya está registrado.");
-                }
-
-                if (studentDAO.isEmailRegistered(email, connection)) {
-                    throw new RepeatedEmail("El correo electrónico ya está registrado.");
-                }
-
-                boolean success = studentDAO.insertStudent(student, connection);
-
-                if (success) {
-                    statusLabel.setText("¡Estudiante registrado exitosamente!");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-
-                    if (parentController != null) {
-                        parentController.loadStudentData();
-                    }
-                } else {
-                    statusLabel.setText("No se pudo registrar el estudiante.");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                }
-            } catch (SQLException e) {
-                logger.error("Error de SQL al registrar el estudiante: {}", e.getMessage(), e);
-                statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
+            } catch (SQLException | RepeatedTuiton | RepeatedPhone | RepeatedEmail e) {
+                logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
+                statusLabel.setText(e.getMessage());
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
+        } catch (EmptyFields | InvalidData | PasswordDoesNotMatch e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -152,7 +127,7 @@ public class GUI_RegisterStudentController {
         }
     }
 
-    public boolean areFieldsFilled() {
+    private boolean areFieldsFilled() {
         return !fieldTuiton.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
