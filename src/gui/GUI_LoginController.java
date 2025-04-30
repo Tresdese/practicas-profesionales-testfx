@@ -53,7 +53,7 @@ public class GUI_LoginController {
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");
-                statusLabel.setStyle("-fx-text-fill: green;"); //Solo para hacer commit
+                statusLabel.setStyle("-fx-text-fill: green;"); //Solo para hacer commit...
             }
         } catch (InvalidCredential e) {
             logger.warn("Credenciales inválidas: {}", e.getMessage());
