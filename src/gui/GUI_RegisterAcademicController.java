@@ -36,7 +36,7 @@ public class GUI_RegisterAcademicController {
     private PasswordField fieldPassword, fieldConfirmPassword;
 
     @FXML
-    private Button buttonRegisterAcademic, togglePasswordVisibility;
+    private Button togglePasswordVisibility;
 
     private boolean isPasswordVisible = false;
 
@@ -51,7 +51,7 @@ public class GUI_RegisterAcademicController {
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            // Cambiar a modo oculto
+
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
 
@@ -67,7 +67,7 @@ public class GUI_RegisterAcademicController {
 
             togglePasswordVisibility.setText("🙈");
         } else {
-            // Cambiar a modo visible
+
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
 

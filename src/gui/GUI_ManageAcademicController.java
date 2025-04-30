@@ -33,7 +33,7 @@ public class GUI_ManageAcademicController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Cargar todos los valores del enum Role en el ChoiceBox
+
         roleBox.setItems(FXCollections.observableArrayList(Role.values()));
     }
 

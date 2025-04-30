@@ -106,7 +106,7 @@ public class GUI_CheckAcademicListController {
             statusLabel.setText("");
         } catch (SQLException e) {
             statusLabel.setText("Error al conectar a la base de datos.");
-            logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
+            logger.error("Error al cargar los datos de los academicos: {}", e.getMessage(), e);
         }
 
         tableView.setItems(userList);
@@ -162,7 +162,7 @@ public class GUI_CheckAcademicListController {
 
     private void addManagementButtonToTable() {
         Callback<TableColumn<UserDTO, Void>, TableCell<UserDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button manageButton = new Button("Gestionar Estudiante");
+            private final Button manageButton = new Button("Gestionar Academico");
 
             {
                 manageButton.setOnAction(event -> {
@@ -192,7 +192,7 @@ public class GUI_CheckAcademicListController {
             Stage stage = new Stage();
             manageAcademicApp.start(stage);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de gestión de academico: {}", e.getMessage(), e);
         }
     }
 }
