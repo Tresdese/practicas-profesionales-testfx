@@ -17,6 +17,7 @@ public class StudentDAO implements IStudentDAO {
     private final static String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM estudiante WHERE matricula = ?";
     private final static String SQL_SELECT = "SELECT * FROM estudiante WHERE matricula = ?";
+    private final static String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM estudiante WHERE usuario = ? AND contraseña = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM estudiante";
 
     public boolean insertStudent(StudentDTO student, Connection connection) throws SQLException {
@@ -149,5 +150,30 @@ public class StudentDAO implements IStudentDAO {
             }
         }
         return false;
+    }
+
+    public StudentDTO searchStudentByUserAndPassword(String user, String hashedPassword, Connection connection) throws SQLException {
+        StudentDTO student = new StudentDTO("N/A", -1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A");
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD)) {
+            statement.setString(1, user);
+            statement.setString(2, hashedPassword);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    student = new StudentDTO(
+                            resultSet.getString("matricula"),
+                            resultSet.getInt("estado"),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("telefono"),
+                            resultSet.getString("correo"),
+                            resultSet.getString("usuario"),
+                            resultSet.getString("contraseña"),
+                            resultSet.getString("NRC"),
+                            resultSet.getString("avanceCrediticio")
+                    );
+                }
+            }
+        }
+        return student;
     }
 }

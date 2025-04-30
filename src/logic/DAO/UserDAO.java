@@ -18,6 +18,7 @@ public class UserDAO {
     private final static String SQL_SELECT = "SELECT * FROM usuario WHERE idUsuario = ?";
     private final static String SQL_SELECT_BY_ID = "SELECT * FROM usuario WHERE idUsuario = ?";
     private final static String SQL_SELECT_BY_USERNAME = "SELECT * FROM usuario WHERE nombreUsuario = ?";
+    private final static String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM usuario WHERE nombreUsuario = ? AND contraseña = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM usuario";
 
     public boolean insertUser(UserDTO user, Connection connection) throws SQLException {
@@ -143,5 +144,27 @@ public class UserDAO {
             }
         }
         return null;
+    }
+
+    public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword, Connection connection) throws SQLException {
+        UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD)) {
+            statement.setString(1, username);
+            statement.setString(2, hashedPassword);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    user = new UserDTO(
+                            resultSet.getString("idUsuario"),
+                            resultSet.getString("numeroDePersonal"),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("nombreUsuario"),
+                            resultSet.getString("contraseña"),
+                            Role.valueOf(resultSet.getString("rol").toUpperCase())
+                    );
+                }
+            }
+        }
+        return user;
     }
 }
