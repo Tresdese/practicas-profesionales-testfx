@@ -1,14 +1,21 @@
 package gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GUI_MenuStudentController {
+
+    private StudentDTO student;
 
     private static final Logger logger = LogManager.getLogger(GUI_MenuStudentController.class);
 
@@ -40,10 +47,31 @@ public class GUI_MenuStudentController {
     }
 
     @FXML
-    private void handleViewCourses() {
-        showAlert("Cursos", "Aquí se mostrarían los cursos del estudiante.");
-    }
+    private void handleUpdateProfile() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_UpdateProfile.fxml"));
+            Parent root = loader.load();
 
+            GUI_UpdateProfileController updateProfileController = loader.getController();
+
+            // Pasar los datos del estudiante al controlador de actualización
+            updateProfileController.setStudentData(
+                    student.getNames(),
+                    student.getSurnames(),
+                    student.getPhone(),
+                    student.getEmail()
+            );
+            updateProfileController.setCurrentStudent(student); // Asegúrate de pasar el objeto completo
+
+            Stage stage = new Stage();
+            stage.setTitle("Modificar Perfil");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de actualización de perfil: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo abrir la ventana de actualización de perfil.");
+        }
+    }
     @FXML
     private void handleViewProgress() {
         showAlert("Avance", "Aquí se mostraría el avance crediticio del estudiante.");
@@ -55,5 +83,9 @@ public class GUI_MenuStudentController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    public void setStudent(StudentDTO student) {
+        this.student = student;
     }
 }

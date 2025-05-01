@@ -78,9 +78,10 @@ public class GUI_RegisterStudentController {
     private void handleRegisterStudent() {
         try {
             if (!areFieldsFilled()) {
-                throw new EmptyFields("Todos los campos deben estar llenos.");
-            }//TODO no propagar en la capa grafica, si no solo cachar el error y mostrar un mensaje al usuario
-
+                statusLabel.setText("Todos los campos deben estar llenos.");
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                return;
+            }
             String tuiton = fieldTuiton.getText();
             String email = fieldEmail.getText();
             String phone = fieldPhone.getText();

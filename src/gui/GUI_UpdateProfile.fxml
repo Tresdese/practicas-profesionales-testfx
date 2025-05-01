@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_UpdateProfileController" prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <VBox alignment="CENTER" spacing="15.0" layoutX="100.0" layoutY="20.0" prefWidth="400.0">
+            <Label text="Editar Perfil" style="-fx-font-size: 18px;" />
+            <GridPane hgap="10" vgap="10" alignment="CENTER">
+                <Label text="Nombres:" />
+                <TextField fx:id="fieldNames" promptText="Nombres" GridPane.columnIndex="1" />
+
+                <Label text="Apellidos:" GridPane.rowIndex="1" />
+                <TextField fx:id="fieldSurnames" promptText="Apellidos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Teléfono:" GridPane.rowIndex="2" />
+                <TextField fx:id="fieldPhone" promptText="Teléfono" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <Label text="Correo Electrónico:" GridPane.rowIndex="3" />
+                <TextField fx:id="fieldEmail" promptText="Correo Electrónico" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+
+                <Button fx:id="togglePasswordVisibility" text="🙈" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            </GridPane>
+            <Button onAction="#handleUpdateProfile" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+            <Label fx:id="statusLabel" textFill="red" wrapText="true" textAlignment="CENTER" />
+        </VBox>
+    </children>
+</AnchorPane>

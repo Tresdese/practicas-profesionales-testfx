@@ -56,9 +56,13 @@ public class GUI_LoginController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuStudent.fxml"));
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
+
+// Pasar el estudiante al controlador de GUI_MenuStudent
                 GUI_MenuStudentController controller = loader.getController();
+                controller.setStudent(student); // Pasar el objeto StudentDTO
                 controller.setStudentName(student.getNames());
                 controller.setProfileImage();
+
                 stage.setTitle("Menú Estudiante");
                 stage.show();
             } else if (user instanceof UserDTO) {

@@ -34,4 +34,11 @@ public class StudentService {
             throw new SQLException("No se pudo registrar el estudiante.");
         }
     }
+
+    public void updateStudent(StudentDTO student, Connection connection) throws SQLException {
+        boolean success = studentDAO.updateStudent(student, connection);
+        if (!success) {
+            throw new SQLException("No se pudo actualizar el estudiante.");
+        }
+    }
 }
