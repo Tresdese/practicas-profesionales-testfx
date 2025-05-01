@@ -101,8 +101,8 @@ public class GUI_RegisterStudentController {
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                StudentService studentService = new StudentService();
-                studentService.registerStudent(student, connection);
+                StudentService studentService = new StudentService(connection);
+                studentService.registerStudent(student);
 
                 statusLabel.setText("¡Estudiante registrado exitosamente!");
                 statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);

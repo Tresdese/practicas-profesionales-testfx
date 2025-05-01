@@ -101,10 +101,10 @@ public class GUI_CheckListOfStudentsController {
 
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
-        StudentDAO studentDAO = new StudentDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            List<StudentDTO> students = studentDAO.getAllStudents(connection);
+            StudentDAO studentDAO = new StudentDAO(connection); // Pasar la conexión al constructor
+            List<StudentDTO> students = studentDAO.getAllStudents(); // Sin pasar la conexión aquí
             studentList.addAll(students);
             statusLabel.setText("");
         } catch (SQLException e) {
@@ -123,10 +123,10 @@ public class GUI_CheckListOfStudentsController {
         }
 
         ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
-        StudentDAO studentDAO = new StudentDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            StudentDTO student = studentDAO.searchStudentByTuiton(searchQuery, connection);
+            StudentDAO studentDAO = new StudentDAO(connection); // Pasar la conexión al constructor
+            StudentDTO student = studentDAO.searchStudentByTuiton(searchQuery); // Sin pasar la conexión aquí
             if (student != null) {
                 filteredList.add(student);
             }

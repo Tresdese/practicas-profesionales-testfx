@@ -37,7 +37,7 @@ class UserDAOTest {
 
     @BeforeEach
     void setUp() {
-        userDAO = new UserDAO();
+        userDAO = new UserDAO(connection);
     }
 
     private int insertTestUser(String nombres, String apellidos,

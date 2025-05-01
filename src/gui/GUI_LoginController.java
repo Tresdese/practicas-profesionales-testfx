@@ -46,8 +46,8 @@ public class GUI_LoginController {
 
         ConecctionDataBase connectionDB = new ConecctionDataBase();
         try (Connection connection = connectionDB.connectDB()) {
-            LoginService loginService = new LoginService();
-            Object user = loginService.login(username, password, connection);
+            LoginService loginService = new LoginService(connection);
+            Object user = loginService.login(username, password);
 
             if (user instanceof StudentDTO) {
                 StudentDTO student = (StudentDTO) user;

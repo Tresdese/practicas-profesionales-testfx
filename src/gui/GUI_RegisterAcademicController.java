@@ -51,7 +51,6 @@ public class GUI_RegisterAcademicController {
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-
             fieldPassword.setText(fieldPasswordVisible.getText());
             fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
 
@@ -67,7 +66,6 @@ public class GUI_RegisterAcademicController {
 
             togglePasswordVisibility.setText("🙈");
         } else {
-
             fieldPasswordVisible.setText(fieldPassword.getText());
             fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
 
@@ -106,15 +104,14 @@ public class GUI_RegisterAcademicController {
 
             UserDTO academic = new UserDTO("0", numberOffStaff, names, surname, userName, hashedPassword, role);
 
-            ConecctionDataBase connectionDB = new ConecctionDataBase();
-            try (Connection connection = connectionDB.connectDB()) {
-                UserDAO userDAO = new UserDAO();
+            try (Connection connection = new ConecctionDataBase().connectDB()) {
+                UserDAO userDAO = new UserDAO(connection); // Pasar la conexión al constructor
 
-                if (userDAO.idIsRegistered(numberOffStaff, connection)) {
+                if (userDAO.searchUserById(numberOffStaff) != null) {
                     throw new RepeatedId("El ID ya está registrado.");
                 }
 
-                boolean success = userDAO.insertUser(academic, connection);
+                boolean success = userDAO.insertUser(academic);
 
                 if (success) {
                     statusLabel.setText("¡Académico registrado exitosamente!");
@@ -127,10 +124,8 @@ public class GUI_RegisterAcademicController {
                 statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 logger.error("Error de SQL al registrar el académico: {}", e.getMessage(), e);
-            } finally {
-                connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedId | RepeatedPhone | RepeatedEmail e) {
+        } catch (EmptyFields | InvalidData | RepeatedId e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);

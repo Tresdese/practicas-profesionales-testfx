@@ -64,8 +64,8 @@ public class GUI_UpdateProfileController {
             // Actualizar en la base de datos
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                StudentService studentService = new StudentService();
-                studentService.updateStudent(updatedStudent, connection);
+                StudentService studentService = new StudentService(connection);
+                studentService.updateStudent(updatedStudent);
 
                 statusLabel.setText("¡Perfil actualizado exitosamente!");
                 statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);

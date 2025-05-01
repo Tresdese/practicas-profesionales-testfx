@@ -1,6 +1,5 @@
 package gui;
 
-import com.mysql.cj.xdevapi.Table;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,9 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import logic.DAO.StudentDAO;
 import logic.DAO.UserDAO;
-import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
 import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
@@ -70,7 +67,6 @@ public class GUI_CheckAcademicListController {
         columnUserNames.setCellValueFactory(new PropertyValueFactory<>("userName"));
         columnnRole.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-
         addDetailsButtonToTable();
         addManagementButtonToTable();
 
@@ -98,15 +94,15 @@ public class GUI_CheckAcademicListController {
 
     public void loadAcademicData() {
         ObservableList<UserDTO> userList = FXCollections.observableArrayList();
-        UserDAO userDAO = new UserDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            List<UserDTO> users = userDAO.getAllUsers(connection);
+            UserDAO userDAO = new UserDAO(connection); // Pasar la conexión al constructor
+            List<UserDTO> users = userDAO.getAllUsers(); // Llamar al método sin pasar la conexión
             userList.addAll(users);
             statusLabel.setText("");
         } catch (SQLException e) {
             statusLabel.setText("Error al conectar a la base de datos.");
-            logger.error("Error al cargar los datos de los academicos: {}", e.getMessage(), e);
+            logger.error("Error al cargar los datos de los académicos: {}", e.getMessage(), e);
         }
 
         tableView.setItems(userList);
@@ -120,10 +116,10 @@ public class GUI_CheckAcademicListController {
         }
 
         ObservableList<UserDTO> filteredList = FXCollections.observableArrayList();
-        UserDAO userDAO = new UserDAO();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            UserDTO user = userDAO.searchUserById(searchQuery, connection);
+            UserDAO userDAO = new UserDAO(connection); // Pasar la conexión al constructor
+            UserDTO user = userDAO.searchUserById(searchQuery); // Llamar al método sin pasar la conexión
             if (user != null) {
                 filteredList.add(user);
             }
@@ -162,7 +158,7 @@ public class GUI_CheckAcademicListController {
 
     private void addManagementButtonToTable() {
         Callback<TableColumn<UserDTO, Void>, TableCell<UserDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button manageButton = new Button("Gestionar Academico");
+            private final Button manageButton = new Button("Gestionar Académico");
 
             {
                 manageButton.setOnAction(event -> {
@@ -192,8 +188,7 @@ public class GUI_CheckAcademicListController {
             Stage stage = new Stage();
             manageAcademicApp.start(stage);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de gestión de academico: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de gestión de académico: {}", e.getMessage(), e);
         }
     }
 }
-
