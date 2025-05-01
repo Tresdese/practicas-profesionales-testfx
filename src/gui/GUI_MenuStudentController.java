@@ -5,8 +5,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GUI_MenuStudentController {
+
+    private static final Logger logger = LogManager.getLogger(GUI_MenuStudentController.class);
 
     @FXML
     private Label welcomeLabel;
@@ -20,8 +24,19 @@ public class GUI_MenuStudentController {
 
     public void setProfileImage() {
         String imageUrl = "https://e7.pngegg.com/pngimages/178/595/png-clipart-user-profile-computer-icons-login-user-avatars-monochrome-black-thumbnail.png";
-        Image image = new Image(imageUrl, true); // Carga la imagen desde la URL
-        profileImageView.setImage(image);
+        try {
+            Image image = new Image(imageUrl, true);
+            if (image.isError()) {
+                logger.error("No se pudo cargar la imagen desde la URL: {}", imageUrl);
+                showAlert("Error", "No se pudo cargar la imagen de perfil. Intente más tarde.");
+                return;
+            }
+            profileImageView.setImage(image);
+        } catch (Exception e) {
+            profileImageView.setImage(null);
+            logger.error("Error inesperado al cargar la imagen: {}", e.getMessage(), e);
+            showAlert("Error", "Ocurrió un error inesperado al cargar la imagen.");
+        }
     }
 
     @FXML
