@@ -84,7 +84,15 @@ public class GUI_LoginController {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuUser.fxml"));
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setScene(new Scene(loader.load()));
 
+                GUI_MenuUserController controller = loader.getController();
+                controller.setUserName(generalUser.getNames());
+
+                stage.setTitle("Menú Usuario");
+                stage.show();
             }
         } catch (InvalidCredential e) {
             logger.warn("Credenciales inválidas: {}", e.getMessage());
