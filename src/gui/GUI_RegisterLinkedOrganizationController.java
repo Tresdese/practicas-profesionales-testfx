@@ -24,9 +24,9 @@ public class GUI_RegisterLinkedOrganizationController {
     @FXML
     private TextField fieldName, fieldAddress, fieldRepresentativeName, fieldRepresentativeSurname, fieldRepresentativeEmail;
 
-    private GUI_CheckListOfStudentsController parentController;
+    private GUI_CheckListLinkedOrganizationController parentController;
 
-    public void setParentController(GUI_CheckListOfStudentsController parentController) {
+    public void setParentController(GUI_CheckListLinkedOrganizationController parentController) {
         this.parentController = parentController;
     }
 
@@ -52,7 +52,6 @@ public class GUI_RegisterLinkedOrganizationController {
                 String generatedId = organizationService.registerOrganization(organization);
                 organization.setIddOrganization(generatedId);
 
-                // Registrar el representante con el ID de la organización
                 RepresentativeDTO representative = new RepresentativeDTO(
                         null,
                         representativeName,
@@ -65,9 +64,9 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setText("¡Organización y representante registrados exitosamente!");
                 statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
-                if (parentController != null) {
-                    parentController.loadStudentData();
-                }
+//                if (parentController != null) {
+//                    parentController.loadOrganizationData();
+//                }
             } catch (SQLException e) {
                 logger.error("Error de SQL al registrar la organización o el representante: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");

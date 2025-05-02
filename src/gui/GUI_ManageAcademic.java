@@ -35,7 +35,7 @@ public class GUI_ManageAcademic extends Application {
 
             Scene scene = new Scene(root);
 
-            primaryStage.setTitle("Gestionar Academico");
+            primaryStage.setTitle("Gestionar Académico");
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IllegalArgumentException e) {

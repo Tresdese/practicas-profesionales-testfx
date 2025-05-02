@@ -81,7 +81,7 @@ class UserDAOTest {
                     Role.COORDINADOR
             );
 
-            boolean result = userDAO.insertUser(user, connection);
+            boolean result = userDAO.insertUser(user);
             assertTrue(result, "La inserción debería ser exitosa");
 
             String sql = "SELECT idUsuario, numeroDePersonal, contraseña FROM usuario WHERE nombreUsuario = ?";
@@ -93,7 +93,7 @@ class UserDAOTest {
                     int insertedNumPersonal = rs.getInt("numeroDePersonal");
                     String hashedPassword = rs.getString("contraseña");
 
-                    UserDTO retrievedUser = userDAO.getUser(new UserDTO(String.valueOf(insertedId)), connection);
+                    UserDTO retrievedUser = userDAO.getUser(new UserDTO(String.valueOf(insertedId)));
                     assertNotNull(retrievedUser, "El usuario debería existir en la base de datos");
                     assertEquals(nombreUsuario, retrievedUser.getUserName(), "El nombre de usuario debería coincidir");
                     assertEquals(String.valueOf(numeroPersonal), retrievedUser.getStaffNumber(), "El número de personal debería coincidir");
@@ -120,7 +120,7 @@ class UserDAOTest {
                     numeroPersonal
             );
 
-            UserDTO user = userDAO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
+            UserDTO user = UserDTO.getUser(new UserDTO(String.valueOf(testUserId)), connection);
             assertNotNull(user, "Debería encontrar al usuario");
             assertEquals("Juan", user.getNames(), "El nombre debería coincidir");
             assertEquals("Pérez", user.getSurname(), "El apellido debería coincidir");
