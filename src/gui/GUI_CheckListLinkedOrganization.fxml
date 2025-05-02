@@ -9,31 +9,28 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="666.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListLinkedOrganizationController">
+<AnchorPane prefHeight="676.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListLinkedOrganizationController">
 
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
-                <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnOrganizationName" prefWidth="120.0" text="Nombre de la organizacion" />
-                        <TableColumn fx:id="columnOrganizationAddress" prefWidth="150.0" text="Direccion de la organizacion" />
-                        <TableColumn fx:id="columnRepresentativeName" prefWidth="150.0" text="Nombre del representante" />
-                        <TableColumn fx:id="columnRepresentativeSurname" prefWidth="150.0" text="Apellidos del representante" />
-                        <TableColumn fx:id="columnRepresentativeEmail" prefWidth="100.0" text="Email del representante" />
-                        <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
+                        <TableColumn fx:id="columnOrganizationName" prefWidth="237.0" text="Nombre de la organizacion" />
+                        <TableColumn fx:id="columnOrganizationAddress" prefWidth="240.0" text="Direccion de la organizacion" />
+                        <TableColumn fx:id="columnDetails" prefWidth="264.0" text="Ver Detalles" />
+                        <TableColumn fx:id="columnManagement" minWidth="0.0" prefWidth="208.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
         </BorderPane>
-        <TextField fx:id="searchField" layoutX="35.0" layoutY="46.0" prefHeight="26.0" prefWidth="800.0" />
-        <Button fx:id="searchButton" layoutX="850.0" layoutY="46.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
+        <TextField fx:id="searchField" layoutX="35.0" layoutY="39.0" prefHeight="26.0" prefWidth="800.0" />
+        <Button fx:id="searchButton" layoutX="851.0" layoutY="39.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
             <font>
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Button>
-        <Label layoutX="352.0" text="Lista de Organizaciones">
+        <Label layoutX="353.0" layoutY="-8.0" text="Lista de Organizaciones">
             <font>
                 <Font size="30.0" />
             </font>

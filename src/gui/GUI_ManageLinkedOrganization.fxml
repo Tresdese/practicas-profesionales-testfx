@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="297.0" prefWidth="390.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageLinkedOrganizationController">
+    <children>
+        <Label layoutX="103.0" layoutY="20.0" text="Gestionar Organizacion">
+            <font>
+                <Font size="20.0" />
+            </font></Label>
+        <Label layoutX="69.0" layoutY="92.0" text="Nombre:" />
+        <TextField fx:id="fieldName" layoutX="169.0" layoutY="88.0" />
+        <Label layoutX="69.0" layoutY="149.0" text="Direccion" />
+        <TextField fx:id="fieldAddress" layoutX="169.0" layoutY="145.0" />
+        <Button layoutX="141.0" layoutY="225.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+        <Label fx:id="statusLabel" layoutX="14.0" layoutY="202.0" prefHeight="17.0" prefWidth="0.0" textFill="RED" />
+    </children>
+
+</AnchorPane>

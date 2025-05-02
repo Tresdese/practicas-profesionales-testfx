@@ -64,7 +64,6 @@ public class GUI_CheckListOfStudentsController {
 
     public void initialize() {
         try {
-            // Obtener el servicio desde la fábrica
             this.studentService = ServiceFactory.getStudentService();
         } catch (RuntimeException e) {
             logger.error("Error al inicializar StudentService: {}", e.getMessage(), e);
