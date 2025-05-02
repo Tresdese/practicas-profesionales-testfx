@@ -88,7 +88,7 @@ public class GUI_RegisterLinkedOrganizationController {
     }
 
     public boolean areFieldsFilled() {
-        return !fieldName.getText().isEmpty() &&
+        return !fieldName.getText().isEmpty()
 
     }
 }
