@@ -62,7 +62,7 @@ class StudentDAOTest {
     @Test
     void testInsertStudent() {
         try {
-            StudentDTO student = new StudentDTO("12351", 1, "Juan", "Perez", "1234567890", "juan.perez@ejemplo.com", "juanperez_unique", "password", "11111", "50");
+            StudentDTO student = new StudentDTO("12351", 1, "Juan", "Perez", "1234567890", "juan.perez@ejemplo.com", "juanperez_unique", "password", "11111", "50", 0.0);
             boolean result = studentDAO.insertStudent(student);
             assertTrue(result, "La inserción debería ser exitosa");
 //TODO se ouede dividir esta prueba
@@ -93,7 +93,7 @@ class StudentDAOTest {
         try {
             String tuiton = insertTestStudent("67892", 1, "Original", "Estudiante", "1111111111", "original.estudiante@example.com", "originaluser_unique", "originalpass", "67890", "30");
 
-            StudentDTO updatedStudent = new StudentDTO(tuiton, 1, "Actualizado", "Estudiante", "2222222222", "updated.estudiante@example.com", "updateduser_unique", "updatedpass", "54321", "60");
+            StudentDTO updatedStudent = new StudentDTO(tuiton, 1, "Actualizado", "Estudiante", "2222222222", "updated.estudiante@example.com", "updateduser_unique", "updatedpass", "54321", "60", 0.0);
             boolean updateResult = studentDAO.updateStudent(updatedStudent);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 

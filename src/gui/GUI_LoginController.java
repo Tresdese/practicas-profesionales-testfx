@@ -1,6 +1,5 @@
 package gui;
 
-import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,8 +14,6 @@ import logic.exceptions.InvalidCredential;
 import logic.services.LoginService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.sql.Connection;
 
 public class GUI_LoginController {
 
@@ -34,6 +31,12 @@ public class GUI_LoginController {
     @FXML
     private Label statusLabel;
 
+    private LoginService loginService; // Inyección de dependencia
+
+    public void setLoginService(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     @FXML
     private void handleLogin() {
         String username = usernameField.getText();
@@ -44,9 +47,7 @@ public class GUI_LoginController {
             return;
         }
 
-        ConecctionDataBase connectionDB = new ConecctionDataBase();
-        try (Connection connection = connectionDB.connectDB()) {
-            LoginService loginService = new LoginService(connection);
+        try {
             Object user = loginService.login(username, password);
 
             if (user instanceof StudentDTO) {
@@ -57,9 +58,9 @@ public class GUI_LoginController {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
 
-// Pasar el estudiante al controlador de GUI_MenuStudent
+                // Pasar el estudiante al controlador de GUI_MenuStudent
                 GUI_MenuStudentController controller = loader.getController();
-                controller.setStudent(student); // Pasar el objeto StudentDTO
+                controller.setStudent(student);
                 controller.setStudentName(student.getNames());
                 controller.setProfileImage();
 
@@ -68,7 +69,7 @@ public class GUI_LoginController {
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");
-                statusLabel.setStyle("-fx-text-fill: green;"); //Solo para hacer commit...
+                statusLabel.setStyle("-fx-text-fill: green;");
             }
         } catch (InvalidCredential e) {
             logger.warn("Credenciales inválidas: {}", e.getMessage());
@@ -78,8 +79,6 @@ public class GUI_LoginController {
             logger.error("Error inesperado: {}", e.getMessage());
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
             statusLabel.setStyle("-fx-text-fill: red;");
-        } finally {
-            connectionDB.closeConnection();
         }
     }
 }
