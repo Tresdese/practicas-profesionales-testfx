@@ -20,10 +20,6 @@ public class GUI_RegisterAcademicController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterAcademicController.class);
 
     @FXML
-    private Label label;
-    private Label roleLabel;
-
-    @FXML
     private ChoiceBox<String> roleBox;
 
     @FXML
@@ -39,6 +35,7 @@ public class GUI_RegisterAcademicController {
     private Button togglePasswordVisibility;
 
     private boolean isPasswordVisible = false;
+    private GUI_CheckAcademicListController parentController;
 
     @FXML
     public void initialize() {
@@ -84,6 +81,10 @@ public class GUI_RegisterAcademicController {
         isPasswordVisible = !isPasswordVisible;
     }
 
+    public void setParentController(GUI_CheckAcademicListController parentController) {
+        this.parentController = parentController;
+    }
+
     @FXML
     private void handleRegisterAcademic() {
         try {
@@ -116,6 +117,9 @@ public class GUI_RegisterAcademicController {
                 if (success) {
                     statusLabel.setText("¡Académico registrado exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                    if (parentController != null) {
+                        parentController.loadAcademicData();
+                    }
                 } else {
                     statusLabel.setText("El académico ya existe.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);

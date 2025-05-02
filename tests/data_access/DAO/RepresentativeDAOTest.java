@@ -34,11 +34,11 @@ class RepresentativeDAOTest {
 
     @BeforeEach
     void setUp() {
-        representativeDAO = new RepresentativeDAO();
+        representativeDAO = new RepresentativeDAO( connection );
     }
 
     private String insertTestRepresentative(String idRepresentative, String names, String surnames, String email, String idOrganization) throws SQLException {
-        RepresentativeDTO existingRepresentative = representativeDAO.searchRepresentativeById(idRepresentative, connection);
+        RepresentativeDTO existingRepresentative = representativeDAO.searchRepresentativeById(idRepresentative);
         if (existingRepresentative != null) {
             return idRepresentative;
         }
@@ -66,10 +66,10 @@ class RepresentativeDAOTest {
                     "1"
             );
 
-            boolean result = representativeDAO.insertRepresentative(representative, connection);
+            boolean result = representativeDAO.insertRepresentative(representative);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            RepresentativeDTO insertedRep = representativeDAO.searchRepresentativeById("1", connection);
+            RepresentativeDTO insertedRep = representativeDAO.searchRepresentativeById("1");
             assertNotNull(insertedRep, "El representante debería existir en la base de datos");
             assertEquals("Nombre Test", insertedRep.getNames(), "El nombre debería coincidir");
             assertEquals("Apellido Test", insertedRep.getSurnames(), "El apellido debería coincidir");
@@ -85,7 +85,7 @@ class RepresentativeDAOTest {
         try {
             insertTestRepresentative("2", "Nombre Consulta", "Apellido Consulta", "consulta@example.com", "3");
 
-            RepresentativeDTO rep = representativeDAO.searchRepresentativeById("2", connection);
+            RepresentativeDTO rep = representativeDAO.searchRepresentativeById("2");
             assertNotNull(rep, "Debería encontrar el representante");
             assertEquals("Nombre Consulta", rep.getNames(), "El nombre debería coincidir");
             assertEquals("Apellido Consulta", rep.getSurnames(), "El apellido debería coincidir");
@@ -109,10 +109,10 @@ class RepresentativeDAOTest {
                     "4"
             );
 
-            boolean updateResult = representativeDAO.updateRepresentative(repToUpdate, connection);
+            boolean updateResult = representativeDAO.updateRepresentative(repToUpdate);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            RepresentativeDTO updatedRep = representativeDAO.searchRepresentativeById("3", connection);
+            RepresentativeDTO updatedRep = representativeDAO.searchRepresentativeById("3");
             assertNotNull(updatedRep, "El representante debería existir después de actualizar");
             assertEquals("Nombre Actualizado", updatedRep.getNames(), "El nombre debería actualizarse");
             assertEquals("Apellido Actualizado", updatedRep.getSurnames(), "El apellido debería actualizarse");
@@ -128,7 +128,7 @@ class RepresentativeDAOTest {
         try {
             insertTestRepresentative("4", "Nombre Lista", "Apellido Lista", "lista@example.com", "5");
 
-            List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives(connection);
+            List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives();
             assertNotNull(representatives, "La lista no debería ser nula");
             assertFalse(representatives.isEmpty(), "La lista no debería estar vacía");
 
@@ -145,13 +145,13 @@ class RepresentativeDAOTest {
         try {
             insertTestRepresentative("5", "Nombre Delete", "Apellido Delete", "delete@example.com", "6");
 
-            RepresentativeDTO beforeDelete = representativeDAO.searchRepresentativeById("5", connection);
+            RepresentativeDTO beforeDelete = representativeDAO.searchRepresentativeById("5");
             assertNotNull(beforeDelete, "El representante debería existir antes de eliminarlo");
 
-            boolean deleteResult = representativeDAO.deleteRepresentative("5", connection);
+            boolean deleteResult = representativeDAO.deleteRepresentative("5");
             assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-            RepresentativeDTO afterDelete = representativeDAO.searchRepresentativeById("5", connection);
+            RepresentativeDTO afterDelete = representativeDAO.searchRepresentativeById("5");
             assertNull(afterDelete, "El representante no debería existir después de eliminarlo");
         } catch (SQLException e) {
             fail("Error en testDeleteRepresentative: " + e.getMessage());
