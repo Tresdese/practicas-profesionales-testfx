@@ -111,7 +111,7 @@ public class GUI_RegisterAcademicController {
                 UserDAO userDAO = new UserDAO();
 
                 if (userDAO.idIsRegistered(numberOffStaff, connection)) {
-                    throw new RepeatedId("El ID ya está registrado.");
+                    throw new RepeatedId("El numero de personal ya está registrado.");
                 }
 
                 boolean success = userDAO.insertUser(academic, connection);
