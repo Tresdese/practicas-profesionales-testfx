@@ -3,18 +3,18 @@ package logic.DTO;
 public class LinkedOrganizationDTO {
     private String iddOrganization;
     private String name;
-    private String adddress;
+    private String address;
 
     public LinkedOrganizationDTO() {
         this.iddOrganization = "";
         this.name = "";
-        this.adddress = "";
+        this.address = "";
     }
 
-    public LinkedOrganizationDTO(String iddOrganization, String name, String adddress) {
+    public LinkedOrganizationDTO(String iddOrganization, String name, String address) {
         this.iddOrganization = iddOrganization;
         this.name = name;
-        this.adddress = adddress;
+        this.address = address;
     }
 
     public String getIddOrganization() {
@@ -34,11 +34,11 @@ public class LinkedOrganizationDTO {
     }
 
     public String getAdddress() {
-        return adddress;
+        return address;
     }
 
     public void setAdddress(String adddress) {
-        this.adddress = adddress;
+        this.address = adddress;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class LinkedOrganizationDTO {
         return "LinkedOrganizationDTO{" +
                 "iddOrganization='" + iddOrganization + '\'' +
                 ", name='" + name + '\'' +
-                ", adddress='" + adddress + '\'' +
+                ", adddress='" + address + '\'' +
                 '}';
     }
 
@@ -59,6 +59,6 @@ public class LinkedOrganizationDTO {
 
         if (!iddOrganization.equals(that.iddOrganization)) return false;
         if (!name.equals(that.name)) return false;
-        return adddress.equals(that.adddress);
+        return address.equals(that.address);
     }
 }
