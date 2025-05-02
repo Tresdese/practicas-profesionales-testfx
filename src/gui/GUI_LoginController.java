@@ -58,6 +58,7 @@ public class GUI_LoginController {
 
         if (username.isEmpty() || password.isEmpty()) {
             statusLabel.setText("Por favor, completa todos los campos.");
+            statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
@@ -83,6 +84,7 @@ public class GUI_LoginController {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
+
             }
         } catch (InvalidCredential e) {
             logger.warn("Credenciales inválidas: {}", e.getMessage());
