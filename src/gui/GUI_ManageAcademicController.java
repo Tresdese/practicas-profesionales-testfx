@@ -33,7 +33,6 @@ public class GUI_ManageAcademicController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         roleBox.setItems(FXCollections.observableArrayList(Role.values()));
     }
 
@@ -51,37 +50,38 @@ public class GUI_ManageAcademicController implements Initializable {
         fieldUserName.setText(academic.getUserName() != null ? academic.getUserName() : "");
         fieldPassword.setText(academic.getPassword() != null ? academic.getPassword() : "");
         roleBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
-
     }
 
     @FXML
     private void handleSaveChanges() {
-        UserDAO userDAO = new UserDAO();
-
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
+            UserDAO userDAO = new UserDAO(connection);
+
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String NumberOffStaff = fieldNumberOffStaff.getText();
+            String numberOffStaff = fieldNumberOffStaff.getText();
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
             String userName = fieldUserName.getText();
             String password = fieldPassword.getText();
             Role role = roleBox.getValue();
 
-            academic.setStaffNumber(NumberOffStaff);
+            academic.setStaffNumber(numberOffStaff);
             academic.setNames(names);
             academic.setSurnames(surnames);
             academic.setUserName(userName);
             academic.setPassword(password);
             academic.setRole(role);
 
-            statusLabel.setText("¡Académico actualizado exitosamente!");
-            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-
-            userDAO.updateUser(academic, connection);
-
+            boolean success = userDAO.updateUser(academic);
+            if (success) {
+                statusLabel.setText("¡Académico actualizado exitosamente!");
+                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            } else {
+                throw new Exception("No se pudo actualizar el académico.");
+            }
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -96,7 +96,6 @@ public class GUI_ManageAcademicController implements Initializable {
                 !fieldUserName.getText().isEmpty() &&
                 !fieldPassword.getText().isEmpty() &&
                 roleBox.getValue() != null;
-
     }
 
     private Role getRoleFromText(String text) {
@@ -112,4 +111,3 @@ public class GUI_ManageAcademicController implements Initializable {
         }
     }
 }
-

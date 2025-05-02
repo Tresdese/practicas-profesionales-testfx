@@ -14,22 +14,22 @@ public class LoginService {
     private final StudentDAO studentDAO;
     private final UserDAO userDAO;
 
-    public LoginService() {
-        this.studentDAO = new StudentDAO();
-        this.userDAO = new UserDAO();
+    public LoginService(Connection connection) {
+        this.studentDAO = new StudentDAO(connection);
+        this.userDAO = new UserDAO(connection);
     }
 
-    public Object login(String username, String plainPassword, Connection connection) throws SQLException, InvalidCredential {
+    public Object login(String username, String plainPassword) throws SQLException, InvalidCredential {
         String hashedPassword = PasswordHasher.hashPassword(plainPassword);
 
         // Buscar estudiante por usuario y contraseña cifrada
-        StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword, connection);
+        StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword);
         if (!"N/A".equals(student.getTuiton())) {
             return student;
         }
 
         // Buscar usuario general por usuario y contraseña cifrada
-        UserDTO user = userDAO.searchUserByUsernameAndPassword(username, hashedPassword, connection);
+        UserDTO user = userDAO.searchUserByUsernameAndPassword(username, hashedPassword);
         if (!"INVALID".equals(user.getIdUser())) {
             return user;
         }

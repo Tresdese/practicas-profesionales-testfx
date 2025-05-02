@@ -33,7 +33,7 @@ class StudentDAOTest {
 
     @BeforeEach
     void setUp() {
-        studentDAO = new StudentDAO();
+        studentDAO = new StudentDAO(connection);
     }
 
     private String insertTestStudent(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String nrc, String creditAdvance) throws SQLException {

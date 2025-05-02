@@ -2,10 +2,13 @@ package gui;
 
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
 import logic.exceptions.InvalidCredential;
@@ -43,13 +46,25 @@ public class GUI_LoginController {
 
         ConecctionDataBase connectionDB = new ConecctionDataBase();
         try (Connection connection = connectionDB.connectDB()) {
-            LoginService loginService = new LoginService();
-            Object user = loginService.login(username, password, connection);
+            LoginService loginService = new LoginService(connection);
+            Object user = loginService.login(username, password);
 
             if (user instanceof StudentDTO) {
                 StudentDTO student = (StudentDTO) user;
                 statusLabel.setText("Bienvenido estudiante, " + student.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuStudent.fxml"));
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setScene(new Scene(loader.load()));
+
+// Pasar el estudiante al controlador de GUI_MenuStudent
+                GUI_MenuStudentController controller = loader.getController();
+                controller.setStudent(student); // Pasar el objeto StudentDTO
+                controller.setStudentName(student.getNames());
+                controller.setProfileImage();
+
+                stage.setTitle("Menú Estudiante");
+                stage.show();
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
                 statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");

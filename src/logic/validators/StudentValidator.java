@@ -11,4 +11,9 @@ public class StudentValidator {
         EmailValidator.validate(email);
         PhoneValidator.validate(phone);
     }
+
+    public static void validateStudentData(String email, String phone ) throws InvalidData {
+        EmailValidator.validate(email);
+        PhoneValidator.validate(phone);
+    }
 }

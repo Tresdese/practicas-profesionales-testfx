@@ -6,13 +6,14 @@ import java.util.List;
 import logic.DTO.StudentDTO;
 
 public interface IStudentDAO {
-    boolean insertStudent(StudentDTO student, Connection connection) throws SQLException;
 
-    boolean updateStudent(StudentDTO student, Connection connection) throws SQLException;
+    boolean insertStudent(StudentDTO student) throws SQLException;
 
-    boolean deleteStudent(String tuiton, Connection connection) throws SQLException;
+    boolean updateStudent(StudentDTO student) throws SQLException;
 
-    StudentDTO searchStudentByTuiton(String tuiton, Connection connection) throws SQLException;
+    boolean deleteStudent(String tuiton) throws SQLException;
 
-    List<StudentDTO> getAllStudents(Connection connection) throws SQLException;
+    StudentDTO searchStudentByTuiton(String tuiton) throws SQLException;
+
+    List<StudentDTO> getAllStudents() throws SQLException;
 }
