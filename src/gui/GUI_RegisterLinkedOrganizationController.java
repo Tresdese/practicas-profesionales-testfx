@@ -3,12 +3,11 @@ package gui;
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
-import logic.DAO.RepresentativeDAO;
 import logic.exceptions.*;
-import logic.utils.EmailValidator;
+import logic.services.LinkedOrganizationService;
+import logic.services.RepresentativeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,31 +43,33 @@ public class GUI_RegisterLinkedOrganizationController {
             String representativeSurnames = fieldRepresentativeSurname.getText();
             String representativeEmail = fieldRepresentativeEmail.getText();
 
-            LinkedOrganizationDTO organization = new LinkedOrganizationDTO("0", name, address);
-            RepresentativeDTO representative = new RepresentativeDTO("0", representativeName, representativeSurnames, representativeEmail, organization.getIddOrganization());
-
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO(connection);
-                RepresentativeDAO representativeDAO = new RepresentativeDAO(connection);
+                LinkedOrganizationService organizationService = new LinkedOrganizationService(connection);
+                RepresentativeService representativeService = new RepresentativeService(connection);
 
-                if (linkedOrganizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
-                    throw new RepeatedTuiton("La matrícula ya está registrada.");
-                }
+                LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
+                String generatedId = organizationService.registerOrganization(organization);
+                organization.setIddOrganization(generatedId);
 
-                if (linkedOrganizationDAO.insertLinkedOrganization(organization) && representativeDAO.insertRepresentative(representative)) {
-                    statusLabel.setText("¡Organizacion registrada exitosamente!");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                // Registrar el representante con el ID de la organización
+                RepresentativeDTO representative = new RepresentativeDTO(
+                        null,
+                        representativeName,
+                        representativeSurnames,
+                        representativeEmail,
+                        organization.getIddOrganization()
+                );
+                representativeService.registerRepresentative(representative);
 
-//                    if (parentController != null) {
-//                        parentController.loadStudentData();
-//                    }
-                } else {
-                    statusLabel.setText("No se pudo registrar la organizacion.");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setText("¡Organización y representante registrados exitosamente!");
+                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+
+                if (parentController != null) {
+                    parentController.loadStudentData();
                 }
             } catch (SQLException e) {
-                logger.error("Error de SQL al registrar la organizacion: {}", e.getMessage(), e);
+                logger.error("Error de SQL al registrar la organización o el representante: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             } finally {

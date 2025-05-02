@@ -33,11 +33,11 @@ public class LinkedOrganizationDTO {
         this.name = name;
     }
 
-    public String getAdddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAdddress(String adddress) {
+    public void setAddress(String adddress) {
         this.address = adddress;
     }
 

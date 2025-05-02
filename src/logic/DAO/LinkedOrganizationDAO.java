@@ -16,29 +16,34 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private final static String SQL_INSERT = "INSERT INTO organizacion_vinculada (idOrganizacion, nombre, direccion) VALUES (?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
     private final static String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";
-    private final static String SQL_SELECT = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
+    private final static String SQL_SELECT_BY_ID = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
+    private final static String SQL_SELECT_BY_NAME = "SELECT * FROM organizacion_vinculada WHERE nombre = ?";
+    private final static String SQL_SELECT_BY_ADDRESS = "SELECT * FROM organizacion_vinculada WHERE direccion = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
 
     public LinkedOrganizationDAO(Connection connection) { this.connection = connection; }
 
-    public boolean insertLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException {
-        LinkedOrganizationDTO existingOrganization = searchLinkedOrganizationById(organization.getIddOrganization());
-        if (existingOrganization != null) {
-            return organization.getIddOrganization().equals(existingOrganization.getIddOrganization());
-        }
+    public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException {
+        String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, organization.getName());
+            statement.setString(2, organization.getAddress());
+            statement.executeUpdate();
 
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setString(1, organization.getIddOrganization());
-            statement.setString(2, organization.getName());
-            statement.setString(3, organization.getAdddress());
-            return statement.executeUpdate() > 0;
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getString(1); // Devuelve el ID generado
+                } else {
+                    throw new SQLException("No se pudo obtener el ID generado para la organización.");
+                }
+            }
         }
     }
 
     public boolean updateLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, organization.getName());
-            statement.setString(2, organization.getAdddress());
+            statement.setString(2, organization.getAddress());
             statement.setString(3, organization.getIddOrganization());
             return statement.executeUpdate() > 0;
         }
@@ -53,7 +58,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException {
         LinkedOrganizationDTO group = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -65,8 +70,26 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public boolean isNameRegistered(String name) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
+            statement.setString(1, name);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    public boolean isAddressRegistered(String email) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ADDRESS)) {
+            statement.setString(1, email);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
             }

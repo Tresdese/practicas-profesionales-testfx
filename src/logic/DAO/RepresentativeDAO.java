@@ -16,17 +16,13 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     private final static String SQL_INSERT = "INSERT INTO representante (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ? WHERE idRepresentante = ?";
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
-    private final static String SQL_SELECT = "SELECT * FROM representante WHERE idRepresentante = ?";
+    private final static String SQL_SELECT_BY_ID = "SELECT * FROM representante WHERE idRepresentante = ?";
+    private final static String SQL_SELECT_BY_EMAIL = "SELECT * FROM representante WHERE correo = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public RepresentativeDAO(Connection connection) { this.connection = connection; }
 
     public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException {
-        RepresentativeDTO existingRepresentative = searchRepresentativeById(representative.getIdRepresentative());
-        if (existingRepresentative != null) {
-            return representative.getIdRepresentative().equals(existingRepresentative.getIdRepresentative());
-        }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, representative.getIdRepresentative());
             statement.setString(2, representative.getNames());
@@ -58,7 +54,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     @Override
     public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException {
         RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idRepresentative);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -72,6 +68,22 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             }
         }
         return representative;
+    }
+
+    public boolean isRepresentativeRegistered(String idRepresentative) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, idRepresentative);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        }
+    }
+
+    public boolean isRepresentativeEmailRegistered(String email) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_EMAIL)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        }
     }
 
     @Override

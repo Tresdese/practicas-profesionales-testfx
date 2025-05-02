@@ -80,7 +80,7 @@ class LinkedOrganizationDAOTest {
             LinkedOrganizationDTO insertedOrg = organizationDAO.searchLinkedOrganizationById(organization.getIddOrganization());
             assertNotNull(insertedOrg, "La organización debería existir en la base de datos");
             assertEquals(uniqueName, insertedOrg.getName(), "El nombre debería coincidir");
-            assertEquals("Dirección Test 123", insertedOrg.getAdddress(), "La dirección debería coincidir");
+            assertEquals("Dirección Test 123", insertedOrg.getAddress(), "La dirección debería coincidir");
         } catch (SQLException e) {
             fail("Error en testInsertLinkedOrganization: " + e.getMessage());
         }
@@ -95,7 +95,7 @@ class LinkedOrganizationDAOTest {
             LinkedOrganizationDTO org = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId));
             assertNotNull(org, "Debería encontrar la organización");
             assertEquals(uniqueName, org.getName(), "El nombre debería coincidir");
-            assertEquals("Dirección Consulta", org.getAdddress(), "La dirección debería coincidir");
+            assertEquals("Dirección Consulta", org.getAddress(), "La dirección debería coincidir");
         } catch (SQLException e) {
             fail("Error en testGetLinkedOrganization: " + e.getMessage());
         }
@@ -119,7 +119,7 @@ class LinkedOrganizationDAOTest {
             LinkedOrganizationDTO updatedOrg = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId));
             assertNotNull(updatedOrg, "La organización debería existir después de actualizar");
             assertEquals("Nombre Actualizado", updatedOrg.getName(), "El nombre debería actualizarse");
-            assertEquals("Dirección Actualizada", updatedOrg.getAdddress(), "La dirección debería actualizarse");
+            assertEquals("Dirección Actualizada", updatedOrg.getAddress(), "La dirección debería actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdateLinkedOrganization: " + e.getMessage());
         }
