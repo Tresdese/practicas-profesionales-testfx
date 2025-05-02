@@ -47,7 +47,6 @@ public class GUI_UpdateProfileController {
             String phone = fieldPhone.getText();
             StudentValidator.validateStudentData(email, phone);
 
-            // Crear un nuevo objeto StudentDTO con los datos actualizados
             StudentDTO updatedStudent = new StudentDTO(
                     currentStudent.getTuiton(),
                     currentStudent.getState(),
@@ -58,7 +57,8 @@ public class GUI_UpdateProfileController {
                     currentStudent.getUser(),
                     currentStudent.getPassword(),
                     currentStudent.getNRC(),
-                    currentStudent.getCreditAdvance()
+                    currentStudent.getCreditAdvance(),
+                    currentStudent.getCalificacionFinal()
             );
 
             // Actualizar en la base de datos

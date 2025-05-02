@@ -96,7 +96,7 @@ public class GUI_RegisterStudentController {
 
             StudentDTO student = new StudentDTO(
                     tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
-                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText()
+                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0 // calificacionFinal
             );
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();

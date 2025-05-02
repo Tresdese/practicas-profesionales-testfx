@@ -1,7 +1,6 @@
 package logic.DAO;
 
 import logic.DTO.StudentDTO;
-import logic.exceptions.RepeatedTuiton;
 import logic.interfaces.IStudentDAO;
 
 import java.sql.Connection;
@@ -14,8 +13,8 @@ import java.util.List;
 public class StudentDAO implements IStudentDAO {
     private final Connection connection;
 
-    private static final String SQL_INSERT = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE estudiante SET estado = ?, nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ? WHERE matricula = ?";
+    private static final String SQL_INSERT = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE estudiante SET estado = ?, nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ?, calificacionFinal = ? WHERE matricula = ?";
     private static final String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private static final String SQL_DELETE = "DELETE FROM estudiante WHERE matricula = ?";
     private static final String SQL_SELECT = "SELECT * FROM estudiante WHERE matricula = ?";
@@ -41,6 +40,7 @@ public class StudentDAO implements IStudentDAO {
             statement.setString(8, student.getPassword());
             statement.setString(9, student.getNRC());
             statement.setString(10, student.getCreditAdvance());
+            statement.setDouble(11, student.getCalificacionFinal());
             return statement.executeUpdate() > 0;
         }
     }
@@ -56,7 +56,8 @@ public class StudentDAO implements IStudentDAO {
             statement.setString(7, student.getPassword());
             statement.setString(8, student.getNRC());
             statement.setString(9, student.getCreditAdvance());
-            statement.setString(10, student.getTuiton());
+            statement.setDouble(10, student.getCalificacionFinal());
+            statement.setString(11, student.getTuiton());
             return statement.executeUpdate() > 0;
         }
     }
@@ -92,7 +93,8 @@ public class StudentDAO implements IStudentDAO {
                             resultSet.getString("usuario"),
                             resultSet.getString("contraseña"),
                             resultSet.getString("NRC"),
-                            resultSet.getString("avanceCrediticio")
+                            resultSet.getString("avanceCrediticio"),
+                            resultSet.getDouble("calificacionFinal")
                     );
                 }
             }
@@ -115,7 +117,8 @@ public class StudentDAO implements IStudentDAO {
                         resultSet.getString("usuario"),
                         resultSet.getString("contraseña"),
                         resultSet.getString("NRC"),
-                        resultSet.getString("avanceCrediticio")
+                        resultSet.getString("avanceCrediticio"),
+                        resultSet.getDouble("calificacionFinal")
                 ));
             }
         }
@@ -139,7 +142,8 @@ public class StudentDAO implements IStudentDAO {
                             resultSet.getString("usuario"),
                             resultSet.getString("contraseña"),
                             resultSet.getString("NRC"),
-                            resultSet.getString("avanceCrediticio")
+                            resultSet.getString("avanceCrediticio"),
+                            resultSet.getDouble("calificacionFinal")
                     );
                 }
             }

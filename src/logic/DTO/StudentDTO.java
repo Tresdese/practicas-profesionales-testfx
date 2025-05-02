@@ -11,6 +11,7 @@ public class StudentDTO {
     private String password;
     private String NRC;
     private String creditAdvance;
+    private double calificacionFinal; // Nuevo atributo
 
     public StudentDTO() {
         this.tuiton = "";
@@ -23,9 +24,10 @@ public class StudentDTO {
         this.password = "";
         this.NRC = "";
         this.creditAdvance = "";
+        this.calificacionFinal = 0.0; // Inicialización
     }
 
-    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance) {
+    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance, double calificacionFinal) {
         this.tuiton = tuiton;
         this.state = state;
         this.names = names;
@@ -36,6 +38,7 @@ public class StudentDTO {
         this.password = password;
         this.NRC = NRC;
         this.creditAdvance = creditAdvance;
+        this.calificacionFinal = calificacionFinal; // Asignación
     }
 
     public String getTuiton() {
@@ -131,6 +134,7 @@ public class StudentDTO {
                 ", password='" + password + '\'' +
                 ", NRC='" + NRC + '\'' +
                 ", creditAdvance='" + creditAdvance + '\'' +
+                ", calificacionFinal=" + calificacionFinal + // Nuevo atributo
                 '}';
     }
 
@@ -149,5 +153,13 @@ public class StudentDTO {
                 password.equals(that.password) &&
                 NRC.equals(that.NRC) &&
                 creditAdvance.equals(that.creditAdvance);
+    }
+
+    public double getCalificacionFinal() {
+        return calificacionFinal;
+    }
+
+    public void setCalificacionFinal(double calificacionFinal) {
+        this.calificacionFinal = calificacionFinal;
     }
 }

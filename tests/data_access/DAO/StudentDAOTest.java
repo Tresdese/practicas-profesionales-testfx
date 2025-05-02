@@ -37,7 +37,7 @@ class StudentDAOTest {
     }
 
     private String insertTestStudent(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String nrc, String creditAdvance) throws SQLException {
-        StudentDTO existingStudent = studentDAO.searchStudentByTuiton(tuiton, connection);
+        StudentDTO existingStudent = studentDAO.searchStudentByTuiton(tuiton);
         if (existingStudent != null) {
             return tuiton;
         }
@@ -62,11 +62,11 @@ class StudentDAOTest {
     @Test
     void testInsertStudent() {
         try {
-            StudentDTO student = new StudentDTO("12351", 1, "Juan", "Perez", "1234567890", "juan.perez@ejemplo.com", "juanperez_unique", "password", "11111", "50");
-            boolean result = studentDAO.insertStudent(student, connection);
+            StudentDTO student = new StudentDTO("12351", 1, "Juan", "Perez", "1234567890", "juan.perez@ejemplo.com", "juanperez_unique", "password", "11111", "50", 0.0);
+            boolean result = studentDAO.insertStudent(student);
             assertTrue(result, "La inserción debería ser exitosa");
 //TODO se ouede dividir esta prueba
-            StudentDTO insertedStudent = studentDAO.searchStudentByTuiton("12351", connection);
+            StudentDTO insertedStudent = studentDAO.searchStudentByTuiton("12351");
             assertNotNull(insertedStudent, "El estudiante debería existir en la base de datos");
             assertEquals("Juan", insertedStudent.getNames(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -79,7 +79,7 @@ class StudentDAOTest {
         try {
             String tuiton = insertTestStudent("54331", 1, "Juana", "Lopez", "0987654321", "juana.lopez@ejemplo.com", "juanalopez_unique", "password123", "54321", "75");
 
-            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton(tuiton, connection);
+            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton(tuiton);
             assertNotNull(retrievedStudent, "Debería encontrar el estudiante");
             assertEquals(tuiton, retrievedStudent.getTuiton(), "La matrícula debería coincidir");
             assertEquals("Juana", retrievedStudent.getNames(), "El nombre debería coincidir");
@@ -93,11 +93,11 @@ class StudentDAOTest {
         try {
             String tuiton = insertTestStudent("67892", 1, "Original", "Estudiante", "1111111111", "original.estudiante@example.com", "originaluser_unique", "originalpass", "67890", "30");
 
-            StudentDTO updatedStudent = new StudentDTO(tuiton, 1, "Actualizado", "Estudiante", "2222222222", "updated.estudiante@example.com", "updateduser_unique", "updatedpass", "54321", "60");
-            boolean updateResult = studentDAO.updateStudent(updatedStudent, connection);
+            StudentDTO updatedStudent = new StudentDTO(tuiton, 1, "Actualizado", "Estudiante", "2222222222", "updated.estudiante@example.com", "updateduser_unique", "updatedpass", "54321", "60", 0.0);
+            boolean updateResult = studentDAO.updateStudent(updatedStudent);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton(tuiton, connection);
+            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton(tuiton);
             assertNotNull(retrievedStudent, "El estudiante debería existir");
             assertEquals("Actualizado", retrievedStudent.getNames(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -110,7 +110,7 @@ class StudentDAOTest {
         try {
             insertTestStudent("11113", 1, "Test", "Student", "3333333333", "test.student@example.com", "testuser_unique", "testpass", "11111", "40");
 
-            List<StudentDTO> students = studentDAO.getAllStudents(connection);
+            List<StudentDTO> students = studentDAO.getAllStudents();
             assertNotNull(students, "La lista no debería ser nula");
             assertFalse(students.isEmpty(), "La lista no debería estar vacía");
 
@@ -127,13 +127,13 @@ class StudentDAOTest {
         try {
             String tuiton = insertTestStudent("22231", 1, "Delete", "Me", "4444444444", "delete.me@example.com", "deleteuser_unique", "deletepass", "11111", "20");
 
-            StudentDTO before = studentDAO.searchStudentByTuiton(tuiton, connection);
+            StudentDTO before = studentDAO.searchStudentByTuiton(tuiton);
             assertNotNull(before, "El estudiante debería existir antes de eliminarlo");
 
-            boolean deleted = studentDAO.deleteStudent(tuiton, connection);
+            boolean deleted = studentDAO.deleteStudent(tuiton);
             assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            StudentDTO after = studentDAO.searchStudentByTuiton(tuiton, connection);
+            StudentDTO after = studentDAO.searchStudentByTuiton(tuiton);
             assertNull(after, "El estudiante no debería existir después de eliminarlo");
         } catch (SQLException e) {
             fail("Error: " + e.getMessage());
