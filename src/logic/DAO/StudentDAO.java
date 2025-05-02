@@ -40,7 +40,7 @@ public class StudentDAO implements IStudentDAO {
             statement.setString(8, student.getPassword());
             statement.setString(9, student.getNRC());
             statement.setString(10, student.getCreditAdvance());
-            statement.setDouble(11, student.getCalificacionFinal());
+            statement.setDouble(11, student.getFinalGrade());
             return statement.executeUpdate() > 0;
         }
     }
@@ -56,7 +56,7 @@ public class StudentDAO implements IStudentDAO {
             statement.setString(7, student.getPassword());
             statement.setString(8, student.getNRC());
             statement.setString(9, student.getCreditAdvance());
-            statement.setDouble(10, student.getCalificacionFinal());
+            statement.setDouble(10, student.getFinalGrade());
             statement.setString(11, student.getTuiton());
             return statement.executeUpdate() > 0;
         }

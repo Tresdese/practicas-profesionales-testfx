@@ -11,7 +11,7 @@ public class StudentDTO {
     private String password;
     private String NRC;
     private String creditAdvance;
-    private double calificacionFinal; // Nuevo atributo
+    private double finalGrade; // Nuevo atributo
 
     public StudentDTO() {
         this.tuiton = "";
@@ -24,10 +24,10 @@ public class StudentDTO {
         this.password = "";
         this.NRC = "";
         this.creditAdvance = "";
-        this.calificacionFinal = 0.0; // Inicialización
+        this.finalGrade = 0.0;
     }
 
-    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance, double calificacionFinal) {
+    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance, double finalGrade) {
         this.tuiton = tuiton;
         this.state = state;
         this.names = names;
@@ -38,7 +38,7 @@ public class StudentDTO {
         this.password = password;
         this.NRC = NRC;
         this.creditAdvance = creditAdvance;
-        this.calificacionFinal = calificacionFinal; // Asignación
+        this.finalGrade = finalGrade;
     }
 
     public String getTuiton() {
@@ -134,7 +134,7 @@ public class StudentDTO {
                 ", password='" + password + '\'' +
                 ", NRC='" + NRC + '\'' +
                 ", creditAdvance='" + creditAdvance + '\'' +
-                ", calificacionFinal=" + calificacionFinal + // Nuevo atributo
+                ", finalGrade=" + finalGrade +
                 '}';
     }
 
@@ -155,11 +155,11 @@ public class StudentDTO {
                 creditAdvance.equals(that.creditAdvance);
     }
 
-    public double getCalificacionFinal() {
-        return calificacionFinal;
+    public double getFinalGrade() {
+        return finalGrade;
     }
 
-    public void setCalificacionFinal(double calificacionFinal) {
-        this.calificacionFinal = calificacionFinal;
+    public void setFinalGrade(double finalGrade) {
+        this.finalGrade = finalGrade;
     }
 }

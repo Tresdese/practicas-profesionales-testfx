@@ -20,6 +20,6 @@
         <TextField fx:id="fieldCreditAdvance" layoutX="169.0" layoutY="178.0" />
         <Button layoutX="62.0" layoutY="247.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="20.0" layoutY="260.0" textFill="RED" />
-      <Button layoutX="244.0" layoutY="247.0" mnemonicParsing="false" text="Asignar Calificacion" />
+        <Button layoutX="244.0" layoutY="247.0" onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
     </children>
 </AnchorPane>

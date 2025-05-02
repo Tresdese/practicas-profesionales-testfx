@@ -59,7 +59,7 @@ public class GUI_UpdateProfileController {
                     currentStudent.getPassword(),
                     currentStudent.getNRC(),
                     currentStudent.getCreditAdvance(),
-                    currentStudent.getCalificacionFinal()
+                    currentStudent.getFinalGrade()
             );
 
             studentService.updateStudent(updatedStudent);

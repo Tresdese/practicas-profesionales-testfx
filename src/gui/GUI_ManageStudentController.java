@@ -1,13 +1,18 @@
 package gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import logic.DTO.StudentDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_ManageStudentController {
@@ -92,5 +97,31 @@ public class GUI_ManageStudentController {
                 !fieldSurnames.getText().isEmpty() &&
                 !fieldNRC.getText().isEmpty() &&
                 !fieldCreditAdvance.getText().isEmpty();
+    }
+
+    @FXML
+    private void handleAssignFinalGrade() {
+        if (student == null) {
+            statusLabel.setText("No hay un estudiante seleccionado.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RecordFinalGrade.fxml"));
+            Parent root = loader.load();
+
+            GUI_RecordFinalGradeController controller = loader.getController();
+            controller.setStudent(student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Asignar Calificación Final");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            logger.error("Error al cargar la interfaz GUI_RecordFinalGrade.fxml: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de calificación.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        }
     }
 }
