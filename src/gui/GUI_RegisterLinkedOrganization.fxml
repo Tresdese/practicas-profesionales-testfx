@@ -7,28 +7,22 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="447.0" prefWidth="608.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterLinkedOrganizationController">
+<AnchorPane prefHeight="185.0" prefWidth="608.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterLinkedOrganizationController">
     <children>
-        <Label fx:id="label" layoutX="173.0" layoutY="14.0" text="Registrar Organización Vinculada" textAlignment="CENTER">
+        <Label fx:id="label" layoutX="173.0" layoutY="54.0" text="Registrar Organización Vinculada" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
         </Label>
-        <Label fx:id="labelName" layoutX="147.0" layoutY="89.0" text="Nombre" />
-        <TextField fx:id="fieldName" layoutX="281.0" layoutY="85.0" />
-        <Label fx:id="labelAddress" layoutX="144.0" layoutY="137.0" text="Dirección" />
-        <TextField fx:id="fieldAddress" layoutX="281.0" layoutY="133.0" />
+        <Label fx:id="labelName" layoutX="147.0" layoutY="150.0" text="Nombre" />
+        <TextField fx:id="fieldName" layoutX="281.0" layoutY="146.0" />
+        <Label fx:id="labelAddress" layoutX="144.0" layoutY="214.0" text="Dirección" />
+        <TextField fx:id="fieldAddress" layoutX="281.0" layoutY="210.0" />
         <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="54.0" layoutY="333.0" prefWidth="500.0" textFill="red" wrapText="true">
             <font>
                 <Font size="18.0" />
             </font></Label>
-      <Label fx:id="labelRepresentativeName" layoutX="100.0" layoutY="183.0" text="Nombre de representante" />
-      <TextField fx:id="fieldRepresentativeName" layoutX="281.0" layoutY="179.0" />
-      <Label fx:id="labelRepresentativeSurname" layoutX="104.0" layoutY="234.0" text="Apellido de representante" />
-      <TextField fx:id="fieldRepresentativeSurname" layoutX="281.0" layoutY="230.0" />
-      <Label fx:id="labelRepresentativeMail" layoutX="107.0" layoutY="280.0" text="Correo del representante" />
-      <TextField fx:id="fieldRepresentativeEmail" layoutX="281.0" layoutY="276.0" />
-        <Button fx:id="buttonRegisterStudent" layoutX="236.0" layoutY="377.0" mnemonicParsing="false" onAction="#handleRegisterLinkedOrganization" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE">
+        <Button fx:id="buttonRegisterStudent" layoutX="236.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleRegisterLinkedOrganization" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
             </opaqueInsets></Button>

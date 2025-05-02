@@ -13,7 +13,7 @@ import logic.interfaces.ILinkedOrganizationDAO;
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private final Connection connection;
 
-    private final static String SQL_INSERT = "INSERT INTO organizacion_vinculada (idOrganizacion, nombre, direccion) VALUES (?, ?, ?)";
+    private final static String SQL_INSERT = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
     private final static String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";
     private final static String SQL_SELECT_BY_ID = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
@@ -24,8 +24,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     public LinkedOrganizationDAO(Connection connection) { this.connection = connection; }
 
     public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException {
-        String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
             statement.executeUpdate();

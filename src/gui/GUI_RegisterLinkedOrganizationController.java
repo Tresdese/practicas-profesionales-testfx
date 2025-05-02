@@ -4,10 +4,8 @@ import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DTO.LinkedOrganizationDTO;
-import logic.DTO.RepresentativeDTO;
 import logic.exceptions.*;
 import logic.services.LinkedOrganizationService;
-import logic.services.RepresentativeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +20,7 @@ public class GUI_RegisterLinkedOrganizationController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldName, fieldAddress, fieldRepresentativeName, fieldRepresentativeSurname, fieldRepresentativeEmail;
+    private TextField fieldName, fieldAddress;
 
     private GUI_CheckListLinkedOrganizationController parentController;
 
@@ -39,36 +37,25 @@ public class GUI_RegisterLinkedOrganizationController {
 
             String name = fieldName.getText();
             String address = fieldAddress.getText();
-            String representativeName = fieldRepresentativeName.getText();
-            String representativeSurnames = fieldRepresentativeSurname.getText();
-            String representativeEmail = fieldRepresentativeEmail.getText();
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
+
             try (Connection connection = connectionDB.connectDB()) {
                 LinkedOrganizationService organizationService = new LinkedOrganizationService(connection);
-                RepresentativeService representativeService = new RepresentativeService(connection);
 
                 LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
                 String generatedId = organizationService.registerOrganization(organization);
                 organization.setIddOrganization(generatedId);
 
-                RepresentativeDTO representative = new RepresentativeDTO(
-                        null,
-                        representativeName,
-                        representativeSurnames,
-                        representativeEmail,
-                        organization.getIddOrganization()
-                );
-                representativeService.registerRepresentative(representative);
-
-                statusLabel.setText("¡Organización y representante registrados exitosamente!");
+                statusLabel.setText("¡Organización registrada exitosamente!");
                 statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
 //                if (parentController != null) {
 //                    parentController.loadOrganizationData();
 //                }
+
             } catch (SQLException e) {
-                logger.error("Error de SQL al registrar la organización o el representante: {}", e.getMessage(), e);
+                logger.error("Error de SQL al registrar la organización: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             } finally {
@@ -87,9 +74,6 @@ public class GUI_RegisterLinkedOrganizationController {
 
     public boolean areFieldsFilled() {
         return !fieldName.getText().isEmpty() &&
-                !fieldAddress.getText().isEmpty() &&
-                !fieldRepresentativeName.getText().isEmpty() &&
-                !fieldRepresentativeSurname.getText().isEmpty() &&
-                !fieldRepresentativeEmail.getText().isEmpty();
+                !fieldAddress.getText().isEmpty();
     }
 }
