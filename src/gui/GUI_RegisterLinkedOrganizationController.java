@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
+import logic.DTO.RepresentativeDTO;
+import logic.DAO.RepresentativeDAO;
 import logic.exceptions.*;
 import logic.utils.EmailValidator;
 import org.apache.logging.log4j.LogManager;
@@ -14,15 +16,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class GUI_RegisterLinkedOrganizationController {
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
+
+    private static final Logger logger = LogManager.getLogger(GUI_RegisterLinkedOrganizationController.class);
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private TextField fieldName, fieldAddress, fieldRepresentativeName, fieldRepresentativeSurnames, fieldRepresentativeEmail;
+    private TextField fieldName, fieldAddress, fieldRepresentativeName, fieldRepresentativeSurname, fieldRepresentativeEmail;
 
-    private GUI_CheckListOfStudentsController parentController; // Referencia al controlador de la tabla
+    private GUI_CheckListOfStudentsController parentController;
 
     public void setParentController(GUI_CheckListOfStudentsController parentController) {
         this.parentController = parentController;
@@ -37,34 +40,29 @@ public class GUI_RegisterLinkedOrganizationController {
 
             String name = fieldName.getText();
             String address = fieldAddress.getText();
+            String representativeName = fieldRepresentativeName.getText();
+            String representativeSurnames = fieldRepresentativeSurname.getText();
+            String representativeEmail = fieldRepresentativeEmail.getText();
 
             LinkedOrganizationDTO organization = new LinkedOrganizationDTO("0", name, address);
+            RepresentativeDTO representative = new RepresentativeDTO("0", representativeName, representativeSurnames, representativeEmail, organization.getIddOrganization());
 
             ConecctionDataBase connectionDB = new ConecctionDataBase();
             try (Connection connection = connectionDB.connectDB()) {
-                LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO();
+                LinkedOrganizationDAO linkedOrganizationDAO = new LinkedOrganizationDAO(connection);
+                RepresentativeDAO representativeDAO = new RepresentativeDAO(connection);
 
-                if (linkedOrganizationDAO.isTuitonRegistered(tuiton, connection)) {
+                if (linkedOrganizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
                     throw new RepeatedTuiton("La matrícula ya está registrada.");
                 }
 
-                if (linkedOrganizationDAO.isPhoneRegistered(phone, connection)) {
-                    throw new RepeatedPhone("El número de teléfono ya está registrado.");
-                }
-
-                if (linkedOrganizationDAO.isEmailRegistered(email, connection)) {
-                    throw new RepeatedEmail("El correo electrónico ya está registrado.");
-                }
-
-                boolean success = linkedOrganizationDAO.insertStudent(student, connection);
-
-                if (success) {
+                if (linkedOrganizationDAO.insertLinkedOrganization(organization) && representativeDAO.insertRepresentative(representative)) {
                     statusLabel.setText("¡Organizacion registrada exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
-                    if (parentController != null) {
-                        parentController.loadStudentData();
-                    }
+//                    if (parentController != null) {
+//                        parentController.loadStudentData();
+//                    }
                 } else {
                     statusLabel.setText("No se pudo registrar la organizacion.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -76,7 +74,7 @@ public class GUI_RegisterLinkedOrganizationController {
             } finally {
                 connectionDB.closeConnection();
             }
-        } catch (EmptyFields | InvalidData | RepeatedTuiton | RepeatedPhone | RepeatedEmail | PasswordDoesNotMatch e) {
+        } catch (EmptyFields e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -89,6 +87,9 @@ public class GUI_RegisterLinkedOrganizationController {
 
     public boolean areFieldsFilled() {
         return !fieldName.getText().isEmpty() &&
-
+                !fieldAddress.getText().isEmpty() &&
+                !fieldRepresentativeName.getText().isEmpty() &&
+                !fieldRepresentativeSurname.getText().isEmpty() &&
+                !fieldRepresentativeEmail.getText().isEmpty();
     }
 }

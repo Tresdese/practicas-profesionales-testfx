@@ -11,14 +11,18 @@ import logic.DTO.RepresentativeDTO;
 import logic.interfaces.IRepresentativeDAO;
 
 public class RepresentativeDAO implements IRepresentativeDAO {
+    private final Connection connection;
+
     private final static String SQL_INSERT = "INSERT INTO representante (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ? WHERE idRepresentante = ?";
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT = "SELECT * FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
-    public boolean insertRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException {
-        RepresentativeDTO existingRepresentative = searchRepresentativeById(representative.getIdRepresentative(), connection);
+    public RepresentativeDAO(Connection connection) { this.connection = connection; }
+
+    public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException {
+        RepresentativeDTO existingRepresentative = searchRepresentativeById(representative.getIdRepresentative());
         if (existingRepresentative != null) {
             return representative.getIdRepresentative().equals(existingRepresentative.getIdRepresentative());
         }
@@ -33,7 +37,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         }
     }
 
-    public boolean updateRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException {
+    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, representative.getNames());
             statement.setString(2, representative.getSurnames());
@@ -44,7 +48,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         }
     }
 
-    public boolean deleteRepresentative(String idRepresentative, Connection connection) throws SQLException {
+    public boolean deleteRepresentative(String idRepresentative) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idRepresentative);
             return statement.executeUpdate() > 0;
@@ -52,7 +56,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public RepresentativeDTO searchRepresentativeById(String idRepresentative, Connection connection) throws SQLException {
+    public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException {
         RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idRepresentative);
@@ -71,7 +75,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public List<RepresentativeDTO> getAllRepresentatives(Connection connection) throws SQLException {
+    public List<RepresentativeDTO> getAllRepresentatives() throws SQLException {
         List<RepresentativeDTO> representatives = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL)) {
             ResultSet resultSet = statement.executeQuery();

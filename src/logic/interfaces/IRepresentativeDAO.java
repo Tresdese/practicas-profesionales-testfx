@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.RepresentativeDTO;
 
 public interface IRepresentativeDAO {
-    boolean insertRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException;
+    boolean insertRepresentative(RepresentativeDTO representative) throws SQLException;
 
-    boolean updateRepresentative(RepresentativeDTO representative, Connection connection) throws SQLException;
+    boolean updateRepresentative(RepresentativeDTO representative) throws SQLException;
 
-    boolean deleteRepresentative(String idRepresentative, Connection connection) throws SQLException;
+    boolean deleteRepresentative(String idRepresentative) throws SQLException;
 
-    RepresentativeDTO searchRepresentativeById(String idRepresentative, Connection connection) throws SQLException;
+    RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException;
 
-    List<RepresentativeDTO> getAllRepresentatives(Connection connection) throws SQLException;
+    List<RepresentativeDTO> getAllRepresentatives() throws SQLException;
 }

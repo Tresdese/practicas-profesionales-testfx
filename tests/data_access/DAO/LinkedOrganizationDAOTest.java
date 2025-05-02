@@ -36,12 +36,10 @@ class LinkedOrganizationDAOTest {
     }
 
     @BeforeEach
-    void setUp() {
-        organizationDAO = new LinkedOrganizationDAO();
-    }
+    void setUp() { organizationDAO = new LinkedOrganizationDAO(connection); }
 
     private String insertTestOrganization(String idOrganization, String nombre, String direccion) throws SQLException {
-        LinkedOrganizationDTO existingOrganization = organizationDAO.searchLinkedOrganizationById(idOrganization, connection);
+        LinkedOrganizationDTO existingOrganization = organizationDAO.searchLinkedOrganizationById(idOrganization);
         if (existingOrganization != null) {
             return idOrganization;
         }
@@ -74,12 +72,12 @@ class LinkedOrganizationDAOTest {
                     "Dirección Test 123"
             );
 
-            boolean result = organizationDAO.insertLinkedOrganization(organization, connection);
+            boolean result = organizationDAO.insertLinkedOrganization(organization);
             assertTrue(result, "La inserción debería ser exitosa");
 
             assertNotNull(organization.getIddOrganization(), "El ID generado no debería ser nulo");
 
-            LinkedOrganizationDTO insertedOrg = organizationDAO.searchLinkedOrganizationById(organization.getIddOrganization(), connection);
+            LinkedOrganizationDTO insertedOrg = organizationDAO.searchLinkedOrganizationById(organization.getIddOrganization());
             assertNotNull(insertedOrg, "La organización debería existir en la base de datos");
             assertEquals(uniqueName, insertedOrg.getName(), "El nombre debería coincidir");
             assertEquals("Dirección Test 123", insertedOrg.getAdddress(), "La dirección debería coincidir");
@@ -94,7 +92,7 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Consulta " + UUID.randomUUID().toString().substring(0, 5);
             String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Consulta");
 
-            LinkedOrganizationDTO org = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId), connection);
+            LinkedOrganizationDTO org = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId));
             assertNotNull(org, "Debería encontrar la organización");
             assertEquals(uniqueName, org.getName(), "El nombre debería coincidir");
             assertEquals("Dirección Consulta", org.getAdddress(), "La dirección debería coincidir");
@@ -115,10 +113,10 @@ class LinkedOrganizationDAOTest {
                     "Dirección Actualizada"
             );
 
-            boolean updateResult = organizationDAO.updateLinkedOrganization(orgToUpdate, connection);
+            boolean updateResult = organizationDAO.updateLinkedOrganization(orgToUpdate);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
-            LinkedOrganizationDTO updatedOrg = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId), connection);
+            LinkedOrganizationDTO updatedOrg = organizationDAO.searchLinkedOrganizationById(String.valueOf(testOrganizationId));
             assertNotNull(updatedOrg, "La organización debería existir después de actualizar");
             assertEquals("Nombre Actualizado", updatedOrg.getName(), "El nombre debería actualizarse");
             assertEquals("Dirección Actualizada", updatedOrg.getAdddress(), "La dirección debería actualizarse");
@@ -133,7 +131,7 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Lista " + UUID.randomUUID().toString().substring(0, 5);
             String testOrganizationId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Lista");
 
-            List<LinkedOrganizationDTO> organizations = organizationDAO.getAllLinkedOrganizations(connection);
+            List<LinkedOrganizationDTO> organizations = organizationDAO.getAllLinkedOrganizations();
             assertNotNull(organizations, "La lista no debería ser nula");
             assertFalse(organizations.isEmpty(), "La lista no debería estar vacía");
 
@@ -151,13 +149,13 @@ class LinkedOrganizationDAOTest {
             String uniqueName = "Organización Delete " + UUID.randomUUID().toString().substring(0, 5);
             String deleteId = insertTestOrganization(UUID.randomUUID().toString(), uniqueName, "Dirección Delete");
 
-            LinkedOrganizationDTO beforeDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId), connection);
+            LinkedOrganizationDTO beforeDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId));
             assertNotNull(beforeDelete, "La organización debería existir antes de eliminarla");
 
-            boolean deleteResult = organizationDAO.deleteLinkedOrganization(String.valueOf(deleteId), connection);
+            boolean deleteResult = organizationDAO.deleteLinkedOrganization(String.valueOf(deleteId));
             assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-            LinkedOrganizationDTO afterDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId), connection);
+            LinkedOrganizationDTO afterDelete = organizationDAO.searchLinkedOrganizationById(String.valueOf(deleteId));
             assertNull(afterDelete, "La organización no debería existir después de eliminarla");
         } catch (SQLException e) {
             fail("Error en testDeleteLinkedOrganization: " + e.getMessage());
