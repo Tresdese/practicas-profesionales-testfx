@@ -78,7 +78,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public StudentDTO searchStudentByTuiton(String tuiton) throws SQLException {
-        StudentDTO student = null;
+        StudentDTO student = new StudentDTO("N/A", 0, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0.0);
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
