@@ -3,8 +3,12 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DTO.StudentDTO;
+import logic.services.ServiceFactory;
+import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.sql.SQLException;
 
 public class GUI_ManageStudentController {
 
@@ -17,6 +21,18 @@ public class GUI_ManageStudentController {
     private Label statusLabel;
 
     private StudentDTO student;
+    private StudentService studentService;
+
+    @FXML
+    private void initialize() {
+        try {
+            this.studentService = ServiceFactory.getStudentService();
+        } catch (Exception e) {
+            logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
+            statusLabel.setText("Error al conectar con la base de datos.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
 
     public void setStudentData(StudentDTO student) {
         if (student == null) {
@@ -34,6 +50,13 @@ public class GUI_ManageStudentController {
 
     @FXML
     private void handleSaveChanges() {
+        if (studentService == null) {
+            logger.error("StudentService no ha sido inicializado.");
+            statusLabel.setText("Error interno. Intente más tarde.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return;
+        }
+
         try {
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
@@ -49,8 +72,14 @@ public class GUI_ManageStudentController {
             student.setNRC(nrc);
             student.setCreditAdvance(creditAdvance);
 
+            studentService.updateStudent(student);
+
             statusLabel.setText("¡Estudiante actualizado exitosamente!");
             statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+        } catch (SQLException e) {
+            statusLabel.setText("Error al actualizar en la base de datos.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            logger.error("Error al actualizar el estudiante en la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
