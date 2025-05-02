@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import logic.DTO.StudentDTO;
+import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,13 +60,18 @@ public class GUI_CheckListOfStudentsController {
     private Label statusLabel;
 
     private StudentDTO selectedStudent;
-    private StudentService studentService; // Inyección de dependencia
-
-    public void setStudentService(StudentService studentService) {
-        this.studentService = studentService;
-    }
+    private StudentService studentService;
 
     public void initialize() {
+        try {
+            // Obtener el servicio desde la fábrica
+            this.studentService = ServiceFactory.getStudentService();
+        } catch (RuntimeException e) {
+            logger.error("Error al inicializar StudentService: {}", e.getMessage(), e);
+            statusLabel.setText("Error interno. Intente más tarde.");
+            return;
+        }
+
         columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
         columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
         columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
