@@ -9,17 +9,18 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="658.0" prefWidth="1014.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckAcademicListController">
+<AnchorPane prefHeight="666.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListLinkedOrganizationController">
+
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnStaffNumber" prefWidth="120.0" text="Numero de personal" />
-                        <TableColumn fx:id="columnNames" prefWidth="150.0" text="Nombres" />
-                        <TableColumn fx:id="columnSurnames" prefWidth="150.0" text="Apellidos" />
-                        <TableColumn fx:id="columnUserNames" prefWidth="150.0" text="Nombre de usuario" />
-                        <TableColumn fx:id="columnnRole" prefWidth="100.0" text="Rol" />
+                        <TableColumn fx:id="columnOrganizationName" prefWidth="120.0" text="Nombre de la organizacion" />
+                        <TableColumn fx:id="columnOrganizationAddress" prefWidth="150.0" text="Direccion de la organizacion" />
+                        <TableColumn fx:id="columnRepresentativeName" prefWidth="150.0" text="Nombre del representante" />
+                        <TableColumn fx:id="columnRepresentativeSurname" prefWidth="150.0" text="Apellidos del representante" />
+                        <TableColumn fx:id="columnRepresentativeEmail" prefWidth="100.0" text="Email del representante" />
                         <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
                         <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
                     </columns>
@@ -32,13 +33,11 @@
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Button>
-        <Label layoutX="376.0" layoutY="8.0" text="Lista de Académicos">
+        <Label layoutX="352.0" text="Lista de Organizaciones">
             <font>
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterAcademic" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Académico" textFill="WHITE" />
+        <Button fx:id="buttonRegisterOrganization" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-    </children>
-
-</AnchorPane>
+    </children></AnchorPane>

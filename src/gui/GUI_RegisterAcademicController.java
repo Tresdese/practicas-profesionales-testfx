@@ -124,6 +124,10 @@ public class GUI_RegisterAcademicController {
                     statusLabel.setText("El académico ya existe.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 }
+
+                if (parentController != null) {
+                    parentController.loadAcademicData();
+                }
             } catch (SQLException e) {
                 statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);

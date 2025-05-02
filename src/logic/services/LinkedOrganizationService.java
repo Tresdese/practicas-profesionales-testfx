@@ -12,15 +12,15 @@ import java.util.List;
 
 public class LinkedOrganizationService {
     private final LinkedOrganizationDAO organizationDAO;
-    private final Connection connection; // Added connection field
+    private final Connection connection;
 
     public LinkedOrganizationService(Connection connection) {
-        this.connection = connection; // Initialize connection
+        this.connection = connection;
         this.organizationDAO = new LinkedOrganizationDAO(connection);
     }
 
     public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, RepeatedId, RepeatedName {
-        connection.setAutoCommit(false); // Deshabilitar auto-commit para manejar la transacción manualmente
+        connection.setAutoCommit(false);
         try {
             if (organizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
                 throw new RepeatedId("El ID de la organización ya está registrado.");
@@ -35,13 +35,13 @@ public class LinkedOrganizationService {
                 throw new SQLException("No se pudo registrar la organización.");
             }
 
-            connection.commit(); // Confirmar la transacción si todo es exitoso
+            connection.commit();
             return success;
         } catch (Exception e) {
-            connection.rollback(); // Revertir la transacción en caso de error
-            throw e; // Relanzar la excepción para que sea manejada por el llamador
+            connection.rollback();
+            throw e;
         } finally {
-            connection.setAutoCommit(true); // Restaurar el auto-commit
+            connection.setAutoCommit(true);
         }
     }
 
