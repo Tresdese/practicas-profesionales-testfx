@@ -31,14 +31,28 @@ public class GUI_LoginController {
     @FXML
     private Label statusLabel;
 
-    private LoginService loginService; // Inyección de dependencia
+    private LoginService loginService;
 
-    public void setLoginService(LoginService loginService) {
-        this.loginService = loginService;
+    @FXML
+    private void initialize() {
+        try {
+            this.loginService = new LoginService();
+        } catch (Exception e) {
+            logger.error("Error al inicializar LoginService: {}", e.getMessage(), e);
+            statusLabel.setText("Error al conectar con la base de datos.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+        }
     }
 
     @FXML
     private void handleLogin() {
+        if (loginService == null) {
+            logger.error("LoginService no ha sido inicializado.");
+            statusLabel.setText("Error interno. Intente más tarde.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -58,7 +72,6 @@ public class GUI_LoginController {
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
 
-                // Pasar el estudiante al controlador de GUI_MenuStudent
                 GUI_MenuStudentController controller = loader.getController();
                 controller.setStudent(student);
                 controller.setStudentName(student.getNames());
