@@ -10,12 +10,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
+import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -60,6 +59,11 @@ public class GUI_CheckListOfStudentsController {
     private Label statusLabel;
 
     private StudentDTO selectedStudent;
+    private StudentService studentService; // Inyección de dependencia
+
+    public void setStudentService(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     public void initialize() {
         columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
@@ -89,7 +93,7 @@ public class GUI_CheckListOfStudentsController {
             Parent root = loader.load();
 
             GUI_RegisterStudentController registerController = loader.getController();
-            registerController.setParentController(this); // Pasar referencia
+            registerController.setParentController(this);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
@@ -102,13 +106,12 @@ public class GUI_CheckListOfStudentsController {
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
 
-        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            StudentDAO studentDAO = new StudentDAO(connection); // Pasar la conexión al constructor
-            List<StudentDTO> students = studentDAO.getAllStudents(); // Sin pasar la conexión aquí
+        try {
+            List<StudentDTO> students = studentService.getAllStudents();
             studentList.addAll(students);
             statusLabel.setText("");
         } catch (SQLException e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
+            statusLabel.setText("Error al cargar los datos de los estudiantes.");
             logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
         }
 
@@ -124,9 +127,8 @@ public class GUI_CheckListOfStudentsController {
 
         ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
 
-        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            StudentDAO studentDAO = new StudentDAO(connection); // Pasar la conexión al constructor
-            StudentDTO student = studentDAO.searchStudentByTuiton(searchQuery); // Sin pasar la conexión aquí
+        try {
+            StudentDTO student = studentService.searchStudentByTuiton(searchQuery);
             if (student != null) {
                 filteredList.add(student);
             }

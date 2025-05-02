@@ -8,6 +8,7 @@ import logic.exceptions.RepeatedTuiton;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class StudentService {
     private final StudentDAO studentDAO;
@@ -40,5 +41,13 @@ public class StudentService {
         if (!success) {
             throw new SQLException("No se pudo actualizar el estudiante.");
         }
+    }
+
+    public List<StudentDTO> getAllStudents() throws SQLException {
+        return studentDAO.getAllStudents();
+    }
+
+    public StudentDTO searchStudentByTuiton(String tuiton) throws SQLException {
+        return studentDAO.searchStudentByTuiton(tuiton);
     }
 }

@@ -1,6 +1,5 @@
 package gui;
 
-import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DTO.StudentDTO;
@@ -10,7 +9,6 @@ import logic.validators.StudentValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class GUI_UpdateProfileController {
@@ -24,6 +22,11 @@ public class GUI_UpdateProfileController {
     private Label statusLabel;
 
     private StudentDTO currentStudent;
+    private StudentService studentService; // Inyección de dependencia
+
+    public void setStudentService(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @FXML
     private void handleUpdateProfile() {
@@ -34,7 +37,6 @@ public class GUI_UpdateProfileController {
             return;
         }
 
-        // Verificar que todos los campos estén llenos
         if (!areFieldsFilled()) {
             statusLabel.setText("Todos los campos deben estar llenos.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -42,7 +44,6 @@ public class GUI_UpdateProfileController {
         }
 
         try {
-            // Validar datos del estudiante
             String email = fieldEmail.getText();
             String phone = fieldPhone.getText();
             StudentValidator.validateStudentData(email, phone);
@@ -61,21 +62,14 @@ public class GUI_UpdateProfileController {
                     currentStudent.getCalificacionFinal()
             );
 
-            // Actualizar en la base de datos
-            ConecctionDataBase connectionDB = new ConecctionDataBase();
-            try (Connection connection = connectionDB.connectDB()) {
-                StudentService studentService = new StudentService(connection);
-                studentService.updateStudent(updatedStudent);
+            studentService.updateStudent(updatedStudent);
 
-                statusLabel.setText("¡Perfil actualizado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-            } catch (SQLException | RepeatedEmail | RepeatedPhone e) {
-                logger.warn("Error al actualizar el perfil: {}", e.getMessage(), e);
-                statusLabel.setText(e.getMessage());
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            } finally {
-                connectionDB.closeConnection();
-            }
+            statusLabel.setText("¡Perfil actualizado exitosamente!");
+            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+        } catch (SQLException | RepeatedEmail | RepeatedPhone e) {
+            logger.warn("Error al actualizar el perfil: {}", e.getMessage(), e);
+            statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
         } catch (InvalidData e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
