@@ -1,5 +1,9 @@
 package logic.DAO;
 
+import data_access.ConecctionDataBase;
+import logic.DTO.LinkedOrganizationDTO;
+import logic.interfaces.ILinkedOrganizationDAO;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,24 +11,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logic.DTO.LinkedOrganizationDTO;
-import logic.interfaces.ILinkedOrganizationDAO;
-
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
-    private final Connection connection;
 
-    private final static String SQL_INSERT = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
-    private final static String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
-    private final static String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";
-    private final static String SQL_SELECT_BY_ID = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
-    private final static String SQL_SELECT_BY_NAME = "SELECT * FROM organizacion_vinculada WHERE nombre = ?";
-    private final static String SQL_SELECT_BY_ADDRESS = "SELECT * FROM organizacion_vinculada WHERE direccion = ?";
-    private final static String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
-
-    public LinkedOrganizationDAO(Connection connection) { this.connection = connection; }
+    private static final String SQL_INSERT = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
+    private static final String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
+    private static final String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
+    private static final String SQL_SELECT_BY_NAME = "SELECT * FROM organizacion_vinculada WHERE nombre = ?";
+    private static final String SQL_SELECT_BY_ADDRESS = "SELECT * FROM organizacion_vinculada WHERE direccion = ?";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
 
     public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
             statement.executeUpdate();
@@ -40,7 +40,9 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public boolean updateLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
             statement.setString(3, organization.getIddOrganization());
@@ -49,27 +51,37 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public boolean deleteLinkedOrganization(String idOrganization) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idOrganization);
             return statement.executeUpdate() > 0;
         }
     }
 
     public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException {
-        LinkedOrganizationDTO group = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    group = new LinkedOrganizationDTO(resultSet.getString("idOrganizacion"), resultSet.getString("nombre"), resultSet.getString("direccion"));
+                    organization = new LinkedOrganizationDTO(
+                            resultSet.getString("idOrganizacion"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("direccion")
+                    );
                 }
             }
         }
-        return group;
+        return organization;
     }
 
     public boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
@@ -78,7 +90,9 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public boolean isNameRegistered(String name) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
@@ -86,9 +100,11 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean isAddressRegistered(String email) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ADDRESS)) {
-            statement.setString(1, email);
+    public boolean isAddressRegistered(String address) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ADDRESS)) {
+            statement.setString(1, address);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();
             }
@@ -97,10 +113,16 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException {
         List<LinkedOrganizationDTO> organizations = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                organizations.add(new LinkedOrganizationDTO(resultSet.getString("idOrganizacion"), resultSet.getString("nombre"), resultSet.getString("direccion")));
+                organizations.add(new LinkedOrganizationDTO(
+                        resultSet.getString("idOrganizacion"),
+                        resultSet.getString("nombre"),
+                        resultSet.getString("direccion")
+                ));
             }
         }
         return organizations;

@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConecctionDataBase {
+public class ConecctionDataBase implements AutoCloseable {
 
     private String URL;
     private String USER;
@@ -43,10 +43,12 @@ public class ConecctionDataBase {
         return connection;
     }
 
-    public void closeConnection() {
+    @Override
+    public void close() {
         if (connection != null) {
             try {
                 connection.close();
+                logger.info("Conexión cerrada correctamente.");
             } catch (SQLException e) {
                 logger.error("Error al cerrar la conexión: " + e.getMessage());
             }

@@ -22,7 +22,7 @@ public class GUI_UpdateProfileController {
     private Label statusLabel;
 
     private StudentDTO currentStudent;
-    private StudentService studentService; // Inyección de dependencia
+    private StudentService studentService;
 
     public void setStudentService(StudentService studentService) {
         this.studentService = studentService;
@@ -30,6 +30,13 @@ public class GUI_UpdateProfileController {
 
     @FXML
     private void handleUpdateProfile() {
+        if (studentService == null) {
+            logger.error("El servicio StudentService no ha sido inicializado.");
+            statusLabel.setText("Error interno: Servicio no disponible.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return;
+        }
+
         if (currentStudent == null) {
             logger.error("El objeto currentStudent no ha sido inicializado.");
             statusLabel.setText("Error: No se pudo cargar la información del estudiante.");

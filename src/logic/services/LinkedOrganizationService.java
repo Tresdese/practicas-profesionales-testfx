@@ -16,7 +16,7 @@ public class LinkedOrganizationService {
 
     public LinkedOrganizationService(Connection connection) {
         this.connection = connection;
-        this.organizationDAO = new LinkedOrganizationDAO(connection);
+        this.organizationDAO = new LinkedOrganizationDAO();
     }
 
     public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, RepeatedId, RepeatedName {

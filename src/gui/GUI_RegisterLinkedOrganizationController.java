@@ -59,7 +59,7 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             } finally {
-                connectionDB.closeConnection();
+                connectionDB.close();
             }
         } catch (EmptyFields e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);

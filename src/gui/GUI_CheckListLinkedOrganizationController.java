@@ -55,8 +55,8 @@ public class GUI_CheckListLinkedOrganizationController {
 
     public void initialize() {
         try {
-            Connection connection = new data_access.ConecctionDataBase().connectDB();
-            this.linkedOrganizationDAO = new LinkedOrganizationDAO(connection);
+            Connection connection = new data_access.ConecctionDataBase().connectDB(); // TODO acoplamiento no permitido
+            this.linkedOrganizationDAO = new LinkedOrganizationDAO();
 
             columnOrganizationName.setCellValueFactory(new PropertyValueFactory<>("name"));
             columnOrganizationAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -74,7 +74,7 @@ public class GUI_CheckListLinkedOrganizationController {
 
             loadOrganizationData();
 
-        } catch (Exception e) {
+        } catch (Exception e) { // TODO excepcion de nivel general
             logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
             statusLabel.setText("Error al inicializar. Por favor, intente más tarde.");
         }

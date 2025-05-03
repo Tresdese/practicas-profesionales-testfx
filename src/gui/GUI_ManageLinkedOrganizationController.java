@@ -41,7 +41,7 @@ public class GUI_ManageLinkedOrganizationController {
     @FXML
     private void handleSaveChanges() {
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            LinkedOrganizationDAO organizationDAO = new LinkedOrganizationDAO(connection);
+            LinkedOrganizationDAO organizationDAO = new LinkedOrganizationDAO();
 
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");

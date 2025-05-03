@@ -99,8 +99,8 @@ public class GUI_RegisterStudentController {
                     fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0 // calificacionFinal
             );
 
-            ConecctionDataBase connectionDB = new ConecctionDataBase();
-            try (Connection connection = connectionDB.connectDB()) {
+            try (ConecctionDataBase connectionDB = new ConecctionDataBase();
+                 Connection connection = connectionDB.connectDB()) {
                 StudentService studentService = new StudentService(connection);
                 studentService.registerStudent(student);
 
@@ -114,8 +114,6 @@ public class GUI_RegisterStudentController {
                 logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
                 statusLabel.setText(e.getMessage());
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            } finally {
-                connectionDB.closeConnection();
             }
         } catch (EmptyFields | InvalidData | PasswordDoesNotMatch e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);

@@ -30,13 +30,10 @@ class LinkedOrganizationDAOTest {
         }
     }
 
-    @AfterAll
-    static void tearDownClass() {
-        connectionDB.closeConnection();
-    }
+
 
     @BeforeEach
-    void setUp() { organizationDAO = new LinkedOrganizationDAO(connection); }
+    void setUp() { organizationDAO = new LinkedOrganizationDAO(); }
 
     private String insertTestOrganization(String idOrganization, String nombre, String direccion) throws SQLException {
         LinkedOrganizationDTO existingOrganization = organizationDAO.searchLinkedOrganizationById(idOrganization);

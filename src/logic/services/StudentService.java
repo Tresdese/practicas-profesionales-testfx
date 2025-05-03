@@ -14,7 +14,7 @@ public class StudentService {
     private final StudentDAO studentDAO;
 
     public StudentService(Connection connection) {
-        this.studentDAO = new StudentDAO(connection);
+        this.studentDAO = new StudentDAO();
     }
 
     public void registerStudent(StudentDTO student) throws SQLException, RepeatedTuiton, RepeatedPhone, RepeatedEmail {
