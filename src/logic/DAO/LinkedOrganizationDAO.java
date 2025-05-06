@@ -31,7 +31,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    return generatedKeys.getString(1); // Devuelve el ID generado
+                    return generatedKeys.getString(1);
                 } else {
                     throw new SQLException("No se pudo obtener el ID generado para la organización.");
                 }

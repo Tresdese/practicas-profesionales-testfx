@@ -158,7 +158,7 @@ class UserDAOTest {
                     Role.ACADEMICO_EVALUADOR
             );
 
-            boolean updateResult = userDAO.updateUser(userToUpdate, connection);
+            boolean updateResult = userDAO.updateUser(userToUpdate);
             assertTrue(updateResult, "La actualización debería ser exitosa");
 
             String sql = "SELECT contraseña FROM usuario WHERE idUsuario = ?";
@@ -237,10 +237,10 @@ class UserDAOTest {
                     Role.ACADEMICO_EVALUADOR
             );
 
-            boolean deleteResult = userDAO.deleteUser(userToDelete, connection);
+            boolean deleteResult = userDAO.deleteUser(userToDelete.getIdUser());
             assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-            UserDTO deletedUser = userDAO.getUser(new UserDTO(String.valueOf(id2)), connection);
+            UserDTO deletedUser = userDAO.search(new UserDTO(String.valueOf(id2)), connection);
             assertNull(deletedUser, "El evaluador eliminado no debería existir");
 
             UserDTO remainingUser1 = userDAO.getUser(new UserDTO(String.valueOf(id1)), connection);

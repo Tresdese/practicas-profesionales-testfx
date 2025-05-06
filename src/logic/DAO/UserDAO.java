@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConecctionDataBase;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 
@@ -26,7 +27,9 @@ public class UserDAO {
     }
 
     public boolean insertUser(UserDTO user) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
             statement.setString(1, user.getIdUser());
             statement.setString(2, user.getStaffNumber());
             statement.setString(3, user.getNames());
@@ -39,7 +42,9 @@ public class UserDAO {
     }
 
     public boolean updateUser(UserDTO user) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
             statement.setString(1, user.getStaffNumber());
             statement.setString(2, user.getNames());
             statement.setString(3, user.getSurnames());
@@ -52,14 +57,18 @@ public class UserDAO {
     }
 
     public boolean deleteUser(String idUser) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_DELETE);
             statement.setString(1, idUser);
             return statement.executeUpdate() > 0;
         }
     }
 
     public UserDTO searchUserById(String idUser) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -80,7 +89,9 @@ public class UserDAO {
 
     public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException {
         UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD);
             statement.setString(1, username);
             statement.setString(2, hashedPassword);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -100,10 +111,23 @@ public class UserDAO {
         return user;
     }
 
+    public boolean isUserRegistered(String idUser) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
+            statement.setString(1, idUser);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
     public List<UserDTO> getAllUsers() throws SQLException {
         List<UserDTO> users = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
-             ResultSet resultSet = statement.executeQuery()) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 users.add(new UserDTO(
                         resultSet.getString("idUsuario"),

@@ -2,7 +2,6 @@ package logic.services;
 
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DAO.LinkedOrganizationDAO;
-import logic.exceptions.RepeatedEmail;
 import logic.exceptions.RepeatedId;
 import logic.exceptions.RepeatedName;
 

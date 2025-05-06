@@ -58,6 +58,7 @@ public class GUI_CheckAcademicListController {
     private Label statusLabel;
 
     private UserDTO selectedAcademic;
+    private
 
     public void initialize() {
 
@@ -95,9 +96,8 @@ public class GUI_CheckAcademicListController {
     public void loadAcademicData() {
         ObservableList<UserDTO> userList = FXCollections.observableArrayList();
 
-        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            UserDAO userDAO = new UserDAO(connection); // Pasar la conexión al constructor
-            List<UserDTO> users = userDAO.getAllUsers(); // Llamar al método sin pasar la conexión
+        try {
+            List<UserDTO> users = userDAO.getAllUsers();
             userList.addAll(users);
             statusLabel.setText("");
         } catch (SQLException e) {
@@ -118,8 +118,8 @@ public class GUI_CheckAcademicListController {
         ObservableList<UserDTO> filteredList = FXCollections.observableArrayList();
 
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            UserDAO userDAO = new UserDAO(connection); // Pasar la conexión al constructor
-            UserDTO user = userDAO.searchUserById(searchQuery); // Llamar al método sin pasar la conexión
+            UserDAO userDAO = new UserDAO(connection);
+            UserDTO user = userDAO.searchUserById(searchQuery);
             if (user != null) {
                 filteredList.add(user);
             }
