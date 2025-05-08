@@ -1,5 +1,6 @@
 package logic.services;
 
+import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.UserDTO;
 import logic.DAO.UserDAO;
 import logic.exceptions.RepeatedId;
