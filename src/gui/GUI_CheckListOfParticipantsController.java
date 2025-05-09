@@ -3,6 +3,8 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,6 +32,9 @@ public class GUI_CheckListOfParticipantsController {
     @FXML
     private TableColumn<StudentProjectViewDTO, String> columnProjectName;
 
+    @FXML
+    private TableColumn<StudentProjectViewDTO, Void> columnGradePresentation;
+
     private final StudentProjectViewDAO studentProjectViewDAO = new StudentProjectViewDAO();
     private int presentationId = -1; // Valor predeterminado para indicar que no está definido
 
@@ -45,6 +50,9 @@ public class GUI_CheckListOfParticipantsController {
         columnStudentMatricula.setCellValueFactory(new PropertyValueFactory<>("studentMatricula"));
         columnStudentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         columnProjectName.setCellValueFactory(new PropertyValueFactory<>("projectName"));
+
+        // Agregar columna con botón de calificar
+        addGradePresentationButtonToTable();
     }
 
     private void loadStudentProjectData() {
@@ -66,6 +74,38 @@ public class GUI_CheckListOfParticipantsController {
             }
         } catch (SQLException e) {
             logger.error("Error al cargar los datos de estudiantes y proyectos.", e);
+        }
+    }
+
+    private void addGradePresentationButtonToTable() {
+        columnGradePresentation.setCellFactory(param -> new TableCell<>() {
+            private final Button gradeButton = new Button("Calificar Presentación");
+
+            {
+                gradeButton.setOnAction(event -> {
+                    StudentProjectViewDTO selectedParticipant = getTableView().getItems().get(getIndex());
+                    openGradePresentationWindow(selectedParticipant);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(gradeButton);
+                }
+            }
+        });
+    }
+
+    private void openGradePresentationWindow(StudentProjectViewDTO participant) {
+        try {
+            logger.info("Abriendo ventana para calificar la presentación del estudiante: " + participant.getStudentName());
+            // Aquí puedes implementar la lógica para abrir una nueva ventana o realizar la acción deseada.
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de calificación.", e);
         }
     }
 }
