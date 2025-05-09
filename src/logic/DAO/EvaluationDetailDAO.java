@@ -12,21 +12,20 @@ import java.util.List;
 
 public class EvaluationDetailDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO detalle_evaluacion (idDetalle, idEvaluacion, idCriterio, calificacion) VALUES (?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO detalle_evaluacion (idEvaluacion, idCriterio, calificacion) VALUES (?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE detalle_evaluacion SET idEvaluacion = ?, idCriterio = ?, calificacion = ? WHERE idDetalle = ?";
     private static final String SQL_DELETE = "DELETE FROM detalle_evaluacion WHERE idDetalle = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM detalle_evaluacion WHERE idDetalle = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM detalle_evaluacion";
 
-    public boolean insertEvaluationDetail(EvaluationDetailDTO detail) throws SQLException {
+    public void insertEvaluationDetail(EvaluationDetailDTO detail) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setInt(1, detail.getIdDetail());
-            statement.setInt(2, detail.getIdEvaluation());
-            statement.setInt(3, detail.getIdCriteria());
-            statement.setDouble(4, detail.getGrade());
-            return statement.executeUpdate() > 0;
+            statement.setInt(1, detail.getIdEvaluation()); // ID de evaluación
+            statement.setInt(2, detail.getIdCriteria());   // ID de criterio
+            statement.setDouble(3, detail.getGrade());     // Calificación
+            statement.executeUpdate();
         }
     }
 
