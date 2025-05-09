@@ -1,5 +1,8 @@
 package logic.DAO;
 
+import data_access.ConecctionDataBase;
+import logic.DTO.ProjectDTO;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,17 +10,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import logic.DTO.ProjectDTO;
-import logic.interfaces.IProjectDAO;
+public class ProjectDAO {
 
-public class ProjectDAO implements IProjectDAO {
-    private final static String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario) VALUES (?, ?, ?, ?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ? WHERE idProyecto = ?";
-    private final static String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
-    private final static String SQL_SELECT = "SELECT * FROM proyecto WHERE idProyecto = ?";
+    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ? WHERE idProyecto = ?";
+    private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
+    private static final String SQL_SELECT = "SELECT * FROM proyecto WHERE idProyecto = ?";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM proyecto";
 
-    public boolean insertProject(ProjectDTO project, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    public boolean insertProject(ProjectDTO project) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, project.getIdProject());
             statement.setString(2, project.getName());
             statement.setString(3, project.getDescription());
@@ -28,8 +32,10 @@ public class ProjectDAO implements IProjectDAO {
         }
     }
 
-    public boolean updateProject(ProjectDTO project, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updateProject(ProjectDTO project) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, project.getName());
             statement.setString(2, project.getDescription());
             statement.setTimestamp(3, project.getApproximateDate());
@@ -40,31 +46,30 @@ public class ProjectDAO implements IProjectDAO {
         }
     }
 
-    public boolean deleteProject(String idProject, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deleteProject(String idProject) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idProject);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public ProjectDTO searchProjectById(String idProject, Connection connection) throws SQLException {
-        ProjectDTO project = new ProjectDTO("N/A",
-                "N/A",
-                "N/A",
-                java.sql.Timestamp.valueOf("0404-01-01 00:00:00"),
-                java.sql.Timestamp.valueOf("0404-01-01 00:00:00"),
-                "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+    public ProjectDTO searchProjectById(String idProject) throws SQLException {
+        ProjectDTO project = null;
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     project = new ProjectDTO(
-                        resultSet.getString("idProyecto"),
-                        resultSet.getString("nombre"),
-                        resultSet.getString("descripcion"),
-                        resultSet.getTimestamp("fechaAproximada"),
-                        resultSet.getTimestamp("fechaInicio"),
-                        resultSet.getString("idUsuario")
+                            resultSet.getString("idProyecto"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("descripcion"),
+                            resultSet.getTimestamp("fechaAproximada"),
+                            resultSet.getTimestamp("fechaInicio"),
+                            resultSet.getString("idUsuario")
                     );
                 }
             }
@@ -72,19 +77,20 @@ public class ProjectDAO implements IProjectDAO {
         return project;
     }
 
-    public List<ProjectDTO> getAllProjects(Connection connection) throws SQLException {
+    public List<ProjectDTO> getAllProjects() throws SQLException {
         List<ProjectDTO> projects = new ArrayList<>();
-        String SQL_SELECT_ALL = "SELECT * FROM proyecto";
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 projects.add(new ProjectDTO(
-                    resultSet.getString("idProyecto"),
-                    resultSet.getString("nombre"),
-                    resultSet.getString("descripcion"),
-                    resultSet.getTimestamp("fechaAproximada"),
-                    resultSet.getTimestamp("fechaInicio"),
-                    resultSet.getString("idUsuario")
+                        resultSet.getString("idProyecto"),
+                        resultSet.getString("nombre"),
+                        resultSet.getString("descripcion"),
+                        resultSet.getTimestamp("fechaAproximada"),
+                        resultSet.getTimestamp("fechaInicio"),
+                        resultSet.getString("idUsuario")
                 ));
             }
         }

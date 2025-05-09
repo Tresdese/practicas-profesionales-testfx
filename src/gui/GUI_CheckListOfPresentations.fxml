@@ -14,8 +14,7 @@
                         <TableColumn fx:id="columnIdProject" prefWidth="150.0" text="ID Proyecto" />
                         <TableColumn fx:id="columnDate" prefWidth="150.0" text="Fecha" />
                         <TableColumn fx:id="columnType" prefWidth="150.0" text="Tipo" />
-                        <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
+                        <TableColumn fx:id="columnRegisterEvaluation" prefWidth="150.0" text="Registrar" />
                     </columns>
                 </TableView>
             </center>
@@ -31,7 +30,6 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterPresentation" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Presentación" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
     </children>
 </AnchorPane>
