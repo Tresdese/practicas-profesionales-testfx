@@ -41,55 +41,46 @@ public class GUI_EvaluatePresentationController {
 
     @FXML
     public void initialize() {
-        // Configurar acción del botón para guardar
+
         saveButton.setOnAction(event -> saveScores());
 
-        // Cargar los criterios
         loadCriteria();
     }
 
     public void loadCriteria() {
         try {
-            // Limpiar contenedores y listas para evitar duplicación
+
             criteriaInputContainer.getChildren().clear();
             scoreFields.clear();
 
-            // Obtener los criterios de evaluación desde la base de datos
             criteriaList = assessmentCriterionDAO.getAllAssessmentCriteria();
 
             for (AssessmentCriterionDTO criterion : criteriaList) {
                 HBox hBox = new HBox(10);
 
-                // Etiqueta del criterio
                 Label nameLabel = new Label(criterion.getNameCriterion());
                 nameLabel.setPrefWidth(300);
 
-                // Campo para ingresar la calificación
                 TextField scoreField = new TextField();
                 scoreField.setPrefWidth(50);
 
-                // Etiquetas para los niveles de calificación
                 Label competentLabel = new Label("Competente");
                 Label independentLabel = new Label("Independiente");
                 Label basicLabel = new Label("Básico");
                 Label notCompetentLabel = new Label("No Competente");
 
-                // Estilo inicial de las etiquetas
                 competentLabel.getStyleClass().add("level-label");
                 independentLabel.getStyleClass().add("level-label");
                 basicLabel.getStyleClass().add("level-label");
                 notCompetentLabel.getStyleClass().add("level-label");
 
-                // Agregar listener para subrayar dinámicamente el nivel correspondiente
                 scoreField.textProperty().addListener((observable, oldValue, newValue) -> {
                     highlightLevel(competentLabel, independentLabel, basicLabel, notCompetentLabel, newValue);
                 });
 
-                // Agregar los elementos al contenedor
                 hBox.getChildren().addAll(nameLabel, scoreField, competentLabel, independentLabel, basicLabel, notCompetentLabel);
                 criteriaInputContainer.getChildren().add(hBox);
 
-                // Guardar referencia al campo de calificación
                 scoreFields.add(scoreField);
             }
         } catch (SQLException e) {
@@ -116,7 +107,7 @@ public class GUI_EvaluatePresentationController {
                 notCompetentLabel.getStyleClass().add("highlighted");
             }
         } catch (NumberFormatException e) {
-            // Si el texto no es un número válido, no se realiza ninguna acción
+            logger.error("Formato incorrecto de los valores.");
         }
     }
 

@@ -110,6 +110,6 @@ public class EvaluationPresentationDAO {
                 return resultSet.getInt(1);
             }
         }
-        throw new SQLException("No se pudo obtener el último ID insertado.");
+        throw new SQLException("No se pudo obtener el último ID insertado."); //TODO Antipatron
     }
 }
