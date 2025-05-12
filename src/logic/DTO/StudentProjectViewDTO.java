@@ -3,7 +3,7 @@ package logic.DTO;
 import java.util.Date;
 
 public class StudentProjectViewDTO {
-    private int presentationId;
+    private int idPresentation;
     private Date presentationDate;
     private String presentationType;
     private int projectId;
@@ -11,9 +11,9 @@ public class StudentProjectViewDTO {
     private String studentMatricula;
     private String studentName;
 
-    public StudentProjectViewDTO(int presentationId, Date presentationDate, String presentationType, int projectId,
+    public StudentProjectViewDTO(int idPresentation, Date presentationDate, String presentationType, int projectId,
                                  String projectName, String studentMatricula, String studentName) {
-        this.presentationId = presentationId;
+        this.idPresentation = idPresentation;
         this.presentationDate = presentationDate;
         this.presentationType = presentationType;
         this.projectId = projectId;
@@ -22,12 +22,13 @@ public class StudentProjectViewDTO {
         this.studentName = studentName;
     }
 
-    public int getPresentationId() {
-        return presentationId;
+    // Getters y setters
+    public int getIdPresentation() {
+        return idPresentation;
     }
 
-    public void setPresentationId(int presentationId) {
-        this.presentationId = presentationId;
+    public void setIdPresentation(int idPresentation) {
+        this.idPresentation = idPresentation;
     }
 
     public Date getPresentationDate() {

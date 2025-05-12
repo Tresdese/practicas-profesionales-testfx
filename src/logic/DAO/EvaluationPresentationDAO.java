@@ -12,22 +12,29 @@ import java.util.List;
 
 public class EvaluationPresentationDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO evaluacion_presentacion (idEvaluacion, idProyecto, matricula, fecha, promedio) VALUES (?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE evaluacion_presentacion SET idProyecto = ?, matricula = ?, fecha = ?, promedio = ? WHERE idEvaluacion = ?";
+    private static final String SQL_INSERT = "INSERT INTO evaluacion_presentacion (idPresentacion, matricula, fecha, promedio) VALUES (?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE evaluacion_presentacion SET idPresentacion = ?, matricula = ?, fecha = ?, promedio = ? WHERE idEvaluacion = ?";
     private static final String SQL_DELETE = "DELETE FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM evaluacion_presentacion";
 
-    public boolean insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
+    public int insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setInt(1, evaluation.getIdEvaluation());
-            statement.setInt(2, evaluation.getIdProject());
-            statement.setString(3, evaluation.getTuiton());
-            statement.setDate(4, new java.sql.Date(evaluation.getDate().getTime()));
-            statement.setDouble(5, evaluation.getAverage());
-            return statement.executeUpdate() > 0;
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            statement.setInt(1, evaluation.getIdProject());
+            statement.setString(2, evaluation.getTuiton());
+            statement.setDate(3, new java.sql.Date(evaluation.getDate().getTime()));
+            statement.setDouble(4, evaluation.getAverage());
+            statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("No se pudo obtener el ID generado para evaluacion_presentacion.");
+                }
+            }
         }
     }
 
@@ -63,7 +70,7 @@ public class EvaluationPresentationDAO {
                 if (resultSet.next()) {
                     evaluation = new EvaluationPresentationDTO(
                             resultSet.getInt("idEvaluacion"),
-                            resultSet.getInt("idProyecto"),
+                            resultSet.getInt("idPresentacion"),
                             resultSet.getString("matricula"),
                             resultSet.getDate("fecha"),
                             resultSet.getDouble("promedio")
@@ -83,7 +90,7 @@ public class EvaluationPresentationDAO {
             while (resultSet.next()) {
                 evaluations.add(new EvaluationPresentationDTO(
                         resultSet.getInt("idEvaluacion"),
-                        resultSet.getInt("idProyecto"),
+                        resultSet.getInt("idPresentacion"),
                         resultSet.getString("matricula"),
                         resultSet.getDate("fecha"),
                         resultSet.getDouble("promedio")
@@ -91,5 +98,18 @@ public class EvaluationPresentationDAO {
             }
         }
         return evaluations;
+    }
+
+    public int getLastInsertedId() throws SQLException {
+        String SQL_LAST_INSERT_ID = "SELECT LAST_INSERT_ID()";
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_LAST_INSERT_ID);
+             ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+        }
+        throw new SQLException("No se pudo obtener el último ID insertado.");
     }
 }

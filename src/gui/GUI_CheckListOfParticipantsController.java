@@ -3,11 +3,15 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import logic.DAO.StudentProjectViewDAO;
 import logic.DTO.StudentProjectViewDTO;
 import org.apache.logging.log4j.LogManager;
@@ -36,27 +40,25 @@ public class GUI_CheckListOfParticipantsController {
     private TableColumn<StudentProjectViewDTO, Void> columnGradePresentation;
 
     private final StudentProjectViewDAO studentProjectViewDAO = new StudentProjectViewDAO();
-    private int presentationId = -1; // Valor predeterminado para indicar que no está definido
+    private int presentationId = -1;
 
     public void setPresentationId(int presentationId) {
         this.presentationId = presentationId;
         logger.info("ID de la presentación recibido: " + presentationId);
-        loadStudentProjectData(); // Cargar los datos al recibir el ID de la presentación
+        loadStudentProjectData();
     }
 
     @FXML
     public void initialize() {
-        // Configurar las columnas
         columnStudentMatricula.setCellValueFactory(new PropertyValueFactory<>("studentMatricula"));
         columnStudentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
         columnProjectName.setCellValueFactory(new PropertyValueFactory<>("projectName"));
 
-        // Agregar columna con botón de calificar
         addGradePresentationButtonToTable();
     }
 
     private void loadStudentProjectData() {
-        if (presentationId <= 0) { // Verificar si el ID de la presentación es válido
+        if (presentationId <= 0) {
             logger.warn("El ID de la presentación no es válido: " + presentationId);
             return;
         }
@@ -103,7 +105,18 @@ public class GUI_CheckListOfParticipantsController {
     private void openGradePresentationWindow(StudentProjectViewDTO participant) {
         try {
             logger.info("Abriendo ventana para calificar la presentación del estudiante: " + participant.getStudentName());
-            // Aquí puedes implementar la lógica para abrir una nueva ventana o realizar la acción deseada.
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_EvaluatePresentation.fxml"));
+            Parent root = loader.load();
+
+            GUI_EvaluatePresentationController controller = loader.getController();
+            controller.setPresentationIdAndTuiton(participant.getIdPresentation(), participant.getStudentMatricula());
+            controller.loadCriteria();
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Calificar Presentación - " + participant.getStudentName());
+            stage.show();
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de calificación.", e);
         }

@@ -46,7 +46,6 @@ public class GUI_CheckListOfPresentationsController {
 
     @FXML
     public void initialize() {
-        // Configurar las columnas
         columnIdPresentation.setCellValueFactory(new PropertyValueFactory<>("idPresentation"));
         columnIdProject.setCellValueFactory(new PropertyValueFactory<>("idProject"));
         columnDate.setCellValueFactory(cellData -> {
@@ -57,13 +56,10 @@ public class GUI_CheckListOfPresentationsController {
         });
         columnType.setCellValueFactory(new PropertyValueFactory<>("tipe"));
 
-        // Agregar columna con botones
         addRegisterEvaluationButtonToTable();
 
-        // Cargar las próximas presentaciones
         loadUpcomingPresentations();
 
-        // Listener para actualizar la fila seleccionada
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedPresentation = newValue;
             tableView.refresh();
@@ -125,11 +121,10 @@ public class GUI_CheckListOfPresentationsController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfParticipants.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador de GUI_CheckListOfParticipantsController
             GUI_CheckListOfParticipantsController controller = loader.getController();
-            int presentationId = presentation.getIdPresentation(); // Cambiar a ID de presentación
+            int presentationId = presentation.getIdPresentation();
             logger.info("Abriendo ventana de Lista de Participantes para la presentación con ID: " + presentationId);
-            controller.setPresentationId(presentationId); // Pasar el ID de la presentación
+            controller.setPresentationId(presentationId);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
