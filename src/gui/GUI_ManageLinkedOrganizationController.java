@@ -1,18 +1,15 @@
 package gui;
 
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
-import logic.DTO.StudentDTO;
+import logic.services.LinkedOrganizationService;
+import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URL;
-import java.sql.Connection;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
 
 public class GUI_ManageLinkedOrganizationController {
 
@@ -24,7 +21,28 @@ public class GUI_ManageLinkedOrganizationController {
     @FXML
     private Label statusLabel;
 
+    private GUI_CheckListLinkedOrganizationController parentController;
+
     private LinkedOrganizationDTO organization;
+    private LinkedOrganizationService organizationService;
+
+    public void setParentController(GUI_CheckListLinkedOrganizationController parentController) {
+        this.parentController = parentController;
+    }
+
+    public void setOrganizationService(LinkedOrganizationService organizationService) {
+        this.organizationService = organizationService;
+    }
+
+    @FXML
+    public void initialize() {
+        try {
+            ServiceConfig serviceConfig = new ServiceConfig();
+            organizationService = serviceConfig.getLinkedOrganizationService();
+        } catch (SQLException e) {
+            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+        }
+    }
 
     public void setOrganizationData(LinkedOrganizationDTO organization) {
         if (organization == null) {
@@ -40,9 +58,7 @@ public class GUI_ManageLinkedOrganizationController {
 
     @FXML
     private void handleSaveChanges() {
-        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            LinkedOrganizationDAO organizationDAO = new LinkedOrganizationDAO();
-
+        try {
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
@@ -53,13 +69,15 @@ public class GUI_ManageLinkedOrganizationController {
             organization.setName(name);
             organization.setAddress(address);
 
-            boolean success = organizationDAO.updateLinkedOrganization(organization);
-            if (success) {
-                statusLabel.setText("¡Organización vinculada actualizada exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-            } else {
-                throw new Exception("No se pudo actualizar la organización vinculada.");
+            organizationService.updateOrganization(organization);
+
+            statusLabel.setText("¡Organización vinculada actualizada exitosamente!");
+            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+
+            if (parentController != null) {
+                parentController.loadOrganizationData();
             }
+
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);

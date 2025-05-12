@@ -11,43 +11,43 @@ import java.util.List;
 
 public class LinkedOrganizationService {
     private final LinkedOrganizationDAO organizationDAO;
-    private final Connection connection;
 
     public LinkedOrganizationService(Connection connection) {
-        this.connection = connection;
-        this.organizationDAO = new LinkedOrganizationDAO();
+        if (connection == null) {
+            throw new IllegalArgumentException("La conexión no puede ser nula.");
+        }
+        this.organizationDAO = new LinkedOrganizationDAO(connection);
     }
 
     public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, RepeatedId, RepeatedName {
-        connection.setAutoCommit(false);
-        try {
-            if (organizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
-                throw new RepeatedId("El ID de la organización ya está registrado.");
-            }
-
-            if (organizationDAO.isNameRegistered(organization.getName())) {
-                throw new RepeatedName("El nombre de la organización ya está registrado.");
-            }
-
-            String success = organizationDAO.insertLinkedOrganizationAndGetId(organization);
-            if (success.isEmpty()) {
-                throw new SQLException("No se pudo registrar la organización.");
-            }
-
-            connection.commit();
-            return success;
-        } catch (Exception e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
+        if (organization == null) {
+            throw new IllegalArgumentException("La organización no puede ser nula.");
         }
+
+        if (organizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
+            throw new RepeatedId("El ID de la organización ya está registrado.");
+        }
+
+        if (organizationDAO.isNameRegistered(organization.getName())) {
+            throw new RepeatedName("El nombre de la organización ya está registrado.");
+        }
+
+        String success = organizationDAO.insertLinkedOrganizationAndGetId(organization);
+        if (success.isEmpty()) {
+            throw new SQLException("No se pudo registrar la organización.");
+        }
+
+        return success;
     }
 
-    public void updateStudent(LinkedOrganizationDTO organization) throws SQLException {
+    public void updateOrganization(LinkedOrganizationDTO organization) throws SQLException {
+        if (organization == null) {
+            throw new IllegalArgumentException("La organización no puede ser nula.");
+        }
+
         boolean success = organizationDAO.updateLinkedOrganization(organization);
         if (!success) {
-            throw new SQLException("No se pudo actualizar la organizacion.");
+            throw new SQLException("No se pudo actualizar la organización.");
         }
     }
 
@@ -55,7 +55,19 @@ public class LinkedOrganizationService {
         return organizationDAO.getAllLinkedOrganizations();
     }
 
-    public LinkedOrganizationDTO searchStudentByTuiton(String id) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationById(String id) throws SQLException {
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("El ID no puede ser nulo o vacío.");
+        }
+
         return organizationDAO.searchLinkedOrganizationById(id);
+    }
+
+    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
+        }
+
+        return organizationDAO.searchLinkedOrganizationByName(name);
     }
 }

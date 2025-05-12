@@ -10,12 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
+import logic.services.LinkedOrganizationService;
+import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -51,33 +51,35 @@ public class GUI_CheckListLinkedOrganizationController {
     private Label statusLabel;
 
     private LinkedOrganizationDTO selectedLinkedOrganization;
-    private LinkedOrganizationDAO linkedOrganizationDAO;
+    private LinkedOrganizationService linkedOrganizationService;
+
+    public void setOrganizationService(LinkedOrganizationService linkedOrganizationService) {
+        this.linkedOrganizationService = linkedOrganizationService;
+    }
 
     public void initialize() {
         try {
-            Connection connection = new data_access.ConecctionDataBase().connectDB(); // TODO acoplamiento no permitido
-            this.linkedOrganizationDAO = new LinkedOrganizationDAO();
-
-            columnOrganizationName.setCellValueFactory(new PropertyValueFactory<>("name"));
-            columnOrganizationAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-
-            addDetailsButtonToTable();
-            addManagementButtonToTable();
-
-            searchButton.setOnAction(event -> searchOrganization());
-            buttonRegisterOrganization.setOnAction(event -> openRegisterOrganizationWindow());
-
-            tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                selectedLinkedOrganization = newValue;
-                tableView.refresh();
-            });
-
-            loadOrganizationData();
-
-        } catch (Exception e) { // TODO excepcion de nivel general
-            logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
-            statusLabel.setText("Error al inicializar. Por favor, intente más tarde.");
+            ServiceConfig serviceConfig = new ServiceConfig();
+            linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
+        } catch (SQLException e) {
+            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
         }
+
+        columnOrganizationName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        columnOrganizationAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+
+        addDetailsButtonToTable();
+        addManagementButtonToTable();
+
+        loadOrganizationData();
+
+        searchButton.setOnAction(event -> searchOrganization());
+        buttonRegisterOrganization.setOnAction(event -> openRegisterOrganizationWindow());
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedLinkedOrganization = newValue;
+            tableView.refresh();
+        });
     }
 
 
@@ -101,7 +103,7 @@ public class GUI_CheckListLinkedOrganizationController {
         ObservableList<LinkedOrganizationDTO> organizationList = FXCollections.observableArrayList();
 
         try {
-            List<LinkedOrganizationDTO> organizations = linkedOrganizationDAO.getAllLinkedOrganizations();
+            List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
             organizationList.addAll(organizations);
             statusLabel.setText("");
         } catch (SQLException e) {
@@ -122,7 +124,7 @@ public class GUI_CheckListLinkedOrganizationController {
         ObservableList<LinkedOrganizationDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            LinkedOrganizationDTO organization = linkedOrganizationDAO.searchLinkedOrganizationById(searchQuery);
+            LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(searchQuery);
             if (organization != null) {
                 filteredList.add(organization);
             }

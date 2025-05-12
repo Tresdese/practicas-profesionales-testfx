@@ -122,6 +122,17 @@ public class UserDAO {
         }
     }
 
+    public boolean isNameRegistered(String username) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME);
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
     public List<UserDTO> getAllUsers() throws SQLException {
         List<UserDTO> users = new ArrayList<>();
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
