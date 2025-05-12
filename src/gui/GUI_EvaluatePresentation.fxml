@@ -6,9 +6,74 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gui.GUI_EvaluatePresentationController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="600.0" prefWidth="900.0"
+            stylesheets="@stylesheets/style.css">
     <children>
-        <VBox fx:id="criteriaContainer" layoutX="20.0" layoutY="20.0" prefWidth="560.0" spacing="10.0" />
-        <Button fx:id="saveButton" layoutX="250.0" layoutY="340.0" mnemonicParsing="false" text="Guardar Calificaciones" />
+        <!-- Título principal -->
+        <Label text="Criterios de Evaluación" layoutX="20.0" layoutY="10.0" styleClass="title" />
+
+        <!-- Tabla de criterios (estática, hardcoded) -->
+        <ScrollPane layoutX="20.0" layoutY="50.0" prefWidth="860.0" prefHeight="250.0">
+            <content>
+                <GridPane gridLinesVisible="true">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="250.0" />
+                        <ColumnConstraints prefWidth="150.0" />
+                        <ColumnConstraints prefWidth="150.0" />
+                        <ColumnConstraints prefWidth="150.0" />
+                        <ColumnConstraints prefWidth="150.0" />
+                    </columnConstraints>
+                    <children>
+                        <!-- Encabezados de la tabla -->
+                        <Label text="Criterio" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="table-header" />
+                        <Label text="Competente\n(9.1 - 10)" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="table-header" />
+                        <Label text="Independiente\n(8.1 - 9.0)" GridPane.columnIndex="2" GridPane.rowIndex="0" styleClass="table-header" />
+                        <Label text="Básico Avanzado\n(7.1 - 8.0)" GridPane.columnIndex="3" GridPane.rowIndex="0" styleClass="table-header" />
+                        <Label text="No Competente\n(5.0 - 7.0)" GridPane.columnIndex="4" GridPane.rowIndex="0" styleClass="table-header" />
+
+                        <!-- Criterios hardcoded (texto estático) -->
+                        <Label text="Uso de métodos y técnicas de la IS" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label text="Cumple con calidad y asegura los métodos." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Métodos adecuados y aplicados correctamente." GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label text="Métodos presentan deficiencias." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label text="No se aplicaron métodos." GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                        <Label text="Requisitos" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label text="Cumple con todos los requisitos." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Cumple con la mayoría de los requisitos." GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="Cumple parcialmente." GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label text="No cumple con los requisitos." GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                        <Label text="Seguridad y dominio" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label text="Exposición clara y segura." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Exposición con seguridad moderada." GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label text="Exposición con fallos menores." GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Label text="Exposición deficiente." GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                        <Label text="Contenido" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <Label text="Contenido completo y relevante." GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="Contenido adecuado con ligeras omisiones." GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label text="Contenido incompleto." GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label text="Contenido insuficiente." GridPane.columnIndex="4" GridPane.rowIndex="4" />
+
+                        <Label text="Ortografía y redacción" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <Label text="Sin errores ortográficos ni gramaticales." GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="Errores mínimos." GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <Label text="Errores frecuentes." GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <Label text="Errores graves." GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                    </children>
+                </GridPane>
+            </content>
+        </ScrollPane>
+
+        <!-- Calificaciones dinámicas -->
+        <VBox fx:id="criteriaInputContainer" layoutX="20.0" layoutY="320.0" prefWidth="860.0" spacing="10.0" />
+
+        <!-- Botón y promedio -->
+        <HBox layoutX="20.0" layoutY="520.0" spacing="20.0">
+            <Button fx:id="saveButton" text="Guardar Calificaciones" />
+            <Label text="Promedio:" />
+            <TextField fx:id="averageField" editable="false" prefWidth="80.0" />
+        </HBox>
     </children>
 </AnchorPane>

@@ -1,0 +1,11 @@
+/* Estilo general para las etiquetas de nivel */
+.level-label {
+    -fx-font-size: 12px;
+    -fx-padding: 5px;
+}
+
+/* Estilo para subrayar las etiquetas destacadas */
+.highlighted {
+    -fx-underline: true;
+    -fx-text-fill: green; /* Cambiado a amarillo para resaltar */
+}
