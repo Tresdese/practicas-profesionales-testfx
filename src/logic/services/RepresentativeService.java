@@ -16,7 +16,8 @@ public class RepresentativeService {
         this.representativeDAO = new RepresentativeDAO(connection);
     }
 
-    public void registerRepresentative(RepresentativeDTO representative) throws SQLException, RepeatedEmail {
+    public boolean registerRepresentative(RepresentativeDTO representative) throws SQLException, RepeatedEmail {
+
         if (representativeDAO.isRepresentativeRegistered(representative.getIdRepresentative())) {
             throw new RepeatedId("La ID ya está registrada.");
         }
@@ -29,20 +30,24 @@ public class RepresentativeService {
         if (!success) {
             throw new SQLException("No se pudo registrar al representante.");
         }
+
+        return success;
     }
 
-    public void updateStudent(RepresentativeDTO representative) throws SQLException {
+    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException {
         boolean success = representativeDAO.updateRepresentative(representative);
         if (!success) {
             throw new SQLException("No se pudo actualizar al representante.");
         }
+
+        return success;
     }
 
     public List<RepresentativeDTO> getAllRepresentatives() throws SQLException {
         return representativeDAO.getAllRepresentatives();
     }
 
-    public RepresentativeDTO searchStudentByTuiton(String id) throws SQLException {
+    public RepresentativeDTO searchRepresentativeById(String id) throws SQLException {
         return representativeDAO.searchRepresentativeById(id);
     }
 }

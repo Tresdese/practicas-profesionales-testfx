@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
+    private final Connection connection;
 
     private static final String SQL_INSERT = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
     private static final String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
@@ -20,6 +21,10 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private static final String SQL_SELECT_BY_NAME = "SELECT * FROM organizacion_vinculada WHERE nombre = ?";
     private static final String SQL_SELECT_BY_ADDRESS = "SELECT * FROM organizacion_vinculada WHERE direccion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
+
+    public LinkedOrganizationDAO(Connection connection) {
+        this.connection = connection;
+    }
 
     public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
@@ -65,6 +70,25 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    organization = new LinkedOrganizationDTO(
+                            resultSet.getString("idOrganizacion"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("direccion")
+                    );
+                }
+            }
+        }
+        return organization;
+    }
+
+    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
+            statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     organization = new LinkedOrganizationDTO(

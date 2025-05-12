@@ -96,11 +96,10 @@ public class GUI_RegisterStudentController {
 
             StudentDTO student = new StudentDTO(
                     tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
-                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0 // calificacionFinal
+                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0
             );
 
-            try (ConecctionDataBase connectionDB = new ConecctionDataBase();
-                 Connection connection = connectionDB.connectDB()) {
+            try (ConecctionDataBase connectionDB = new ConecctionDataBase(); Connection connection = connectionDB.connectDB()) {
                 StudentService studentService = new StudentService(connection);
                 studentService.registerStudent(student);
 
