@@ -1,144 +1,129 @@
-//package data_access.DAO;
-//
-//import data_access.ConecctionDataBase;
-//import logic.DAO.PartialEvaluationDAO;
-//import logic.DTO.PartialEvaluationDTO;
-//import org.junit.jupiter.api.*;
-//import java.sql.Connection;
-//import java.sql.PreparedStatement;
-//import java.sql.SQLException;
-//import java.util.List;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class PartialEvaluationDAOTest {
-//
-//    private static ConecctionDataBase connectionDB;
-//    private static Connection connection;
-//    private PartialEvaluationDAO partialEvaluationDAO;
-//
-//    @BeforeAll
-//    static void setUpClass() {
-//        connectionDB = new ConecctionDataBase();
-//        try {
-//            connection = connectionDB.connectDB();
-//        } catch (SQLException e) {
-//            fail("Error al conectar a la base de datos: " + e.getMessage());
-//        }
-//    }
-//
-//    @AfterAll
-//    static void tearDownClass() {
-//        connectionDB.close();
-//    }
-//
-//    @BeforeEach
-//    void setUp() {
-//        partialEvaluationDAO = new PartialEvaluationDAO();
-//    }
-//
-//    private String insertTestPartialEvaluation(String idEvaluation, double average, String tuiton, String evidence) throws SQLException {
-//        PartialEvaluationDTO existingEvaluation = partialEvaluationDAO.searchPartialEvaluationById(idEvaluation, connection);
-//        if (existingEvaluation != null) {
-//            return idEvaluation;
-//        }
-//
-//        String checkTuitonSql = "SELECT matricula FROM estudiante WHERE matricula = ?";
-//        try (PreparedStatement checkStmt = connection.prepareStatement(checkTuitonSql)) {
-//            checkStmt.setString(1, tuiton);
-//            if (!checkStmt.executeQuery().next()) {
-//                fail("La matrícula proporcionada no existe en la tabla estudiante: " + tuiton);
-//            }
-//        }
-//
-//        String sql = "INSERT INTO evaluacion_parcial (idEvaluacion, promedio, matricula, IdEvidencia) VALUES (?, ?, ?, ?)";
-//        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-//            stmt.setString(1, idEvaluation);
-//            stmt.setDouble(2, average);
-//            stmt.setString(3, tuiton);
-//            stmt.setString(4, evidence);
-//            stmt.executeUpdate();
-//            return idEvaluation;
-//        }
-//    }
-//
-//    @Test
-//    void testInsertPartialEvaluation() {
-//        try {
-//            PartialEvaluationDTO evaluation = new PartialEvaluationDTO("10000", 85.5, "11113", "1");
-//            boolean result = partialEvaluationDAO.insertPartialEvaluation(evaluation, connection);
-//            assertTrue(result, "La inserción debería ser exitosa");
-//
-//            PartialEvaluationDTO insertedEvaluation = partialEvaluationDAO.searchPartialEvaluationById("10000", connection);
-//            assertNotNull(insertedEvaluation, "La evaluación debería existir en la base de datos");
-//            assertEquals(85.5, insertedEvaluation.getAverage(), "El promedio debería coincidir");
-//        } catch (SQLException e) {
-//            fail("Error: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testSearchPartialEvaluationById() {
-//        try {
-//            String idEvaluation = insertTestPartialEvaluation("11111", 90.0, "54331", "2");
-//
-//            PartialEvaluationDTO retrievedEvaluation = partialEvaluationDAO.searchPartialEvaluationById(idEvaluation, connection);
-//            assertNotNull(retrievedEvaluation, "Debería encontrar la evaluación");
-//            assertEquals(idEvaluation, retrievedEvaluation.getIdEvaluation(), "El ID de la evaluación debería coincidir");
-//            assertEquals(90.0, retrievedEvaluation.getAverage(), "El promedio debería coincidir");
-//        } catch (SQLException e) {
-//            fail("Error: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testUpdatePartialEvaluation() {
-//        try {
-//            String idEvaluation = insertTestPartialEvaluation("33333", 75.0, "67892", "4");
-//
-//            PartialEvaluationDTO updatedEvaluation = new PartialEvaluationDTO(idEvaluation, 95.0, "67892", "4");
-//            boolean updateResult = partialEvaluationDAO.updatePartialEvaluation(updatedEvaluation, connection);
-//            assertTrue(updateResult, "La actualización debería ser exitosa");
-//
-//            PartialEvaluationDTO retrievedEvaluation = partialEvaluationDAO.searchPartialEvaluationById(idEvaluation, connection);
-//            assertNotNull(retrievedEvaluation, "La evaluación debería existir");
-//            assertEquals(95.0, retrievedEvaluation.getAverage(), "El promedio debería actualizarse");
-//        } catch (SQLException e) {
-//            fail("Error: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testGetAllPartialEvaluations() {
-//        try {
-//            insertTestPartialEvaluation("44444", 88.0, "11113", "6");
-//
-//            List<PartialEvaluationDTO> evaluations = partialEvaluationDAO.getAllPartialEvaluations(connection);
-//            assertNotNull(evaluations, "La lista no debería ser nula");
-//            assertFalse(evaluations.isEmpty(), "La lista no debería estar vacía");
-//
-//            boolean found = evaluations.stream()
-//                    .anyMatch(e -> e.getIdEvaluation().equals("44444"));
-//            assertTrue(found, "Nuestra evaluación de prueba debería estar en la lista");
-//        } catch (SQLException e) {
-//            fail("Error: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testDeletePartialEvaluation() {
-//        try {
-//            String idEvaluation = insertTestPartialEvaluation("55555", 70.0, "12351", "7");
-//
-//            PartialEvaluationDTO before = partialEvaluationDAO.searchPartialEvaluationById(idEvaluation, connection);
-//            assertNotNull(before, "La evaluación debería existir antes de eliminarla");
-//
-//            boolean deleted = partialEvaluationDAO.deletePartialEvaluation(idEvaluation, connection);
-//            assertTrue(deleted, "La eliminación debería ser exitosa");
-//
-//            PartialEvaluationDTO after = partialEvaluationDAO.searchPartialEvaluationById(idEvaluation, connection);
-//            assertNull(after, "La evaluación no debería existir después de eliminarla");
-//        } catch (SQLException e) {
-//            fail("Error: " + e.getMessage());
-//        }
-//    }
-//}
+package data_access.DAO;
+
+import data_access.ConecctionDataBase;
+import logic.DAO.PartialEvaluationDAO;
+import logic.DTO.PartialEvaluationDTO;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class PartialEvaluationDAOTest {
+    private Connection connection;
+    private PartialEvaluationDAO partialEvaluationDAO;
+
+    @BeforeEach
+    void setUp() throws SQLException {
+        // Configura la conexión a la base de datos real
+        ConecctionDataBase conecctionDataBase = new ConecctionDataBase();
+        connection = conecctionDataBase.connectDB();
+        partialEvaluationDAO = new PartialEvaluationDAO();
+
+        // Limpia la tabla antes de cada prueba
+        connection.createStatement().execute("DELETE FROM evaluacion_parcial");
+    }
+
+    @AfterEach
+    void tearDown() throws SQLException {
+        // Limpia la tabla después de cada prueba
+        connection.createStatement().execute("DELETE FROM evaluacion_parcial");
+        connection.close();
+    }
+
+    @Test
+    void insertPartialEvaluationSuccessfully() throws SQLException {
+        PartialEvaluationDTO evaluation = new PartialEvaluationDTO("1", 85.5, "12345", "Evidencia1");
+
+        boolean result = partialEvaluationDAO.insertPartialEvaluation(evaluation, connection);
+
+        assertTrue(result, "La evaluación parcial debería insertarse correctamente");
+    }
+
+    @Test
+    void updatePartialEvaluationSuccessfully() throws SQLException {
+        PartialEvaluationDTO evaluation = new PartialEvaluationDTO("1", 85.5, "12345", "Evidencia1");
+        partialEvaluationDAO.insertPartialEvaluation(evaluation, connection);
+
+        PartialEvaluationDTO updatedEvaluation = new PartialEvaluationDTO("1", 90.0, "54321", "Evidencia2");
+        boolean result = partialEvaluationDAO.updatePartialEvaluation(updatedEvaluation, connection);
+
+        assertTrue(result, "La evaluación parcial debería actualizarse correctamente");
+    }
+
+    @Test
+    void updatePartialEvaluationFailsWhenNotExists() throws SQLException {
+        PartialEvaluationDTO evaluation = new PartialEvaluationDTO("999", 90.0, "54321", "Evidencia2");
+
+        boolean result = partialEvaluationDAO.updatePartialEvaluation(evaluation, connection);
+
+        assertFalse(result, "No debería permitir actualizar una evaluación parcial inexistente");
+    }
+
+    @Test
+    void deletePartialEvaluationSuccessfully() throws SQLException {
+        PartialEvaluationDTO evaluation = new PartialEvaluationDTO("1", 85.5, "12345", "Evidencia1");
+        partialEvaluationDAO.insertPartialEvaluation(evaluation, connection);
+
+        boolean result = partialEvaluationDAO.deletePartialEvaluation("1", connection);
+
+        assertTrue(result, "La evaluación parcial debería eliminarse correctamente");
+    }
+
+    @Test
+    void deletePartialEvaluationFailsWhenNotExists() throws SQLException {
+        boolean result = partialEvaluationDAO.deletePartialEvaluation("999", connection);
+
+        assertFalse(result, "No debería permitir eliminar una evaluación parcial inexistente");
+    }
+
+    @Test
+    void searchPartialEvaluationByIdWhenExists() throws SQLException {
+        PartialEvaluationDTO evaluation = new PartialEvaluationDTO("1", 85.5, "12345", "Evidencia1");
+        partialEvaluationDAO.insertPartialEvaluation(evaluation, connection);
+
+        PartialEvaluationDTO result = partialEvaluationDAO.searchPartialEvaluationById("1", connection);
+
+        assertNotNull(result, "La evaluación parcial no debería ser nula");
+        assertEquals("1", result.getIdEvaluation());
+        assertEquals(85.5, result.getAverage());
+        assertEquals("12345", result.getTuiton());
+        assertEquals("Evidencia1", result.getEvidence());
+    }
+
+    @Test
+    void searchPartialEvaluationByIdWhenNotExists() throws SQLException {
+        PartialEvaluationDTO result = partialEvaluationDAO.searchPartialEvaluationById("999", connection);
+
+        assertNotNull(result, "La evaluación parcial no debería ser nula");
+        assertEquals("N/A", result.getIdEvaluation());
+        assertEquals(-1, result.getAverage());
+        assertEquals("N/A", result.getTuiton());
+        assertEquals("N/A", result.getEvidence());
+    }
+
+    @Test
+    void getAllPartialEvaluationsReturnsList() throws SQLException {
+        PartialEvaluationDTO eval1 = new PartialEvaluationDTO("1", 85.5, "12345", "Evidencia1");
+        PartialEvaluationDTO eval2 = new PartialEvaluationDTO("2", 90.0, "54321", "Evidencia2");
+        partialEvaluationDAO.insertPartialEvaluation(eval1, connection);
+        partialEvaluationDAO.insertPartialEvaluation(eval2, connection);
+
+        List<PartialEvaluationDTO> result = partialEvaluationDAO.getAllPartialEvaluations(connection);
+
+        assertNotNull(result, "La lista de evaluaciones no debería ser nula");
+        assertEquals(2, result.size(), "Debería haber 2 evaluaciones en la lista");
+    }
+
+    @Test
+    void getAllPartialEvaluationsReturnsEmptyListWhenNoEvaluationsExist() throws SQLException {
+        List<PartialEvaluationDTO> result = partialEvaluationDAO.getAllPartialEvaluations(connection);
+
+        assertNotNull(result, "La lista de evaluaciones no debería ser nula");
+        assertTrue(result.isEmpty(), "La lista de evaluaciones debería estar vacía");
+    }
+}

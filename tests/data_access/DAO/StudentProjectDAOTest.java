@@ -1,150 +1,129 @@
-//package data_access.DAO;
-//
-//import data_access.ConecctionDataBase;
-//import logic.DAO.StudentProjectDAO;
-//import logic.DTO.StudentProjectDTO;
-//import org.junit.jupiter.api.*;
-//
-//import java.sql.Connection;
-//import java.sql.PreparedStatement;
-//import java.sql.SQLException;
-//import java.util.List;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//class StudentProjectDAOTest {
-//
-//    private static ConecctionDataBase connectionDB;
-//    private static Connection connection;
-//    private StudentProjectDAO studentProjectDAO;
-//
-//    @BeforeAll
-//    static void setUpClass() {
-//        connectionDB = new ConecctionDataBase();
-//        try {
-//            connection = connectionDB.connectDB();
-//        } catch (SQLException e) {
-//            fail("Error al conectar a la base de datos: " + e.getMessage());
-//        }
-//    }
-//
-//    @AfterAll
-//    static void tearDownClass() {
-//        connectionDB.closeConnection();
-//    }
-//
-//    @BeforeEach
-//    void setUp() {
-//        studentProjectDAO = new StudentProjectDAO();
-//        try {
-//            // Asegurar que el proyecto con idProyecto exista en la tabla proyecto
-//            try (PreparedStatement statement = connection.prepareStatement(
-//                    "INSERT IGNORE INTO proyecto (idProyecto, nombre, descripcion) VALUES (?, ?, ?)")) {
-//                statement.setString(1, "1");
-//                statement.setString(2, "Proyecto 1");
-//                statement.setString(3, "Descripción del proyecto 1");
-//                statement.executeUpdate();
-//            }
-//        } catch (SQLException e) {
-//            fail("Error al preparar los datos iniciales: " + e.getMessage());
-//        }
-//    }
-//
-//    @AfterEach
-//    void tearDown() {
-//        try {
-//            // Limpiar los datos creados en la tabla proyecto_estudiante
-//            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM proyecto_estudiante")) {
-//                statement.executeUpdate();
-//            }
-//        } catch (SQLException e) {
-//            fail("Error al limpiar los datos después de la prueba: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testInsertStudentProject() {
-//        try {
-//            StudentProjectDTO studentProject = new StudentProjectDTO("1", "67899");
-//            boolean result = studentProjectDAO.insertStudentProject(studentProject, connection);
-//            assertTrue(result, "La inserción debería ser exitosa");
-//        } catch (SQLException e) {
-//            fail("Error en testInsertStudentProject: " + e.getMessage());
-//        }
-//    }
-//
-//
-//    @Test
-//    void testSearchStudentProjectByIdProject() {
-//        try {
-//            StudentProjectDTO studentProject = new StudentProjectDTO("1", "12345");
-//            studentProjectDAO.insertStudentProject(studentProject, connection);
-//
-//            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
-//            assertNotNull(retrievedProject, "El proyecto debería existir");
-//            assertEquals("a", retrievedProject.getTuiton(), "La matrícula debería coincidir");
-//        } catch (SQLException e) {
-//            fail("Error en testGetStudentProject: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testUpdateStudentProject() {
-//        try {
-//            StudentProjectDTO studentProject = new StudentProjectDTO("1", "12345");
-//            studentProjectDAO.insertStudentProject(studentProject, connection);
-//
-//            StudentProjectDTO updatedProject = new StudentProjectDTO("1", "54321");
-//            boolean result = studentProjectDAO.updateStudentProject(updatedProject, connection);
-//            assertTrue(result, "La actualización debería ser exitosa");
-//
-//            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
-//            assertNotNull(retrievedProject, "El proyecto debería existir");
-//            assertEquals("54321", retrievedProject.getTuiton(), "La matrícula debería actualizarse");
-//        } catch (SQLException e) {
-//            fail("Error en testUpdateStudentProject: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testDeleteStudentProject() {
-//        try {
-//            StudentProjectDTO studentProject = new StudentProjectDTO("1", "12345");
-//            studentProjectDAO.insertStudentProject(studentProject, connection);
-//
-//            boolean result = studentProjectDAO.deleteStudentProject(studentProject, connection);
-//            assertTrue(result, "La eliminación debería ser exitosa");
-//
-//            StudentProjectDTO deletedProject = studentProjectDAO.searchStudentProjectByIdProject("1", connection);
-//            assertNull(deletedProject, "El proyecto eliminado no debería existir");
-//        } catch (SQLException e) {
-//            fail("Error en testDeleteStudentProject: " + e.getMessage());
-//        }
-//    }
-//
-//    @Test
-//    void testGetAllStudentProjects() {
-//        try {
-//            StudentProjectDTO studentProject1 = new StudentProjectDTO("1", "12345");
-//            StudentProjectDTO studentProject2 = new StudentProjectDTO("2", "54321");
-//
-//            // Asegurar que el proyecto con idProyecto 2 exista
-//            try (PreparedStatement statement = connection.prepareStatement(
-//                    "INSERT IGNORE INTO proyecto (idProyecto, nombre, descripcion) VALUES (?, ?, ?)")) {
-//                statement.setString(1, "2");
-//                statement.setString(2, "Proyecto 2");
-//                statement.setString(3, "Descripción del proyecto 2");
-//                statement.executeUpdate();
-//            }
-//
-//            studentProjectDAO.insertStudentProject(studentProject1, connection);
-//            studentProjectDAO.insertStudentProject(studentProject2, connection);
-//
-//            List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects(connection);
-//            assertNotNull(projects, "La lista no debería ser nula");
-//            assertTrue(projects.size() >= 2, "Debería haber al menos dos proyectos en la lista");
-//        } catch (SQLException e) {
-//            fail("Error en testGetAllStudentProjects: " + e.getMessage());
-//        }
-//    }
-//}
+package data_access.DAO;
+
+import data_access.ConecctionDataBase;
+import logic.DAO.StudentProjectDAO;
+import logic.DTO.StudentProjectDTO;
+import org.junit.jupiter.api.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class StudentProjectDAOTest {
+
+    private static ConecctionDataBase connectionDB;
+    private static Connection connection;
+    private StudentProjectDAO studentProjectDAO;
+
+    @BeforeAll
+    static void setUpClass() {
+        connectionDB = new ConecctionDataBase();
+        try {
+            connection = connectionDB.connectDB();
+        } catch (SQLException e) {
+            fail("Error al conectar a la base de datos: " + e.getMessage());
+        }
+    }
+
+    @AfterAll
+    static void tearDownClass() {
+        connectionDB.close();
+    }
+
+    @BeforeEach
+    void setUp() {
+        studentProjectDAO = new StudentProjectDAO();
+        try {
+            connection.prepareStatement("DELETE FROM proyecto_estudiante").executeUpdate();
+        } catch (SQLException e) {
+            fail("Error al limpiar la tabla proyecto_estudiante: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testInsertStudentProject() {
+        try {
+            StudentProjectDTO studentProject = new StudentProjectDTO("P12345", "S12345");
+            boolean result = studentProjectDAO.insertStudentProject(studentProject, connection);
+            assertTrue(result, "La inserción debería ser exitosa");
+
+            StudentProjectDTO insertedProject = studentProjectDAO.searchStudentProjectByIdProject("P12345", connection);
+            assertNotNull(insertedProject, "El proyecto de estudiante debería existir en la base de datos");
+            assertEquals("S12345", insertedProject.getTuiton(), "La matrícula debería coincidir");
+        } catch (SQLException e) {
+            fail("Error en testInsertStudentProject: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testSearchStudentProjectByIdProject() {
+        try {
+            insertTestStudentProject("P54321", "S54321");
+
+            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("P54321", connection);
+            assertNotNull(retrievedProject, "Debería encontrar el proyecto de estudiante");
+            assertEquals("S54321", retrievedProject.getTuiton(), "La matrícula debería coincidir");
+        } catch (SQLException e) {
+            fail("Error en testSearchStudentProjectByIdProject: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateStudentProject() {
+        try {
+            insertTestStudentProject("P67890", "S67890");
+
+            StudentProjectDTO updatedProject = new StudentProjectDTO("P67890", "S98765");
+            boolean result = studentProjectDAO.updateStudentProject(updatedProject, connection);
+            assertTrue(result, "La actualización debería ser exitosa");
+
+            StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject("P67890", connection);
+            assertNotNull(retrievedProject, "El proyecto de estudiante debería existir después de actualizar");
+            assertEquals("S98765", retrievedProject.getTuiton(), "La matrícula debería actualizarse");
+        } catch (SQLException e) {
+            fail("Error en testUpdateStudentProject: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testDeleteStudentProject() {
+        try {
+            insertTestStudentProject("P22222", "S22222");
+
+            StudentProjectDTO projectToDelete = new StudentProjectDTO("P22222", "S22222");
+            boolean result = studentProjectDAO.deleteStudentProject(projectToDelete, connection);
+            assertTrue(result, "La eliminación debería ser exitosa");
+
+            StudentProjectDTO deletedProject = studentProjectDAO.searchStudentProjectByIdProject("P22222", connection);
+            assertEquals("N/A", deletedProject.getIdProject(), "El proyecto eliminado no debería existir");
+        } catch (SQLException e) {
+            fail("Error en testDeleteStudentProject: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testGetAllStudentProjects() {
+        try {
+            insertTestStudentProject("P33333", "S33333");
+            insertTestStudentProject("P44444", "S44444");
+
+            List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects(connection);
+            assertNotNull(projects, "La lista no debería ser nula");
+            assertTrue(projects.size() >= 2, "Deberían existir al menos dos proyectos en la lista");
+        } catch (SQLException e) {
+            fail("Error en testGetAllStudentProjects: " + e.getMessage());
+        }
+    }
+
+    private void insertTestStudentProject(String idProject, String tuiton) throws SQLException {
+        String sql = "INSERT INTO proyecto_estudiante (idProyecto, matricula) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, idProject);
+            stmt.setString(2, tuiton);
+            stmt.executeUpdate();
+        }
+    }
+}
