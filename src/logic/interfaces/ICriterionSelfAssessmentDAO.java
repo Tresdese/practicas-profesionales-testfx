@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface ICriterionSelfAssessmentDAO {
-    boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment, Connection connection) throws SQLException;
+    boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException;
 
-    boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment, Connection connection) throws SQLException;
+    boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException;
 
-    boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException;
+    boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria) throws SQLException;
 
-    CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException;
+    CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria) throws SQLException;
 
-    List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments(Connection connection) throws SQLException;
+    List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments() throws SQLException;
 }

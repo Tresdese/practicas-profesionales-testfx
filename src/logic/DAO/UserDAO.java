@@ -10,8 +10,9 @@ import java.util.List;
 import data_access.ConecctionDataBase;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
+import logic.interfaces.IUserDAO;
 
-public class UserDAO {
+public class UserDAO { // TODO implementar la interfaz IUserDAO
     private final Connection connection;
 
     private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";

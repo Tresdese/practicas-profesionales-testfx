@@ -92,6 +92,7 @@ public class GUI_CheckRepresentativeListController {
 
         searchButton.setOnAction(event -> searchRepresentative());
         buttonRegisterRepresentative.setOnAction(event -> openRegisterRepresentativeWindow());
+        // TODO hacer un metodo para inicializar los botones
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedRepresentative = (RepresentativeDTO) newValue;
