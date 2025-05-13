@@ -268,7 +268,6 @@ class CriterionSelfAssessmentDAOTest {
             String idSelfAssessment = String.valueOf(600000 + randomNumber);
             String idCriteria = String.valueOf(650000 + randomNumber);
 
-            // Primera inserción
             CriterionSelfAssessmentDTO firstInsert = new CriterionSelfAssessmentDTO(idSelfAssessment, idCriteria);
             boolean firstResult = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(firstInsert);
             assertTrue(firstResult, "La primera inserción debería ser exitosa");
