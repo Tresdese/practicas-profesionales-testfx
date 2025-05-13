@@ -1,11 +1,14 @@
 package logic.services;
 
 import data_access.ConecctionDataBase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ServiceConfig {
+    private static final Logger logger = LogManager.getLogger(ServiceConfig.class);
 
     private final ConecctionDataBase connectionDB;
 
@@ -33,7 +36,7 @@ public class ServiceConfig {
             try {
                 connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                logger.error("Error cerrando la conexión: ", e);
             }
         }
     }

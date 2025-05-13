@@ -37,7 +37,7 @@ class ActivityDAOTest {
 
     @AfterAll
     static void tearDownClass() {
-        connectionDB.closeConnection();
+        connectionDB.close();
     }
 
     @BeforeEach
@@ -59,7 +59,45 @@ class ActivityDAOTest {
                 }
             }
         }
-        return -1; // Retorno por defecto en caso de error
+        return -1;
+    }
+
+    @Test
+    void testInsertTestActivitySuccess() throws SQLException {
+        String nombreActividad = "Actividad de Prueba Exitosa";
+        int id = insertTestActivity(nombreActividad);
+
+        assertTrue(id > 0, "Debería generarse un ID positivo");
+
+        String sql = "SELECT nombreActividad FROM actividad WHERE idActividad = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                assertTrue(rs.next(), "Debería encontrarse la actividad");
+                assertEquals(nombreActividad, rs.getString("nombreActividad"), "El nombre debería coincidir");
+            }
+        }
+    }
+
+    @Test
+    void testInsertTestActivityWithEmptyName() {
+        try {
+            int id = insertTestActivity("");
+            assertEquals(-1, id, "No debería permitir insertar con nombre vacío");
+        } catch (SQLException e) {
+            // Es aceptable que lance excepción ante un valor inválido
+            assertTrue(e.getMessage().contains("constraint") || e.getMessage().contains("validation"), "La excepción debería estar relacionada con restricciones de validación");
+        }
+    }
+
+    @Test
+    void testInsertTestActivityWithNullName() {
+        try {
+            int id = insertTestActivity(null);
+            assertEquals(-1, id, "No debería permitir insertar con nombre nulo");
+        } catch (SQLException e) {
+            assertTrue(e.getMessage().contains("null") || e.getMessage().contains("constraint"), "La excepción debería estar relacionada con valores nulos");
+        }
     }
 
     @Test
@@ -85,17 +123,49 @@ class ActivityDAOTest {
         }
     }
 
-    @Test
-    void testGetActivity() throws SQLException {
-        try {
-            testActivityId = insertTestActivity("Actividad para Consulta");
+//    @Test
+//    void testGetActivity() throws SQLException {
+//        try {
+//            testActivityId = insertTestActivity("Actividad para Consulta");
+//
+//            ActivityDTO retrievedActivity = activityDAO.searchActivityById(String.valueOf(testActivityId), connection);
+//            assertNotNull(retrievedActivity, "Debería encontrar la actividad");
+//            assertEquals(String.valueOf(testActivityId), retrievedActivity.getActivityId(), "El ID debería coincidir");
+//            assertEquals("Actividad para Consulta", retrievedActivity.getActivityName(), "El nombre debería coincidir");
+//        } catch (SQLException e) {
+//            logger.error("Error: " + e.getMessage());
+//        }
+//    }
 
-            ActivityDTO retrievedActivity = activityDAO.searchActivityById(String.valueOf(testActivityId), connection);
-            assertNotNull(retrievedActivity, "Debería encontrar la actividad");
-            assertEquals(String.valueOf(testActivityId), retrievedActivity.getActivityId(), "El ID debería coincidir");
-            assertEquals("Actividad para Consulta", retrievedActivity.getActivityName(), "El nombre debería coincidir");
+    @Test
+    void testGetExistingActivity() throws SQLException {
+        testActivityId = insertTestActivity("Actividad para Consulta");
+
+        ActivityDTO retrievedActivity = activityDAO.searchActivityById(String.valueOf(testActivityId), connection);
+
+        assertNotNull(retrievedActivity, "Debería encontrar la actividad");
+        assertEquals(String.valueOf(testActivityId), retrievedActivity.getActivityId(), "El ID debería coincidir");
+        assertEquals("Actividad para Consulta", retrievedActivity.getActivityName(), "El nombre debería coincidir");
+    }
+
+    @Test
+    void testGetNonExistentActivity() throws SQLException {
+        String idInexistente = "999999";
+
+        ActivityDTO retrievedActivity = activityDAO.searchActivityById(idInexistente, connection);
+
+        assertNull(retrievedActivity, "No debería encontrar una actividad inexistente");
+        assertEquals("invalido", retrievedActivity.getActivityId(), "Debería devolver un ID inválido");
+    }
+
+    @Test
+    void testGetInvalidIdActivity() throws SQLException {
+        try {
+            ActivityDTO retrievedActivity = activityDAO.searchActivityById("@", connection);
+            assertEquals("invalido", retrievedActivity.getActivityId(), "Debería devolver un ID inválido");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
+            assertTrue(e.getMessage().contains("formato") || e.getMessage().contains("number"),
+                    "Debería lanzar excepción por formato inválido");
         }
     }
 
