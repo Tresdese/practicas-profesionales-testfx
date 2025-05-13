@@ -10,14 +10,20 @@ import java.util.List;
 import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.interfaces.ICriterionSelfAssessmentDAO;
 
-public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
+public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO { // TODO implementar la interfaz ICriterionSelfAssessmentDAO
+    private final Connection connection;
+
     private final static String SQL_INSERT = "INSERT INTO autoevaluacion_criterio (idAutoevaluacion, idCriterios) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE autoevaluacion_criterio SET idCriterios = ? WHERE idAutoevaluacion = ?";
     private final static String SQL_DELETE = "DELETE FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
     private final static String SQL_SELECT = "SELECT * FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion_criterio";
 
-    public boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment, Connection connection) throws SQLException {
+    public CriterionSelfAssessmentDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    public boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, criterionSelfAssessment.getIdSelfAssessment());
             statement.setString(2, criterionSelfAssessment.getIdCriteria());
@@ -25,7 +31,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         }
     }
 
-    public boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment, Connection connection) throws SQLException {
+    public boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, criterionSelfAssessment.getIdCriteria());
             statement.setString(2, criterionSelfAssessment.getIdSelfAssessment());
@@ -33,7 +39,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         }
     }
 
-    public boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException {
+    public boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idSelfAssessment);
             statement.setString(2, idCriteria);
@@ -41,7 +47,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         }
     }
 
-    public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria, Connection connection) throws SQLException {
+    public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria) throws SQLException {
         CriterionSelfAssessmentDTO selfAssessment = new CriterionSelfAssessmentDTO("N/A","N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idSelfAssessment);
@@ -55,7 +61,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         return selfAssessment;
     }
 
-    public List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments(Connection connection) throws SQLException {
+    public List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments() throws SQLException {
         List<CriterionSelfAssessmentDTO> criterionSelfAssessments = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface IActivityDAO {
 
-    boolean insertActivity(ActivityDTO activity, Connection connection) throws SQLException;
+    boolean insertActivity(ActivityDTO activity) throws SQLException;
 
-    boolean updateActivity(ActivityDTO activity, Connection connection) throws SQLException;
+    boolean updateActivity(ActivityDTO activity) throws SQLException;
 
-    boolean deleteActivity(ActivityDTO activity, Connection connection) throws SQLException;
+    boolean deleteActivity(ActivityDTO activity) throws SQLException;
 
-    ActivityDTO searchActivityById(String idActivity, Connection connection) throws SQLException;
+    ActivityDTO searchActivityById(String idActivity) throws SQLException;
 
-    List<ActivityDTO> getAllActivities(Connection connection) throws SQLException;
+    List<ActivityDTO> getAllActivities() throws SQLException;
 }
