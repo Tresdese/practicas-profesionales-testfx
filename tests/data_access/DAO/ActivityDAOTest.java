@@ -170,6 +170,16 @@ class ActivityDAOTest {
     }
 
     @Test
+    void testGetActivityConIdNulo() throws SQLException {
+        try {
+            ActivityDTO retrievedActivity = activityDAO.searchActivityById(null, connection);
+            fail("Debería lanzar excepción al pasar un ID nulo");
+        } catch (SQLException | NullPointerException e) {
+            assertTrue(true, "Se esperaba una excepción al pasar un ID nulo");
+        }
+    }
+
+    @Test
     void testUpdateActivity() throws SQLException {
         try {
             testActivityId = insertTestActivity("Actividad Original");
