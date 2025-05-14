@@ -30,7 +30,7 @@ class EvidenceDAOTest {
 
     @AfterAll
     static void tearDownClass() {
-        connectionDB.closeConnection();
+        connectionDB.close();
     }
 
     @BeforeEach
