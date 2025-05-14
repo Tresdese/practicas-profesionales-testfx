@@ -38,7 +38,6 @@ class GroupDAOTest {
     @Test
     void insertGroupWhenGroupDoesNotExist() throws SQLException {
         GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-
         boolean result = groupDAO.insertGroup(group, connection);
 
         assertTrue(result, "El grupo debería insertarse correctamente");
