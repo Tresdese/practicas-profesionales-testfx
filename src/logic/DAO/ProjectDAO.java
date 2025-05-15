@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ProjectDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ? WHERE idProyecto = ?";
+    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ? WHERE idProyecto = ?";
     private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT = "SELECT * FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM proyecto";
@@ -28,6 +28,7 @@ public class ProjectDAO {
             statement.setTimestamp(4, project.getApproximateDate());
             statement.setTimestamp(5, project.getStartDate());
             statement.setString(6, project.getIdUser());
+            statement.setInt(7, project.getIdOrganization());
             return statement.executeUpdate() > 0;
         }
     }
@@ -41,7 +42,8 @@ public class ProjectDAO {
             statement.setTimestamp(3, project.getApproximateDate());
             statement.setTimestamp(4, project.getStartDate());
             statement.setString(5, project.getIdUser());
-            statement.setString(6, project.getIdProject());
+            statement.setInt(6, project.getIdOrganization());
+            statement.setString(7, project.getIdProject());
             return statement.executeUpdate() > 0;
         }
     }
@@ -56,7 +58,7 @@ public class ProjectDAO {
     }
 
     public ProjectDTO searchProjectById(String idProject) throws SQLException {
-        ProjectDTO project = null;
+        ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
@@ -69,7 +71,8 @@ public class ProjectDAO {
                             resultSet.getString("descripcion"),
                             resultSet.getTimestamp("fechaAproximada"),
                             resultSet.getTimestamp("fechaInicio"),
-                            resultSet.getString("idUsuario")
+                            resultSet.getString("idUsuario"),
+                            resultSet.getInt("idOrganizacion")
                     );
                 }
             }
@@ -90,7 +93,8 @@ public class ProjectDAO {
                         resultSet.getString("descripcion"),
                         resultSet.getTimestamp("fechaAproximada"),
                         resultSet.getTimestamp("fechaInicio"),
-                        resultSet.getString("idUsuario")
+                        resultSet.getString("idUsuario"),
+                        resultSet.getInt("idOrganizacion")
                 ));
             }
         }

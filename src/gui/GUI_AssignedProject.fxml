@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.GUI_AssignedProjectController"
+            prefHeight="400.0" prefWidth="600.0"
+            style="-fx-background-color: #f4f6fb;">
+    <VBox alignment="CENTER" spacing="18" layoutX="100" layoutY="50"
+          style="-fx-background-color: #fff; -fx-padding: 32 40 32 40; -fx-background-radius: 18; -fx-effect: dropshadow(gaussian, #b0b0b0, 10, 0.2, 0, 4);">
+        <Label text="Proyecto Asignado"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C; -fx-padding: 0 0 10 0;" />
+        <Separator />
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Nombre:" style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;"/>
+            <Label fx:id="nameLabel" text="-" style="-fx-text-fill: #333;"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Descripción:" style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;"/>
+            <Label fx:id="descriptionLabel" text="-" wrapText="true" style="-fx-text-fill: #333;"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Fecha Aproximada:" style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;"/>
+            <Label fx:id="approximateDateLabel" text="-" style="-fx-text-fill: #333;"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Fecha de Inicio:" style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;"/>
+            <Label fx:id="startDateLabel" text="-" style="-fx-text-fill: #333;"/>
+        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="ID Usuario:" style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;"/>
+            <Label fx:id="userLabel" text="-" style="-fx-text-fill: #333;"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

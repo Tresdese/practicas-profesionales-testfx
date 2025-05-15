@@ -85,6 +85,25 @@ public class GUI_MenuStudentController {
         alert.showAndWait();
     }
 
+    @FXML
+    private void handleViewAssignedProject() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_AssignedProject.fxml"));
+            Parent root = loader.load();
+
+            GUI_AssignedProjectController controller = loader.getController();
+            controller.setStudent(student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Proyecto Asignado");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de proyecto asignado: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo abrir la ventana de proyecto asignado.");
+        }
+    }
+
     public void setStudent(StudentDTO student) {
         this.student = student;
     }

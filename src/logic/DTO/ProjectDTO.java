@@ -9,6 +9,7 @@ public class ProjectDTO {
     private Timestamp approximateDate;
     private Timestamp startDate;
     private String idUser;
+    private int idOrganization;
 
     public ProjectDTO() {
         this.idProject = "";
@@ -17,15 +18,17 @@ public class ProjectDTO {
         this.approximateDate = null;
         this.startDate = null;
         this.idUser = "";
+        this.idOrganization = 0;
     }
 
-    public ProjectDTO(String idProject, String name, String description, Timestamp approximateDate, Timestamp startDate, String idUser) {
+    public ProjectDTO(String idProject, String name, String description, Timestamp approximateDate, Timestamp startDate, String idUser, int idOrganization) {
         this.idProject = idProject;
         this.name = name;
         this.description = description;
         this.approximateDate = approximateDate;
         this.startDate = startDate;
         this.idUser = idUser;
+        this.idOrganization = idOrganization;
     }
 
     public String getIdProject() {
@@ -76,6 +79,14 @@ public class ProjectDTO {
         this.idUser = idUser;
     }
 
+    public int getIdOrganization() {
+        return idOrganization;
+    }
+
+    public void setIdOrganization(int idOrganization) {
+        this.idOrganization = idOrganization;
+    }
+
     @Override
     public String toString() {
         return "ProjectDTO{" +
@@ -85,6 +96,7 @@ public class ProjectDTO {
                 ", approximateDate=" + approximateDate +
                 ", startDate=" + startDate +
                 ", idUser='" + idUser + '\'' +
+                ", idOrganization=" + idOrganization +
                 '}';
     }
 
@@ -95,6 +107,7 @@ public class ProjectDTO {
 
         ProjectDTO that = (ProjectDTO) obj;
 
+        if (idOrganization != that.idOrganization) return false;
         if (!idProject.equals(that.idProject)) return false;
         if (!name.equals(that.name)) return false;
         if (!description.equals(that.description)) return false;

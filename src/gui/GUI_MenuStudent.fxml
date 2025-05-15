@@ -14,6 +14,8 @@
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button text="Consultar Avance" onAction="#handleViewProgress"
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button text="Ver Proyecto Asignado" onAction="#handleViewAssignedProject"
+                    style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
         </VBox>
     </left>
     <center>
