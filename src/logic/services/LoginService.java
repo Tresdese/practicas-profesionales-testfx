@@ -24,19 +24,16 @@ public class LoginService {
     public Object login(String username, String plainPassword) throws SQLException, InvalidCredential {
         String hashedPassword = PasswordHasher.hashPassword(plainPassword);
 
-        // Buscar estudiante por usuario y contraseña cifrada
         StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword);
         if (student != null && !"N/A".equals(student.getTuiton())) {
             return student;
         }
 
-        // Buscar usuario general por usuario y contraseña cifrada
         UserDTO user = userDAO.searchUserByUsernameAndPassword(username, hashedPassword);
         if (user != null && !"INVALID".equals(user.getIdUser())) {
             return user;
         }
 
-        // Si no se encuentra ni estudiante ni usuario, lanzar excepción
         throw new InvalidCredential("Credenciales inválidas");
     }
 }
