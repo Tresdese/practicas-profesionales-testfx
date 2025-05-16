@@ -1,7 +1,12 @@
 package gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.RepresentativeDAO;
@@ -33,10 +38,15 @@ public class GUI_AssignedProjectController {
     private Label organizationLabel;
     @FXML
     private Label representativeLabel;
+    @FXML
+    private Button checkPresentationGradeButton;
+
+    private StudentDTO student;
 
     private static final Logger logger = LogManager.getLogger(GUI_AssignedProjectController.class);
 
     public void setStudent(StudentDTO student) {
+        this.student = student;
         try {
             StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
             if (isStudentProjectNA(studentProject)) {
@@ -66,7 +76,6 @@ public class GUI_AssignedProjectController {
                 return sp;
             }
         }
-        // Retorna objeto con "N/A" si no se encuentra
         return new StudentProjectDTO("N/A", "N/A");
     }
 
@@ -181,5 +190,23 @@ public class GUI_AssignedProjectController {
         userLabel.setStyle("-fx-text-fill: #333;");
         organizationLabel.setStyle("-fx-text-fill: #333;");
         representativeLabel.setStyle("-fx-text-fill: #333;");
+    }
+
+    @FXML
+    private void handleCheckPresentationGrade() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_CheckPresentationGrade.fxml"));
+            Parent root = loader.load();
+
+            GUI_CheckPresentationGradeController controller = loader.getController();
+            controller.setStudent(this.student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Calificación de Presentación");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+        }
     }
 }

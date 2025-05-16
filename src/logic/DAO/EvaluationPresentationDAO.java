@@ -17,6 +17,7 @@ public class EvaluationPresentationDAO {
     private static final String SQL_DELETE = "DELETE FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM evaluacion_presentacion";
+    private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM evaluacion_presentacion WHERE matricula = ?";
 
     public int insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
@@ -111,5 +112,26 @@ public class EvaluationPresentationDAO {
             }
         }
         throw new SQLException("No se pudo obtener el último ID insertado."); //TODO Antipatron
+    }
+
+    public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException {
+        List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_TUITON)) {
+            statement.setString(1, tuiton);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    evaluations.add(new EvaluationPresentationDTO(
+                            resultSet.getInt("idEvaluacion"),
+                            resultSet.getInt("idPresentacion"), // Este es el id de la presentación
+                            resultSet.getString("matricula"),
+                            resultSet.getDate("fecha"),
+                            resultSet.getDouble("promedio")
+                    ));
+                }
+            }
+        }
+        return evaluations;
     }
 }

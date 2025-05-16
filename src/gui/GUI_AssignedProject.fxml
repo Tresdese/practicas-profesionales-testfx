@@ -49,4 +49,8 @@
             <Label fx:id="representativeLabel" text="-" style="-fx-text-fill: #333;"/>
         </HBox>
     </VBox>
+    <Button fx:id="checkPresentationGradeButton"
+            text="Ver Calificación de Presentación"
+            style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;"
+            onAction="#handleCheckPresentationGrade"/>
 </AnchorPane>
