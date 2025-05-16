@@ -18,7 +18,7 @@ public class GUI_RegisterStudent extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUIRegisterStudent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterStudent.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);

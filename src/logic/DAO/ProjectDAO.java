@@ -2,6 +2,7 @@ package logic.DAO;
 
 import data_access.ConecctionDataBase;
 import logic.DTO.ProjectDTO;
+import logic.interfaces.IProjectDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,12 +11,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectDAO {
+public class ProjectDAO implements IProjectDAO {
 
     private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ? WHERE idProyecto = ?";
     private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT = "SELECT * FROM proyecto WHERE idProyecto = ?";
+    private static final String SQL_SELECT_BY_NAME = "SELECT * FROM proyecto WHERE nombre = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM proyecto";
 
     public boolean insertProject(ProjectDTO project) throws SQLException {
@@ -63,6 +65,29 @@ public class ProjectDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    project = new ProjectDTO(
+                            resultSet.getString("idProyecto"),
+                            resultSet.getString("nombre"),
+                            resultSet.getString("descripcion"),
+                            resultSet.getTimestamp("fechaAproximada"),
+                            resultSet.getTimestamp("fechaInicio"),
+                            resultSet.getString("idUsuario"),
+                            resultSet.getInt("idOrganizacion")
+                    );
+                }
+            }
+        }
+        return project;
+    }
+
+    public ProjectDTO searchProjectByName(String name) throws SQLException {
+        ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
+            statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     project = new ProjectDTO(

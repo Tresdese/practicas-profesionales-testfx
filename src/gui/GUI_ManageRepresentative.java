@@ -24,7 +24,7 @@ public class GUI_ManageRepresentative extends Application {
     public void start(Stage primaryStage) {
         try {
             if (representative == null) {
-                throw new IllegalArgumentException("El objeto RepresentativeDTO no puede ser nulo.");
+                logger.error("El objeto RepresentativeDTO no puede ser nulo.");
             }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageRepresentative.fxml"));

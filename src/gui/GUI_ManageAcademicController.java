@@ -55,7 +55,7 @@ public class GUI_ManageAcademicController implements Initializable {
     @FXML
     private void handleSaveChanges() {
         try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
-            UserDAO userDAO = new UserDAO(connection);
+            UserDAO userDAO = new UserDAO();
 
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");

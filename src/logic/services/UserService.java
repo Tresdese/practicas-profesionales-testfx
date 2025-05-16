@@ -13,7 +13,7 @@ public class UserService {
     private final UserDAO userDAO;
 
     public UserService(Connection connection) {
-        this.userDAO = new UserDAO( connection );
+        this.userDAO = new UserDAO();
     }
 
     public boolean registerUser(UserDTO user) throws SQLException, RepeatedId, RepeatedName {
@@ -41,11 +41,15 @@ public class UserService {
         }
     }
 
-    public List<UserDTO> getAllUsers() throws SQLException {
-        return userDAO.getAllUsers();
-    }
-
     public UserDTO searchUserById(String id) throws SQLException {
         return userDAO.searchUserById(id);
+    }
+
+    public String getUserIdByUsername(String username) throws SQLException {
+        return userDAO.getUserIdByUsername(username);
+    }
+
+    public List<UserDTO> getAllUsers() throws SQLException {
+        return userDAO.getAllUsers();
     }
 }

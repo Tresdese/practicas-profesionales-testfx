@@ -12,8 +12,7 @@ import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.interfaces.IUserDAO;
 
-public class UserDAO { // TODO implementar la interfaz IUserDAO
-    private final Connection connection;
+public class UserDAO implements IUserDAO { // TODO implementar la interfaz IUserDAO
 
     private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
@@ -22,10 +21,6 @@ public class UserDAO { // TODO implementar la interfaz IUserDAO
     private static final String SQL_SELECT_BY_USERNAME = "SELECT * FROM usuario WHERE nombreUsuario = ?";
     private static final String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM usuario WHERE nombreUsuario = ? AND contraseña = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM usuario";
-
-    public UserDAO(Connection connection) {
-        this.connection = connection;
-    }
 
     public boolean insertUser(UserDTO user) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();) {
@@ -132,6 +127,21 @@ public class UserDAO { // TODO implementar la interfaz IUserDAO
                 return resultSet.next();
             }
         }
+    }
+
+    public String getUserIdByUsername(String username) throws SQLException {
+        String userId = null;
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME);
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    userId = resultSet.getString("idUsuario");
+                }
+            }
+        }
+        return userId;
     }
 
     public List<UserDTO> getAllUsers() throws SQLException {

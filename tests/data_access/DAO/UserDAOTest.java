@@ -36,7 +36,7 @@ class UserDAOTest {
 
     @BeforeEach
     void setUp() {
-        userDAO = new UserDAO(connection);
+        userDAO = new UserDAO();
         try {
             connection.prepareStatement("DELETE FROM usuario").executeUpdate();
         } catch (SQLException e) {

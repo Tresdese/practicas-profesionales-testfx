@@ -42,10 +42,6 @@ public class GUI_RegisterAcademicController {
         this.parentController = parentController;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
     @FXML
     public void initialize() {
         togglePasswordVisibility.setText("🙈");
@@ -57,7 +53,9 @@ public class GUI_RegisterAcademicController {
             ServiceConfig serviceConfig = new ServiceConfig();
             userService = serviceConfig.getUserService();
         } catch (SQLException e) {
-            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error al conectar a la base de datos.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            logger.error("Error al inicializar el servicio de usuarios: {}", e.getMessage(), e);
         }
     }
 
@@ -106,49 +104,66 @@ public class GUI_RegisterAcademicController {
             String numberOffStaff = fieldNumberOffStaff.getText();
             StaffNumberValidator.validate(numberOffStaff);
 
+            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
+            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
+
+            if (!password.equals(confirmPassword)) {
+                statusLabel.setText("Las contraseñas no coinciden.");
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                return;
+            }
+
             String names = fieldNames.getText();
             String surname = fieldSurnames.getText();
             String selectedRoleText = roleBox.getValue();
             Role role = getRoleFromText(selectedRoleText);
             String userName = fieldUser.getText();
-            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
-
             String hashedPassword = PasswordHasher.hashPassword(password);
 
             UserDTO academic = new UserDTO("0", numberOffStaff, names, surname, userName, hashedPassword, role);
 
-            try{
-
-                if (userService.searchUserById(numberOffStaff) != null) {
-                    throw new RepeatedId("El ID ya está registrado.");
-                }
-
+            try {
                 boolean success = userService.registerUser(academic);
 
-                if (success) {
-                    statusLabel.setText("¡Académico registrado exitosamente!");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-                    if (parentController != null) {
-                        parentController.loadAcademicData();
-                    }
-                } else {
-                    statusLabel.setText("El académico ya existe.");
-                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                }
+                statusLabel.setText("¡Académico registrado exitosamente!");
+                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
                 if (parentController != null) {
                     parentController.loadAcademicData();
                 }
+
+                clearFields();
+
+            } catch (RepeatedId e) {
+                statusLabel.setText(e.getMessage());
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                logger.error("Error - ID repetido: {}", e.getMessage());
+            } catch (RepeatedName e) {
+                statusLabel.setText(e.getMessage());
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                logger.error("Error - Nombre de usuario repetido: {}", e.getMessage());
             } catch (SQLException e) {
                 statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 logger.error("Error de SQL al registrar el académico: {}", e.getMessage(), e);
             }
-        } catch (EmptyFields | InvalidData | RepeatedId e) {
+        } catch (EmptyFields | InvalidData e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
         }
+    }
+
+    private void clearFields() {
+        fieldNumberOffStaff.clear();
+        fieldNames.clear();
+        fieldSurnames.clear();
+        fieldUser.clear();
+        fieldPassword.clear();
+        fieldConfirmPassword.clear();
+        fieldPasswordVisible.clear();
+        fieldConfirmPasswordVisible.clear();
+        roleBox.setValue(null);
     }
 
     public boolean areFieldsFilled() {
