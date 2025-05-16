@@ -23,6 +23,7 @@ import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -140,9 +141,12 @@ public class GUI_CheckProjectListController {
                     .searchLinkedOrganizationById(organizationId);
 
             return (organization != null) ? organization.getName() : "Organización no encontrada";
+        } catch (IllegalArgumentException e) {
+            logger.error("ID de organización inválido: {}", e.getMessage(), e);
+            return "ID inválido";
         } catch (Exception e) {
-            logger.error("Error al obtener nombre de organización: {}", e.getMessage(), e);
-            return "Error";
+            logger.error("Error inesperado al obtener organización: {}", e.getMessage(), e);
+            return "Error de sistema";
         }
     }
 
@@ -303,10 +307,18 @@ public class GUI_CheckProjectListController {
             stage.setTitle("Gestionar Proyecto");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la interfaz de gestión de proyecto.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            statusLabel.setText("Error de configuración en la ventana de gestión.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de estado al configurar controlador: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error al abrir la ventana de gestión de proyecto.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error al abrir la ventana de gestión de proyecto: {}", e.getMessage(), e);
+            logger.error("Error inesperado al gestionar proyecto: {}", e.getMessage(), e);
         }
     }
 }

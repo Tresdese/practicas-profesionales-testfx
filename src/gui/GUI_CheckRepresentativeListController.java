@@ -80,9 +80,9 @@ public class GUI_CheckRepresentativeListController {
         representativeEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         representativeOrganization.setCellValueFactory(cellData -> {
-            String orgId = cellData.getValue().getIdOrganization();
-            String orgName = getOrganizationNameById(orgId);
-            return new SimpleStringProperty(orgName);
+            String organizationId = cellData.getValue().getIdOrganization();
+            String organizationName = getOrganizationNameById(organizationId);
+            return new SimpleStringProperty(organizationName);
         });
 
         addDetailsButtonToTable();

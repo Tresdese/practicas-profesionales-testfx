@@ -124,12 +124,12 @@ public class GUI_RegisterProjectController {
                 organizationBox.getItems().clear();
                 academicBox.getItems().clear();
 
-                for (String orgName : getOrganizationNames()) {
-                    organizationBox.getItems().add(orgName);
+                for (String organizationName : getOrganizationNames()) {
+                    organizationBox.getItems().add(organizationName);
                 }
 
-                for (String acadName : getAcademicNames()) {
-                    academicBox.getItems().add(acadName);
+                for (String academicName : getAcademicNames()) {
+                    academicBox.getItems().add(academicName);
                 }
             } else {
                 statusLabel.setText("El proyecto ya existe.");

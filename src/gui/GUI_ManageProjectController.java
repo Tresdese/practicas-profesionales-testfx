@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.UserDTO;
@@ -209,12 +210,24 @@ public class GUI_ManageProjectController {
                 }
             } else {
                 statusLabel.setText("No se pudo actualizar el proyecto.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
             }
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de validación: {}", e.getMessage(), e);
+        } catch (SQLException e) {
+            statusLabel.setText("Error de base de datos al actualizar el proyecto.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de SQL: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            statusLabel.setText("Error: Datos requeridos no disponibles.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error por referencia nula: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al actualizar el proyecto.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado: {}", e.getMessage(), e);
         }
     }
 
