@@ -94,7 +94,7 @@ public class GUI_CheckListOfStudentsController {
 
     private void openRegisterStudentWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUIRegisterStudent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterStudent.fxml"));
             Parent root = loader.load();
 
             GUI_RegisterStudentController registerController = loader.getController();

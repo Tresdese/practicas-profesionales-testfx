@@ -31,6 +31,11 @@ public class ServiceConfig {
         return new RepresentativeService(connection);
     }
 
+    public ProjectService getProjectService() throws SQLException {
+        Connection connection = connectionDB.connectDB();
+        return new ProjectService(connection);
+    }
+
     public void closeConnection(Connection connection) {
         if (connection != null) {
             try {

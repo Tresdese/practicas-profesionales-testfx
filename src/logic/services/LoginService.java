@@ -18,7 +18,7 @@ public class LoginService {
     public LoginService() throws SQLException {
         Connection connection = new ConecctionDataBase().connectDB();
         this.studentDAO = new StudentDAO();
-        this.userDAO = new UserDAO(connection);
+        this.userDAO = new UserDAO();
     }
 
     public Object login(String username, String plainPassword) throws SQLException, InvalidCredential {

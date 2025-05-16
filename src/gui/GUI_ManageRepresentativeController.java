@@ -82,7 +82,6 @@ public class GUI_ManageRepresentativeController {
         surnamesField.setText(representative.getSurnames() != null ? representative.getSurnames() : "");
         emailField.setText(representative.getEmail() != null ? representative.getEmail() : "");
 
-        // Establecer la organización actual del representante en el ChoiceBox
         try {
             String orgId = representative.getIdOrganization();
             if (orgId != null && !orgId.isEmpty()) {
@@ -112,7 +111,6 @@ public class GUI_ManageRepresentativeController {
             representative.setSurnames(surname);
             representative.setEmail(email);
 
-            // Actualizar la organización del representante
             LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organizationName);
             if (linkedOrganization == null || linkedOrganization.getIddOrganization() == null) {
                 throw new IllegalArgumentException("La organización seleccionada no es válida.");

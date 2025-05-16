@@ -7,13 +7,19 @@ import logic.DTO.UserDTO;
 
 
 public interface IUserDAO {
-    boolean insertUser(UserDTO user, Connection connection) throws SQLException;
+    boolean insertUser(UserDTO user) throws SQLException;
 
-    boolean updateUser(UserDTO user, Connection connection) throws SQLException;
+    boolean updateUser(UserDTO user) throws SQLException;
 
-    boolean deleteUser(UserDTO user, Connection connection) throws SQLException;
+    boolean deleteUser(String idUser) throws SQLException;
 
-    UserDTO getUser(String idUser, Connection connection) throws SQLException;
+    UserDTO searchUserById(String idUser) throws SQLException;
 
-    List<UserDTO> getAllUsers(Connection connection) throws SQLException;
+    UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException;
+
+    boolean isUserRegistered(String idUser) throws SQLException;
+
+    boolean isNameRegistered(String username) throws SQLException;
+
+    List<UserDTO> getAllUsers() throws SQLException;
 }
