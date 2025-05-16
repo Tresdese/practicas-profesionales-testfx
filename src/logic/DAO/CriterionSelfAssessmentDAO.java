@@ -10,7 +10,7 @@ import java.util.List;
 import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.interfaces.ICriterionSelfAssessmentDAO;
 
-public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO { // TODO implementar la interfaz ICriterionSelfAssessmentDAO
+public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
     private final Connection connection;
 
     private final static String SQL_INSERT = "INSERT INTO autoevaluacion_criterio (idAutoevaluacion, idCriterios) VALUES (?, ?)";

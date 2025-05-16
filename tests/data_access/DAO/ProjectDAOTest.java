@@ -1,132 +1,187 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
-import logic.DAO.ProjectDAO;
-import logic.DTO.ProjectDTO;
+import logic.DAO.*;
+import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProjectDAOTest {
 
-    private static ConecctionDataBase connectionDB;
-    private static Connection connection;
+    private ConecctionDataBase connectionDB;
+    private Connection connection;
+    private UserDAO userDAO;
+    private LinkedOrganizationDAO organizationDAO;
     private ProjectDAO projectDAO;
 
-    @BeforeAll
-    static void setUpClass() {
-        connectionDB = new ConecctionDataBase();
-        try {
-            connection = connectionDB.connectDB();
-        } catch (SQLException e) {
-            fail("Error al conectar a la base de datos: " + e.getMessage());
-        }
-    }
+    private int userId;
+    private int organizationId;
 
-    @AfterAll
-    static void tearDownClass() {
-        connectionDB.close();
+    @BeforeAll
+    void setUpAll() throws Exception {
+        connectionDB = new ConecctionDataBase();
+        connection = connectionDB.connectDB();
+        userDAO = new UserDAO(connection);
+        organizationDAO = new LinkedOrganizationDAO(connection);
+        projectDAO = new ProjectDAO();
+
+        limpiarTablasYResetearAutoIncrement();
     }
 
     @BeforeEach
-    void setUp() {
-        projectDAO = new ProjectDAO();
-        try {
-            // Limpia la tabla antes de cada prueba
-            connection.prepareStatement("DELETE FROM proyecto").executeUpdate();
-        } catch (SQLException e) {
-            fail("Error al limpiar la tabla proyecto: " + e.getMessage());
+    void setUp() throws Exception {
+        limpiarTablasYResetearAutoIncrement();
+        crearUsuarioYOrganizacionBase();
+    }
+
+    private void limpiarTablasYResetearAutoIncrement() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
+        stmt.execute("TRUNCATE TABLE proyecto");
+        stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
+        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
+        stmt.close();
+    }
+
+    private void crearUsuarioYOrganizacionBase() throws SQLException {
+        // Insertar organización vinculada
+        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+        organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
+
+        // Insertar usuario
+        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        userId = insertarUsuarioYObtenerId(user);
+    }
+
+    private int insertarUsuarioYObtenerId(UserDTO user) throws SQLException {
+        String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, user.getStaffNumber());
+            stmt.setString(2, user.getNames());
+            stmt.setString(3, user.getSurnames());
+            stmt.setString(4, user.getUserName());
+            stmt.setString(5, user.getPassword());
+            stmt.setString(6, user.getRole().toString());
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo obtener el id del usuario insertado");
+    }
+
+    @AfterAll
+    void tearDownAll() throws Exception {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+        if (connectionDB != null) {
+            connectionDB.close();
         }
     }
 
     @Test
-    void testInsertProject() {
-        try {
-            ProjectDTO project = new ProjectDTO("1", "Proyecto Prueba", "Descripción de prueba",
-                    Timestamp.valueOf("2023-12-01 10:00:00"), Timestamp.valueOf("2023-12-05 10:00:00"), "1");
-            boolean result = projectDAO.insertProject(project);
-            assertTrue(result, "La inserción debería ser exitosa");
-
-            ProjectDTO insertedProject = projectDAO.searchProjectById("1");
-            assertNotNull(insertedProject, "El proyecto debería existir en la base de datos");
-            assertEquals("Proyecto Prueba", insertedProject.getName(), "El nombre debería coincidir");
-        } catch (SQLException e) {
-            fail("Error en testInsertProject: " + e.getMessage());
-        }
+    void testInsertProject() throws Exception {
+        ProjectDTO project = new ProjectDTO(
+                null, // idProyecto autoincremental
+                "Proyecto Test",
+                "Descripción Test",
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                String.valueOf(userId),
+                organizationId
+        );
+        boolean inserted = projectDAO.insertProject(project);
+        assertTrue(inserted, "El proyecto debe insertarse correctamente");
     }
 
     @Test
-    void testSearchProjectById() {
-        try {
-            ProjectDTO project = new ProjectDTO("2", "Proyecto Consulta", "Descripción consulta",
-                    Timestamp.valueOf("2023-12-02 10:00:00"), Timestamp.valueOf("2023-12-06 10:00:00"), "2");
-            projectDAO.insertProject(project);
-
-            ProjectDTO retrievedProject = projectDAO.searchProjectById("2");
-            assertNotNull(retrievedProject, "El proyecto debería existir");
-            assertEquals("Proyecto Consulta", retrievedProject.getName(), "El nombre debería coincidir");
-        } catch (SQLException e) {
-            fail("Error en testSearchProjectById: " + e.getMessage());
-        }
+    void testGetAllProjects() throws Exception {
+        testInsertProject();
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        assertNotNull(projects);
+        assertFalse(projects.isEmpty());
     }
 
     @Test
-    void testUpdateProject() {
-        try {
-            ProjectDTO project = new ProjectDTO("3", "Proyecto Original", "Descripción original",
-                    Timestamp.valueOf("2023-12-03 10:00:00"), Timestamp.valueOf("2023-12-07 10:00:00"), "3");
-            projectDAO.insertProject(project);
+    void testSearchProjectById() throws Exception {
+        ProjectDTO project = new ProjectDTO(
+                null,
+                "Proyecto Buscar",
+                "Descripción Buscar",
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                String.valueOf(userId),
+                organizationId
+        );
+        projectDAO.insertProject(project);
 
-            ProjectDTO updatedProject = new ProjectDTO("3", "Proyecto Actualizado", "Descripción actualizada",
-                    Timestamp.valueOf("2023-12-04 10:00:00"), Timestamp.valueOf("2023-12-08 10:00:00"), "3");
-            boolean result = projectDAO.updateProject(updatedProject);
-            assertTrue(result, "La actualización debería ser exitosa");
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        assertFalse(projects.isEmpty());
+        ProjectDTO inserted = projects.get(0);
 
-            ProjectDTO retrievedProject = projectDAO.searchProjectById("3");
-            assertNotNull(retrievedProject, "El proyecto debería existir después de actualizarlo");
-            assertEquals("Proyecto Actualizado", retrievedProject.getName(), "El nombre debería actualizarse");
-        } catch (SQLException e) {
-            fail("Error en testUpdateProject: " + e.getMessage());
-        }
+        ProjectDTO found = projectDAO.searchProjectById(inserted.getIdProject());
+        assertNotNull(found);
+        assertEquals(inserted.getName(), found.getName());
     }
 
     @Test
-    void testDeleteProject() {
-        try {
-            ProjectDTO project = new ProjectDTO("4", "Proyecto Eliminar", "Descripción eliminar",
-                    Timestamp.valueOf("2023-12-05 10:00:00"), Timestamp.valueOf("2023-12-09 10:00:00"), "4");
-            projectDAO.insertProject(project);
+    void testUpdateProject() throws Exception {
+        ProjectDTO project = new ProjectDTO(
+                null,
+                "Proyecto Actualizar",
+                "Descripción Original",
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                String.valueOf(userId),
+                organizationId
+        );
+        projectDAO.insertProject(project);
 
-            boolean result = projectDAO.deleteProject("4");
-            assertTrue(result, "La eliminación debería ser exitosa");
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        ProjectDTO toUpdate = projects.get(0);
 
-            ProjectDTO deletedProject = projectDAO.searchProjectById("4");
-            assertNull(deletedProject, "El proyecto eliminado no debería existir");
-        } catch (SQLException e) {
-            fail("Error en testDeleteProject: " + e.getMessage());
-        }
+        toUpdate.setName("Proyecto Actualizado");
+        toUpdate.setDescription("Descripción Modificada");
+        boolean updated = projectDAO.updateProject(toUpdate);
+        assertTrue(updated);
+
+        ProjectDTO updatedProject = projectDAO.searchProjectById(toUpdate.getIdProject());
+        assertEquals("Proyecto Actualizado", updatedProject.getName());
+        assertEquals("Descripción Modificada", updatedProject.getDescription());
     }
 
     @Test
-    void testGetAllProjects() {
-        try {
-            ProjectDTO project1 = new ProjectDTO("5", "Proyecto Lista 1", "Descripción lista 1",
-                    Timestamp.valueOf("2023-12-06 10:00:00"), Timestamp.valueOf("2023-12-10 10:00:00"), "5");
-            ProjectDTO project2 = new ProjectDTO("6", "Proyecto Lista 2", "Descripción lista 2",
-                    Timestamp.valueOf("2023-12-07 10:00:00"), Timestamp.valueOf("2023-12-11 10:00:00"), "6");
-            projectDAO.insertProject(project1);
-            projectDAO.insertProject(project2);
+    void testDeleteProject() throws Exception {
+        ProjectDTO project = new ProjectDTO(
+                null,
+                "Proyecto Eliminar",
+                "Descripción Eliminar",
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                new java.sql.Timestamp(System.currentTimeMillis()),
+                String.valueOf(userId),
+                organizationId
+        );
+        projectDAO.insertProject(project);
 
-            List<ProjectDTO> projects = projectDAO.getAllProjects();
-            assertNotNull(projects, "La lista no debería ser nula");
-            assertTrue(projects.size() >= 2, "Debería haber al menos dos proyectos en la lista");
-        } catch (SQLException e) {
-            fail("Error en testGetAllProjects: " + e.getMessage());
-        }
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        ProjectDTO toDelete = projects.get(0);
+
+        boolean deleted = projectDAO.deleteProject(toDelete.getIdProject());
+        assertTrue(deleted);
+
+        ProjectDTO deletedProject = projectDAO.searchProjectById(toDelete.getIdProject());
+        assertEquals("-1", deletedProject.getIdProject());
     }
 }
