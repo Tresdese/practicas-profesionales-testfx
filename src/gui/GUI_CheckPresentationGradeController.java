@@ -15,6 +15,7 @@ import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class GUI_CheckPresentationGradeController {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableView().getSelectionModel().getSelectedItem() != getTableView().getItems().get(getIndex())) {
+                if (empty) {
                     setGraphic(null);
                 } else {
                     setGraphic(btn);
@@ -80,7 +81,6 @@ public class GUI_CheckPresentationGradeController {
         };
         colVerDetalles.setCellFactory(cellFactory);
 
-        // Refresca la tabla al cambiar la selección para mostrar/ocultar el botón
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> tableView.refresh());
     }
 
@@ -90,7 +90,7 @@ public class GUI_CheckPresentationGradeController {
             Parent root = loader.load();
 
             GUI_DetailsPresentationStudentController controller = loader.getController();
-            controller.setIdEvaluation(evaluation.getIdEvaluation()); // Pasa el idEvaluation
+            controller.setIdEvaluation(evaluation.getIdEvaluation());
 
             Stage stage = new Stage();
             stage.setTitle("Detalles de la Evaluación");
@@ -116,14 +116,17 @@ public class GUI_CheckPresentationGradeController {
             EvaluationPresentationDAO evaluationDAO = new EvaluationPresentationDAO();
             List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuiton(student.getTuiton());
 
-            if (studentEvaluations.isEmpty()) {
+            if (studentEvaluations == null || studentEvaluations.isEmpty()) {
                 statusLabel.setText("No tienes evaluaciones de presentación registradas.");
             } else {
                 tableView.getItems().setAll(studentEvaluations);
             }
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al cargar las evaluaciones: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos al cargar las evaluaciones.");
         } catch (Exception e) {
-            logger.error("Error al cargar las evaluaciones de presentación: {}", e.getMessage(), e);
-            statusLabel.setText("Error al cargar las evaluaciones.");
+            logger.error("Error inesperado al cargar las evaluaciones: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al cargar las evaluaciones.");
         }
     }
 }

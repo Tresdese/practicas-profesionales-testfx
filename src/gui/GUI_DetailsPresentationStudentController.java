@@ -10,6 +10,7 @@ import logic.DTO.EvaluationDetailDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class GUI_DetailsPresentationStudentController {
         detailsVBox.getChildren().clear();
         try {
             List<EvaluationDetailDTO> details = getDetailsByEvaluation(idEvaluation);
-            if (details.isEmpty()) {
+            if (details == null || details.isEmpty()) {
                 statusLabel.setText("No hay detalles para esta evaluación.");
             } else {
                 for (EvaluationDetailDTO detail : details) {
@@ -37,13 +38,16 @@ public class GUI_DetailsPresentationStudentController {
                 }
                 statusLabel.setText("");
             }
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al cargar los detalles de la evaluación: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos al cargar los detalles.");
         } catch (Exception e) {
-            logger.error("Error al cargar los detalles de la evaluación: {}", e.getMessage(), e);
-            statusLabel.setText("Error al cargar los detalles.");
+            logger.error("Error inesperado al cargar los detalles de la evaluación: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al cargar los detalles.");
         }
     }
 
-    private List<EvaluationDetailDTO> getDetailsByEvaluation(int idEvaluation) throws Exception {
+    private List<EvaluationDetailDTO> getDetailsByEvaluation(int idEvaluation) throws SQLException {
         EvaluationDetailDAO detailDAO = new EvaluationDetailDAO();
         return detailDAO.getAllEvaluationDetails()
                 .stream()
@@ -51,9 +55,9 @@ public class GUI_DetailsPresentationStudentController {
                 .collect(Collectors.toList());
     }
 
-    private String getCriterionName(int idCriterion) throws Exception {
+    private String getCriterionName(int idCriterion) throws SQLException {
         AssessmentCriterionDAO criterionDAO = new AssessmentCriterionDAO();
         AssessmentCriterionDTO criterion = criterionDAO.searchAssessmentCriterionById(String.valueOf(idCriterion));
-        return criterion.getNameCriterion();
+        return criterion != null ? criterion.getNameCriterion() : "Desconocido";
     }
 }

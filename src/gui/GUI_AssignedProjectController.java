@@ -21,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 import data_access.ConecctionDataBase;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import logic.exceptions.ProjectNotFound;
 
 public class GUI_AssignedProjectController {
 
@@ -63,8 +65,14 @@ public class GUI_AssignedProjectController {
             resetLabelsStyle();
             fillProjectLabels(project);
             fillOrganizationAndRepresentativeLabels(project.getIdOrganization());
+        } catch (ProjectNotFound e) {
+            logger.warn("Proyecto no encontrado: {}", e.getMessage());
+            showProjectNotFound();
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al buscar el proyecto asignado: {}", e.getMessage(), e);
+            showErrorLoadingProject();
         } catch (Exception e) {
-            logger.error("Error al buscar el proyecto asignado: {}", e.getMessage(), e);
+            logger.error("Error inesperado al buscar el proyecto asignado: {}", e.getMessage(), e);
             showErrorLoadingProject();
         }
     }
@@ -123,10 +131,14 @@ public class GUI_AssignedProjectController {
             } else {
                 representativeLabel.setText(rep.getNames() + " " + rep.getSurnames());
             }
+        } catch (SQLException e) {
+            organizationLabel.setText("Error");
+            representativeLabel.setText("Error");
+            logger.error("Error de base de datos al obtener organización o representante: {}", e.getMessage(), e);
         } catch (Exception e) {
             organizationLabel.setText("Error");
             representativeLabel.setText("Error");
-            logger.error("Error al obtener organización o representante: {}", e.getMessage(), e);
+            logger.error("Error inesperado al obtener organización o representante: {}", e.getMessage(), e);
         }
     }
 
@@ -140,7 +152,6 @@ public class GUI_AssignedProjectController {
                 return r;
             }
         }
-        // Retorna objeto con "N/A" si no se encuentra
         return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
     }
 
