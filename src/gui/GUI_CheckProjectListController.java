@@ -9,13 +9,17 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.UserDTO;
+
 import logic.services.ProjectService;
 import logic.services.ServiceConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,9 +101,9 @@ public class GUI_CheckProjectListController {
         });
 
         projectOrganization.setCellValueFactory(cellData -> {
-            String orgId = String.valueOf(cellData.getValue().getIdOrganization());
-            String orgName = getOrganizationNameById(orgId);
-            return new SimpleStringProperty(orgName);
+            String organizationId = String.valueOf(cellData.getValue().getIdOrganization());
+            String organizationName = getOrganizationNameById(organizationId);
+            return new SimpleStringProperty(organizationName);
         });
 
         projectAcademic.setCellValueFactory(cellData -> {
@@ -113,13 +117,17 @@ public class GUI_CheckProjectListController {
 
         loadProjectData();
 
-        searchButton.setOnAction(event -> searchProject());
-        buttonRegisterProject.setOnAction(event -> openRegisterProjectWindow());
+        initializeButtons();
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedProject = newValue;
             tableView.refresh();
         });
+    }
+
+    private void initializeButtons() {
+        buttonRegisterProject.setOnAction(event -> openRegisterProjectWindow());
+        searchButton.setOnAction(event -> searchProject());
     }
 
     private String getOrganizationNameById(String organizationId) {
@@ -146,9 +154,15 @@ public class GUI_CheckProjectListController {
 
             UserDTO academic = serviceConfig.getUserService().searchUserById(academicId);
             return (academic != null) ? academic.getNames() + " " + academic.getSurnames() : "Académico no encontrado";
+        }catch (SQLException e) {
+            logger.error("Error de base de datos al obtener academico: {}", e.getMessage(), e);
+            return "Error de conexión a BD";
+        } catch (IllegalArgumentException e) {
+            logger.error("ID de academico inválido: {}", e.getMessage(), e);
+            return "ID inválido";
         } catch (Exception e) {
-            logger.error("Error al obtener nombre del académico: {}", e.getMessage(), e);
-            return "Error";
+            logger.error("Error inesperado al obtener academico: {}", e.getMessage(), e);
+            return "Error de sistema";
         }
     }
 
@@ -204,13 +218,13 @@ public class GUI_CheckProjectListController {
 
             if (filteredList.isEmpty()) {
                 statusLabel.setText("No se encontraron proyectos con ese ID o nombre.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
             } else {
                 statusLabel.setText("");
             }
         } catch (SQLException e) {
             statusLabel.setText("Error al buscar el proyecto.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             logger.error("Error al buscar el proyecto: {}", e.getMessage(), e);
         }
 
@@ -291,7 +305,7 @@ public class GUI_CheckProjectListController {
             stage.show();
         } catch (Exception e) {
             statusLabel.setText("Error al abrir la ventana de gestión de proyecto.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             logger.error("Error al abrir la ventana de gestión de proyecto: {}", e.getMessage(), e);
         }
     }
