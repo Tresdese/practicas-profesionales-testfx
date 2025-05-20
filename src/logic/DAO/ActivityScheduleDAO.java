@@ -11,45 +11,45 @@ import logic.DTO.ActivityScheduleDTO;
 import logic.interfaces.IActivityScheduleDAO;
 
 public class ActivityScheduleDAO implements IActivityScheduleDAO {
-    private final static String SQL_INSERT = "INSERT INTO actividad_programada (idHorario, idActividad) VALUES (?, ?)";
-    private final static String SQL_UPDATE = "UPDATE actividad_programada SET idHorario = ?, idActividad = ? WHERE idHorario = ? AND idActividad = ?";
-    private final static String SQL_DELETE = "DELETE FROM actividad_programada WHERE idHorario = ? AND idActividad = ?";
-    private final static String SQL_SELECT = "SELECT * FROM actividad_programada WHERE idHorario = ? AND idActividad = ?";
-    private final static String SQL_SELECT_ALL = "SELECT * FROM actividad_programada";
+    private final static String SQL_INSERT = "INSERT INTO cronograma_actividad (idCronograma, idActividad) VALUES (?, ?)";
+    private final static String SQL_UPDATE = "UPDATE cronograma_actividad SET idCronograma = ?, idActividad = ? WHERE idCronograma = ? AND idActividad = ?";
+    private final static String SQL_DELETE = "DELETE FROM cronograma_actividad WHERE idCronograma = ? AND idActividad = ?";
+    private final static String SQL_SELECT = "SELECT * FROM cronograma_actividad WHERE idCronograma = ? AND idActividad = ?";
+    private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_actividad";
 
     public boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setString(1, activitySchedule.getIdSchedule());
-            statement.setString(2, activitySchedule.getIdActivity());
+            statement.setInt(1, activitySchedule.getIdSchedule());
+            statement.setInt(2, activitySchedule.getIdActivity());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
-            statement.setString(1, newActivitySchedule.getIdSchedule());
-            statement.setString(2, newActivitySchedule.getIdActivity());
-            statement.setString(3, oldActivitySchedule.getIdSchedule());
-            statement.setString(4, oldActivitySchedule.getIdActivity());
+            statement.setInt(1, newActivitySchedule.getIdSchedule());
+            statement.setInt(2, newActivitySchedule.getIdActivity());
+            statement.setInt(3, oldActivitySchedule.getIdSchedule());
+            statement.setInt(4, oldActivitySchedule.getIdActivity());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            statement.setString(1, activitySchedule.getIdSchedule());
-            statement.setString(2, activitySchedule.getIdActivity());
+            statement.setInt(1, activitySchedule.getIdSchedule());
+            statement.setInt(2, activitySchedule.getIdActivity());
             return statement.executeUpdate() > 0;
         }
     }
 
     public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
-            statement.setString(1, activitySchedule.getIdSchedule());
-            statement.setString(2, activitySchedule.getIdActivity());
+            statement.setInt(1, activitySchedule.getIdSchedule());
+            statement.setInt(2, activitySchedule.getIdActivity());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ActivityScheduleDTO(resultSet.getString("idHorario"), resultSet.getString("idActividad"));
+                    return new ActivityScheduleDTO(resultSet.getInt("idCronograma"), resultSet.getInt("idActividad"));
                 }
             }
         }
@@ -61,7 +61,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                activitySchedules.add(new ActivityScheduleDTO(resultSet.getString("idHorario"), resultSet.getString("idActividad")));
+                activitySchedules.add(new ActivityScheduleDTO(resultSet.getInt("idCronograma"), resultSet.getInt("idActividad")));
             }
         }
         return activitySchedules;

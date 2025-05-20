@@ -1,40 +1,40 @@
 package logic.DTO;
 
 public class ActivityScheduleDTO {
-    private String idSchedule;
-    private String idActivity;
+    private int idSchedule;
+    private int idActivity;
 
     public ActivityScheduleDTO() {
-        this.idSchedule = "";
-        this.idActivity = "";
+        this.idSchedule = 0;
+        this.idActivity = 0;
     }
 
-    public ActivityScheduleDTO(String idSchedule, String idActivity) {
+    public ActivityScheduleDTO(int idSchedule, int idActivity) {
         this.idSchedule = idSchedule;
         this.idActivity = idActivity;
     }
 
-    public String getIdSchedule() {
+    public int getIdSchedule() {
         return idSchedule;
     }
 
-    public void setIdSchedule(String idSchedule) {
+    public void setIdSchedule(int idSchedule) {
         this.idSchedule = idSchedule;
     }
 
-    public String getIdActivity() {
+    public int getIdActivity() {
         return idActivity;
     }
 
-    public void setIdActivity(String idActivity) {
+    public void setIdActivity(int idActivity) {
         this.idActivity = idActivity;
     }
 
     @Override
     public String toString() {
         return "ActivityScheduleDTO{" +
-                "idSchedule='" + idSchedule + '\'' +
-                ", idActivity='" + idActivity + '\'' +
+                "idSchedule=" + idSchedule +
+                ", idActivity=" + idActivity +
                 '}';
     }
 
@@ -45,7 +45,7 @@ public class ActivityScheduleDTO {
 
         ActivityScheduleDTO that = (ActivityScheduleDTO) obj;
 
-        if (!idSchedule.equals(that.idSchedule)) return false;
-        return idActivity.equals(that.idActivity);
+        if (idSchedule != that.idSchedule) return false;
+        return idActivity == that.idActivity;
     }
 }

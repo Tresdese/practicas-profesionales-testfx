@@ -11,8 +11,8 @@ import logic.DTO.SelfAssessmentCriteriaDTO;
 import logic.interfaces.ISelfAssessmentCriterialDAO;
 
 public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
-    private final static String SQL_INSERT = "INSERT INTO criterio_de_autoevaluacion (idCriterios, nombreCriterio, calificacion) VALUES (?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE criterio_de_autoevaluacion SET nombreCriterio = ?, calificacion = ? WHERE idCriterios = ?";
+    private final static String SQL_INSERT = "INSERT INTO criterio_de_autoevaluacion (idCriterios, nombreCriterio) VALUES (?, ?)";
+    private final static String SQL_UPDATE = "UPDATE criterio_de_autoevaluacion SET nombreCriterio = ? WHERE idCriterios = ?";
     private final static String SQL_DELETE = "DELETE FROM criterio_de_autoevaluacion WHERE idCriterios = ?";
     private final static String SQL_SELECT = "SELECT * FROM criterio_de_autoevaluacion WHERE idCriterios = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM criterio_de_autoevaluacion";
@@ -21,7 +21,6 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, criteria.getIdCriteria());
             statement.setString(2, criteria.getNameCriteria());
-            statement.setDouble(3, criteria.getGrade());
             return statement.executeUpdate() > 0;
         }
     }
@@ -29,8 +28,7 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
     public boolean updateSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, criteria.getNameCriteria());
-            statement.setDouble(2, criteria.getGrade());
-            statement.setString(3, criteria.getIdCriteria());
+            statement.setString(2, criteria.getIdCriteria());
             return statement.executeUpdate() > 0;
         }
     }
@@ -45,8 +43,7 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
     public SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria, Connection connection) throws SQLException {
         SelfAssessmentCriteriaDTO selfAssessmentCriteria = new SelfAssessmentCriteriaDTO(
                 "N/A",
-                "N/A",
-                -1
+                "N/A"
         );
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idCriteria);
@@ -54,8 +51,7 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
                 if (resultSet.next()) {
                     selfAssessmentCriteria = new SelfAssessmentCriteriaDTO(
                             resultSet.getString("idCriterios"),
-                            resultSet.getString("nombreCriterio"),
-                            resultSet.getDouble("calificacion")
+                            resultSet.getString("nombreCriterio")
                     );
                 }
             }
@@ -70,11 +66,11 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
             while (resultSet.next()) {
                 criteriaList.add(new SelfAssessmentCriteriaDTO(
                         resultSet.getString("idCriterios"),
-                        resultSet.getString("nombreCriterio"),
-                        resultSet.getDouble("calificacion")
+                        resultSet.getString("nombreCriterio")
                 ));
             }
         }
         return criteriaList;
     }
 }
+

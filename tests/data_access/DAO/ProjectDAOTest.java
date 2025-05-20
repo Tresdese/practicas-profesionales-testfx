@@ -26,7 +26,7 @@ class ProjectDAOTest {
     void setUpAll() throws Exception {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
-        userDAO = new UserDAO(connection);
+        userDAO = new UserDAO();
         organizationDAO = new LinkedOrganizationDAO(connection);
         projectDAO = new ProjectDAO();
 

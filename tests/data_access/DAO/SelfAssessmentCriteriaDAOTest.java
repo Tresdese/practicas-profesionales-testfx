@@ -46,7 +46,7 @@ class SelfAssessmentCriteriaDAOTest {
     void testInsertSelfAssessmentCriteria() {
         try {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
-                    "1", "Criterio de Prueba", 85.5
+                    "1", "Criterio de Prueba"
             );
 
             boolean result = criteriaDAO.insertSelfAssessmentCriteria(criteria, connection);
@@ -65,14 +65,13 @@ class SelfAssessmentCriteriaDAOTest {
     void testSearchSelfAssessmentCriteriaById() {
         try {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
-                    "2", "Criterio de Consulta", 90.0
+                    "2", "Criterio de Consulta"
             );
-
             criteriaDAO.insertSelfAssessmentCriteria(criteria, connection);
 
-            SelfAssessmentCriteriaDTO retrievedCriteria = criteriaDAO.searchSelfAssessmentCriteriaById("2", connection);
-            assertNotNull(retrievedCriteria, "El criterio debería existir en la base de datos");
-            assertEquals("Criterio de Consulta", retrievedCriteria.getNameCriteria(), "El nombre debería coincidir");
+            SelfAssessmentCriteriaDTO found = criteriaDAO.searchSelfAssessmentCriteriaById("2", connection);
+            assertNotNull(found, "El criterio buscado no debe ser nulo");
+            assertEquals("Criterio de Consulta", found.getNameCriteria(), "El nombre debe coincidir");
         } catch (SQLException e) {
             fail("Error en testSearchSelfAssessmentCriteriaById: " + e.getMessage());
         }
@@ -81,23 +80,19 @@ class SelfAssessmentCriteriaDAOTest {
     @Test
     void testUpdateSelfAssessmentCriteria() {
         try {
-            SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
-                    "3", "Criterio Original", 75.0
+            SelfAssessmentCriteriaDTO original = new SelfAssessmentCriteriaDTO(
+                    "3", "Criterio Original"
             );
+            criteriaDAO.insertSelfAssessmentCriteria(original, connection);
 
-            criteriaDAO.insertSelfAssessmentCriteria(criteria, connection);
-
-            SelfAssessmentCriteriaDTO updatedCriteria = new SelfAssessmentCriteriaDTO(
-                    "3", "Criterio Actualizado", 95.0
+            SelfAssessmentCriteriaDTO updated = new SelfAssessmentCriteriaDTO(
+                    "3", "Criterio Actualizado"
             );
-
-            boolean result = criteriaDAO.updateSelfAssessmentCriteria(updatedCriteria, connection);
+            boolean result = criteriaDAO.updateSelfAssessmentCriteria(updated, connection);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            SelfAssessmentCriteriaDTO retrievedCriteria = criteriaDAO.searchSelfAssessmentCriteriaById("3", connection);
-            assertNotNull(retrievedCriteria, "El criterio debería existir después de actualizar");
-            assertEquals("Criterio Actualizado", retrievedCriteria.getNameCriteria(), "El nombre debería actualizarse");
-            assertEquals(95.0, retrievedCriteria.getGrade(), "La calificación debería actualizarse");
+            SelfAssessmentCriteriaDTO found = criteriaDAO.searchSelfAssessmentCriteriaById("3", connection);
+            assertEquals("Criterio Actualizado", found.getNameCriteria(), "El nombre debe actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdateSelfAssessmentCriteria: " + e.getMessage());
         }
@@ -107,16 +102,15 @@ class SelfAssessmentCriteriaDAOTest {
     void testDeleteSelfAssessmentCriteria() {
         try {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
-                    "4", "Criterio a Eliminar", 60.0
+                    "4", "Criterio a Eliminar"
             );
-
             criteriaDAO.insertSelfAssessmentCriteria(criteria, connection);
 
             boolean result = criteriaDAO.deleteSelfAssessmentCriteria(criteria, connection);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            SelfAssessmentCriteriaDTO deletedCriteria = criteriaDAO.searchSelfAssessmentCriteriaById("4", connection);
-            assertEquals("N/A", deletedCriteria.getIdCriteria(), "El criterio eliminado no debería existir");
+            SelfAssessmentCriteriaDTO found = criteriaDAO.searchSelfAssessmentCriteriaById("4", connection);
+            assertEquals("N/A", found.getIdCriteria(), "El criterio eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteSelfAssessmentCriteria: " + e.getMessage());
         }
@@ -126,11 +120,11 @@ class SelfAssessmentCriteriaDAOTest {
     void testGetAllSelfAssessmentCriteria() {
         try {
             SelfAssessmentCriteriaDTO criteria1 = new SelfAssessmentCriteriaDTO(
-                    "5", "Criterio 1", 80.0
+                    "5", "Criterio 1"
             );
 
             SelfAssessmentCriteriaDTO criteria2 = new SelfAssessmentCriteriaDTO(
-                    "6", "Criterio 2", 85.0
+                    "6", "Criterio 2"
             );
 
             criteriaDAO.insertSelfAssessmentCriteria(criteria1, connection);

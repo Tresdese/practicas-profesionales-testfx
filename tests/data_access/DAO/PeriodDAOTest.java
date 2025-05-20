@@ -6,64 +6,84 @@ import logic.DTO.PeriodDTO;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PeriodDAOTest {
-
-    private static ConecctionDataBase connectionDB;
-    private static Connection connection;
+    private ConecctionDataBase connectionDB;
+    private Connection connection;
     private PeriodDAO periodDAO;
 
+    // Datos base para pruebas
+    private final String baseId = "1000";
+    private final String baseName = "Periodo Base";
+    private final Timestamp baseStart = Timestamp.valueOf("2025-01-01 00:00:00");
+    private final Timestamp baseEnd = Timestamp.valueOf("2025-06-30 23:59:59");
+
     @BeforeAll
-    static void setUpClass() {
+    void setUpAll() {
         connectionDB = new ConecctionDataBase();
         try {
             connection = connectionDB.connectDB();
+            periodDAO = new PeriodDAO();
+            clearTable();
+            // Insertar registro base necesario para los tests
+            PeriodDTO basePeriod = new PeriodDTO(baseId, baseName, baseStart, baseEnd);
+            assertTrue(periodDAO.insertPeriod(basePeriod, connection), "No se pudo insertar el periodo base en BeforeAll");
         } catch (SQLException e) {
-            fail("Error al conectar a la base de datos: " + e.getMessage());
+            fail("Error al conectar o preparar la base de datos: " + e.getMessage());
         }
     }
 
     @AfterAll
-    static void tearDownClass() {
-        connectionDB.close();
+    void tearDownAll() {
+        try {
+            clearTable();
+            if (connection != null) connection.close();
+            if (connectionDB != null) connectionDB.close();
+        } catch (SQLException ignored) {}
     }
 
     @BeforeEach
     void setUp() {
-        periodDAO = new PeriodDAO();
         try {
-            // Limpia la tabla antes de cada prueba
-            connection.prepareStatement("DELETE FROM periodo").executeUpdate();
+            clearTable();
+            // Insertar el periodo base usando el DAO, igual que en StudentDAOTest
+            PeriodDTO basePeriod = new PeriodDTO(baseId, baseName, baseStart, baseEnd);
+            assertTrue(periodDAO.insertPeriod(basePeriod, connection), "No se pudo insertar el periodo base en BeforeEach");
         } catch (SQLException e) {
             fail("Error al limpiar la tabla periodo: " + e.getMessage());
         }
     }
 
-    private PeriodDTO createTestPeriod(String idPeriod, String name, Timestamp startDate, Timestamp endDate) {
-        return new PeriodDTO(idPeriod, name, startDate, endDate);
+    private void clearTable() throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM periodo")) {
+            stmt.executeUpdate();
+        }
+        try (PreparedStatement stmt = connection.prepareStatement("ALTER TABLE periodo AUTO_INCREMENT = 1")) {
+            stmt.executeUpdate();
+        } catch (SQLException ignored) { /* Puede fallar si la BD no soporta AUTO_INCREMENT en PK manual */ }
     }
 
     @Test
     void testInsertPeriod() {
         try {
-            PeriodDTO period = createTestPeriod(
-                    "222601",
-                    "Agosto 25 Enero 26",
-                    Timestamp.valueOf("2025-08-01 00:00:00"),
-                    Timestamp.valueOf("2026-01-31 23:59:59")
+            PeriodDTO period = new PeriodDTO(
+                    "2000",
+                    "Periodo Extra",
+                    Timestamp.valueOf("2026-01-01 00:00:00"),
+                    Timestamp.valueOf("2026-06-30 23:59:59")
             );
-
             boolean result = periodDAO.insertPeriod(period, connection);
             assertTrue(result, "La inserción debería ser exitosa");
-
-            PeriodDTO insertedPeriod = periodDAO.searchPeriodById("222601", connection);
+            PeriodDTO insertedPeriod = periodDAO.searchPeriodById("2000", connection);
             assertNotNull(insertedPeriod, "El periodo debería existir en la base de datos");
-            assertEquals("Agosto 25 Enero 26", insertedPeriod.getName(), "El nombre debería coincidir");
+            assertEquals("Periodo Extra", insertedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en testInsertPeriod: " + e.getMessage());
         }
@@ -72,18 +92,9 @@ class PeriodDAOTest {
     @Test
     void testSearchPeriodById() {
         try {
-            PeriodDTO period = createTestPeriod(
-                    "222651",
-                    "Febrero 26 Julio 26",
-                    Timestamp.valueOf("2026-02-01 00:00:00"),
-                    Timestamp.valueOf("2026-07-31 23:59:59")
-            );
-
-            periodDAO.insertPeriod(period, connection);
-
-            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById("222651", connection);
-            assertNotNull(retrievedPeriod, "El periodo debería existir en la base de datos");
-            assertEquals("Febrero 26 Julio 26", retrievedPeriod.getName(), "El nombre debería coincidir");
+            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById(baseId, connection);
+            assertNotNull(retrievedPeriod, "El periodo base debería existir en la base de datos");
+            assertEquals(baseName, retrievedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en testSearchPeriodById: " + e.getMessage());
         }
@@ -92,28 +103,17 @@ class PeriodDAOTest {
     @Test
     void testUpdatePeriod() {
         try {
-            PeriodDTO period = createTestPeriod(
-                    "222701",
-                    "Agosto 26 Enero 27",
-                    Timestamp.valueOf("2026-08-01 00:00:00"),
-                    Timestamp.valueOf("2027-01-31 23:59:59")
-            );
-
-            periodDAO.insertPeriod(period, connection);
-
             PeriodDTO updatedPeriod = new PeriodDTO(
-                    "222701",
-                    "Agosto 26 Febrero 27",
-                    Timestamp.valueOf("2026-08-01 00:00:00"),
-                    Timestamp.valueOf("2027-02-28 23:59:59")
+                    baseId,
+                    "Periodo Base Actualizado",
+                    baseStart,
+                    baseEnd
             );
-
             boolean result = periodDAO.updatePeriod(updatedPeriod, connection);
             assertTrue(result, "La actualización debería ser exitosa");
-
-            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById("222701", connection);
+            PeriodDTO retrievedPeriod = periodDAO.searchPeriodById(baseId, connection);
             assertNotNull(retrievedPeriod, "El periodo debería existir después de actualizar");
-            assertEquals("Agosto 26 Febrero 27", retrievedPeriod.getName(), "El nombre debería actualizarse");
+            assertEquals("Periodo Base Actualizado", retrievedPeriod.getName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdatePeriod: " + e.getMessage());
         }
@@ -122,19 +122,9 @@ class PeriodDAOTest {
     @Test
     void testDeletePeriod() {
         try {
-            PeriodDTO period = createTestPeriod(
-                    "222651",
-                    "Febrero 26 Julio 26",
-                    Timestamp.valueOf("2026-02-01 00:00:00"),
-                    Timestamp.valueOf("2026-07-31 23:59:59")
-            );
-
-            periodDAO.insertPeriod(period, connection);
-
-            boolean result = periodDAO.deletePeriodById("222651", connection);
+            boolean result = periodDAO.deletePeriodById(baseId, connection);
             assertTrue(result, "La eliminación debería ser exitosa");
-
-            PeriodDTO deletedPeriod = periodDAO.searchPeriodById("222651", connection);
+            PeriodDTO deletedPeriod = periodDAO.searchPeriodById(baseId, connection);
             assertEquals("N/A", deletedPeriod.getIdPeriod(), "El periodo eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeletePeriod: " + e.getMessage());
@@ -144,23 +134,13 @@ class PeriodDAOTest {
     @Test
     void testGetAllPeriods() {
         try {
-            PeriodDTO period1 = createTestPeriod(
-                    "222601",
-                    "Agosto 25 Enero 26",
-                    Timestamp.valueOf("2025-08-01 00:00:00"),
-                    Timestamp.valueOf("2026-01-31 23:59:59")
+            PeriodDTO period2 = new PeriodDTO(
+                    "3000",
+                    "Periodo Secundario",
+                    Timestamp.valueOf("2027-01-01 00:00:00"),
+                    Timestamp.valueOf("2027-06-30 23:59:59")
             );
-
-            PeriodDTO period2 = createTestPeriod(
-                    "222651",
-                    "Febrero 26 Julio 26",
-                    Timestamp.valueOf("2026-02-01 00:00:00"),
-                    Timestamp.valueOf("2026-07-31 23:59:59")
-            );
-
-            periodDAO.insertPeriod(period1, connection);
             periodDAO.insertPeriod(period2, connection);
-
             List<PeriodDTO> periods = periodDAO.getAllPeriods(connection);
             assertNotNull(periods, "La lista de periodos no debería ser nula");
             assertTrue(periods.size() >= 2, "Deberían existir al menos dos periodos en la base de datos");
