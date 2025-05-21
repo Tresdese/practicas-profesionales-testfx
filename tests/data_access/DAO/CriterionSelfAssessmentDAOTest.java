@@ -24,6 +24,7 @@ class CriterionSelfAssessmentDAOTest {
     private SelfAssessmentDAO selfAssessmentDAO;
     private CriterionSelfAssessmentDAO criterionSelfAssessmentDAO;
     private StudentDAO studentDAO;
+    private UserDAO userDAO;
 
     // Base IDs for records
     private final int periodIdBase = 1001;
@@ -32,6 +33,7 @@ class CriterionSelfAssessmentDAOTest {
     private final int evidenceIdBase = 4001;
     private final int criteriaIdBase = 5001;
     private final int selfAssessmentIdBase = 6001;
+    private final String userIdBase = "1";
 
     @BeforeAll
     void setUpAll() throws Exception {
@@ -44,6 +46,7 @@ class CriterionSelfAssessmentDAOTest {
         selfAssessmentDAO = new SelfAssessmentDAO();
         criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO(connection);
         studentDAO = new StudentDAO();
+        userDAO = new UserDAO();
         clearTablesAndResetAutoIncrement();
     }
 
@@ -73,10 +76,12 @@ class CriterionSelfAssessmentDAOTest {
         stmt.execute("TRUNCATE TABLE evidencia");
         stmt.execute("TRUNCATE TABLE estudiante");
         stmt.execute("TRUNCATE TABLE grupo");
+        stmt.execute("TRUNCATE TABLE usuario");
         stmt.execute("TRUNCATE TABLE periodo");
         stmt.execute("ALTER TABLE criterio_de_autoevaluacion AUTO_INCREMENT = 1");
         stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
         stmt.execute("ALTER TABLE autoevaluacion AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
         stmt.execute("SET FOREIGN_KEY_CHECKS=1");
         stmt.close();
     }
@@ -92,14 +97,29 @@ class CriterionSelfAssessmentDAOTest {
     }
 
     private void createBaseRecords() throws SQLException {
+        // 1. Insertar periodo
         String periodId = String.valueOf(periodIdBase);
         PeriodDTO period = new PeriodDTO(periodId, "Test Period", new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
         assertTrue(periodDAO.insertPeriod(period, connection), "No se pudo insertar el periodo");
 
-        String groupNRC = String.valueOf(groupIdBase);
-        GroupDTO group = new GroupDTO(groupNRC, "Test Group", "1", periodId);
-        assertTrue(groupDAO.insertGroup(group, connection), "No se pudo insertar el grupo");
+        // 2. Insertar usuario (requerido para grupo)
+        UserDTO user = new UserDTO(
+                userIdBase, // idUsuario
+                "12345", // numeroDePersonal
+                "Nombre", // nombres
+                "Apellido", // apellidos
+                "testuser", // nombreUsuario
+                "1234567890123456789012345678901234567890123456789012345678901234", // contraseña (64 chars)
+                Role.ACADEMICO // rol
+        );
+        assertTrue(userDAO.insertUser(user), "No se pudo insertar el usuario");
 
+        // 3. Insertar grupo
+        String groupNRC = String.valueOf(groupIdBase);
+        GroupDTO group = new GroupDTO(groupNRC, "Test Group", userIdBase, periodId);
+        assertTrue(groupDAO.insertGroup(group), "No se pudo insertar el grupo");
+
+        // 4. Insertar estudiante
         StudentDTO student = new StudentDTO(
                 studentIdBase, 1, "John", "Doe", "1234567890", "john.doe@test.com",
                 "johnuser", "1234567890123456789012345678901234567890123456789012345678901234",
@@ -107,23 +127,26 @@ class CriterionSelfAssessmentDAOTest {
         );
         assertTrue(studentDAO.insertStudent(student), "No se pudo insertar el estudiante");
 
+        // 5. Insertar evidencia
         EvidenceDTO evidence = new EvidenceDTO(0, "Test Evidence", new Date(), "/path/evidence.pdf");
         assertTrue(evidenceDAO.insertEvidence(evidence, connection), "No se pudo insertar la evidencia");
         int insertedEvidenceId = lastInsertedEvidenceId(connection);
         assertTrue(insertedEvidenceId > 0, "No se pudo obtener el id de la evidencia insertada");
 
+        // 6. Insertar criterio de autoevaluación
         SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
                 String.valueOf(criteriaIdBase),
                 "Criterio de prueba"
         );
         assertTrue(selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria, connection), "No se pudo insertar el criterio de autoevaluación");
 
+        // 7. Insertar autoevaluación
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 String.valueOf(selfAssessmentIdBase),
                 String.valueOf(insertedEvidenceId),
                 10.0,
                 studentIdBase,
-                "1"
+                userIdBase
         );
         assertTrue(selfAssessmentDAO.insertSelfAssessment(selfAssessment, connection), "No se pudo insertar la autoevaluación");
     }
@@ -145,7 +168,10 @@ class CriterionSelfAssessmentDAOTest {
             CriterionSelfAssessmentDTO criterionSelfAssessment = new CriterionSelfAssessmentDTO(String.valueOf(selfAssessmentIdBase), String.valueOf(criteriaIdBase));
             criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessment);
             CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO
-                    .searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String.valueOf(selfAssessmentIdBase), String.valueOf(criteriaIdBase));
+                    .searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(
+                            String.valueOf(selfAssessmentIdBase),
+                            String.valueOf(criteriaIdBase)
+                    );
             assertEquals(criterionSelfAssessment, found, "El registro buscado debe coincidir con el insertado");
         } catch (SQLException e) {
             fail("Error en testSearchCriterionSelfAssessmentByIds: " + e.getMessage());

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConecctionDataBase;
 import logic.DTO.GroupDTO;
 import logic.interfaces.IGroupDAO;
 
@@ -17,9 +18,10 @@ public class GroupDAO  implements IGroupDAO {
     private final static String SQL_SELECT = "SELECT * FROM grupo WHERE NRC = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM grupo";
 
-    public boolean insertGroup(GroupDTO group, Connection connection) throws SQLException {
-        // Solo intenta insertar, deja la responsabilidad de verificar existencia al exterior
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    public boolean insertGroup(GroupDTO group) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, group.getNRC());
             statement.setString(2, group.getName());
             statement.setString(3, group.getIdUser());
@@ -28,8 +30,10 @@ public class GroupDAO  implements IGroupDAO {
         }
     }
 
-    public boolean updateGroup(GroupDTO group, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updateGroup(GroupDTO group) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, group.getName());
             statement.setString(2, group.getIdUser());
             statement.setString(3, group.getIdPeriod());
@@ -38,16 +42,20 @@ public class GroupDAO  implements IGroupDAO {
         }
     }
 
-    public boolean deleteGroup(String NRC, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deleteGroup(String NRC) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, NRC);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public GroupDTO searchGroupById(String NRC, Connection connection) throws SQLException {
+    public GroupDTO searchGroupById(String NRC) throws SQLException {
         GroupDTO group = new GroupDTO("N/A", "N/A", "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, NRC);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -58,9 +66,11 @@ public class GroupDAO  implements IGroupDAO {
         return group;
     }
 
-    public List<GroupDTO> getAllGroups(Connection connection) throws SQLException {
+    public List<GroupDTO> getAllGroups() throws SQLException {
         List<GroupDTO> groups = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 groups.add(new GroupDTO(resultSet.getString("NRC"), resultSet.getString("nombre"), resultSet.getString("idUsuario"), resultSet.getString("idPeriodo")));

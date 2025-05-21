@@ -144,9 +144,11 @@ class AssessmentCriterionDAOTest {
     void testSearchCriterionWithNullId() {
         try {
             AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(null);
-            fail("Debería lanzar excepción al pasar un ID nulo");
-        } catch (SQLException | NullPointerException e) {
-            assertTrue(true, "Se esperaba una excepción al pasar un ID nulo");
+            assertNotNull(retrievedCriterion, "Siempre debería devolver un objeto");
+            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Debería devolver N/A como ID para criterios nulos");
+            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Debería devolver N/A como nombre para criterios nulos");
+        } catch (SQLException e) {
+            fail("No debería lanzar excepción: " + e.getMessage());
         }
     }
 

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConecctionDataBase;
 import logic.DTO.PartialEvaluationDTO;
 import logic.interfaces.IPartialEvaluationDAO;
 
@@ -17,8 +18,10 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     private final static String SQL_SELECT = "SELECT * FROM evaluacion_parcial WHERE idEvaluacion = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM evaluacion_parcial";
 
-    public boolean insertPartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    public boolean insertPartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, evaluation.getIdEvaluation());
             statement.setDouble(2, evaluation.getAverage());
             statement.setString(3, evaluation.getTuiton());
@@ -27,8 +30,10 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
         }
     }
 
-    public boolean updatePartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updatePartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setDouble(1, evaluation.getAverage());
             statement.setString(2, evaluation.getTuiton());
             statement.setString(3, evaluation.getEvidence());
@@ -37,16 +42,20 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
         }
     }
 
-    public boolean deletePartialEvaluation(String idEvaluation, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deletePartialEvaluation(String idEvaluation) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idEvaluation);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation, Connection connection) throws SQLException {
+    public PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation) throws SQLException {
         PartialEvaluationDTO partialEvaluation = new PartialEvaluationDTO("N/A", -1, "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idEvaluation);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -57,9 +66,11 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
         return partialEvaluation;
     }
 
-    public List<PartialEvaluationDTO> getAllPartialEvaluations(Connection connection) throws SQLException {
+    public List<PartialEvaluationDTO> getAllPartialEvaluations() throws SQLException {
         List<PartialEvaluationDTO> evaluations = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 evaluations.add(new PartialEvaluationDTO(resultSet.getString("idEvaluacion"), resultSet.getDouble("promedio"), resultSet.getString("matricula"), resultSet.getString("IdEvidencia")));
