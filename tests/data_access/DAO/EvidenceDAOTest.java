@@ -134,7 +134,8 @@ class EvidenceDAOTest {
             assertTrue(result, "La eliminación debería ser exitosa");
 
             EvidenceDTO deletedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
-            assertNull(deletedEvidence, "La evidencia eliminada no debería existir");
+            assertEquals(-1, deletedEvidence.getIdEvidence(), "La evidencia eliminada no debería existir");
+            assertEquals("N/A", deletedEvidence.getEvidenceName(), "La evidencia eliminada no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteEvidence: " + e.getMessage());
         }

@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IPartialEvaluationDAO {
-    boolean insertPartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException;
+    boolean insertPartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException;
 
-    boolean updatePartialEvaluation(PartialEvaluationDTO evaluation, Connection connection) throws SQLException;
+    boolean updatePartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException;
 
-    boolean deletePartialEvaluation(String idEvaluation, Connection connection) throws SQLException;
+    boolean deletePartialEvaluation(String idEvaluation) throws SQLException;
 
-    PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation, Connection connection) throws SQLException;
+    PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation) throws SQLException;
 
-    List<PartialEvaluationDTO> getAllPartialEvaluations(Connection connection) throws SQLException;
+    List<PartialEvaluationDTO> getAllPartialEvaluations() throws SQLException;
 }

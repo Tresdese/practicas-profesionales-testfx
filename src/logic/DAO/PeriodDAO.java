@@ -19,10 +19,9 @@ public class PeriodDAO implements IPeriodDAO {
 
     public boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException {
         PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod(), connection);
-        if (existingPeriod != null) {
-            return period.getIdPeriod().equals(existingPeriod.getIdPeriod());
+        if (existingPeriod != null && !"N/A".equals(existingPeriod.getIdPeriod())) {
+            return false; // Ya existe, no insertar
         }
-
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, period.getIdPeriod());
             statement.setString(2, period.getName());

@@ -26,7 +26,7 @@ class ProjectDAOTest {
     void setUpAll() throws Exception {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
-        userDAO = new UserDAO(connection);
+        userDAO = new UserDAO();
         organizationDAO = new LinkedOrganizationDAO(connection);
         projectDAO = new ProjectDAO();
 
@@ -53,11 +53,9 @@ class ProjectDAOTest {
     }
 
     private void crearUsuarioYOrganizacionBase() throws SQLException {
-        // Insertar organización vinculada
         LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
-        // Insertar usuario
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertarUsuarioYObtenerId(user);
     }
@@ -91,10 +89,15 @@ class ProjectDAOTest {
         }
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        limpiarTablasYResetearAutoIncrement();
+    }
+
     @Test
     void testInsertProject() throws Exception {
         ProjectDTO project = new ProjectDTO(
-                null, // idProyecto autoincremental
+                null,
                 "Proyecto Test",
                 "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),

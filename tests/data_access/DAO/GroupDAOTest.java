@@ -2,112 +2,129 @@ package data_access.DAO;
 
 import data_access.ConecctionDataBase;
 import logic.DAO.GroupDAO;
+import logic.DAO.PeriodDAO;
+import logic.DAO.UserDAO;
 import logic.DTO.GroupDTO;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import logic.DTO.PeriodDTO;
+import logic.DTO.Role;
+import logic.DTO.UserDTO;
+import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GroupDAOTest {
     private Connection connection;
     private GroupDAO groupDAO;
+    private PeriodDAO periodDAO;
+    private UserDAO userDAO;
 
-    @BeforeEach
-    void setUp() throws SQLException {
-        // Configura la conexión a la base de datos real
-        ConecctionDataBase conecctionDataBase = new ConecctionDataBase();
-        connection = conecctionDataBase.connectDB();
+    @BeforeAll
+    void setUpAll() throws Exception {
+        ConecctionDataBase db = new ConecctionDataBase();
+        connection = db.connectDB();
         groupDAO = new GroupDAO();
-
-        // Limpia la tabla antes de cada prueba
-        connection.createStatement().execute("DELETE FROM grupo");
+        periodDAO = new PeriodDAO();
+        userDAO = new UserDAO();
+        limpiarTablasYAutoincrement();
     }
 
-    @AfterEach
-    void tearDown() throws SQLException {
-        // Limpia la tabla después de cada prueba
-        connection.createStatement().execute("DELETE FROM grupo");
-        connection.close();
+    @BeforeEach
+    void setUp() throws Exception {
+        limpiarTablasYAutoincrement();
+        // Inserta periodo y usuario usando los DAOs, no directamente con la conexión
+        PeriodDTO periodo = new PeriodDTO("1", "Periodo Test", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
+        periodDAO.insertPeriod(periodo, connection);
+
+        UserDTO usuario = new UserDTO("1", "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMICO);
+        userDAO.insertUser(usuario);
+    }
+
+    @AfterAll
+    void tearDownAll() throws Exception {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+    }
+
+    private void limpiarTablasYAutoincrement() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.execute("DELETE FROM grupo");
+        stmt.execute("DELETE FROM usuario");
+        stmt.execute("DELETE FROM periodo");
+        stmt.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
+        stmt.close();
     }
 
     @Test
     void insertGroupWhenGroupDoesNotExist() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-        boolean result = groupDAO.insertGroup(group, connection);
-
+        GroupDTO group = new GroupDTO("123", "Group A", "1", "1");
+        boolean result = groupDAO.insertGroup(group);
         assertTrue(result, "El grupo debería insertarse correctamente");
     }
 
     @Test
     void insertGroupWhenGroupAlreadyExists() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-        groupDAO.insertGroup(group, connection);
-
-        boolean result = groupDAO.insertGroup(group, connection);
-
-        assertFalse(result, "No debería permitir insertar un grupo con el mismo NRC");
+        GroupDTO group = new GroupDTO("12344", "Group A", "1", "1");
+        groupDAO.insertGroup(group);
+        assertThrows(java.sql.SQLIntegrityConstraintViolationException.class, () -> {
+            groupDAO.insertGroup(group);
+        }, "No debería permitir insertar un grupo con el mismo NRC");
     }
 
     @Test
     void updateGroupSuccessfully() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-        groupDAO.insertGroup(group, connection);
-
-        GroupDTO updatedGroup = new GroupDTO("123", "Updated Group", "User2", "Period2");
-        boolean result = groupDAO.updateGroup(updatedGroup, connection);
-
+        GroupDTO group = new GroupDTO("123", "Group A", "1", "1");
+        groupDAO.insertGroup(group);
+        GroupDTO updatedGroup = new GroupDTO("123", "Updated Group", "1", "1");
+        boolean result = groupDAO.updateGroup(updatedGroup);
         assertTrue(result, "El grupo debería actualizarse correctamente");
     }
 
     @Test
     void updateGroupFailsWhenGroupDoesNotExist() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Updated Group", "User2", "Period2");
-
-        boolean result = groupDAO.updateGroup(group, connection);
-
+        GroupDTO group = new GroupDTO("123", "Updated Group", "1", "1");
+        boolean result = groupDAO.updateGroup(group);
         assertFalse(result, "No debería permitir actualizar un grupo inexistente");
     }
 
     @Test
     void deleteGroupSuccessfully() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-        groupDAO.insertGroup(group, connection);
-
-        boolean result = groupDAO.deleteGroup("123", connection);
-
+        GroupDTO group = new GroupDTO("123", "Group A", "1", "1");
+        groupDAO.insertGroup(group);
+        boolean result = groupDAO.deleteGroup("123");
         assertTrue(result, "El grupo debería eliminarse correctamente");
     }
 
     @Test
     void deleteGroupFailsWhenGroupDoesNotExist() throws SQLException {
-        boolean result = groupDAO.deleteGroup("123", connection);
-
+        boolean result = groupDAO.deleteGroup("123");
         assertFalse(result, "No debería permitir eliminar un grupo inexistente");
     }
 
     @Test
     void searchGroupByIdWhenGroupExists() throws SQLException {
-        GroupDTO group = new GroupDTO("123", "Group A", "User1", "Period1");
-        groupDAO.insertGroup(group, connection);
-
-        GroupDTO result = groupDAO.searchGroupById("123", connection);
-
+        GroupDTO group = new GroupDTO("123", "Group A", "1", "1");
+        groupDAO.insertGroup(group);
+        GroupDTO result = groupDAO.searchGroupById("123");
         assertNotNull(result, "El grupo no debería ser nulo");
         assertEquals("123", result.getNRC());
         assertEquals("Group A", result.getName());
-        assertEquals("User1", result.getIdUser());
-        assertEquals("Period1", result.getIdPeriod());
+        assertEquals("1", result.getIdUser());
+        assertEquals("1", result.getIdPeriod());
     }
 
     @Test
     void searchGroupByIdWhenGroupDoesNotExist() throws SQLException {
-        GroupDTO result = groupDAO.searchGroupById("123", connection);
-
+        GroupDTO result = groupDAO.searchGroupById("123");
         assertNotNull(result, "El grupo no debería ser nulo");
         assertEquals("N/A", result.getNRC());
         assertEquals("N/A", result.getName());
@@ -117,21 +134,18 @@ class GroupDAOTest {
 
     @Test
     void getAllGroupsReturnsListOfGroups() throws SQLException {
-        GroupDTO group1 = new GroupDTO("123", "Group A", "User1", "Period1");
-        GroupDTO group2 = new GroupDTO("456", "Group B", "User2", "Period2");
-        groupDAO.insertGroup(group1, connection);
-        groupDAO.insertGroup(group2, connection);
-
-        List<GroupDTO> result = groupDAO.getAllGroups(connection);
-
+        GroupDTO group1 = new GroupDTO("123", "Group A", "1", "1");
+        GroupDTO group2 = new GroupDTO("456", "Group B", "1", "1");
+        groupDAO.insertGroup(group1);
+        groupDAO.insertGroup(group2);
+        List<GroupDTO> result = groupDAO.getAllGroups();
         assertNotNull(result, "La lista de grupos no debería ser nula");
         assertEquals(2, result.size(), "Debería haber 2 grupos en la lista");
     }
 
     @Test
     void getAllGroupsReturnsEmptyListWhenNoGroupsExist() throws SQLException {
-        List<GroupDTO> result = groupDAO.getAllGroups(connection);
-
+        List<GroupDTO> result = groupDAO.getAllGroups();
         assertNotNull(result, "La lista de grupos no debería ser nula");
         assertTrue(result.isEmpty(), "La lista de grupos debería estar vacía");
     }

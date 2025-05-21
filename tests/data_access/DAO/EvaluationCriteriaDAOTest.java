@@ -109,34 +109,29 @@ class EvaluationCriteriaDAOTest {
 
     @Test
     void testInsertEvaluationCriteriaWithEmptyIds() {
-        try {
-            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("", "");
-            boolean result = criteriaDAO.insertEvaluationCriteria(criteria, connection);
-            assertFalse(result, "No debería permitir insertar con IDs vacíos");
-        } catch (SQLException e) {
-            assertTrue(e.getMessage().contains("constraint") || e.getMessage().contains("foreign key"),
-                    "La excepción debería estar relacionada con restricciones de clave foránea");
-        }
+        EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("", "");
+        assertThrows(SQLException.class, () -> {
+            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+        }, "Debería lanzar SQLException al insertar con IDs vacíos");
     }
 
     @Test
     void testInsertDuplicateEvaluationCriteria() {
-        try {
-            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
-            boolean firstResult = criteriaDAO.insertEvaluationCriteria(criteria, connection);
-            assertTrue(firstResult, "La primera inserción debería ser exitosa");
-
-            try {
-                boolean secondResult = criteriaDAO.insertEvaluationCriteria(criteria, connection);
-                assertFalse(secondResult, "No debería permitir duplicados");
-            } catch (SQLException e) {
-                assertTrue(e.getMessage().contains("duplicate") || e.getMessage().contains("unique"),
-                        "La excepción debería estar relacionada con entradas duplicadas");
-            }
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería fallar la primera inserción: " + e.getMessage());
+            fail("Error al limpiar la tabla: " + e.getMessage());
         }
+
+        EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
+        assertDoesNotThrow(() -> criteriaDAO.insertEvaluationCriteria(criteria, connection));
+
+        SQLException exception = assertThrows(SQLException.class, () -> {
+            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+        }, "Se esperaba una SQLException por duplicado");
+
+        // Opcional: verifica SQLState para duplicados (MySQL: 23000)
+        assertEquals("23000", exception.getSQLState(), "El SQLState debe indicar violación de restricción de unicidad");
     }
 
     @Test
@@ -222,10 +217,11 @@ class EvaluationCriteriaDAOTest {
     @Test
     void testSearchWithNullIds() {
         try {
-            criteriaDAO.searchEvaluationCriteriaById(null, null, connection);
-            fail("Debería lanzar excepción con IDs nulos");
-        } catch (SQLException | NullPointerException e) {
-            assertTrue(true, "Se esperaba una excepción al buscar con IDs nulos");
+            EvaluationCriteriaDTO result = criteriaDAO.searchEvaluationCriteriaById(null, null, connection);
+            assertEquals("N/A", result.getIdEvaluation(), "Debería devolver N/A para idEvaluation nulo");
+            assertEquals("N/A", result.getIdCriterion(), "Debería devolver N/A para idCriterion nulo");
+        } catch (SQLException e) {
+            fail("No debería lanzar excepción al buscar con IDs nulos: " + e.getMessage());
         }
     }
 
@@ -326,10 +322,10 @@ class EvaluationCriteriaDAOTest {
     @Test
     void testDeleteWithNullIds() {
         try {
-            criteriaDAO.deleteEvaluationCriteria(null, null, connection);
-            fail("Debería lanzar excepción con IDs nulos");
-        } catch (SQLException | NullPointerException e) {
-            assertTrue(true, "Se esperaba una excepción al eliminar con IDs nulos");
+            boolean result = criteriaDAO.deleteEvaluationCriteria(null, null, connection);
+            assertFalse(result, "No debería eliminar nada con IDs nulos");
+        } catch (SQLException e) {
+            fail("No debería lanzar excepción al eliminar con IDs nulos: " + e.getMessage());
         }
     }
 }
