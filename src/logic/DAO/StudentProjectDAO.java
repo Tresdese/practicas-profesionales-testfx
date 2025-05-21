@@ -31,7 +31,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     public boolean updateStudentProject(StudentProjectDTO studentProject) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-                PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, studentProject.getTuiton());
             statement.setString(2, studentProject.getIdProject());
             return statement.executeUpdate() > 0;
@@ -41,7 +41,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     public boolean deleteStudentProject(StudentProjectDTO studentProject) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-                PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, studentProject.getIdProject());
             return statement.executeUpdate() > 0;
         }
@@ -51,7 +51,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
         StudentProjectDTO studentProject = new StudentProjectDTO("N/A", "N/A");
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-                PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -66,7 +66,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
         List<StudentProjectDTO> studentProjects = new ArrayList<>();
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-                PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 studentProjects.add(new StudentProjectDTO(resultSet.getString("idProyecto"), resultSet.getString("matricula")));
