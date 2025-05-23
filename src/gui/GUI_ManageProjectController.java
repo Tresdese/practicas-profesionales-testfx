@@ -132,7 +132,7 @@ public class GUI_ManageProjectController {
                 if (organization != null) {
                     organizationBox.setValue(organization.getName());
                 }
-            }
+            } //TOO
         } catch (SQLException e) {
             logger.error("Error al obtener la organización del proyecto: {}", e.getMessage(), e);
         }
