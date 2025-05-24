@@ -15,7 +15,7 @@ public class ProjectRequestDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM solicitud_proyecto";
     private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM solicitud_proyecto WHERE matricula=?";
 
-    public boolean insert(ProjectRequestDTO request) throws SQLException {
+    public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
@@ -35,12 +35,12 @@ public class ProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus());
+            stmt.setString(17, request.getStatus().name());
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean update(ProjectRequestDTO request) throws SQLException {
+    public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
@@ -60,13 +60,13 @@ public class ProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus());
+            stmt.setString(17, request.getStatus().name());
             stmt.setInt(18, request.getRequestId());
             return stmt.executeUpdate() > 0;
         }
     }
 
-    public boolean delete(int requestId) throws SQLException {
+    public boolean deleteProjectRequest(int requestId) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
@@ -75,7 +75,7 @@ public class ProjectRequestDAO {
         }
     }
 
-    public ProjectRequestDTO searchById(int requestId) throws SQLException {
+    public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
         ProjectRequestDTO request = null;
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -90,7 +90,7 @@ public class ProjectRequestDAO {
         return request;
     }
 
-    public List<ProjectRequestDTO> getAll() throws SQLException {
+    public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException {
         List<ProjectRequestDTO> list = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -103,7 +103,7 @@ public class ProjectRequestDAO {
         return list;
     }
 
-    public List<ProjectRequestDTO> searchByTuiton(String tuiton) throws SQLException {
+    public List<ProjectRequestDTO> searchProjectRequestsByTuiton(String tuiton) throws SQLException {
         List<ProjectRequestDTO> list = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -137,7 +137,7 @@ public class ProjectRequestDAO {
                 rs.getString("diasHorario"),
                 rs.getInt("usuariosDirectos"),
                 rs.getInt("usuariosIndirectos"),
-                rs.getString("estado"),
+                rs.getString("estado"), // se mantiene como String
                 rs.getString("fechaSolicitud")
         );
     }

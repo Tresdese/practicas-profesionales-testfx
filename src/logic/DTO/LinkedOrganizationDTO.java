@@ -43,11 +43,7 @@ public class LinkedOrganizationDTO {
 
     @Override
     public String toString() {
-        return "LinkedOrganizationDTO{" +
-                "iddOrganization='" + iddOrganization + '\'' +
-                ", name='" + name + '\'' +
-                ", adddress='" + address + '\'' +
-                '}';
+        return name; // Solo muestra el nombre en el ComboBox
     }
 
     @Override

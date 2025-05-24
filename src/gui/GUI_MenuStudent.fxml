@@ -16,6 +16,9 @@
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button text="Ver Proyecto Asignado" onAction="#handleViewAssignedProject"
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="btnRegisterProjectRequest" layoutX="200.0" layoutY="300.0"
+                    text="Registrar Solicitud de Proyecto"
+                    onAction="#handleRegisterProjectRequest"/>
         </VBox>
     </left>
     <center>

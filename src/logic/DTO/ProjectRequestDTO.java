@@ -18,7 +18,7 @@ public class ProjectRequestDTO {
     private String scheduleDays;
     private int directUsers;
     private int indirectUsers;
-    private String status;
+    private ProjectStatus status;
     private String requestDate;
 
     public ProjectRequestDTO() {
@@ -39,7 +39,7 @@ public class ProjectRequestDTO {
         this.scheduleDays = "";
         this.directUsers = 0;
         this.indirectUsers = 0;
-        this.status = "pending";
+        this.status = ProjectStatus.pendiente;
         this.requestDate = "";
     }
 
@@ -61,161 +61,48 @@ public class ProjectRequestDTO {
         this.scheduleDays = scheduleDays;
         this.directUsers = directUsers;
         this.indirectUsers = indirectUsers;
-        this.status = status;
+        this.status = ProjectStatus.valueOf(status);
         this.requestDate = requestDate;
     }
 
-    public int getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
-
-    public String getTuiton() {
-        return tuiton;
-    }
-
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
-    }
-
-    public int getOrganizationId() {
-        return organizationId;
-    }
-
-    public void setOrganizationId(int organizationId) {
-        this.organizationId = organizationId;
-    }
-
-    public int getRepresentativeId() {
-        return representativeId;
-    }
-
-    public void setRepresentativeId(int representativeId) {
-        this.representativeId = representativeId;
-    }
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getGeneralObjective() {
-        return generalObjective;
-    }
-
-    public void setGeneralObjective(String generalObjective) {
-        this.generalObjective = generalObjective;
-    }
-
-    public String getImmediateObjectives() {
-        return immediateObjectives;
-    }
-
-    public void setImmediateObjectives(String immediateObjectives) {
-        this.immediateObjectives = immediateObjectives;
-    }
-
-    public String getMediateObjectives() {
-        return mediateObjectives;
-    }
-
-    public void setMediateObjectives(String mediateObjectives) {
-        this.mediateObjectives = mediateObjectives;
-    }
-
-    public String getMethodology() {
-        return methodology;
-    }
-
-    public void setMethodology(String methodology) {
-        this.methodology = methodology;
-    }
-
-    public String getResources() {
-        return resources;
-    }
-
-    public void setResources(String resources) {
-        this.resources = resources;
-    }
-
-    public String getActivities() {
-        return activities;
-    }
-
-    public void setActivities(String activities) {
-        this.activities = activities;
-    }
-
-    public String getResponsibilities() {
-        return responsibilities;
-    }
-
-    public void setResponsibilities(String responsibilities) {
-        this.responsibilities = responsibilities;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public String getScheduleDays() {
-        return scheduleDays;
-    }
-
-    public void setScheduleDays(String scheduleDays) {
-        this.scheduleDays = scheduleDays;
-    }
-
-    public int getDirectUsers() {
-        return directUsers;
-    }
-
-    public void setDirectUsers(int directUsers) {
-        this.directUsers = directUsers;
-    }
-
-    public int getIndirectUsers() {
-        return indirectUsers;
-    }
-
-    public void setIndirectUsers(int indirectUsers) {
-        this.indirectUsers = indirectUsers;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(String requestDate) {
-        this.requestDate = requestDate;
-    }
+    public int getRequestId() { return requestId; }
+    public void setRequestId(int requestId) { this.requestId = requestId; }
+    public String getTuiton() { return tuiton; }
+    public void setTuiton(String tuiton) { this.tuiton = tuiton; }
+    public int getOrganizationId() { return organizationId; }
+    public void setOrganizationId(int organizationId) { this.organizationId = organizationId; }
+    public int getRepresentativeId() { return representativeId; }
+    public void setRepresentativeId(int representativeId) { this.representativeId = representativeId; }
+    public String getProjectName() { return projectName; }
+    public void setProjectName(String projectName) { this.projectName = projectName; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getGeneralObjective() { return generalObjective; }
+    public void setGeneralObjective(String generalObjective) { this.generalObjective = generalObjective; }
+    public String getImmediateObjectives() { return immediateObjectives; }
+    public void setImmediateObjectives(String immediateObjectives) { this.immediateObjectives = immediateObjectives; }
+    public String getMediateObjectives() { return mediateObjectives; }
+    public void setMediateObjectives(String mediateObjectives) { this.mediateObjectives = mediateObjectives; }
+    public String getMethodology() { return methodology; }
+    public void setMethodology(String methodology) { this.methodology = methodology; }
+    public String getResources() { return resources; }
+    public void setResources(String resources) { this.resources = resources; }
+    public String getActivities() { return activities; }
+    public void setActivities(String activities) { this.activities = activities; }
+    public String getResponsibilities() { return responsibilities; }
+    public void setResponsibilities(String responsibilities) { this.responsibilities = responsibilities; }
+    public int getDuration() { return duration; }
+    public void setDuration(int duration) { this.duration = duration; }
+    public String getScheduleDays() { return scheduleDays; }
+    public void setScheduleDays(String scheduleDays) { this.scheduleDays = scheduleDays; }
+    public int getDirectUsers() { return directUsers; }
+    public void setDirectUsers(int directUsers) { this.directUsers = directUsers; }
+    public int getIndirectUsers() { return indirectUsers; }
+    public void setIndirectUsers(int indirectUsers) { this.indirectUsers = indirectUsers; }
+    public ProjectStatus getStatus() { return status; }
+    public void setStatus(ProjectStatus status) { this.status = status; }
+    public String getRequestDate() { return requestDate; }
+    public void setRequestDate(String requestDate) { this.requestDate = requestDate; }
 
     @Override
     public String toString() {
@@ -237,7 +124,7 @@ public class ProjectRequestDTO {
                 ", scheduleDays='" + scheduleDays + '\'' +
                 ", directUsers=" + directUsers +
                 ", indirectUsers=" + indirectUsers +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", requestDate='" + requestDate + '\'' +
                 '}';
     }
@@ -264,7 +151,7 @@ public class ProjectRequestDTO {
                 scheduleDays.equals(that.scheduleDays) &&
                 directUsers == that.directUsers &&
                 indirectUsers == that.indirectUsers &&
-                status.equals(that.status) &&
+                status == that.status &&
                 ((requestDate == null && that.requestDate == null) || (requestDate != null && requestDate.equals(that.requestDate)));
     }
 }
