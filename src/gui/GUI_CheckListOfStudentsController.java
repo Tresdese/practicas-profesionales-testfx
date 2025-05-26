@@ -57,6 +57,9 @@ public class GUI_CheckListOfStudentsController {
     private Button buttonRegisterStudent;
 
     @FXML
+    private Button buttonAssignProject;
+
+    @FXML
     private Label statusLabel;
 
     private StudentDTO selectedStudent;
@@ -83,11 +86,14 @@ public class GUI_CheckListOfStudentsController {
         loadStudentData();
 
         searchButton.setOnAction(event -> searchStudent());
-
         buttonRegisterStudent.setOnAction(event -> openRegisterStudentWindow());
+        buttonAssignProject.setOnAction(event -> openAssignProjectWindow());
+
+        buttonAssignProject.setDisable(true);
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedStudent = newValue;
+            buttonAssignProject.setDisable(selectedStudent == null);
             tableView.refresh();
         });
     }
@@ -105,6 +111,23 @@ public class GUI_CheckListOfStudentsController {
             stage.show();
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
+        }
+    }
+
+    private void openAssignProjectWindow() {
+        if (selectedStudent == null) {
+            statusLabel.setText("Debe seleccionar un estudiante para asignar un proyecto");
+            return;
+        }
+
+        try {
+            GUI_AssignProject.setStudent(selectedStudent);
+            GUI_AssignProject assignProjectApp = new GUI_AssignProject();
+            Stage stage = new Stage();
+            assignProjectApp.start(stage);
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de asignación de proyecto");
         }
     }
 
@@ -153,7 +176,6 @@ public class GUI_CheckListOfStudentsController {
                 detailsButton.setOnAction(event -> {
                     StudentDTO student = getTableView().getItems().get(getIndex());
                     System.out.println("Detalles de: " + student.getTuiton());
-                    // TODO Lógica para mostrar detalles del estudiante
                 });
             }
 

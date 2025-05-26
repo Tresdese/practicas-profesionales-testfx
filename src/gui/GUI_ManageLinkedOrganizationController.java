@@ -3,13 +3,16 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+
 import logic.DTO.LinkedOrganizationDTO;
 import logic.services.LinkedOrganizationService;
 import logic.services.ServiceConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
+import java.io.IOException;
 
 public class GUI_ManageLinkedOrganizationController {
 
@@ -78,10 +81,10 @@ public class GUI_ManageLinkedOrganizationController {
                 parentController.loadOrganizationData();
             }
 
-        } catch (Exception e) {
-            statusLabel.setText(e.getMessage());
+        } catch (SQLException e) {
+            statusLabel.setText("Error al actualizar la organización en la base de datos.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            logger.error("Error SQL: {}", e.getMessage(), e);
         }
     }
 

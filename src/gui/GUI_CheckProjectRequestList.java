@@ -10,23 +10,23 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class GUI_RegisterProjectRequest extends Application {
+public class GUI_CheckProjectRequestList extends Application {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequest.class);
+    private static final Logger logger = LogManager.getLogger(GUI_CheckProjectRequestList.class);
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterProjectRequest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckProjectRequestList.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
 
-            primaryStage.setTitle("Registrar Solicitud de Proyecto");
+            primaryStage.setTitle("Solicitudes de Proyectos");
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
-            logger.error("Error al cargar la interfaz GUI_RegisterProjectRequest.fxml: {}", e.getMessage(), e);
+            logger.error("Error al cargar la interfaz GUI_CheckProjectRequestList.fxml: {}", e.getMessage(), e);
         }
     }
 

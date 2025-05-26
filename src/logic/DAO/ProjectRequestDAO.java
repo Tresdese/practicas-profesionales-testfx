@@ -2,14 +2,16 @@ package logic.DAO;
 
 import data_access.ConecctionDataBase;
 import logic.DTO.ProjectRequestDTO;
+import logic.interfaces.IProjectRequestDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectRequestDAO {
-    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idRepresentante, nombreProyecto, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idRepresentante=?, nombreProyecto=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+public class ProjectRequestDAO implements IProjectRequestDAO {
+    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idProyecto, idRepresentante, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idProyecto=?, idRepresentante=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE solicitud_proyecto SET estado=? WHERE idSolicitud=?";
     private static final String SQL_DELETE = "DELETE FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT = "SELECT * FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM solicitud_proyecto";
@@ -21,8 +23,8 @@ public class ProjectRequestDAO {
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setInt(3, request.getProjectId());
+            stmt.setInt(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -35,7 +37,7 @@ public class ProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().name());
+            stmt.setString(17, request.getStatus());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -46,8 +48,8 @@ public class ProjectRequestDAO {
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setInt(3, request.getProjectId());
+            stmt.setInt(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -60,8 +62,18 @@ public class ProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().name());
+            stmt.setString(17, request.getStatus());
             stmt.setInt(18, request.getRequestId());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection conn = db.connectDB();
+             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_STATUS)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, requestId);
             return stmt.executeUpdate() > 0;
         }
     }
@@ -103,7 +115,7 @@ public class ProjectRequestDAO {
         return list;
     }
 
-    public List<ProjectRequestDTO> searchProjectRequestsByTuiton(String tuiton) throws SQLException {
+    public List<ProjectRequestDTO> searchProjectRequestByTuiton(String tuiton) throws SQLException {
         List<ProjectRequestDTO> list = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -123,8 +135,8 @@ public class ProjectRequestDAO {
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),
                 rs.getInt("idOrganizacion"),
+                rs.getInt("idProyecto"),
                 rs.getInt("idRepresentante"),
-                rs.getString("nombreProyecto"),
                 rs.getString("descripcion"),
                 rs.getString("objetivoGeneral"),
                 rs.getString("objetivosInmediatos"),
@@ -137,7 +149,7 @@ public class ProjectRequestDAO {
                 rs.getString("diasHorario"),
                 rs.getInt("usuariosDirectos"),
                 rs.getInt("usuariosIndirectos"),
-                rs.getString("estado"), // se mantiene como String
+                rs.getString("estado"),
                 rs.getString("fechaSolicitud")
         );
     }
