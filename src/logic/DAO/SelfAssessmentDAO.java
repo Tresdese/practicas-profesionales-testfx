@@ -1,14 +1,12 @@
 package logic.DAO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
+import data_access.ConecctionDataBase;
 import logic.DTO.SelfAssessmentDTO;
 import logic.interfaces.ISelfAssessmentDAO;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_INSERT = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -17,21 +15,20 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_SELECT = "SELECT * FROM autoevaluacion WHERE idAutoevaluacion = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion";
 
-    public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    @Override
+    public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, selfAssessment.getComments());
-            statement.setBigDecimal(2, selfAssessment.getGrade());
+            statement.setFloat(2, selfAssessment.getGrade());
             statement.setString(3, selfAssessment.getRegistration());
             statement.setInt(4, selfAssessment.getProjectId());
-            if (selfAssessment.getEvidenceId() != null) {
-                statement.setInt(5, selfAssessment.getEvidenceId());
-            } else {
-                statement.setNull(5, java.sql.Types.INTEGER);
-            }
+            statement.setInt(5, selfAssessment.getEvidenceId());
             if (selfAssessment.getRegistrationDate() != null) {
-                statement.setDate(6, java.sql.Date.valueOf(selfAssessment.getRegistrationDate()));
+                statement.setDate(6, new java.sql.Date(selfAssessment.getRegistrationDate().getTime()));
             } else {
-                statement.setNull(6, java.sql.Types.DATE);
+                statement.setNull(6, Types.DATE);
             }
             statement.setString(7, selfAssessment.getStatus().getValue());
             statement.setString(8, selfAssessment.getGeneralComments());
@@ -39,21 +36,20 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         }
     }
 
-    public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    @Override
+    public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, selfAssessment.getComments());
-            statement.setBigDecimal(2, selfAssessment.getGrade());
+            statement.setFloat(2, selfAssessment.getGrade());
             statement.setString(3, selfAssessment.getRegistration());
             statement.setInt(4, selfAssessment.getProjectId());
-            if (selfAssessment.getEvidenceId() != null) {
-                statement.setInt(5, selfAssessment.getEvidenceId());
-            } else {
-                statement.setNull(5, java.sql.Types.INTEGER);
-            }
+            statement.setInt(5, selfAssessment.getEvidenceId());
             if (selfAssessment.getRegistrationDate() != null) {
-                statement.setDate(6, java.sql.Date.valueOf(selfAssessment.getRegistrationDate()));
+                statement.setDate(6, new java.sql.Date(selfAssessment.getRegistrationDate().getTime()));
             } else {
-                statement.setNull(6, java.sql.Types.DATE);
+                statement.setNull(6, Types.DATE);
             }
             statement.setString(7, selfAssessment.getStatus().getValue());
             statement.setString(8, selfAssessment.getGeneralComments());
@@ -62,26 +58,32 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         }
     }
 
-    public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    @Override
+    public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, selfAssessment.getSelfAssessmentId());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId, Connection connection) throws SQLException {
+    @Override
+    public SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId) throws SQLException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0,
                 "N/A",
-                java.math.BigDecimal.valueOf(-1),
+                -1f,
                 "N/A",
                 0,
-                -1,
-                java.time.LocalDate.of(1900, 1, 1),
+                0,
+                null,
                 SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA,
                 "N/A"
         );
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, Integer.parseInt(selfAssessmentId));
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -92,9 +94,12 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         return selfAssessment;
     }
 
-    public List<SelfAssessmentDTO> getAllSelfAssessments(Connection connection) throws SQLException {
+    @Override
+    public List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException {
         List<SelfAssessmentDTO> selfAssessments = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 selfAssessments.add(mapResultSetToDTO(resultSet));
@@ -103,17 +108,42 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         return selfAssessments;
     }
 
+    public int getLastSelfAssessmentId() throws Exception {
+        int lastId = -1;
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection connection = db.connectDB();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT MAX(idAutoevaluacion) FROM autoevaluacion")) {
+            if (rs.next()) {
+                lastId = rs.getInt(1);
+            }
+        }
+        if (lastId == -1) {
+            throw new Exception("No se pudo obtener el id de la autoevaluación.");
+        }
+        return lastId;
+    }
+
     private SelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         int id = rs.getInt("idAutoevaluacion");
-        String comentarios = rs.getString("comentarios");
-        java.math.BigDecimal calificacion = rs.getBigDecimal("calificacion");
-        String matricula = rs.getString("matricula");
-        int idProyecto = rs.getInt("idProyecto");
-        Integer idEvidencia = rs.getObject("idEvidencia") != null ? rs.getInt("idEvidencia") : null;
-        java.sql.Date fechaRegistro = rs.getDate("fecha_registro");
-        java.time.LocalDate fecha = fechaRegistro != null ? fechaRegistro.toLocalDate() : null;
-        SelfAssessmentDTO.EstadoAutoevaluacion estado = SelfAssessmentDTO.EstadoAutoevaluacion.fromString(rs.getString("estado"));
-        String comentariosGenerales = rs.getString("comentarios_generales");
-        return new SelfAssessmentDTO(id, comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha, estado, comentariosGenerales);
+        String comments = rs.getString("comentarios");
+        float grade = rs.getFloat("calificacion");
+        String registration = rs.getString("matricula");
+        int projectId = rs.getInt("idProyecto");
+        int evidenceId = rs.getInt("idEvidencia");
+        java.sql.Date regDate = rs.getDate("fecha_registro");
+        String estado = rs.getString("estado");
+        String generalComments = rs.getString("comentarios_generales");
+        return new SelfAssessmentDTO(
+                id,
+                comments,
+                grade,
+                registration,
+                projectId,
+                evidenceId,
+                regDate != null ? new java.util.Date(regDate.getTime()) : null,
+                SelfAssessmentDTO.EstadoAutoevaluacion.fromString(estado),
+                generalComments
+        );
     }
 }

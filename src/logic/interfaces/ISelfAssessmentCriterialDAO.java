@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 
 public interface ISelfAssessmentCriterialDAO {
-    boolean insertSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException;
+    boolean insertSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException;
 
-    boolean updateSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException;
+    boolean updateSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException;
 
-    boolean deleteSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException;
+    boolean deleteSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException;
 
-    SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria, Connection connection) throws SQLException;
+    SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria) throws SQLException;
 
-    List<SelfAssessmentCriteriaDTO> getAllSelfAssessmentCriteria(Connection connection) throws SQLException;
+    List<SelfAssessmentCriteriaDTO> getAllSelfAssessmentCriteria() throws SQLException;
 }

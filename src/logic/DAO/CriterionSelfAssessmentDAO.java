@@ -13,8 +13,8 @@ import logic.interfaces.ICriterionSelfAssessmentDAO;
 public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
     private final Connection connection;
 
-    private final static String SQL_INSERT = "INSERT INTO autoevaluacion_criterio (idAutoevaluacion, idCriterios) VALUES (?, ?)";
-    private final static String SQL_UPDATE = "UPDATE autoevaluacion_criterio SET idCriterios = ? WHERE idAutoevaluacion = ?";
+    private final static String SQL_INSERT = "INSERT INTO autoevaluacion_criterio (idAutoevaluacion, idCriterios, calificacion, comentarios) VALUES (?, ?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE autoevaluacion_criterio SET calificacion = ?, comentarios = ? WHERE idAutoevaluacion = ? AND idCriterios = ?";
     private final static String SQL_DELETE = "DELETE FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
     private final static String SQL_SELECT = "SELECT * FROM autoevaluacion_criterio WHERE idAutoevaluacion = ? AND idCriterios = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion_criterio";
@@ -25,36 +25,40 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
 
     public boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setString(1, criterionSelfAssessment.getIdSelfAssessment());
-            statement.setString(2, criterionSelfAssessment.getIdCriteria());
+            statement.setInt(1, criterionSelfAssessment.getIdSelfAssessment());
+            statement.setInt(2, criterionSelfAssessment.getIdCriteria());
+            statement.setFloat(3, criterionSelfAssessment.getGrade());
+            statement.setString(4, criterionSelfAssessment.getComments());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
-            statement.setString(1, criterionSelfAssessment.getIdCriteria());
-            statement.setString(2, criterionSelfAssessment.getIdSelfAssessment());
+            statement.setFloat(1, criterionSelfAssessment.getGrade());
+            statement.setString(2, criterionSelfAssessment.getComments());
+            statement.setInt(3, criterionSelfAssessment.getIdSelfAssessment());
+            statement.setInt(4, criterionSelfAssessment.getIdCriteria());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria) throws SQLException {
+    public boolean deleteCriterionSelfAssessment(int idSelfAssessment, int idCriteria) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
-            statement.setString(1, idSelfAssessment);
-            statement.setString(2, idCriteria);
+            statement.setInt(1, idSelfAssessment);
+            statement.setInt(2, idCriteria);
             return statement.executeUpdate() > 0;
         }
     }
 
-    public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria) throws SQLException {
-        CriterionSelfAssessmentDTO selfAssessment = new CriterionSelfAssessmentDTO("N/A","N/A");
+    public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(int idSelfAssessment, int idCriteria) throws SQLException {
+        CriterionSelfAssessmentDTO selfAssessment = new CriterionSelfAssessmentDTO(0, 0, -1f, "N/A");
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
-            statement.setString(1, idSelfAssessment);
-            statement.setString(2, idCriteria);
+            statement.setInt(1, idSelfAssessment);
+            statement.setInt(2, idCriteria);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    selfAssessment = new CriterionSelfAssessmentDTO(resultSet.getString("idAutoevaluacion"), resultSet.getString("idCriterios"));
+                    selfAssessment = mapResultSetToDTO(resultSet);
                 }
             }
         }
@@ -66,9 +70,17 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                criterionSelfAssessments.add(new CriterionSelfAssessmentDTO(resultSet.getString("idAutoevaluacion"), resultSet.getString("idCriterios")));
+                criterionSelfAssessments.add(mapResultSetToDTO(resultSet));
             }
         }
         return criterionSelfAssessments;
+    }
+
+    private CriterionSelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+        int idSelfAssessment = rs.getInt("idAutoevaluacion");
+        int idCriteria = rs.getInt("idCriterios");
+        float grade = rs.getFloat("calificacion");
+        String comments = rs.getString("comentarios");
+        return new CriterionSelfAssessmentDTO(idSelfAssessment, idCriteria, grade, comments);
     }
 }
