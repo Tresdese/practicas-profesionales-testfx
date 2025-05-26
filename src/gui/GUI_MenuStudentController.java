@@ -104,6 +104,25 @@ public class GUI_MenuStudentController {
         }
     }
 
+    @FXML
+    private void handleRegisterProjectRequest() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterProjectRequest.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterProjectRequestController controller = loader.getController();
+            controller.setStudent(this.student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Solicitud de Proyecto");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo abrir la ventana de registro.");
+        }
+    }
+
     public void setStudent(StudentDTO student) {
         this.student = student;
     }

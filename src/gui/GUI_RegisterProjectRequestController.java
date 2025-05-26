@@ -1,239 +1,216 @@
-//package gui;
-//
-//import data_access.ConecctionDataBase;
-//import javafx.collections.FXCollections;
-//import javafx.collections.ObservableList;
-//import javafx.fxml.FXML;
-//import javafx.scene.control.*;
-//import javafx.util.StringConverter;
-//import logic.DAO.ProjectRequestDAO;
-//import logic.DTO.LinkedOrganizationDTO;
-//import logic.DTO.ProjectDTO;
-//import logic.DTO.ProjectRequestDTO;
-//import logic.DTO.RepresentativeDTO;
-//import logic.exceptions.*;
-//import logic.services.LinkedOrganizationService;
-//import logic.services.ProjectService;
-//import logic.services.RepresentativeService;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-//
-//import java.sql.Connection;
-//import java.sql.SQLException;
-//import java.util.List;
-//
-//public class GUI_RegisterProjectRequestController {
-//
-//    private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequestController.class);
-//
-//    @FXML
-//    private Label statusLabel;
-//
-//    @FXML
-//    private TextField fieldTuiton, fieldDuration, fieldScheduleDays, fieldDirectUsers, fieldIndirectUsers;
-//
-//    @FXML
-//    private TextArea fieldDescription, fieldGeneralObjective;
-//
-//    @FXML
-//    private ComboBox<ProjectDTO> comboProject;
-//    @FXML
-//    private ComboBox<LinkedOrganizationDTO> comboOrganization;
-//    @FXML
-//    private ComboBox<RepresentativeDTO> comboRepresentative;
-//    @FXML
-//    private ComboBox<String> comboStatus;
-//
-//    private ProjectService projectService;
-//    private LinkedOrganizationService organizationService;
-//    private RepresentativeService representativeService;
-//    private ProjectRequestDAO projectRequestDAO;
-//
-//    @FXML
-//    public void initialize() {
-//        try (ConecctionDataBase connectionDB = new ConecctionDataBase();
-//             Connection connection = connectionDB.connectDB()) {
-//
-//            projectService = new ProjectService(connection);
-//            organizationService = new LinkedOrganizationService(connection);
-//            representativeService = new RepresentativeService(connection);
-//
-//            setupComboBoxes();
-//            setupComboStatus();
-//            setupProjectListener();
-//
-//        } catch (SQLException e) {
-//            logger.error("Error al inicializar servicios: {}", e.getMessage(), e);
-//            statusLabel.setText("Error al cargar datos. Intente más tarde.");
-//            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//        }
-//    }
-//
-//    private void setupComboBoxes() {
-//        try {
-//            // Configurar combo organizaciones
-//            List<LinkedOrganizationDTO> organizations = organizationService.getAllLinkedOrganizations();
-//            comboOrganization.setItems(FXCollections.observableArrayList(organizations));
-//            comboOrganization.setConverter(new StringConverter<LinkedOrganizationDTO>() {
-//                @Override
-//                public String toString(LinkedOrganizationDTO organization) {
-//                    return organization != null ? organization.getName() : "";
-//                }
-//
-//                @Override
-//                public LinkedOrganizationDTO fromString(String string) {
-//                    return null; // No necesario para este caso
-//                }
-//            });
-//
-//            // Configurar combo proyectos
-//            List<ProjectDTO> projects = projectService.getAllProjects();
-//            comboProject.setItems(FXCollections.observableArrayList(projects));
-//            comboProject.setConverter(new StringConverter<ProjectDTO>() {
-//                @Override
-//                public String toString(ProjectDTO project) {
-//                    return project != null ? project.getName() : "";
-//                }
-//
-//                @Override
-//                public ProjectDTO fromString(String string) {
-//                    return null;
-//                }
-//            });
-//
-//            // Configurar combo representantes
-//            List<RepresentativeDTO> representatives = representativeService.getAllRepresentatives();
-//            comboRepresentative.setItems(FXCollections.observableArrayList(representatives));
-//            comboRepresentative.setConverter(new StringConverter<RepresentativeDTO>() {
-//                @Override
-//                public String toString(RepresentativeDTO representative) {
-//                    return representative != null ? representative.getNames() + " " + representative.getSurnames() : "";
-//                }
-//
-//                @Override
-//                public RepresentativeDTO fromString(String string) {
-//                    return null;
-//                }
-//            });
-//
-//        } catch (SQLException e) {
-//            logger.error("Error al cargar datos en los combos: {}", e.getMessage(), e);
-//        }
-//    }
-//
-//    private void setupComboStatus() {
-//        ObservableList<String> statusOptions = FXCollections.observableArrayList(
-//                "Pendiente", "Aceptado", "Rechazado", "Cancelado"
-//        );
-//        comboStatus.setItems(statusOptions);
-//        comboStatus.setValue("Pendiente");
-//    }
-//
-//    private void setupProjectListener() {
-//        comboProject.setOnAction(event -> {
-//            ProjectDTO selectedProject = comboProject.getValue();
-//            if (selectedProject != null) {
-//                fieldDescription.setText(selectedProject.getDescription());
-//            } else {
-//                fieldDescription.clear();
-//            }
-//        });
-//    }
-//
-//    @FXML
-//    private void handleRegisterProject() {
-//        try {
-//            if (!areFieldsFilled()) {
-//                statusLabel.setText("Todos los campos deben estar llenos.");
-//                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//                return;
-//            }
-//
-//            ProjectDTO project = comboProject.getValue();
-//            LinkedOrganizationDTO organization = comboOrganization.getValue();
-//            RepresentativeDTO representative = comboRepresentative.getValue();
-//
-//            if (project == null || organization == null || representative == null) {
-//                statusLabel.setText("Debes seleccionar una organización, un proyecto y un representante.");
-//                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//                return;
-//            }
-//
-//            ProjectRequestDTO request = new ProjectRequestDTO(
-//                    project.getIdProject(),
-//                    fieldTuiton.getText(),
-//                    organization.getIddOrganization(), // Usar getId() en lugar de getIdLinkedOrganization()
-//                    representative.getIdRepresentative(),
-//                    project.getDescription(),
-//                    fieldGeneralObjective.getText(),
-//                    Integer.parseInt(fieldDuration.getText()),
-//                    fieldScheduleDays.getText(),
-//                    Integer.parseInt(fieldDirectUsers.getText()),
-//                    Integer.parseInt(fieldIndirectUsers.getText()),
-//                    comboStatus.getValue()
-//            );
-//
-//            try (ConecctionDataBase connectionDB = new ConecctionDataBase();
-//                 Connection connection = connectionDB.connectDB()) {
-//
-//                projectRequestDAO = new ProjectRequestDAO();
-//                boolean success = projectRequestDAO.insertProjectRequest(request);
-//
-//                if (success) {
-//                    statusLabel.setText("¡Solicitud de proyecto registrada exitosamente!");
-//                    statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-//                    clearFields();
-//                } else {
-//                    statusLabel.setText("No se pudo registrar la solicitud de proyecto.");
-//                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//                }
-//            }
-//
-//        } catch (NumberFormatException e) {
-//            logger.warn("Error de formato en campos numéricos: {}", e.getMessage(), e);
-//            statusLabel.setText("Los campos de duración, usuarios directos e indirectos deben ser números.");
-//            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//        } catch (SQLException e) {
-//            logger.error("Error de base de datos: {}", e.getMessage(), e);
-//            statusLabel.setText("Error al registrar la solicitud: " + e.getMessage());
-//            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//        } catch (Exception e) {
-//            logger.error("Error inesperado: {}", e.getMessage(), e);
-//            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-//            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-//        }
-//    }
-//
-//    @FXML
-//    private void handleCancel() {
-//        clearFields();
-//        statusLabel.setText("");
-//    }
-//
-//    private void clearFields() {
-//        fieldTuiton.clear();
-//        fieldDuration.clear();
-//        fieldScheduleDays.clear();
-//        fieldDirectUsers.clear();
-//        fieldIndirectUsers.clear();
-//        fieldGeneralObjective.clear();
-//        fieldDescription.clear();
-//        comboOrganization.getSelectionModel().clearSelection();
-//        comboProject.getSelectionModel().clearSelection();
-//        comboRepresentative.getSelectionModel().clearSelection();
-//        comboStatus.setValue("Pendiente");
-//    }
-//
-//    private boolean areFieldsFilled() {
-//        return !fieldTuiton.getText().isEmpty() &&
-//                comboOrganization.getValue() != null &&
-//                comboProject.getValue() != null &&
-//                comboRepresentative.getValue() != null &&
-//                !fieldGeneralObjective.getText().isEmpty() &&
-//                !fieldDuration.getText().isEmpty() &&
-//                !fieldScheduleDays.getText().isEmpty() &&
-//                !fieldDirectUsers.getText().isEmpty() &&
-//                !fieldIndirectUsers.getText().isEmpty() &&
-//                comboStatus.getValue() != null;
-//    }
-//}
+package gui;
+
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import logic.DAO.LinkedOrganizationDAO;
+import logic.DAO.ProjectDAO;
+import logic.DAO.ProjectRequestDAO;
+import logic.DAO.RepresentativeDAO;
+import logic.DTO.LinkedOrganizationDTO;
+import logic.DTO.ProjectDTO;
+import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
+import logic.DTO.RepresentativeDTO;
+import logic.DTO.StudentDTO;
+
+import java.sql.SQLException;
+import java.util.List;
+
+public class GUI_RegisterProjectRequestController {
+    private StudentDTO student;
+
+    @FXML private ComboBox<LinkedOrganizationDTO> comboOrganization;
+    @FXML private ComboBox<RepresentativeDTO> comboRepresentative;
+    @FXML private ComboBox<ProjectDTO> comboProject;
+
+    @FXML private TextArea fieldDescription;
+    @FXML private TextArea fieldGeneralObjective;
+    @FXML private TextArea fieldImmediateObjectives;
+    @FXML private TextArea fieldMediateObjectives;
+    @FXML private TextArea fieldMethodology;
+    @FXML private TextArea fieldResources;
+    @FXML private TextArea fieldActivities;
+    @FXML private TextArea fieldResponsibilities;
+    @FXML private TextField fieldDuration;
+    // Nuevo: CheckBox para días y campo para horario
+    @FXML private CheckBox mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
+    @FXML private TextField fieldScheduleTime;
+    @FXML private TextField fieldDirectUsers;
+    @FXML private TextField fieldIndirectUsers;
+    @FXML private Button btnRegister;
+    @FXML private Label statusLabel;
+
+    public void setStudent(StudentDTO student) {
+        this.student = student;
+    }
+
+    @FXML
+    private void initialize() {
+        loadOrganizations();
+        comboOrganization.setOnAction(e -> {
+            loadRepresentatives();
+            loadProjects();
+        });
+        fieldDuration.setText("420");
+        fieldDuration.setDisable(true);
+    }
+
+    private void loadOrganizations() {
+        try {
+            LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO(null);
+            List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
+            comboOrganization.setItems(FXCollections.observableArrayList(orgs));
+        } catch (SQLException e) {
+            setStatus("Error cargando organizaciones.", true);
+        }
+    }
+
+    private void loadRepresentatives() {
+        comboRepresentative.getItems().clear();
+        LinkedOrganizationDTO org = comboOrganization.getValue();
+        if (org != null) {
+            try {
+                RepresentativeDAO repDao = new RepresentativeDAO();
+                List<RepresentativeDTO> reps = repDao.getRepresentativesByOrganization(org.getIddOrganization());
+                comboRepresentative.setItems(FXCollections.observableArrayList(reps));
+            } catch (SQLException e) {
+                setStatus("Error cargando representantes.", true);
+            }
+        }
+    }
+
+    private void loadProjects() {
+        comboProject.getItems().clear();
+        LinkedOrganizationDTO org = comboOrganization.getValue();
+        if (org != null) {
+            try {
+                ProjectDAO projectDao = new ProjectDAO();
+                List<ProjectDTO> projects = projectDao.getAllProjects();
+                int orgId = Integer.parseInt(org.getIddOrganization());
+                projects.removeIf(p -> p.getIdOrganization() != orgId);
+                comboProject.setItems(FXCollections.observableArrayList(projects));
+            } catch (Exception e) {
+                setStatus("Error cargando proyectos.", true);
+            }
+        }
+    }
+
+    @FXML
+    private void handleRegisterProjectRequest() {
+        if (!validateFields()) return;
+
+        try {
+            LinkedOrganizationDTO org = comboOrganization.getValue();
+            RepresentativeDTO rep = comboRepresentative.getValue();
+            ProjectDTO project = comboProject.getValue();
+
+            int orgId = Integer.parseInt(org.getIddOrganization());
+            int repId = Integer.parseInt(rep.getIdRepresentative());
+            String projectName = project.getName();
+
+            ProjectRequestDTO request = new ProjectRequestDTO(
+                    0,
+                    student.getTuiton(),
+                    orgId,
+                    repId,
+                    projectName,
+                    fieldDescription.getText(),
+                    fieldGeneralObjective.getText(),
+                    fieldImmediateObjectives.getText(),
+                    fieldMediateObjectives.getText(),
+                    fieldMethodology.getText(),
+                    fieldResources.getText(),
+                    fieldActivities.getText(),
+                    fieldResponsibilities.getText(),
+                    420, // Duración fija
+                    getScheduleDays(),
+                    Integer.parseInt(fieldDirectUsers.getText()),
+                    Integer.parseInt(fieldIndirectUsers.getText()),
+                    ProjectStatus.pendiente.name(),
+                    ""
+            );
+
+            ProjectRequestDAO dao = new ProjectRequestDAO();
+            boolean success = dao.insertProjectRequest(request);
+
+            if (success) {
+                setStatus("Solicitud registrada correctamente.", false);
+                clearFields();
+            } else {
+                setStatus("Error al registrar la solicitud.", true);
+            }
+        } catch (NumberFormatException e) {
+            setStatus("Verifica los campos numéricos.", true);
+        } catch (Exception e) {
+            setStatus("Error: " + e.getMessage(), true);
+        }
+    }
+
+    // Construye el string de días/horario
+    private String getScheduleDays() {
+        StringBuilder days = new StringBuilder();
+        if (mondayCheck.isSelected()) days.append("Lun ");
+        if (tuesdayCheck.isSelected()) days.append("Mar ");
+        if (wednesdayCheck.isSelected()) days.append("Mié ");
+        if (thursdayCheck.isSelected()) days.append("Jue ");
+        if (fridayCheck.isSelected()) days.append("Vie ");
+        if (saturdayCheck.isSelected()) days.append("Sáb ");
+        if (sundayCheck.isSelected()) days.append("Dom ");
+        String horario = fieldScheduleTime.getText().trim();
+        return days.toString().trim() + (horario.isEmpty() ? "" : " " + horario);
+    }
+
+    private boolean validateFields() {
+        if (comboOrganization.getValue() == null ||
+                comboRepresentative.getValue() == null ||
+                comboProject.getValue() == null ||
+                fieldGeneralObjective.getText().isEmpty() ||
+                fieldImmediateObjectives.getText().isEmpty() ||
+                fieldMediateObjectives.getText().isEmpty() ||
+                fieldMethodology.getText().isEmpty() ||
+                fieldResources.getText().isEmpty() ||
+                fieldActivities.getText().isEmpty() ||
+                fieldResponsibilities.getText().isEmpty() ||
+                // Validar al menos un día y horario
+                (!mondayCheck.isSelected() && !tuesdayCheck.isSelected() && !wednesdayCheck.isSelected() &&
+                        !thursdayCheck.isSelected() && !fridayCheck.isSelected() && !saturdayCheck.isSelected() && !sundayCheck.isSelected()) ||
+                fieldScheduleTime.getText().isEmpty() ||
+                fieldDirectUsers.getText().isEmpty() ||
+                fieldIndirectUsers.getText().isEmpty()) {
+            setStatus("Completa todos los campos obligatorios.", true);
+            return false;
+        }
+        return true;
+    }
+
+    private void setStatus(String message, boolean isError) {
+        statusLabel.setText(message);
+        statusLabel.setStyle(isError ? "-fx-text-fill: red;" : "-fx-text-fill: green;");
+    }
+
+    private void clearFields() {
+        fieldDescription.clear();
+        fieldGeneralObjective.clear();
+        fieldImmediateObjectives.clear();
+        fieldMediateObjectives.clear();
+        fieldMethodology.clear();
+        fieldResources.clear();
+        fieldActivities.clear();
+        fieldResponsibilities.clear();
+        // fieldDuration no se limpia porque es fijo
+        mondayCheck.setSelected(false);
+        tuesdayCheck.setSelected(false);
+        wednesdayCheck.setSelected(false);
+        thursdayCheck.setSelected(false);
+        fridayCheck.setSelected(false);
+        saturdayCheck.setSelected(false);
+        sundayCheck.setSelected(false);
+        fieldScheduleTime.clear();
+        fieldDirectUsers.clear();
+        fieldIndirectUsers.clear();
+        comboOrganization.getSelectionModel().clearSelection();
+        comboRepresentative.getItems().clear();
+        comboProject.getItems().clear();
+    }
+}

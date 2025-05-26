@@ -65,15 +65,9 @@ public class RepresentativeDTO {
 
     @Override
     public String toString() {
-        return "RepresentativeDTO{" +
-                "idRepresentative='" + idRepresentative + '\'' +
-                ", names='" + names + '\'' +
-                ", surnames='" + surnames + '\'' +
-                ", email='" + email + '\'' +
-                ", idOrganization='" + idOrganization + '\'' +
-                '}';
+        return names + " " + surnames;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

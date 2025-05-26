@@ -124,7 +124,7 @@ public class GUI_AssignedProjectController {
                 organizationLabel.setText(org.getName());
             }
 
-            RepresentativeDAO repDAO = new RepresentativeDAO(conn);
+            RepresentativeDAO repDAO = new RepresentativeDAO();
             RepresentativeDTO rep = getRepresentativeByOrganization(repDAO, org.getIddOrganization());
             if (isRepresentativeNA(rep)) {
                 representativeLabel.setText("No asignado");

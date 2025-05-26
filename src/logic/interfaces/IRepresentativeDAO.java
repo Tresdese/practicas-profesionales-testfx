@@ -15,4 +15,6 @@ public interface IRepresentativeDAO {
     RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException;
 
     List<RepresentativeDTO> getAllRepresentatives() throws SQLException;
+
+    public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException;
 }

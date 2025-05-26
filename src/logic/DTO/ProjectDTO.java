@@ -89,15 +89,7 @@ public class ProjectDTO {
 
     @Override
     public String toString() {
-        return "ProjectDTO{" +
-                "idProject='" + idProject + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", approximateDate=" + approximateDate +
-                ", startDate=" + startDate +
-                ", idUser='" + idUser + '\'' +
-                ", idOrganization=" + idOrganization +
-                '}';
+        return name; // Solo muestra el nombre en el ComboBox
     }
 
     @Override

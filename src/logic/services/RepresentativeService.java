@@ -13,7 +13,7 @@ public class RepresentativeService {
     private final RepresentativeDAO representativeDAO;
 
     public RepresentativeService(Connection connection) {
-        this.representativeDAO = new RepresentativeDAO(connection);
+        this.representativeDAO = new RepresentativeDAO();
     }
 
     public boolean registerRepresentative(RepresentativeDTO representative) throws SQLException, RepeatedEmail {
