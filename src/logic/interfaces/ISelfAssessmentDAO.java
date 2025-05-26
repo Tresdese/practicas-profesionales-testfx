@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.SelfAssessmentDTO;
 
 public interface ISelfAssessmentDAO {
-    boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException;
+    boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException;
 
-    boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException;
+    boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException;
 
-    boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment, Connection connection) throws SQLException;
+    boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException;
 
-    SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId, Connection connection) throws SQLException;
+    SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId) throws SQLException;
 
-    List<SelfAssessmentDTO> getAllSelfAssessments(Connection connection) throws SQLException;
+    List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException;
 }

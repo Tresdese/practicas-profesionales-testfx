@@ -10,9 +10,9 @@ public interface ICriterionSelfAssessmentDAO {
 
     boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException;
 
-    boolean deleteCriterionSelfAssessment(String idSelfAssessment, String idCriteria) throws SQLException;
+    boolean deleteCriterionSelfAssessment(int idSelfAssessment, int idCriteria) throws SQLException;
 
-    CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(String idSelfAssessment, String idCriteria) throws SQLException;
+    CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(int idSelfAssessment, int idCriteria) throws SQLException;
 
     List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments() throws SQLException;
 }

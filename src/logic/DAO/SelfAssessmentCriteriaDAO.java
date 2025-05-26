@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConecctionDataBase;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 import logic.interfaces.ISelfAssessmentCriterialDAO;
 
@@ -17,35 +18,43 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
     private final static String SQL_SELECT = "SELECT * FROM criterio_de_autoevaluacion WHERE idCriterios = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM criterio_de_autoevaluacion";
 
-    public boolean insertSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    public boolean insertSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, criteria.getIdCriteria());
             statement.setString(2, criteria.getNameCriteria());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean updateSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updateSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, criteria.getNameCriteria());
             statement.setString(2, criteria.getIdCriteria());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean deleteSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deleteSelfAssessmentCriteria(SelfAssessmentCriteriaDTO criteria) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, criteria.getIdCriteria());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria, Connection connection) throws SQLException {
+    public SelfAssessmentCriteriaDTO searchSelfAssessmentCriteriaById(String idCriteria) throws SQLException {
         SelfAssessmentCriteriaDTO selfAssessmentCriteria = new SelfAssessmentCriteriaDTO(
                 "N/A",
                 "N/A"
         );
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idCriteria);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -59,9 +68,11 @@ public class SelfAssessmentCriteriaDAO implements ISelfAssessmentCriterialDAO {
         return selfAssessmentCriteria;
     }
 
-    public List<SelfAssessmentCriteriaDTO> getAllSelfAssessmentCriteria(Connection connection) throws SQLException {
+    public List<SelfAssessmentCriteriaDTO> getAllSelfAssessmentCriteria() throws SQLException {
         List<SelfAssessmentCriteriaDTO> criteriaList = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 criteriaList.add(new SelfAssessmentCriteriaDTO(

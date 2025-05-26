@@ -220,4 +220,27 @@ public class GUI_AssignedProjectController {
             logger.error("Error al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
         }
     }
+
+    @FXML
+    private void handleOpenSelfAssessment() {
+        try {
+            // Obtén el proyecto asignado
+            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            ProjectDTO project = getProject(studentProject.getIdProject());
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterSelfAssessment.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterSelfAssessmentController controller = loader.getController();
+            controller.setStudentAndProject(student, project);
+
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Autoevaluación");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            // Manejo de errores
+            e.printStackTrace();
+        }
+    }
 }

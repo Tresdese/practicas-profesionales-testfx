@@ -1,51 +1,54 @@
 package logic.DTO;
 
 public class CriterionSelfAssessmentDTO {
-    private String idSelfAssessment;
-    private String idCriteria;
+    private int idSelfAssessment;
+    private int idCriteria;
+    private float grade;
+    private String comments;
 
     public CriterionSelfAssessmentDTO() {
-        this.idSelfAssessment = "";
-        this.idCriteria = "";
+        this.idSelfAssessment = 0;
+        this.idCriteria = 0;
+        this.grade = 0.0f;
+        this.comments = "";
     }
 
-    public CriterionSelfAssessmentDTO(String idSelfAssessment, String idCriteria) {
+    public CriterionSelfAssessmentDTO(int idSelfAssessment, int idCriteria, float grade, String comments) {
         this.idSelfAssessment = idSelfAssessment;
         this.idCriteria = idCriteria;
+        this.grade = grade;
+        this.comments = comments;
     }
 
-    public String getIdSelfAssessment() {
+    public int getIdSelfAssessment() {
         return idSelfAssessment;
     }
 
-    public void setIdSelfAssessment(String idSelfAssessment) {
+    public void setIdSelfAssessment(int idSelfAssessment) {
         this.idSelfAssessment = idSelfAssessment;
     }
 
-    public String getIdCriteria() {
+    public int getIdCriteria() {
         return idCriteria;
     }
 
-    public void setIdCriteria(String idCriteria) {
+    public void setIdCriteria(int idCriteria) {
         this.idCriteria = idCriteria;
     }
 
-    @Override
-    public String toString() {
-        return "CriterionSelfAssessmentDTO{" +
-                "idSelfAssessment='" + idSelfAssessment + '\'' +
-                ", idCriteria='" + idCriteria + '\'' +
-                '}';
+    public float getGrade() {
+        return grade;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+    public void setGrade(float grade) {
+        this.grade = grade;
+    }
 
-        CriterionSelfAssessmentDTO that = (CriterionSelfAssessmentDTO) obj;
+    public String getComments() {
+        return comments;
+    }
 
-        if (!idSelfAssessment.equals(that.idSelfAssessment)) return false;
-        return idCriteria.equals(that.idCriteria);
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }
