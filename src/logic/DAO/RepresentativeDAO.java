@@ -18,6 +18,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_BY_ID = "SELECT * FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_BY_EMAIL = "SELECT * FROM representante WHERE correo = ?";
+    private final static String SQL_SELECT_BY_FULLNAME = "SELECT * FROM representante WHERE nombres = ? AND apellidos = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public RepresentativeDAO(Connection connection) { this.connection = connection; }
@@ -84,6 +85,25 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         }
+    }
+
+    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException {
+        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_FULLNAME)) {
+            statement.setString(1, names);
+            statement.setString(2, surnames);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                representative = new RepresentativeDTO(
+                        resultSet.getString("idRepresentante"),
+                        resultSet.getString("nombres"),
+                        resultSet.getString("apellidos"),
+                        resultSet.getString("correo"),
+                        resultSet.getString("idOrganizacion")
+                );
+            }
+        }
+        return representative;
     }
 
     @Override

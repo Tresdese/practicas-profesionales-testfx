@@ -4,8 +4,8 @@ public class ProjectRequestDTO {
     private int requestId;
     private String tuiton;
     private int organizationId;
+    private int projectId;
     private int representativeId;
-    private String projectName;
     private String description;
     private String generalObjective;
     private String immediateObjectives;
@@ -25,8 +25,8 @@ public class ProjectRequestDTO {
         this.requestId = 0;
         this.tuiton = "";
         this.organizationId = 0;
+        this.projectId = 0;
         this.representativeId = 0;
-        this.projectName = "";
         this.description = "";
         this.generalObjective = "";
         this.immediateObjectives = "";
@@ -39,16 +39,16 @@ public class ProjectRequestDTO {
         this.scheduleDays = "";
         this.directUsers = 0;
         this.indirectUsers = 0;
-        this.status = "pending";
+        this.status = "pendiente";
         this.requestDate = "";
     }
 
-    public ProjectRequestDTO(int requestId, String tuiton, int organizationId, int representativeId, String projectName, String description, String generalObjective, String immediateObjectives, String mediateObjectives, String methodology, String resources, String activities, String responsibilities, int duration, String scheduleDays, int directUsers, int indirectUsers, String status, String requestDate) {
+    public ProjectRequestDTO(int requestId, String tuiton, int organizationId, int representativeId, int projectId, String description, String generalObjective, String immediateObjectives, String mediateObjectives, String methodology, String resources, String activities, String responsibilities, int duration, String scheduleDays, int directUsers, int indirectUsers, String status, String requestDate) {
         this.requestId = requestId;
         this.tuiton = tuiton;
         this.organizationId = organizationId;
+        this.projectId = projectId;
         this.representativeId = representativeId;
-        this.projectName = projectName;
         this.description = description;
         this.generalObjective = generalObjective;
         this.immediateObjectives = immediateObjectives;
@@ -97,12 +97,24 @@ public class ProjectRequestDTO {
         this.representativeId = representativeId;
     }
 
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
     public String getProjectName() {
-        return projectName;
+        return String.valueOf(projectId);
     }
 
     public void setProjectName(String projectName) {
-        this.projectName = projectName;
+        try {
+            this.projectId = Integer.parseInt(projectName);
+        } catch (NumberFormatException e) {
+            this.projectId = 0;
+        }
     }
 
     public String getDescription() {
@@ -223,8 +235,8 @@ public class ProjectRequestDTO {
                 "requestId=" + requestId +
                 ", tuiton='" + tuiton + '\'' +
                 ", organizationId=" + organizationId +
+                ", projectId=" + projectId +
                 ", representativeId=" + representativeId +
-                ", projectName='" + projectName + '\'' +
                 ", description='" + description + '\'' +
                 ", generalObjective='" + generalObjective + '\'' +
                 ", immediateObjectives='" + immediateObjectives + '\'' +
@@ -250,8 +262,8 @@ public class ProjectRequestDTO {
         return requestId == that.requestId &&
                 tuiton.equals(that.tuiton) &&
                 organizationId == that.organizationId &&
+                projectId == that.projectId &&
                 representativeId == that.representativeId &&
-                projectName.equals(that.projectName) &&
                 ((description == null && that.description == null) || (description != null && description.equals(that.description))) &&
                 generalObjective.equals(that.generalObjective) &&
                 immediateObjectives.equals(that.immediateObjectives) &&

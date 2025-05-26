@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterProjectRequestController">
+    <children>
+        <Label fx:id="label" layoutX="210.0" layoutY="20.0" text="Registrar Solicitud de Proyecto" textAlignment="CENTER">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Label>
+        <TextField fx:id="fieldTuiton" layoutX="220.0" layoutY="70.0" prefWidth="200.0" promptText="Ejem: S23014069" />
+        <Label layoutX="69.0" layoutY="74.0" text="Matrícula:" />
+
+        <Label layoutX="69.0" layoutY="114.0" text="Organización:" />
+        <ComboBox fx:id="comboOrganization" layoutX="220.0" layoutY="110.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="154.0" text="Proyecto:" />
+        <ComboBox fx:id="comboProject" layoutX="220.0" layoutY="150.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="194.0" text="Representante:" />
+        <ComboBox fx:id="comboRepresentative" layoutX="220.0" layoutY="190.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="234.0" text="Descripción:" />
+        <TextArea fx:id="fieldDescription" layoutX="220.0" layoutY="230.0" prefHeight="60.0" prefWidth="400.0" wrapText="true" editable="false" />
+
+        <Label layoutX="69.0" layoutY="300.0" text="Objetivo General:" />
+        <TextArea fx:id="fieldGeneralObjective" layoutX="220.0" layoutY="300.0" prefHeight="60.0" prefWidth="400.0" wrapText="true" />
+
+        <Label layoutX="69.0" layoutY="370.0" text="Duración (horas):" />
+        <TextField fx:id="fieldDuration" layoutX="220.0" layoutY="370.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="410.0" text="Horario:" />
+        <TextField fx:id="fieldScheduleDays" layoutX="220.0" layoutY="410.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="450.0" text="Usuarios Directos:" />
+        <TextField fx:id="fieldDirectUsers" layoutX="220.0" layoutY="450.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="490.0" text="Usuarios Indirectos:" />
+        <TextField fx:id="fieldIndirectUsers" layoutX="220.0" layoutY="490.0" prefWidth="200.0" />
+
+        <Label layoutX="69.0" layoutY="530.0" text="Estado:" />
+        <ComboBox fx:id="comboStatus" layoutX="220.0" layoutY="530.0" prefWidth="200.0" />
+
+        <Button fx:id="buttonRegisterProject" layoutX="440.0" layoutY="490.0" mnemonicParsing="false" onAction="#handleRegisterProject" style="-fx-background-color: #2772d3;" text="Registrar Proyecto" textFill="WHITE">
+            <opaqueInsets>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </opaqueInsets>
+        </Button>
+        <Button fx:id="buttonCancel" layoutX="440.0" layoutY="530.0" mnemonicParsing="false" onAction="#handleCancel" style="-fx-background-color: #c0c0c0;" text="Cancelar" textFill="BLACK">
+            <opaqueInsets>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </opaqueInsets>
+        </Button>
+
+        <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="100.0" layoutY="570.0" prefWidth="500.0" textFill="RED" wrapText="true">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

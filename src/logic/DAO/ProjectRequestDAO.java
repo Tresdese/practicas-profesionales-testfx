@@ -2,27 +2,29 @@ package logic.DAO;
 
 import data_access.ConecctionDataBase;
 import logic.DTO.ProjectRequestDTO;
+import logic.interfaces.IProjectRequestDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectRequestDAO {
-    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idRepresentante, nombreProyecto, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idRepresentante=?, nombreProyecto=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+public class ProjectRequestDAO implements IProjectRequestDAO {
+    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idProyecto, idRepresentante, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idProyecto=?, idRepresentante=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE solicitud_proyecto SET estado=? WHERE idSolicitud=?";
     private static final String SQL_DELETE = "DELETE FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT = "SELECT * FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM solicitud_proyecto";
     private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM solicitud_proyecto WHERE matricula=?";
 
-    public boolean insert(ProjectRequestDTO request) throws SQLException {
+    public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setInt(3, request.getProjectId());
+            stmt.setInt(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -40,14 +42,14 @@ public class ProjectRequestDAO {
         }
     }
 
-    public boolean update(ProjectRequestDTO request) throws SQLException {
+    public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setInt(3, request.getProjectId());
+            stmt.setInt(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -66,7 +68,17 @@ public class ProjectRequestDAO {
         }
     }
 
-    public boolean delete(int requestId) throws SQLException {
+    public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException {
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection conn = db.connectDB();
+             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_STATUS)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, requestId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean deleteProjectRequest(int requestId) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
@@ -75,7 +87,7 @@ public class ProjectRequestDAO {
         }
     }
 
-    public ProjectRequestDTO searchById(int requestId) throws SQLException {
+    public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
         ProjectRequestDTO request = null;
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -90,7 +102,7 @@ public class ProjectRequestDAO {
         return request;
     }
 
-    public List<ProjectRequestDTO> getAll() throws SQLException {
+    public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException {
         List<ProjectRequestDTO> list = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -103,7 +115,7 @@ public class ProjectRequestDAO {
         return list;
     }
 
-    public List<ProjectRequestDTO> searchByTuiton(String tuiton) throws SQLException {
+    public List<ProjectRequestDTO> searchProjectRequestByTuiton(String tuiton) throws SQLException {
         List<ProjectRequestDTO> list = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -123,8 +135,8 @@ public class ProjectRequestDAO {
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),
                 rs.getInt("idOrganizacion"),
+                rs.getInt("idProyecto"),
                 rs.getInt("idRepresentante"),
-                rs.getString("nombreProyecto"),
                 rs.getString("descripcion"),
                 rs.getString("objetivoGeneral"),
                 rs.getString("objetivosInmediatos"),
