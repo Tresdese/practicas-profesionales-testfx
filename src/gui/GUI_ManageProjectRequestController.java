@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logic.DAO.ProjectRequestDAO;
 import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,10 +48,8 @@ public class GUI_ManageProjectRequestController {
 
     @FXML
     public void initialize() {
-        // Configurar el ComboBox de estados
         comboStatus.setItems(FXCollections.observableArrayList("pendiente", "aprobada", "rechazada"));
 
-        // Inicializar el DAO si no se ha inyectado
         if (projectRequestDAO == null) {
             projectRequestDAO = new ProjectRequestDAO();
         }
@@ -74,7 +73,7 @@ public class GUI_ManageProjectRequestController {
         fieldScheduleDays.setText(projectRequest.getScheduleDays());
         fieldDirectUsers.setText(String.valueOf(projectRequest.getDirectUsers()));
         fieldIndirectUsers.setText(String.valueOf(projectRequest.getIndirectUsers()));
-        comboStatus.setValue(projectRequest.getStatus());
+        comboStatus.setValue(projectRequest.getStatus() != null ? projectRequest.getStatus().name() : "pendiente");
     }
 
     @FXML
@@ -85,16 +84,16 @@ public class GUI_ManageProjectRequestController {
             }
 
             projectRequest.setTuiton(fieldTuiton.getText());
-            projectRequest.setOrganizationId(Integer.parseInt(fieldOrganizationId.getText()));
-            projectRequest.setProjectId(Integer.parseInt(fieldProjectId.getText()));
-            projectRequest.setRepresentativeId(Integer.parseInt(fieldRepresentativeId.getText()));
+            projectRequest.setOrganizationId(fieldOrganizationId.getText());
+            projectRequest.setProjectId(fieldProjectId.getText());
+            projectRequest.setRepresentativeId(fieldRepresentativeId.getText());
             projectRequest.setDescription(fieldDescription.getText());
             projectRequest.setGeneralObjective(fieldGeneralObjective.getText());
             projectRequest.setDuration(Integer.parseInt(fieldDuration.getText()));
             projectRequest.setScheduleDays(fieldScheduleDays.getText());
             projectRequest.setDirectUsers(Integer.parseInt(fieldDirectUsers.getText()));
             projectRequest.setIndirectUsers(Integer.parseInt(fieldIndirectUsers.getText()));
-            projectRequest.setStatus(comboStatus.getValue());
+            projectRequest.setStatus(ProjectStatus.valueOf(comboStatus.getValue()));
 
             boolean result = projectRequestDAO.updateProjectRequest(projectRequest);
 

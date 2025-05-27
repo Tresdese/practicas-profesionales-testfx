@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectRequestDAO {
-    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idRepresentante, nombreProyecto, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idRepresentante=?, nombreProyecto=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idProyecto, idRepresentante, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idProyecto=?, idRepresentante=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
     private static final String SQL_DELETE = "DELETE FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT = "SELECT * FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM solicitud_proyecto";
@@ -20,9 +20,9 @@ public class ProjectRequestDAO {
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
             stmt.setString(1, request.getTuiton());
-            stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setString(2, request.getOrganizationId());
+            stmt.setString(3, request.getProjectId());
+            stmt.setString(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -45,9 +45,9 @@ public class ProjectRequestDAO {
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
-            stmt.setInt(2, request.getOrganizationId());
-            stmt.setInt(3, request.getRepresentativeId());
-            stmt.setString(4, request.getProjectName());
+            stmt.setString(2, request.getOrganizationId());
+            stmt.setString(3, request.getProjectId());
+            stmt.setString(4, request.getRepresentativeId());
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -122,9 +122,9 @@ public class ProjectRequestDAO {
         return new ProjectRequestDTO(
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),
-                rs.getInt("idOrganizacion"),
-                rs.getInt("idRepresentante"),
-                rs.getString("nombreProyecto"),
+                rs.getString("idOrganizacion"),
+                rs.getString("idProyecto"),
+                rs.getString("idRepresentante"),
                 rs.getString("descripcion"),
                 rs.getString("objetivoGeneral"),
                 rs.getString("objetivosInmediatos"),

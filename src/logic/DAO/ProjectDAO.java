@@ -16,7 +16,7 @@ public class ProjectDAO implements IProjectDAO {
     private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ? WHERE idProyecto = ?";
     private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
-    private static final String SQL_SELECT = "SELECT * FROM proyecto WHERE idProyecto = ?";
+    private static final String SQL_SELECT_BY_ID = "SELECT * FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_BY_NAME = "SELECT * FROM proyecto WHERE nombre = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM proyecto";
 
@@ -63,7 +63,7 @@ public class ProjectDAO implements IProjectDAO {
         ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -103,6 +103,21 @@ public class ProjectDAO implements IProjectDAO {
             }
         }
         return project;
+    }
+
+    public String getProyectNameById(String idProject) throws SQLException {
+        String projectName = "";
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, idProject);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    projectName = resultSet.getString("nombre");
+                }
+            }
+        }
+        return projectName;
     }
 
     public List<ProjectDTO> getAllProjects() throws SQLException {
