@@ -100,7 +100,9 @@ public class RepresentativeDAO implements IRepresentativeDAO {
 
     public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException {
         RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_FULLNAME)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_FULLNAME)) {
             statement.setString(1, names);
             statement.setString(2, surnames);
             ResultSet resultSet = statement.executeQuery();
@@ -136,6 +138,20 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             }
         }
         return representatives;
+    }
+
+    public String getRepresentativeNameById(String idRepresentative) throws SQLException {
+        String representativeName = "";
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+            statement.setString(1, idRepresentative);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                representativeName = resultSet.getString("nombres") + " " + resultSet.getString("apellidos");
+            }
+        }
+        return representativeName;
     }
 
     public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException {

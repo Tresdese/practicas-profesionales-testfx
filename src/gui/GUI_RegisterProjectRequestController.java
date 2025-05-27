@@ -58,7 +58,7 @@ public class GUI_RegisterProjectRequestController {
 
     private void loadOrganizations() {
         try {
-            LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO(null);
+            LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO();
             List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
             comboOrganization.setItems(FXCollections.observableArrayList(orgs));
         } catch (SQLException e) {
@@ -105,8 +105,8 @@ public class GUI_RegisterProjectRequestController {
             RepresentativeDTO rep = comboRepresentative.getValue();
             ProjectDTO project = comboProject.getValue();
 
-            int orgId = Integer.parseInt(org.getIddOrganization());
-            int repId = Integer.parseInt(rep.getIdRepresentative());
+            String orgId = org.getIddOrganization();
+            String repId = rep.getIdRepresentative();
             String projectName = project.getName();
 
             ProjectRequestDTO request = new ProjectRequestDTO(
@@ -147,7 +147,6 @@ public class GUI_RegisterProjectRequestController {
         }
     }
 
-    // Construye el string de días/horario
     private String getScheduleDays() {
         StringBuilder days = new StringBuilder();
         if (mondayCheck.isSelected()) days.append("Lun ");

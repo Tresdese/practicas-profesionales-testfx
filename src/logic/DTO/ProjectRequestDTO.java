@@ -3,9 +3,9 @@ package logic.DTO;
 public class ProjectRequestDTO {
     private int requestId;
     private String tuiton;
-    private int organizationId;
-    private int representativeId;
-    private String projectName;
+    private String organizationId;
+    private String representativeId;
+    private String projectId;
     private String description;
     private String generalObjective;
     private String immediateObjectives;
@@ -24,9 +24,9 @@ public class ProjectRequestDTO {
     public ProjectRequestDTO() {
         this.requestId = 0;
         this.tuiton = "";
-        this.organizationId = 0;
-        this.representativeId = 0;
-        this.projectName = "";
+        this.organizationId = "";
+        this.representativeId = "";
+        this.projectId = "";
         this.description = "";
         this.generalObjective = "";
         this.immediateObjectives = "";
@@ -43,12 +43,12 @@ public class ProjectRequestDTO {
         this.requestDate = "";
     }
 
-    public ProjectRequestDTO(int requestId, String tuiton, int organizationId, int representativeId, String projectName, String description, String generalObjective, String immediateObjectives, String mediateObjectives, String methodology, String resources, String activities, String responsibilities, int duration, String scheduleDays, int directUsers, int indirectUsers, String status, String requestDate) {
+    public ProjectRequestDTO(int requestId, String tuiton, String organizationId, String representativeId, String projectName, String description, String generalObjective, String immediateObjectives, String mediateObjectives, String methodology, String resources, String activities, String responsibilities, int duration, String scheduleDays, int directUsers, int indirectUsers, String status, String requestDate) {
         this.requestId = requestId;
         this.tuiton = tuiton;
         this.organizationId = organizationId;
         this.representativeId = representativeId;
-        this.projectName = projectName;
+        this.projectId = projectName;
         this.description = description;
         this.generalObjective = generalObjective;
         this.immediateObjectives = immediateObjectives;
@@ -69,12 +69,12 @@ public class ProjectRequestDTO {
     public void setRequestId(int requestId) { this.requestId = requestId; }
     public String getTuiton() { return tuiton; }
     public void setTuiton(String tuiton) { this.tuiton = tuiton; }
-    public int getOrganizationId() { return organizationId; }
-    public void setOrganizationId(int organizationId) { this.organizationId = organizationId; }
-    public int getRepresentativeId() { return representativeId; }
-    public void setRepresentativeId(int representativeId) { this.representativeId = representativeId; }
-    public String getProjectName() { return projectName; }
-    public void setProjectName(String projectName) { this.projectName = projectName; }
+    public String getOrganizationId() { return organizationId; }
+    public void setOrganizationId(String organizationId) { this.organizationId = organizationId; }
+    public String getRepresentativeId() { return representativeId; }
+    public void setRepresentativeId(String representativeId) { this.representativeId = representativeId; }
+    public String getProjectId() { return projectId; }
+    public void setProjectId(String projectId) { this.projectId = projectId; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public String getGeneralObjective() { return generalObjective; }
@@ -111,7 +111,7 @@ public class ProjectRequestDTO {
                 ", tuiton='" + tuiton + '\'' +
                 ", organizationId=" + organizationId +
                 ", representativeId=" + representativeId +
-                ", projectName='" + projectName + '\'' +
+                ", projectName='" + projectId + '\'' +
                 ", description='" + description + '\'' +
                 ", generalObjective='" + generalObjective + '\'' +
                 ", immediateObjectives='" + immediateObjectives + '\'' +
@@ -138,7 +138,7 @@ public class ProjectRequestDTO {
                 tuiton.equals(that.tuiton) &&
                 organizationId == that.organizationId &&
                 representativeId == that.representativeId &&
-                projectName.equals(that.projectName) &&
+                projectId.equals(that.projectId) &&
                 ((description == null && that.description == null) || (description != null && description.equals(that.description))) &&
                 generalObjective.equals(that.generalObjective) &&
                 immediateObjectives.equals(that.immediateObjectives) &&

@@ -81,6 +81,27 @@ public class GUI_CheckProjectListController {
             logger.error("Error al inicializar el servicio de proyectos: {}", e.getMessage(), e);
         }
 
+        setAllCellValueFactories();
+
+        addDetailsButtonToTable();
+        addManagementButtonToTable();
+
+        loadProjectData();
+
+        initializeButtons();
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedProject = newValue;
+            tableView.refresh();
+        });
+    }
+
+    private void initializeButtons() {
+        buttonRegisterProject.setOnAction(event -> openRegisterProjectWindow());
+        searchButton.setOnAction(event -> searchProject());
+    }
+
+    private void setAllCellValueFactories() {
         projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
@@ -112,23 +133,6 @@ public class GUI_CheckProjectListController {
             String academicName = getAcademicNameById(academicId);
             return new SimpleStringProperty(academicName);
         });
-
-        addDetailsButtonToTable();
-        addManagementButtonToTable();
-
-        loadProjectData();
-
-        initializeButtons();
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedProject = newValue;
-            tableView.refresh();
-        });
-    }
-
-    private void initializeButtons() {
-        buttonRegisterProject.setOnAction(event -> openRegisterProjectWindow());
-        searchButton.setOnAction(event -> searchProject());
     }
 
     private String getOrganizationNameById(String organizationId) {

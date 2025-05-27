@@ -33,7 +33,7 @@ class RepresentativeDAOTest {
     void setUp() throws Exception {
         limpiarTablasYResetearAutoIncrement();
         crearOrganizacionBase();
-        representativeDAO = new RepresentativeDAO(connection);
+        representativeDAO = new RepresentativeDAO();
     }
 
     @AfterAll
