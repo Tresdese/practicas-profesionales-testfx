@@ -197,7 +197,7 @@ public class GUI_CheckProjectRequestListController {
         ObservableList<ProjectRequestDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            List<ProjectRequestDTO> requests = projectRequestDAO.searchProjectRequestsByTuiton(searchQuery);
+            List<ProjectRequestDTO> requests = projectRequestDAO.searchProjectRequestByTuiton(searchQuery);
 
             String selectedStatus = filterComboBox.getValue();
             if (!"Todos".equals(selectedStatus)) {
