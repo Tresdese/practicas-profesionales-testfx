@@ -39,4 +39,4 @@ build/
 
 logs/
 
-# /out/resources/credentials.json#
+/out/resources/credentials.json
