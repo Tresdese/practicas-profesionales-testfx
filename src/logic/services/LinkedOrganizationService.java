@@ -16,7 +16,7 @@ public class LinkedOrganizationService {
         if (connection == null) {
             throw new IllegalArgumentException("La conexión no puede ser nula.");
         }
-        this.organizationDAO = new LinkedOrganizationDAO(connection);
+        this.organizationDAO = new LinkedOrganizationDAO();
     }
 
     public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, RepeatedId, RepeatedName {

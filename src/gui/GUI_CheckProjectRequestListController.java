@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,12 +8,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import logic.DTO.ProjectRequestDTO;
+import logic.DAO.LinkedOrganizationDAO;
+import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
+import logic.DAO.RepresentativeDAO;
+import logic.DTO.ProjectDTO;
+import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
+import logic.DTO.RepresentativeDTO;
+import logic.DTO.LinkedOrganizationDTO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,76 +33,61 @@ public class GUI_CheckProjectRequestListController {
 
     @FXML
     private TableView<ProjectRequestDTO> tableView;
-
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnTuiton;
-
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnProjectName;
-
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnDescription;
-
     @FXML
-    private TableColumn<ProjectRequestDTO, Integer> columnOrganizationId;
-
+    private TableColumn<ProjectRequestDTO, String> columnOrganizationId;
     @FXML
-    private TableColumn<ProjectRequestDTO, Integer> columnRepresentativeId;
-
+    private TableColumn<ProjectRequestDTO, String> columnRepresentativeId;
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnStatus;
-
     @FXML
     private TableColumn<ProjectRequestDTO, Void> columnDetails;
-
     @FXML
     private TableColumn<ProjectRequestDTO, Void> columnApprove;
-
     @FXML
     private TextField searchField;
-
     @FXML
     private ComboBox<String> filterComboBox;
-
     @FXML
     private Button searchButton;
-
     @FXML
     private Button clearButton;
-
     @FXML
     private Button buttonRegisterRequest;
-
     @FXML
     private Button buttonRefreshList;
-
     @FXML
     private Label statusLabel;
 
     private ProjectRequestDTO selectedRequest;
     private ProjectRequestDAO projectRequestDAO;
+    private ProjectDAO projectDAO;
+    private LinkedOrganizationDAO organizationDAO;
+    private RepresentativeDAO representativeDAO;
 
     public void initialize() {
         try {
             this.projectRequestDAO = new ProjectRequestDAO();
+            this.projectDAO = new ProjectDAO();
+            this.organizationDAO = new LinkedOrganizationDAO();
+            this.representativeDAO = new RepresentativeDAO();
         } catch (RuntimeException e) {
-            logger.error("Error al inicializar ProjectRequestDAO: {}", e.getMessage(), e);
+            logger.error("Error al inicializar DAOs: {}", e.getMessage(), e);
             statusLabel.setText("Error interno. Intente más tarde.");
             return;
         }
 
-        columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
-        columnProjectName.setCellValueFactory(new PropertyValueFactory<>("projectName"));
-        columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-        columnOrganizationId.setCellValueFactory(new PropertyValueFactory<>("organizationId"));
-        columnRepresentativeId.setCellValueFactory(new PropertyValueFactory<>("representativeId"));
-        columnStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        setAllCellValueFactories();
 
         addDetailsButtonToTable();
         addApproveButtonToTable();
         addManageButtonToTable();
 
-        // Configurar el ComboBox para filtrar por estado
         ObservableList<String> statusOptions = FXCollections.observableArrayList(
                 "Todos", "pendiente", "aprobada", "rechazada"
         );
@@ -141,7 +133,7 @@ public class GUI_CheckProjectRequestListController {
 
             String selectedStatus = filterComboBox.getValue();
             if (!"Todos".equals(selectedStatus)) {
-                requests.removeIf(request -> !request.getStatus().equals(selectedStatus));
+                requests.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
             }
 
             requestList.addAll(requests);
@@ -152,6 +144,47 @@ public class GUI_CheckProjectRequestListController {
         }
 
         tableView.setItems(requestList);
+    }
+
+    private void setAllCellValueFactories() { // TODO no sirven los search by name de project y representative
+        columnProjectName.setCellValueFactory(cellData -> {
+            try {
+                String projectName = projectDAO.getProyectNameById(cellData.getValue().getProjectId());
+                return new SimpleStringProperty(projectName);
+            } catch (SQLException e) {
+                logger.error("Error al obtener nombre del proyecto: {}", e.getMessage(), e);
+                return new SimpleStringProperty("Error");
+            }
+        });
+
+        columnTuiton.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getTuiton()));
+
+        columnDescription.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDescription()));
+
+        columnOrganizationId.setCellValueFactory(cellData -> {
+            try {
+                String orgName = organizationDAO.getOrganizationNameById(cellData.getValue().getOrganizationId());
+                return new SimpleStringProperty(orgName);
+            } catch (SQLException e) {
+                logger.error("Error al obtener nombre de la organización: {}", e.getMessage(), e);
+                return new SimpleStringProperty("Error");
+            }
+        });
+
+        columnRepresentativeId.setCellValueFactory(cellData -> {
+            try {
+                String repName = representativeDAO.getRepresentativeNameById(cellData.getValue().getRepresentativeId());
+                return new SimpleStringProperty(repName);
+            } catch (SQLException e) {
+                logger.error("Error al obtener nombre del representante: {}", e.getMessage(), e);
+                return new SimpleStringProperty("Error");
+            }
+        });
+
+        columnStatus.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getStatus().name()));
     }
 
     private void searchRequest() {
@@ -168,7 +201,7 @@ public class GUI_CheckProjectRequestListController {
 
             String selectedStatus = filterComboBox.getValue();
             if (!"Todos".equals(selectedStatus)) {
-                requests.removeIf(request -> !request.getStatus().equals(selectedStatus));
+                requests.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
             }
 
             filteredList.addAll(requests);
@@ -228,8 +261,7 @@ public class GUI_CheckProjectRequestListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    // Solo mostrar el botón si la solicitud está pendiente
-                    if ("pendiente".equals(getTableView().getItems().get(getIndex()).getStatus())) {
+                    if (getTableView().getItems().get(getIndex()).getStatus() == ProjectStatus.pendiente) {
                         setGraphic(approveButton);
                     } else {
                         setGraphic(null);
@@ -271,13 +303,14 @@ public class GUI_CheckProjectRequestListController {
 
     private void openManageRequestWindow(ProjectRequestDTO request) {
         try {
-            // Configurar la ventana de gestión
             GUI_ManageProjectRequest.setProjectRequest(request);
 
-            // Crear y mostrar la ventana
             Stage stage = new Stage();
             GUI_ManageProjectRequest manageWindow = new GUI_ManageProjectRequest();
             manageWindow.start(stage);
+        } catch (RuntimeException e) {
+            logger.error("Error de ejecución al abrir la ventana de gestión: {}", e.getMessage(), e);
+            statusLabel.setText("Error de ejecución al abrir la ventana de gestión");
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión: {}", e.getMessage(), e);
             statusLabel.setText("Error al abrir la ventana de gestión");
@@ -291,12 +324,15 @@ public class GUI_CheckProjectRequestListController {
             alert.setHeaderText("Solicitud #" + request.getRequestId());
 
             String content = "Matrícula: " + request.getTuiton() + "\n" +
-                    "Nombre del proyecto: " + request.getProjectName() + "\n" +
+                    "Nombre del proyecto: " + request.getProjectId() + "\n" +
                     "Descripción: " + request.getDescription() + "\n" +
-                    "Estado: " + request.getStatus();
+                    "Estado: " + (request.getStatus() != null ? request.getStatus().name() : "");
 
             alert.setContentText(content);
             alert.showAndWait();
+        } catch (RuntimeException e) {
+            logger.error("Error al mostrar detalles: {}", e.getMessage(), e);
+            statusLabel.setText("Error al mostrar detalles");
         } catch (Exception e) {
             logger.error("Error al mostrar detalles: {}", e.getMessage(), e);
             statusLabel.setText("Error al mostrar detalles");
@@ -307,7 +343,7 @@ public class GUI_CheckProjectRequestListController {
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Aprobar/Rechazar Solicitud");
-            alert.setHeaderText("Solicitud #" + request.getRequestId() + ": " + request.getProjectName());
+            alert.setHeaderText("Solicitud #" + request.getRequestId() + ": " + request.getProjectId());
             alert.setContentText("¿Desea aprobar o rechazar esta solicitud?");
 
             ButtonType buttonTypeApprove = new ButtonType("Aprobar");
@@ -319,17 +355,23 @@ public class GUI_CheckProjectRequestListController {
             alert.showAndWait().ifPresent(buttonType -> {
                 try {
                     if (buttonType == buttonTypeApprove) {
-                        request.setStatus("aprobada");
+                        request.setStatus(ProjectStatus.aprobada);
                         updateRequestStatus(request);
                     } else if (buttonType == buttonTypeReject) {
-                        request.setStatus("rechazada");
+                        request.setStatus(ProjectStatus.rechazada);
                         updateRequestStatus(request);
                     }
+                } catch (RuntimeException e) {
+                    logger.error("Error al actualizar estado: {}", e.getMessage(), e);
+                    statusLabel.setText("Error al actualizar estado");
                 } catch (Exception e) {
                     logger.error("Error al actualizar estado: {}", e.getMessage(), e);
                     statusLabel.setText("Error al actualizar estado");
                 }
             });
+        } catch (RuntimeException e) {
+            logger.error("Error al mostrar ventana de aprobación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al mostrar ventana de aprobación");
         } catch (Exception e) {
             logger.error("Error al mostrar ventana de aprobación: {}", e.getMessage(), e);
             statusLabel.setText("Error al mostrar ventana de aprobación");
@@ -338,10 +380,10 @@ public class GUI_CheckProjectRequestListController {
 
     private void updateRequestStatus(ProjectRequestDTO request) {
         try {
-            boolean result = projectRequestDAO.updateProjectRequestStatus(request.getRequestId(), request.getStatus());
+            boolean result = projectRequestDAO.updateProjectRequest(request);
             if (result) {
                 statusLabel.setText("Estado de la solicitud actualizado correctamente");
-                loadRequestData(); // Recargar la tabla
+                loadRequestData();
             } else {
                 statusLabel.setText("No se pudo actualizar el estado de la solicitud");
             }

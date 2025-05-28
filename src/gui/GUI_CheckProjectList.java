@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,8 +16,11 @@ public class GUI_CheckProjectList extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/gui/GUI_CheckProjectList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckProjectList.fxml"));
+
+            Parent root = loader.load();
             Scene scene = new Scene(root);
+
             primaryStage.setTitle("Lista de Proyectos");
             primaryStage.setScene(scene);
             primaryStage.show();

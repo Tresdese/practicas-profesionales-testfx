@@ -116,7 +116,7 @@ public class GUI_AssignedProjectController {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB()) {
 
-            LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO(conn);
+            LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
             LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));
             if (isOrganizationNA(org)) {
                 organizationLabel.setText("N/A");
@@ -216,6 +216,8 @@ public class GUI_AssignedProjectController {
             stage.setTitle("Calificación de Presentación");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (NullPointerException e) {
+            logger.error("NullPointerException al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
         }
