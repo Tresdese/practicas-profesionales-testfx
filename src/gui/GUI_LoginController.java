@@ -70,7 +70,6 @@ public class GUI_LoginController {
                 statusLabel.setText("Bienvenido estudiante, " + student.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
 
-                // Mantiene la navegación al menú de estudiante
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuStudent.fxml"));
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
