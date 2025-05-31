@@ -40,3 +40,4 @@ build/
 logs/
 
 /out/resources/credentials.json
+/tokens/

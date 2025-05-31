@@ -17,10 +17,11 @@ import logic.DTO.EvidenceDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 import data_access.ConecctionDataBase;
+import java.security.GeneralSecurityException;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
+import static logic.drive.GoogleDriveUploader.uploadFile;
+
 import java.util.Date;
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +34,18 @@ import java.util.logging.Logger;
 
 public class GUI_RegisterSelfAssessmentController {
 
-    @FXML private ComboBox<ProjectDTO> projectComboBox;
-    @FXML private TextField evidenceFileTextField;
-    @FXML private VBox criteriaVBox;
-    @FXML private TextArea generalCommentsTextArea;
-    @FXML private Button registerButton;
-    @FXML private Label statusLabel;
+    @FXML
+    private ComboBox<ProjectDTO> projectComboBox;
+    @FXML
+    private TextField evidenceFileTextField;
+    @FXML
+    private VBox criteriaVBox;
+    @FXML
+    private TextArea generalCommentsTextArea;
+    @FXML
+    private Button registerButton;
+    @FXML
+    private Label statusLabel;
 
     private File selectedEvidenceFile;
     private StudentDTO student;
@@ -71,7 +78,10 @@ public class GUI_RegisterSelfAssessmentController {
             ProjectDAO projectDAO = new ProjectDAO();
             List<ProjectDTO> projects = projectDAO.getAllProjects();
             projectComboBox.getItems().setAll(projects);
-        } catch (Exception e) {
+        } catch (SQLException e){
+            showError("Error de base de datos al cargar proyectos.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al cargar proyectos", e);
+        }catch (Exception e) {
             showError("Error al cargar proyectos.");
             LOGGER.log(Level.SEVERE, "Error al cargar proyectos", e);
         }
@@ -88,6 +98,9 @@ public class GUI_RegisterSelfAssessmentController {
                 criterionInputs.add(input);
                 criteriaVBox.getChildren().add(input.toHBox());
             }
+        } catch(SQLException e){
+            showError("Error de base de datos al cargar criterios.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al cargar criterios", e);
         } catch (Exception e) {
             showError("Error al cargar criterios.");
             LOGGER.log(Level.SEVERE, "Error al cargar criterios", e);
@@ -98,8 +111,17 @@ public class GUI_RegisterSelfAssessmentController {
     private void handleSelectEvidenceFile(javafx.event.ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar archivo de evidencia");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Archivos permitidos", "*.pdf", "*.jpg", "*.jpeg", "*.png", "*.docx")
+        );
         File file = fileChooser.showOpenDialog(evidenceFileTextField.getScene().getWindow());
         if (file != null) {
+            String fileName = file.getName().toLowerCase();
+            if (!(fileName.endsWith(".pdf") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") ||
+                    fileName.endsWith(".png") || fileName.endsWith(".docx"))) {
+                showError("Solo se permiten archivos PDF, imágenes (JPG, PNG) o documentos DOCX.");
+                return;
+            }
             selectedEvidenceFile = file;
             evidenceFileTextField.setText(file.getAbsolutePath());
         }
@@ -159,39 +181,96 @@ public class GUI_RegisterSelfAssessmentController {
                 float grade = Float.parseFloat(input.getGrade());
                 sum += grade;
                 count++;
-            } catch (Exception ignored) {}
+            } catch (NumberFormatException e){
+                showError("Calificación inválida para el criterio: " + input.idCriteria);
+                LOGGER.log(Level.WARNING, "Calificación inválida para el criterio: " + input.idCriteria);
+                return 0f;
+            }catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Calificación inválida para el criterio: " + input.idCriteria);
+            }
         }
         return count > 0 ? (float) Math.round((sum / count) * 100) / 100 : 0f;
     }
 
     private int saveEvidenceFile(File file) {
-        try {
-            String destDir = "evidencias/";
-            Files.createDirectories(Path.of(destDir));
-            EvidenceDAO evidenceDAO = new EvidenceDAO();
-            int nextId = evidenceDAO.getNextEvidenceId();
-            String destPath = destDir + "evidencia_" + nextId + "_" + file.getName();
-            Files.copy(file.toPath(), Path.of(destPath), StandardCopyOption.REPLACE_EXISTING);
+        int nextId = getNextEvidenceId();
+        if (nextId == -1) return -1;
 
-            EvidenceDTO evidence = new EvidenceDTO(
-                    nextId,
-                    file.getName(),
-                    new Date(),
-                    destPath
-            );
+        String driveUrl = uploadEvidenceToDrive(file);
+        if (driveUrl == null) return -1;
+
+        if (!insertEvidenceToDatabase(nextId, file.getName(), driveUrl)) return -1;
+
+        return nextId;
+    }
+
+    private int getNextEvidenceId() {
+        try {
+            EvidenceDAO evidenceDAO = new EvidenceDAO();
+            return evidenceDAO.getNextEvidenceId();
+        } catch (SQLException e) {
+            showError("Error de base de datos al obtener el ID de evidencia.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al obtener el ID de evidencia", e);
+            return -1;
+        } catch (Exception e) {
+            showError("Error al obtener el ID de evidencia.");
+            LOGGER.log(Level.SEVERE, "Error al obtener el ID de evidencia", e);
+            return -1;
+        }
+    }
+
+    private String uploadEvidenceToDrive(File file) {
+        try {
+            String idPeriod = getIdPeriod();
+            String parentId = createDriveFolders(idPeriod);
+            return uploadFile(file.getAbsolutePath(), parentId);
+        } catch (IOException | GeneralSecurityException e) {
+            showError("Error al subir archivo a Google Drive.");
+            LOGGER.log(Level.SEVERE, "Error al subir archivo a Drive", e);
+            return null;
+        }
+    }
+
+    private String createDriveFolders(String idPeriod) {
+        try {
+            String parentId = null;
+            parentId = createOrGetFolder(idPeriod, parentId);
+            parentId = createOrGetFolder(student.getNRC(), parentId);
+            parentId = createOrGetFolder(student.getTuiton(), parentId);
+            parentId = createOrGetFolder("Autoevaluacion", parentId);
+            return parentId;
+        } catch (IOException | GeneralSecurityException e) {
+            showError("Error al crear carpetas en Google Drive.");
+            LOGGER.log(Level.SEVERE, "Error al crear carpetas en Drive", e);
+            return null;
+        }
+    }
+
+    private String getIdPeriod() {
+        try {
+            logic.DAO.GroupDAO groupDAO = new logic.DAO.GroupDAO();
+            logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
+            return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "Error en la base de datos", e);
+            return "PeriodoDesconocido";
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);
+            return "PeriodoDesconocido";
+        }
+    }
+
+    private boolean insertEvidenceToDatabase(int id, String fileName, String driveUrl) {
+        try {
+            EvidenceDAO evidenceDAO = new EvidenceDAO();
+            EvidenceDTO evidence = new EvidenceDTO(id, fileName, new Date(), driveUrl);
             evidenceDAO.insertEvidence(evidence);
-            return nextId;
-        } catch (IOException e) {
-            showError("Error al guardar el archivo de evidencia.");
-            LOGGER.log(Level.SEVERE, "Error de IO al guardar evidencia", e);
+            return true;
         } catch (SQLException e) {
             showError("Error de base de datos al guardar la evidencia.");
             LOGGER.log(Level.SEVERE, "Error de SQL al guardar evidencia", e);
-        } catch (Exception e) {
-            showError("Ocurrió un error inesperado al guardar la evidencia.");
-            LOGGER.log(Level.SEVERE, "Error inesperado al guardar evidencia", e);
+            return false;
         }
-        return -1;
     }
 
     private int saveSelfAssessment(int evidenceId, float averageGrade, String generalComments) {
@@ -266,7 +345,6 @@ public class GUI_RegisterSelfAssessmentController {
         statusLabel.setText(message);
     }
 
-    // Clase interna para los controles de cada criterio
     private static class CriterionInput {
         String idCriteria;
         Label nameLabel;
@@ -288,7 +366,12 @@ public class GUI_RegisterSelfAssessmentController {
             return hbox;
         }
 
-        String getGrade() { return gradeField.getText(); }
-        String getComments() { return commentsField.getText(); }
+        String getGrade() {
+            return gradeField.getText();
+        }
+
+        String getComments() {
+            return commentsField.getText();
+        }
     }
 }
