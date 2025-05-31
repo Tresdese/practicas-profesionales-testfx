@@ -4,9 +4,8 @@ module proyecto.practicas {
     requires java.sql;
     requires org.apache.logging.log4j;
     requires mysql.connector.j;
-
-    requires google.api.client;
     requires jdk.httpserver;
+    requires google.api.client;
 
     requires com.google.api.client;
     requires com.google.api.client.auth;
