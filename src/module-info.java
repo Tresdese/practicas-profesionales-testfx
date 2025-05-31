@@ -6,7 +6,7 @@ module proyecto.practicas {
     requires mysql.connector.j;
 
     requires google.api.client;
-
+    requires jdk.httpserver;
 
     requires com.google.api.client;
     requires com.google.api.client.auth;
