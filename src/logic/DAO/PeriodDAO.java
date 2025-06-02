@@ -17,6 +17,7 @@ public class PeriodDAO implements IPeriodDAO {
     private final static String SQL_SELECT = "SELECT * FROM periodo WHERE idPeriodo = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
 
+    @Override
     public boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException {
         PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod(), connection);
         if (existingPeriod != null && !"N/A".equals(existingPeriod.getIdPeriod())) {
@@ -31,6 +32,7 @@ public class PeriodDAO implements IPeriodDAO {
         }
     }
 
+    @Override
     public boolean updatePeriod(PeriodDTO period, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, period.getName());
@@ -41,6 +43,7 @@ public class PeriodDAO implements IPeriodDAO {
         }
     }
 
+    @Override
     public boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idPeriod);
@@ -48,6 +51,7 @@ public class PeriodDAO implements IPeriodDAO {
         }
     }
 
+    @Override
     public PeriodDTO searchPeriodById(String idPeriod, Connection connection) throws SQLException {
         PeriodDTO period = new PeriodDTO("N/A", "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), java.sql.Timestamp.valueOf("0404-01-01 00:00:00"));
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
@@ -61,6 +65,7 @@ public class PeriodDAO implements IPeriodDAO {
         return period;
     }
 
+    @Override
     public List<PeriodDTO> getAllPeriods(Connection connection) throws SQLException {
         List<PeriodDTO> periods = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);

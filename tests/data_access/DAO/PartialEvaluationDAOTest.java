@@ -98,7 +98,7 @@ class PartialEvaluationDAOTest {
 
         // 5. Evidence
         EvidenceDTO evidence = new EvidenceDTO(1, "Evidence 1", Date.valueOf("2024-06-01"), "path/to/evidence");
-        evidenceDAO.insertEvidence(evidence, connection);
+        evidenceDAO.insertEvidence(evidence);
     }
 
     @Test

@@ -146,9 +146,16 @@ public class RepresentativeDAO implements IRepresentativeDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idRepresentative);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                representativeName = resultSet.getString("nombres") + " " + resultSet.getString("apellidos");
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String nombres = resultSet.getString("nombres");
+                    String apellidos = resultSet.getString("apellidos");
+                    if (nombres != null && apellidos != null) {
+                        representativeName = nombres + " " + apellidos;
+                    } else {
+                        representativeName = "Sin nombre";
+                    }
+                }
             }
         }
         return representativeName;

@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import logic.DTO.Role;
 import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
 import logic.exceptions.InvalidCredential;
@@ -70,7 +71,7 @@ public class GUI_LoginController {
                 statusLabel.setText("Bienvenido estudiante, " + student.getNames() + "!");
                 statusLabel.setStyle("-fx-text-fill: green;");
 
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuStudent.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_MenuStudent.fxml"));
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
 
@@ -87,14 +88,15 @@ public class GUI_LoginController {
 
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
-                statusLabel.setText("Bienvenido usuario, " + generalUser.getNames() + "!");
-                statusLabel.setStyle("-fx-text-fill: green;");
+                Role role = generalUser.getRole();
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_MenuUser.fxml"));
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
 
                 GUI_MenuUserController controller = loader.getController();
                 controller.setUserName(generalUser.getNames());
+                controller.setUserRole(role); // Ahora pasas el enum
 
                 stage.setTitle("Menú Usuario");
                 stage.show();
@@ -112,7 +114,7 @@ public class GUI_LoginController {
 
     private void goToRegisterProjectRequest(StudentDTO student) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterProjectRequest.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfProjects.fxml"));
             Scene scene = new Scene(loader.load());
             GUI_RegisterProjectRequestController controller = loader.getController();
             controller.setStudent(student);

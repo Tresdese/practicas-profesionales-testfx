@@ -133,12 +133,20 @@ class SelfAssessmentDAOTest {
     @Test
     void testInsertSelfAssessment() throws SQLException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
-                null, "Buen trabajo", 9.5, testStudentMatricula, String.valueOf(testEvidenceId)
+                1, // selfAssessmentId
+                "Comentarios",
+                9.5f, // grade
+                "matricula123",
+                2, // projectId
+                3, // evidenceId
+                new java.util.Date(),
+                SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA,
+                "Comentarios generales"
         );
-        boolean result = selfAssessmentDAO.insertSelfAssessment(selfAssessment, connection);
+        boolean result = selfAssessmentDAO.insertSelfAssessment(selfAssessment);
         assertTrue(result, "La inserción debería ser exitosa");
 
-        List<SelfAssessmentDTO> all = selfAssessmentDAO.getAllSelfAssessments(connection);
+        List<SelfAssessmentDTO> all = selfAssessmentDAO.getAllSelfAssessments();
         assertFalse(all.isEmpty(), "Debe haber al menos una autoevaluación");
         assertEquals("Buen trabajo", all.get(0).getComments());
     }
@@ -146,7 +154,7 @@ class SelfAssessmentDAOTest {
     @Test
     void testSearchSelfAssessmentById() throws SQLException {
         int id = insertTestSelfAssessment("Comentario test", 8.0);
-        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id), connection);
+        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id));
         assertNotNull(found);
         assertEquals("Comentario test", found.getComments());
     }
@@ -154,13 +162,21 @@ class SelfAssessmentDAOTest {
     @Test
     void testUpdateSelfAssessment() throws SQLException {
         int id = insertTestSelfAssessment("Comentario original", 7.0);
-        SelfAssessmentDTO updated = new SelfAssessmentDTO(
-                String.valueOf(id), "Comentario actualizado", 10.0, testStudentMatricula, String.valueOf(testEvidenceId)
+        SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
+                1, // selfAssessmentId
+                "Comentarios",
+                9.5f, // grade
+                "matricula123",
+                2, // projectId
+                3, // evidenceId
+                new java.util.Date(),
+                SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA,
+                "Comentarios generales"
         );
-        boolean result = selfAssessmentDAO.updateSelfAssessment(updated, connection);
+        boolean result = selfAssessmentDAO.updateSelfAssessment(selfAssessment);
         assertTrue(result);
 
-        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id), connection);
+        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id));
         assertEquals("Comentario actualizado", found.getComments());
         assertEquals(10.0, found.getGrade());
     }
@@ -168,13 +184,21 @@ class SelfAssessmentDAOTest {
     @Test
     void testDeleteSelfAssessment() throws SQLException {
         int id = insertTestSelfAssessment("Comentario a borrar", 6.0);
-        SelfAssessmentDTO toDelete = new SelfAssessmentDTO(
-                String.valueOf(id), "Comentario a borrar", 6.0, testStudentMatricula, String.valueOf(testEvidenceId)
+        SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
+                1, // selfAssessmentId
+                "Comentarios",
+                9.5f, // grade
+                "matricula123",
+                2, // projectId
+                3, // evidenceId
+                new java.util.Date(),
+                SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA,
+                "Comentarios generales"
         );
-        boolean result = selfAssessmentDAO.deleteSelfAssessment(toDelete, connection);
+        boolean result = selfAssessmentDAO.deleteSelfAssessment(selfAssessment);
         assertTrue(result);
 
-        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id), connection);
+        SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id));
         assertEquals("N/A", found.getSelfAssessmentId());
     }
 
@@ -183,7 +207,7 @@ class SelfAssessmentDAOTest {
         insertTestSelfAssessment("Comentario 1", 7.5);
         insertTestSelfAssessment("Comentario 2", 8.5);
 
-        List<SelfAssessmentDTO> all = selfAssessmentDAO.getAllSelfAssessments(connection);
+        List<SelfAssessmentDTO> all = selfAssessmentDAO.getAllSelfAssessments();
         assertEquals(2, all.size());
     }
 

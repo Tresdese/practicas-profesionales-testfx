@@ -32,8 +32,13 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterStudent" layoutX="200.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
-        <Button fx:id="buttonAssignProject" layoutX="600.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Asignar Proyecto" textFill="WHITE" />
+        <HBox layoutX="0.0" layoutY="600.0" prefWidth="1000.0" spacing="100.0" alignment="CENTER">
+            <children>
+                <Button fx:id="buttonRegisterStudent" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
+                <Button fx:id="buttonAssignProject" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Asignar Proyecto" textFill="WHITE" />
+                <Button fx:id="buttonReassignProject" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Reasignar Proyecto" textFill="WHITE" />
+            </children>
+        </HBox>
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
     </children>
 </AnchorPane>

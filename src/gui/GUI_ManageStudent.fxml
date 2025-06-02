@@ -4,22 +4,27 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageStudentController">
+<AnchorPane prefHeight="320.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageStudentController">
     <children>
-        <Label layoutX="103.0" layoutY="20.0" text="Gestionar Estudiante">
-         <font>
-            <Font size="20.0" />
-         </font></Label>
-        <Label layoutX="69.0" layoutY="58.0" text="Nombres:" />
-        <TextField fx:id="fieldNames" layoutX="169.0" layoutY="58.0" />
-        <Label layoutX="69.0" layoutY="98.0" text="Apellidos:" />
-        <TextField fx:id="fieldSurnames" layoutX="169.0" layoutY="98.0" />
-        <Label layoutX="69.0" layoutY="138.0" text="NRC:" />
-        <TextField fx:id="fieldNRC" layoutX="169.0" layoutY="138.0" />
-        <Label layoutX="69.0" layoutY="178.0" text="Avance Crediticio:" />
-        <TextField fx:id="fieldCreditAdvance" layoutX="169.0" layoutY="178.0" />
-        <Button layoutX="62.0" layoutY="247.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
-        <Label fx:id="statusLabel" layoutX="20.0" layoutY="260.0" textFill="RED" />
-        <Button layoutX="244.0" layoutY="247.0" onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
+        <Label layoutX="170.0" layoutY="20.0" text="Gestionar Estudiante">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Label>
+        <Label layoutX="90.0" layoutY="58.0" text="Nombres:" />
+        <TextField fx:id="fieldNames" layoutX="210.0" layoutY="58.0" />
+        <Label layoutX="90.0" layoutY="98.0" text="Apellidos:" />
+        <TextField fx:id="fieldSurnames" layoutX="210.0" layoutY="98.0" />
+        <Label layoutX="90.0" layoutY="138.0" text="NRC:" />
+        <TextField fx:id="fieldNRC" layoutX="210.0" layoutY="138.0" />
+        <Label layoutX="90.0" layoutY="178.0" text="Avance Crediticio:" />
+        <TextField fx:id="fieldCreditAdvance" layoutX="210.0" layoutY="178.0" />
+        <HBox layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0" alignment="CENTER">
+            <children>
+                <Button onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+                <Button onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
+            </children>
+        </HBox>
+        <Label fx:id="statusLabel" layoutX="20.0" layoutY="290.0" textFill="RED" />
     </children>
 </AnchorPane>

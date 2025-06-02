@@ -15,6 +15,7 @@ import javafx.util.Callback;
 
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
+import logic.DTO.Role;
 import logic.DTO.UserDTO;
 
 import logic.services.ProjectService;
@@ -71,6 +72,7 @@ public class GUI_CheckProjectListController {
     private ProjectDTO selectedProject;
     private ProjectService projectService;
     private ServiceConfig serviceConfig;
+    private Role userRole;
 
     @FXML
     public void initialize() {
@@ -94,6 +96,21 @@ public class GUI_CheckProjectListController {
             selectedProject = newValue;
             tableView.refresh();
         });
+    }
+
+    public void setRole(Role role) {
+        this.userRole = role;
+        applyRolRestrictions();
+    }
+
+    private void applyRolRestrictions() {
+        if (userRole == Role.COORDINADOR) {
+            buttonRegisterProject.setVisible(true);
+        } else if (userRole == Role.ACADEMICO) {
+            buttonRegisterProject.setVisible(false);
+        } else {
+            buttonRegisterProject.setVisible(false);
+        }
     }
 
     private void initializeButtons() {

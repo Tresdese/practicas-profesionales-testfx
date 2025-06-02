@@ -1,12 +1,17 @@
 package gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import logic.DAO.ProjectDAO;
+import logic.DAO.StudentProjectDAO;
+import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
+import logic.DTO.StudentProjectDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +31,8 @@ public class GUI_ManageStudentController {
     private Label statusLabel;
 
     private StudentDTO student;
+    private ProjectDTO currentProject;
+    private StudentProjectDTO studentProject;
     private StudentService studentService;
 
     @FXML
@@ -39,13 +46,14 @@ public class GUI_ManageStudentController {
         }
     }
 
-    public void setStudentData(StudentDTO student) {
+    public void setStudentData(StudentDTO student, ProjectDTO currentProject) {
         if (student == null) {
             logger.error("El objeto StudentDTO es nulo.");
             return;
         }
 
         this.student = student;
+        this.currentProject = currentProject;
 
         fieldNames.setText(student.getNames() != null ? student.getNames() : "");
         fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
