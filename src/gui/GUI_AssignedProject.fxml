@@ -36,6 +36,7 @@
             <Label fx:id="representativeLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
     </VBox>
-    <Button fx:id="checkPresentationGradeButton" layoutX="33.0" layoutY="7.0" onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Ver Calificación de Presentación" />
-    <Button fx:id="openSelfAssessmentButton" layoutX="505.0" layoutY="7.0" onAction="#handleOpenSelfAssessment" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Registrar Autoevaluación" />
+    <Button fx:id="checkPresentationGradeButton" layoutX="51.0" layoutY="22.0" onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Ver Calificación de Presentación" />
+    <Button fx:id="openSelfAssessmentButton" layoutX="413.0" layoutY="22.0" onAction="#handleOpenSelfAssessment" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Registrar Autoevaluación" />
+    <Button fx:id="openRegisterReportButton" layoutX="714.0" layoutY="22.0" onAction="#handleOpenRegisterReport" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Registrar Informe" />
 </AnchorPane>

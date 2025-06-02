@@ -13,46 +13,59 @@ import logic.interfaces.IActivityReportDAO;
 
 public class ActivityReportDAO implements IActivityReportDAO {
 
-
-    private final static String SQL_INSERT = "INSERT INTO reporte_actividad (numReporte, idActividad) VALUES (?, ?)";
-    private final static String SQL_UPDATE = "UPDATE reporte_actividad SET idActividad = ? WHERE numReporte = ?";
+    private final static String SQL_INSERT = "INSERT INTO reporte_actividad (numReporte, idActividad, porcentaje_avance, observaciones) VALUES (?, ?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE reporte_actividad SET idActividad = ?, porcentaje_avance = ?, observaciones = ? WHERE numReporte = ?";
     private final static String SQL_DELETE = "DELETE FROM reporte_actividad WHERE numReporte = ?";
     private final static String SQL_SELECT = "SELECT * FROM reporte_actividad WHERE numReporte = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM reporte_actividad";
 
     public boolean insertActivityReport(ActivityReportDTO activityReport) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase(); Connection connection = connectionDataBase.connectDB(); PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, activityReport.getNumberReport());
             statement.setString(2, activityReport.getIdActivity());
+            statement.setInt(3, activityReport.getProgressPercentage());
+            statement.setString(4, activityReport.getObservations());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateActivityReport(ActivityReportDTO activityReport) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-             Connection connection = connectionDataBase.connectDB(); PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, activityReport.getIdActivity());
-            statement.setString(2, activityReport.getNumberReport());
+            statement.setInt(2, activityReport.getProgressPercentage());
+            statement.setString(3, activityReport.getObservations());
+            statement.setString(4, activityReport.getNumberReport());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean deleteActivityReport(String reportNumber) throws SQLException {
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-             Connection connection = connectionDataBase.connectDB(); PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, reportNumber);
             return statement.executeUpdate() > 0;
         }
     }
 
     public ActivityReportDTO searchActivityReportByReportNumber(String reportNumber) throws SQLException {
-        ActivityReportDTO activityReport = new ActivityReportDTO("N/A","N/A");
+        ActivityReportDTO activityReport = new ActivityReportDTO("N/A", "N/A", 0, "");
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-             Connection connection = connectionDataBase.connectDB(); PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, reportNumber);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    activityReport = new ActivityReportDTO(resultSet.getString("numReporte"), resultSet.getString("idActividad"));
+                    activityReport = new ActivityReportDTO(
+                            resultSet.getString("numReporte"),
+                            resultSet.getString("idActividad"),
+                            resultSet.getInt("porcentaje_avance"),
+                            resultSet.getString("observaciones")
+                    );
                 }
             }
         }
@@ -62,10 +75,16 @@ public class ActivityReportDAO implements IActivityReportDAO {
     public List<ActivityReportDTO> getAllActivityReports() throws SQLException {
         List<ActivityReportDTO> activityReports = new ArrayList<>();
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-             Connection connection = connectionDataBase.connectDB(); PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                activityReports.add(new ActivityReportDTO(resultSet.getString("numReporte"), resultSet.getString("idActividad")));
+                activityReports.add(new ActivityReportDTO(
+                        resultSet.getString("numReporte"),
+                        resultSet.getString("idActividad"),
+                        resultSet.getInt("porcentaje_avance"),
+                        resultSet.getString("observaciones")
+                ));
             }
         }
         return activityReports;

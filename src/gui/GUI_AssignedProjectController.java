@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import data_access.ConecctionDataBase;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import logic.exceptions.ProjectNotFound;
@@ -45,21 +44,20 @@ public class GUI_AssignedProjectController {
     private Button checkPresentationGradeButton;
 
     private StudentDTO student;
-    private StudentProjectDTO studentProject;
 
     private static final Logger logger = LogManager.getLogger(GUI_AssignedProjectController.class);
 
     public void setStudent(StudentDTO student) {
         this.student = student;
         try {
-            this.studentProject = getStudentProject(student.getTuiton());
-            if (this.studentProject == null) {
+            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            if (isStudentProjectNA(studentProject)) {
                 showNoProjectAssigned();
                 return;
             }
 
-            ProjectDTO project = getProjectFromStudentProject(this.studentProject);
-            if (project == null) {
+            ProjectDTO project = getProject(studentProject.getIdProject());
+            if (isProjectNA(project)) {
                 showProjectNotFound();
                 return;
             }
@@ -81,23 +79,29 @@ public class GUI_AssignedProjectController {
 
     private StudentProjectDTO getStudentProject(String tuiton) throws Exception {
         StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-        StudentProjectDTO sp = studentProjectDAO.searchStudentProjectByIdTuiton(tuiton);
-        if (sp == null || sp.getIdProject() == null || sp.getIdProject().isEmpty() || "N/A".equals(sp.getIdProject())) {
-            return null;
+        for (StudentProjectDTO sp : studentProjectDAO.getAllStudentProjects()) {
+            if (sp.getTuiton().equals(tuiton)) {
+                return sp;
+            }
         }
-        return sp;
+        return new StudentProjectDTO("N/A", "N/A");
     }
 
-    private ProjectDTO getProjectFromStudentProject(StudentProjectDTO sp) throws Exception {
-        if (sp == null) {
-            return null;
-        }
+    private boolean isStudentProjectNA(StudentProjectDTO sp) {
+        return sp == null || "N/A".equals(sp.getIdProject()) || "N/A".equals(sp.getTuiton());
+    }
+
+    private ProjectDTO getProject(String idProject) throws Exception {
         ProjectDAO projectDAO = new ProjectDAO();
-        ProjectDTO project = projectDAO.searchProjectById(sp.getIdProject());
-        if (project == null || project.getIdProject() == null || project.getIdProject().isEmpty()) {
-            return null;
+        ProjectDTO project = projectDAO.searchProjectById(idProject);
+        if (project == null) {
+            return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
         }
         return project;
+    }
+
+    private boolean isProjectNA(ProjectDTO project) {
+        return project == null || "-1".equals(project.getIdProject());
     }
 
     private void fillProjectLabels(ProjectDTO project) {
@@ -222,11 +226,8 @@ public class GUI_AssignedProjectController {
     @FXML
     private void handleOpenSelfAssessment() {
         try {
-            ProjectDTO project = getProjectFromStudentProject(studentProject);
-            if (project == null) {
-                logger.error("No se pudo obtener el proyecto para la autoevaluación");
-                return;
-            }
+            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            ProjectDTO project = getProject(studentProject.getIdProject());
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterSelfAssessment.fxml"));
             Parent root = loader.load();
@@ -238,16 +239,87 @@ public class GUI_AssignedProjectController {
             stage.setTitle("Registrar Autoevaluación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (ProjectNotFound e) {
-            logger.error("Proyecto no encontrado para autoevaluación: {}", e.getMessage(), e);
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
         } catch (NullPointerException e) {
-            logger.error("Recurso FXML o controlador no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
+            logger.error("NullPointerException al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de registrar autoevaluacion: {}", e.getMessage(), e);
+        }
+    }
+
+    private String[] getProfessorAndPeriod(String nrc) {
+        try {
+            logic.DAO.GroupDAO groupDAO = new logic.DAO.GroupDAO();
+            logic.DTO.GroupDTO group = groupDAO.searchGroupById(nrc);
+            if (group != null) {
+                return new String[]{group.getIdUser(), group.getIdPeriod()};
+            }
+        } catch (Exception e) {
+            logger.warn("No se pudo obtener el periodo o profesor: {}", e.getMessage());
+        }
+        return new String[]{"N/A", "N/A"};
+    }
+
+    private String getOrganizationName(int idOrganization) {
+        try {
+            logic.DAO.LinkedOrganizationDAO orgDAO = new logic.DAO.LinkedOrganizationDAO();
+            logic.DTO.LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));
+            return org != null ? org.getName() : "N/A";
+        } catch (Exception e) {
+            logger.warn("No se pudo obtener la organización: {}", e.getMessage());
+            return "N/A";
+        }
+    }
+
+    private String getProfessorNameById(String idUser) {
+        try {
+            logic.DAO.UserDAO userDAO = new logic.DAO.UserDAO();
+            logic.DTO.UserDTO user = userDAO.searchUserById(idUser);
+            if (user != null) {
+                return user.getNames() + " " + user.getSurnames();
+            }
+        } catch (Exception e) {
+            logger.warn("No se pudo obtener el nombre del profesor: {}", e.getMessage());
+        }
+        return "N/A";
+    }
+
+    private void showRegisterReportWindow(ProjectDTO project, String professorId, String nrc, String period, String studentName, String organization) {
+        try {
+            // Obtener el nombre del profesor usando el id
+            String professorName = getProfessorNameById(professorId);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterReport.fxml"));
+            Parent root = loader.load();
+            GUI_RegisterReportController controller = loader.getController();
+            controller.setReportContext(
+                    professorName, // Aquí se pasa el nombre en vez del id
+                    nrc, period, studentName, organization,
+                    project.getName(), project.getIdProject(), student.getTuiton()
+            );
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Informe");
+            stage.setScene(new Scene(root));
+            stage.show();
+            controller.setStudent(this.student);
+        } catch (NullPointerException e) {
+            logger.error("NullPointerException al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
+    private void handleOpenRegisterReport() {
+        try {
+            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            ProjectDTO project = getProject(studentProject.getIdProject());
+            String nrc = student.getNRC();
+            String[] profAndPeriod = getProfessorAndPeriod(nrc);
+            String organization = getOrganizationName(project.getIdOrganization());
+            String studentName = student.getNames() + " " + student.getSurnames();
+            showRegisterReportWindow(project, profAndPeriod[0], nrc, profAndPeriod[1], studentName, organization);
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de informe: {}", e.getMessage(), e);
         }
     }
 }
