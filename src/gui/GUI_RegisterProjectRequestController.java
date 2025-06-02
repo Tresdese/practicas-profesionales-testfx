@@ -3,6 +3,8 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
+
 import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
@@ -33,7 +35,6 @@ public class GUI_RegisterProjectRequestController {
     @FXML private TextArea fieldActivities;
     @FXML private TextArea fieldResponsibilities;
     @FXML private TextField fieldDuration;
-    // Nuevo: CheckBox para días y campo para horario
     @FXML private CheckBox mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
     @FXML private TextField fieldScheduleTime;
     @FXML private TextField fieldDirectUsers;
@@ -90,6 +91,18 @@ public class GUI_RegisterProjectRequestController {
                 int orgId = Integer.parseInt(org.getIddOrganization());
                 projects.removeIf(p -> p.getIdOrganization() != orgId);
                 comboProject.setItems(FXCollections.observableArrayList(projects));
+
+                comboProject.setConverter(new StringConverter<ProjectDTO>() {
+                    @Override
+                    public String toString(ProjectDTO project) {
+                        return project == null ? "" : project.getName();
+                    }
+
+                    @Override
+                    public ProjectDTO fromString(String string) {
+                        return null; // No es necesario para este caso
+                    }
+                });
             } catch (Exception e) {
                 setStatus("Error cargando proyectos.", true);
             }
@@ -105,16 +118,12 @@ public class GUI_RegisterProjectRequestController {
             RepresentativeDTO rep = comboRepresentative.getValue();
             ProjectDTO project = comboProject.getValue();
 
-            String orgId = org.getIddOrganization();
-            String repId = rep.getIdRepresentative();
-            String projectName = project.getName();
-
             ProjectRequestDTO request = new ProjectRequestDTO(
                     0,
                     student.getTuiton(),
-                    orgId,
-                    repId,
-                    projectName,
+                    org.getIddOrganization(),
+                    rep.getIdRepresentative(),
+                    String.valueOf(project.getIdProject()), // Usar el ID del proyecto en lugar del nombre
                     fieldDescription.getText(),
                     fieldGeneralObjective.getText(),
                     fieldImmediateObjectives.getText(),
@@ -123,7 +132,7 @@ public class GUI_RegisterProjectRequestController {
                     fieldResources.getText(),
                     fieldActivities.getText(),
                     fieldResponsibilities.getText(),
-                    420, // Duración fija
+                    420,
                     getScheduleDays(),
                     Integer.parseInt(fieldDirectUsers.getText()),
                     Integer.parseInt(fieldIndirectUsers.getText()),
