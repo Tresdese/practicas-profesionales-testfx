@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,9 +16,11 @@ public class GUI_ManageStudent extends Application {
 
     private static final Logger logger = LogManager.getLogger(GUI_ManageStudent.class);
     private static StudentDTO student;
+    private static ProjectDTO currentProject;
 
-    public static void setStudent(StudentDTO studentData) {
+    public static void setStudent(StudentDTO studentData, ProjectDTO projectData) {
         student = studentData;
+        currentProject = projectData;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class GUI_ManageStudent extends Application {
             Parent root = loader.load();
 
             GUI_ManageStudentController controller = loader.getController();
-            controller.setStudentData(student);
+            controller.setStudentData(student, currentProject);
 
             Scene scene = new Scene(root);
 

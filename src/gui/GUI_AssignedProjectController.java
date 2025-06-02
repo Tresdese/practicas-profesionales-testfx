@@ -44,20 +44,21 @@ public class GUI_AssignedProjectController {
     private Button checkPresentationGradeButton;
 
     private StudentDTO student;
+    private StudentProjectDTO studentProject;
 
     private static final Logger logger = LogManager.getLogger(GUI_AssignedProjectController.class);
 
     public void setStudent(StudentDTO student) {
         this.student = student;
         try {
-            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
-            if (isStudentProjectNA(studentProject)) {
+            this.studentProject = getStudentProject(student.getTuiton());
+            if (this.studentProject == null) {
                 showNoProjectAssigned();
                 return;
             }
 
-            ProjectDTO project = getProject(studentProject.getIdProject());
-            if (isProjectNA(project)) {
+            ProjectDTO project = getProjectFromStudentProject(this.studentProject);
+            if (project == null) {
                 showProjectNotFound();
                 return;
             }
@@ -79,29 +80,23 @@ public class GUI_AssignedProjectController {
 
     private StudentProjectDTO getStudentProject(String tuiton) throws Exception {
         StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-        for (StudentProjectDTO sp : studentProjectDAO.getAllStudentProjects()) {
-            if (sp.getTuiton().equals(tuiton)) {
-                return sp;
-            }
+        StudentProjectDTO sp = studentProjectDAO.searchStudentProjectByIdTuiton(tuiton);
+        if (sp == null || sp.getIdProject() == null || sp.getIdProject().isEmpty() || "N/A".equals(sp.getIdProject())) {
+            return null;
         }
-        return new StudentProjectDTO("N/A", "N/A");
+        return sp;
     }
 
-    private boolean isStudentProjectNA(StudentProjectDTO sp) {
-        return sp == null || "N/A".equals(sp.getIdProject()) || "N/A".equals(sp.getTuiton());
-    }
-
-    private ProjectDTO getProject(String idProject) throws Exception {
+    private ProjectDTO getProjectFromStudentProject(StudentProjectDTO sp) throws Exception {
+        if (sp == null) {
+            return null;
+        }
         ProjectDAO projectDAO = new ProjectDAO();
-        ProjectDTO project = projectDAO.searchProjectById(idProject);
-        if (project == null) {
-            return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
+        ProjectDTO project = projectDAO.searchProjectById(sp.getIdProject());
+        if (project == null || project.getIdProject() == null || project.getIdProject().isEmpty()) {
+            return null;
         }
         return project;
-    }
-
-    private boolean isProjectNA(ProjectDTO project) {
-        return project == null || "-1".equals(project.getIdProject());
     }
 
     private void fillProjectLabels(ProjectDTO project) {
@@ -226,9 +221,7 @@ public class GUI_AssignedProjectController {
     @FXML
     private void handleOpenSelfAssessment() {
         try {
-            // Obtén el proyecto asignado
-            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
-            ProjectDTO project = getProject(studentProject.getIdProject());
+            ProjectDTO project = getProjectFromStudentProject(studentProject);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterSelfAssessment.fxml"));
             Parent root = loader.load();
@@ -241,7 +234,6 @@ public class GUI_AssignedProjectController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (Exception e) {
-            // Manejo de errores
             e.printStackTrace();
         }
     }

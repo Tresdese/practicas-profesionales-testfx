@@ -1,6 +1,7 @@
 package logic.DAO;
 
 import data_access.ConecctionDataBase;
+import logic.DTO.ProjectDTO;
 import logic.DTO.StudentProjectViewDTO;
 
 import java.sql.Connection;
@@ -16,11 +17,7 @@ public class StudentProjectViewDAO {
 
     private static final Logger logger = LogManager.getLogger(StudentProjectViewDAO.class);
 
-    private static final String SQL_SELECT_BY_PRESENTATION_ID =
-            "SELECT idPresentacion, fecha_presentacion, tipo_presentacion, idProyecto, " +
-                    "       nombre_proyecto, matricula, nombre_estudiante " +
-                    "FROM vista_estudiantes_por_presentacion " +
-                    "WHERE idPresentacion = ?";
+    private static final String SQL_SELECT_BY_PRESENTATION_ID = "SELECT idPresentacion, fecha_presentacion, tipo_presentacion, idProyecto, " + "       nombre_proyecto, matricula, nombre_estudiante " + "FROM vista_estudiantes_por_presentacion " + "WHERE idPresentacion = ?";
 
     public List<StudentProjectViewDTO> getStudentProjectViewByPresentationId(int presentationId) throws SQLException {
         List<StudentProjectViewDTO> studentProjectViews = new ArrayList<>();
@@ -53,4 +50,5 @@ public class StudentProjectViewDAO {
         logger.info("Cantidad de registros obtenidos: " + studentProjectViews.size());
         return studentProjectViews;
     }
+
 }

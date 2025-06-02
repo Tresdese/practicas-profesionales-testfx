@@ -11,8 +11,7 @@ public class StudentProjectViewDTO {
     private String studentMatricula;
     private String studentName;
 
-    public StudentProjectViewDTO(int idPresentation, Date presentationDate, String presentationType, int projectId,
-                                 String projectName, String studentMatricula, String studentName) {
+    public StudentProjectViewDTO(int idPresentation, Date presentationDate, String presentationType, int projectId, String projectName, String studentMatricula, String studentName) {
         this.idPresentation = idPresentation;
         this.presentationDate = presentationDate;
         this.presentationType = presentationType;
