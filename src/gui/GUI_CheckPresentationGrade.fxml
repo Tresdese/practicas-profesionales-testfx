@@ -3,10 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gui.GUI_CheckPresentationGradeController"
-            prefHeight="400.0" prefWidth="700.0">
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.GUI_CheckPresentationGradeController" prefHeight="400.0" prefWidth="700.0">
     <VBox alignment="CENTER" spacing="18" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" AnchorPane.bottomAnchor="20">
         <Label text="Calificaciones de Presentación"
                style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C;" />

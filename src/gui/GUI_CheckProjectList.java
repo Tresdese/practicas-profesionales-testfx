@@ -6,12 +6,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GUI_CheckProjectList extends Application {
 
     private static final Logger logger = LogManager.getLogger(GUI_CheckProjectList.class);
+    private Role userRole;
+
+    public void setRole(Role role) {
+        this.userRole = role;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -20,6 +26,9 @@ public class GUI_CheckProjectList extends Application {
 
             Parent root = loader.load();
             Scene scene = new Scene(root);
+
+            GUI_CheckProjectListController controller = loader.getController();
+            controller.setRole(userRole);
 
             primaryStage.setTitle("Lista de Proyectos");
             primaryStage.setScene(scene);

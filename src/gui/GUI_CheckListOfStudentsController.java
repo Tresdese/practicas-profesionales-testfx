@@ -10,15 +10,19 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+
 import logic.DTO.ProjectDTO;
 import logic.DAO.ProjectDAO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
+import logic.DTO.Role;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -63,12 +67,16 @@ public class GUI_CheckListOfStudentsController {
     private Button buttonAssignProject;
 
     @FXML
+    private Button buttonReassignProject;
+
+    @FXML
     private Label statusLabel;
 
     private StudentDTO selectedStudent;
     private StudentService studentService;
     private StudentProjectDTO studentProject;
     private ProjectDTO currentProject;
+    private Role userRole;
 
     public void initialize() {
         try {
@@ -93,14 +101,47 @@ public class GUI_CheckListOfStudentsController {
         searchButton.setOnAction(event -> searchStudent());
         buttonRegisterStudent.setOnAction(event -> openRegisterStudentWindow());
         buttonAssignProject.setOnAction(event -> openAssignProjectWindow());
+        buttonReassignProject.setOnAction(event -> openReassignProjectWindow());
 
         buttonAssignProject.setDisable(true);
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedStudent = newValue;
             buttonAssignProject.setDisable(selectedStudent == null);
+            buttonReassignProject.setDisable(selectedStudent == null);
             tableView.refresh();
         });
+    }
+
+    public void setUserRole(Role userRole) {
+        this.userRole = userRole;
+        applyRolRestrictions();
+    }
+
+    void setButtonVisibility(Button btn, boolean visible) {
+        if (btn != null) {
+            btn.setVisible(visible);
+            btn.setManaged(visible);
+        }
+    }
+
+    private void applyRolRestrictions() {
+        if (userRole == Role.ACADEMICO_EVALUADOR) {
+            setButtonVisibility(buttonRegisterStudent, false);
+            setButtonVisibility(buttonAssignProject, false);
+            setButtonVisibility(buttonReassignProject, false);
+            columnManagement.setVisible(false);
+        } else if (userRole == Role.ACADEMICO) {
+            setButtonVisibility(buttonRegisterStudent, true);
+            setButtonVisibility(buttonAssignProject, false);
+            setButtonVisibility(buttonReassignProject, false);
+            columnManagement.setVisible(true);
+        } else if (userRole == Role.COORDINADOR) {
+            setButtonVisibility(buttonRegisterStudent, false);
+            setButtonVisibility(buttonAssignProject, true);
+            setButtonVisibility(buttonReassignProject, true);
+            columnManagement.setVisible(false);
+        }
     }
 
     private void openRegisterStudentWindow() {
@@ -114,6 +155,10 @@ public class GUI_CheckListOfStudentsController {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            logger.error("No se pudo cargar el archivo FXML: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            logger.error("No se encontró el recurso FXML: {}", e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
         }
@@ -130,13 +175,47 @@ public class GUI_CheckListOfStudentsController {
             GUI_AssignProject assignProjectApp = new GUI_AssignProject();
             Stage stage = new Stage();
             assignProjectApp.start(stage);
+        } catch (NullPointerException e) {
+            logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
+            statusLabel.setText("Error interno: recurso no encontrado");
+        } catch (IllegalStateException e) {
+            logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
+            statusLabel.setText("Error de estado al abrir la ventana");
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
             statusLabel.setText("Error al abrir la ventana de asignación de proyecto");
         }
     }
 
-
+    private void openReassignProjectWindow() {
+        if (selectedStudent == null) {
+            statusLabel.setText("Debe seleccionar un estudiante para reasignar proyecto");
+            return;
+        }
+        ProjectDTO currentProject = null;
+        try {
+            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuiton());
+            if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
+                currentProject = new logic.DAO.ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
+            }
+            gui.GUI_ReassignProject.setProjectStudent(selectedStudent, currentProject);
+            gui.GUI_ReassignProject reassignProjectApp = new gui.GUI_ReassignProject();
+            Stage stage = new Stage();
+            reassignProjectApp.start(stage);
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al reasignar proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos al reasignar proyecto");
+        } catch (NullPointerException e) {
+            logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
+            statusLabel.setText("Error interno: recurso no encontrado");
+        } catch (IllegalStateException e) {
+            logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
+            statusLabel.setText("Error de estado al abrir la ventana");
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de reasignación de proyecto");
+        }
+    }
 
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
@@ -236,6 +315,12 @@ public class GUI_CheckListOfStudentsController {
             GUI_ManageStudent manageStudentApp = new GUI_ManageStudent();
             Stage stage = new Stage();
             manageStudentApp.start(stage);
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al gestionar estudiante: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            logger.error("Recurso nulo al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            logger.error("Estado ilegal al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         }

@@ -15,11 +15,9 @@ import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
 import logic.DAO.RepresentativeDAO;
-import logic.DTO.ProjectDTO;
 import logic.DTO.ProjectRequestDTO;
 import logic.DTO.ProjectStatus;
-import logic.DTO.RepresentativeDTO;
-import logic.DTO.LinkedOrganizationDTO;
+import logic.DTO.Role;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,34 +31,49 @@ public class GUI_CheckProjectRequestListController {
 
     @FXML
     private TableView<ProjectRequestDTO> tableView;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnTuiton;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnProjectName;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnDescription;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnOrganizationId;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnRepresentativeId;
+
     @FXML
     private TableColumn<ProjectRequestDTO, String> columnStatus;
+
     @FXML
     private TableColumn<ProjectRequestDTO, Void> columnDetails;
+
     @FXML
     private TableColumn<ProjectRequestDTO, Void> columnApprove;
+
     @FXML
     private TextField searchField;
+
     @FXML
     private ComboBox<String> filterComboBox;
+
     @FXML
     private Button searchButton;
+
     @FXML
     private Button clearButton;
+
     @FXML
     private Button buttonRegisterRequest;
+
     @FXML
     private Button buttonRefreshList;
+
     @FXML
     private Label statusLabel;
 
@@ -69,6 +82,7 @@ public class GUI_CheckProjectRequestListController {
     private ProjectDAO projectDAO;
     private LinkedOrganizationDAO organizationDAO;
     private RepresentativeDAO representativeDAO;
+    private Role userRole;
 
     public void initialize() {
         try {
@@ -109,6 +123,21 @@ public class GUI_CheckProjectRequestListController {
             selectedRequest = newValue;
             tableView.refresh();
         });
+    }
+
+    public void setUserRole(Role role) {
+        this.userRole = role;
+        applyRolRestrictions();
+    }
+
+    private void applyRolRestrictions() {
+        if (userRole == Role.COORDINADOR) {
+            buttonRegisterRequest.setVisible(true);
+        } else if (userRole == Role.ACADEMICO) {
+            buttonRegisterRequest.setVisible(true);
+        } else {
+            buttonRegisterRequest.setVisible(false);
+        }
     }
 
     private void openRegisterRequestWindow() {
