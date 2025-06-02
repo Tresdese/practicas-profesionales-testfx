@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.ReportDTO;
 
 public interface IReportDAO {
-    boolean insertReport(ReportDTO report, Connection connection) throws SQLException;
+    boolean insertReport(ReportDTO report) throws SQLException;
 
-    boolean updateReport(ReportDTO report, Connection connection) throws SQLException;
+    boolean updateReport(ReportDTO report) throws SQLException;
 
-    boolean deleteReport(String numberReport, Connection connection) throws SQLException;
+    boolean deleteReport(String numberReport) throws SQLException;
 
-    ReportDTO searchReportById(String numberReport, Connection connection) throws SQLException;
+    ReportDTO searchReportById(String numberReport) throws SQLException;
 
-    List<ReportDTO> getAllReports(Connection connection) throws SQLException;
+    List<ReportDTO> getAllReports() throws SQLException;
 }

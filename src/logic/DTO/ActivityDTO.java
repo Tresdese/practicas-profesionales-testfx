@@ -32,10 +32,8 @@ public class ActivityDTO {
 
     @Override
     public String toString() {
-        return "ActivityDTO{" +
-                "activityId='" + activityId + '\'' +
-                ", activityName='" + activityName + '\'' +
-                '}';
+        return
+                "Actividad" + activityName;
     }
 
     @Override
