@@ -23,7 +23,6 @@
             <children>
                 <Button onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
                 <Button onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
-                <Button onAction="#handleReassignProject" style="-fx-background-color: #2772d3;" text="Reasignar proyecto" textFill="WHITE" />
             </children>
         </HBox>
         <Label fx:id="statusLabel" layoutX="20.0" layoutY="290.0" textFill="RED" />

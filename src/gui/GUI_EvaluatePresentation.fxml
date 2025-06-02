@@ -3,11 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gui.GUI_EvaluatePresentationController"
-            prefHeight="600.0" prefWidth="900.0"
-            stylesheets="@stylesheets/style.css">
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.GUI_EvaluatePresentationController" prefHeight="600.0" prefWidth="900.0" stylesheets="@stylesheets/style.css">
     <children>
         <!-- Título principal -->
         <Label text="Criterios de Evaluación" layoutX="20.0" layoutY="10.0" styleClass="title" />

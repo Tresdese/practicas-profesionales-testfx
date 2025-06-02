@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import data_access.ConecctionDataBase;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import logic.exceptions.ProjectNotFound;
@@ -222,6 +223,10 @@ public class GUI_AssignedProjectController {
     private void handleOpenSelfAssessment() {
         try {
             ProjectDTO project = getProjectFromStudentProject(studentProject);
+            if (project == null) {
+                logger.error("No se pudo obtener el proyecto para la autoevaluación");
+                return;
+            }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterSelfAssessment.fxml"));
             Parent root = loader.load();
@@ -233,8 +238,16 @@ public class GUI_AssignedProjectController {
             stage.setTitle("Registrar Autoevaluación");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (ProjectNotFound e) {
+            logger.error("Proyecto no encontrado para autoevaluación: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            logger.error("Recurso FXML o controlador no encontrado: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error inesperado al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
         }
     }
 }

@@ -100,47 +100,6 @@ public class GUI_ManageStudentController {
         }
     }
 
-    private ProjectDTO getCurrentProjectForStudent(StudentDTO student) {
-        try {
-            StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-            StudentProjectDTO studentProject = studentProjectDAO.searchStudentProjectByIdTuiton(student.getTuiton());
-            if (studentProject != null && studentProject.getIdProject() != null && !studentProject.getIdProject().isEmpty()) {
-                ProjectDAO projectDAO = new ProjectDAO();
-                return projectDAO.searchProjectById(studentProject.getIdProject());
-            }
-        } catch (Exception e) {
-            logger.error("Error al obtener el proyecto actual del estudiante: {}", e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @FXML
-    private void handleReassignProject(ActionEvent event) {
-        if (student == null) {
-            statusLabel.setText("No hay un estudiante seleccionado.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            return;
-        }
-        try {
-            ProjectDTO currentProject = getCurrentProjectForStudent(student);
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ReassignProject.fxml"));
-            Parent root = loader.load();
-
-            GUI_ReassignProjectController controller = loader.getController();
-            controller.setProjectStudent(student, currentProject);
-
-            Stage stage = new Stage();
-            stage.setTitle("Reasignar Proyecto");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar la interfaz GUI_ReassignProject.fxml: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir la ventana de reasignación.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-        }
-    }
-
     private boolean areFieldsFilled() {
         return !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
