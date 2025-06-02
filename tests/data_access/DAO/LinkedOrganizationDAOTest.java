@@ -22,7 +22,7 @@ class LinkedOrganizationDAOTest {
         // Configura la conexión a la base de datos real
         ConecctionDataBase conecctionDataBase = new ConecctionDataBase();
         connection = conecctionDataBase.connectDB();
-        linkedOrganizationDAO = new LinkedOrganizationDAO(connection);
+        linkedOrganizationDAO = new LinkedOrganizationDAO();
 
         // Limpia la tabla antes de cada prueba
         connection.createStatement().execute("DELETE FROM organizacion_vinculada");
