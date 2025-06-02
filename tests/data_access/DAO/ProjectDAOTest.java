@@ -27,7 +27,7 @@ class ProjectDAOTest {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
-        organizationDAO = new LinkedOrganizationDAO(connection);
+        organizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
 
         limpiarTablasYResetearAutoIncrement();

@@ -15,6 +15,7 @@ class EvidenceDAOTest {
 
     private static ConecctionDataBase connectionDB;
     private static Connection connection;
+
     private EvidenceDAO evidenceDAO;
     private int testEvidenceId;
 
@@ -64,7 +65,7 @@ class EvidenceDAOTest {
             String ruta = "/ruta/test";
 
             EvidenceDTO evidence = new EvidenceDTO(0, nombreEvidencia, fechaEntrega, ruta);
-            boolean result = evidenceDAO.insertEvidence(evidence, connection);
+            boolean result = evidenceDAO.insertEvidence(evidence);
             assertTrue(result, "La inserción debería ser exitosa");
 
             String sql = "SELECT * FROM evidencia WHERE nombreEvidencia = ?";
@@ -90,7 +91,7 @@ class EvidenceDAOTest {
 
             testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
 
-            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
+            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(testEvidenceId);
             assertNotNull(evidence, "Debería encontrar la evidencia");
             assertEquals(nombreEvidencia, evidence.getEvidenceName(), "El nombre de la evidencia debería coincidir");
             assertEquals(ruta, evidence.getRoute(), "La ruta debería coincidir");
@@ -109,10 +110,10 @@ class EvidenceDAOTest {
             testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
 
             EvidenceDTO evidenceToUpdate = new EvidenceDTO(testEvidenceId, "Evidencia Actualizada", fechaEntrega, "/ruta/actualizada");
-            boolean result = evidenceDAO.updateEvidence(evidenceToUpdate, connection);
+            boolean result = evidenceDAO.updateEvidence(evidenceToUpdate);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
+            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId);
             assertNotNull(updatedEvidence, "La evidencia debería existir después de actualizar");
             assertEquals("Evidencia Actualizada", updatedEvidence.getEvidenceName(), "El nombre debería actualizarse");
             assertEquals("/ruta/actualizada", updatedEvidence.getRoute(), "La ruta debería actualizarse");
@@ -130,10 +131,10 @@ class EvidenceDAOTest {
 
             testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
 
-            boolean result = evidenceDAO.deleteEvidence(testEvidenceId, connection);
+            boolean result = evidenceDAO.deleteEvidence(testEvidenceId);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            EvidenceDTO deletedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId, connection);
+            EvidenceDTO deletedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId);
             assertEquals(-1, deletedEvidence.getIdEvidence(), "La evidencia eliminada no debería existir");
             assertEquals("N/A", deletedEvidence.getEvidenceName(), "La evidencia eliminada no debería existir");
         } catch (SQLException e) {
@@ -153,7 +154,7 @@ class EvidenceDAOTest {
             insertTestEvidence(nombreEvidencia1, fechaEntrega, ruta1);
             insertTestEvidence(nombreEvidencia2, fechaEntrega, ruta2);
 
-            List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences(connection);
+            List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
             assertTrue(evidences.size() >= 2, "Debería haber al menos dos evidencias");
         } catch (SQLException e) {
             fail("Error en testGetAllEvidences: " + e.getMessage());
