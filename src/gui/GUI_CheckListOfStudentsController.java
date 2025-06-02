@@ -10,7 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import logic.DTO.ProjectDTO;
+import logic.DAO.ProjectDAO;
 import logic.DTO.StudentDTO;
+import logic.DTO.StudentProjectDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
@@ -64,6 +67,8 @@ public class GUI_CheckListOfStudentsController {
 
     private StudentDTO selectedStudent;
     private StudentService studentService;
+    private StudentProjectDTO studentProject;
+    private ProjectDTO currentProject;
 
     public void initialize() {
         try {
@@ -130,6 +135,8 @@ public class GUI_CheckListOfStudentsController {
             statusLabel.setText("Error al abrir la ventana de asignación de proyecto");
         }
     }
+
+
 
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
@@ -219,8 +226,13 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private void openManageStudentWindow(StudentDTO student) {
+        ProjectDTO currentProject = null;
         try {
-            GUI_ManageStudent.setStudent(student);
+            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(student.getTuiton());
+            if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
+                currentProject = new logic.DAO.ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
+            }
+            GUI_ManageStudent.setStudent(student, currentProject);
             GUI_ManageStudent manageStudentApp = new GUI_ManageStudent();
             Stage stage = new Stage();
             manageStudentApp.start(stage);

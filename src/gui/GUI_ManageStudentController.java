@@ -1,12 +1,17 @@
 package gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import logic.DAO.ProjectDAO;
+import logic.DAO.StudentProjectDAO;
+import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
+import logic.DTO.StudentProjectDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +31,8 @@ public class GUI_ManageStudentController {
     private Label statusLabel;
 
     private StudentDTO student;
+    private ProjectDTO currentProject;
+    private StudentProjectDTO studentProject;
     private StudentService studentService;
 
     @FXML
@@ -39,13 +46,14 @@ public class GUI_ManageStudentController {
         }
     }
 
-    public void setStudentData(StudentDTO student) {
+    public void setStudentData(StudentDTO student, ProjectDTO currentProject) {
         if (student == null) {
             logger.error("El objeto StudentDTO es nulo.");
             return;
         }
 
         this.student = student;
+        this.currentProject = currentProject;
 
         fieldNames.setText(student.getNames() != null ? student.getNames() : "");
         fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
@@ -89,6 +97,47 @@ public class GUI_ManageStudentController {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
+        }
+    }
+
+    private ProjectDTO getCurrentProjectForStudent(StudentDTO student) {
+        try {
+            StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
+            StudentProjectDTO studentProject = studentProjectDAO.searchStudentProjectByIdTuiton(student.getTuiton());
+            if (studentProject != null && studentProject.getIdProject() != null && !studentProject.getIdProject().isEmpty()) {
+                ProjectDAO projectDAO = new ProjectDAO();
+                return projectDAO.searchProjectById(studentProject.getIdProject());
+            }
+        } catch (Exception e) {
+            logger.error("Error al obtener el proyecto actual del estudiante: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @FXML
+    private void handleReassignProject(ActionEvent event) {
+        if (student == null) {
+            statusLabel.setText("No hay un estudiante seleccionado.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return;
+        }
+        try {
+            ProjectDTO currentProject = getCurrentProjectForStudent(student);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ReassignProject.fxml"));
+            Parent root = loader.load();
+
+            GUI_ReassignProjectController controller = loader.getController();
+            controller.setProjectStudent(student, currentProject);
+
+            Stage stage = new Stage();
+            stage.setTitle("Reasignar Proyecto");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            logger.error("Error al cargar la interfaz GUI_ReassignProject.fxml: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de reasignación.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
         }
     }
 
