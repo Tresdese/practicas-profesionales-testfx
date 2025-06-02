@@ -15,6 +15,7 @@ import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
 import logic.DAO.RepresentativeDAO;
+import logic.DTO.ProjectDTO;
 import logic.DTO.ProjectRequestDTO;
 import logic.DTO.ProjectStatus;
 import logic.DTO.Role;
@@ -175,12 +176,16 @@ public class GUI_CheckProjectRequestListController {
         tableView.setItems(requestList);
     }
 
-    private void setAllCellValueFactories() { // TODO no sirven los search by name de project y representative
+    private void setAllCellValueFactories() {
         columnProjectName.setCellValueFactory(cellData -> {
             try {
-                String projectName = projectDAO.getProyectNameById(cellData.getValue().getProjectId());
-                return new SimpleStringProperty(projectName);
-            } catch (SQLException e) {
+                String projectId = cellData.getValue().getProjectId();
+                if (projectId != null && !projectId.isEmpty()) {
+                    String projectName = projectDAO.getProyectNameById(projectId);
+                    return new SimpleStringProperty(projectId != null && !projectId.isEmpty() ? projectName : "No encontrado");
+                }
+                return new SimpleStringProperty("N/A");
+            } catch (Exception e) {
                 logger.error("Error al obtener nombre del proyecto: {}", e.getMessage(), e);
                 return new SimpleStringProperty("Error");
             }
@@ -194,8 +199,13 @@ public class GUI_CheckProjectRequestListController {
 
         columnOrganizationId.setCellValueFactory(cellData -> {
             try {
-                String orgName = organizationDAO.getOrganizationNameById(cellData.getValue().getOrganizationId());
-                return new SimpleStringProperty(orgName);
+                String orgId = cellData.getValue().getOrganizationId();
+                if (orgId != null && !orgId.isEmpty()) {
+                    String orgName = organizationDAO.getOrganizationNameById(orgId);
+                    return new SimpleStringProperty(orgName != null && !orgName.isEmpty() ?
+                            orgName : "No encontrado");
+                }
+                return new SimpleStringProperty("N/A");
             } catch (SQLException e) {
                 logger.error("Error al obtener nombre de la organización: {}", e.getMessage(), e);
                 return new SimpleStringProperty("Error");
@@ -204,8 +214,13 @@ public class GUI_CheckProjectRequestListController {
 
         columnRepresentativeId.setCellValueFactory(cellData -> {
             try {
-                String repName = representativeDAO.getRepresentativeNameById(cellData.getValue().getRepresentativeId());
-                return new SimpleStringProperty(repName);
+                String repId = cellData.getValue().getRepresentativeId();
+                if (repId != null && !repId.isEmpty()) {
+                    String repName = representativeDAO.getRepresentativeNameById(repId);
+                    return new SimpleStringProperty(repName != null && !repName.isEmpty() ?
+                            repName : "No encontrado");
+                }
+                return new SimpleStringProperty("N/A");
             } catch (SQLException e) {
                 logger.error("Error al obtener nombre del representante: {}", e.getMessage(), e);
                 return new SimpleStringProperty("Error");
@@ -226,17 +241,31 @@ public class GUI_CheckProjectRequestListController {
         ObservableList<ProjectRequestDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            List<ProjectRequestDTO> requests = projectRequestDAO.searchProjectRequestByTuiton(searchQuery);
+            List<ProjectRequestDTO> allRequests = projectRequestDAO.getAllProjectRequests();
+
+            for (ProjectRequestDTO request : allRequests) {
+                if (request.getTuiton().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    filteredList.add(request);
+                    continue;
+                }
+
+                try {
+                    String projectName = projectDAO.getProyectNameById(request.getProjectId());
+                    if (projectName.toLowerCase().contains(searchQuery.toLowerCase())) {
+                        filteredList.add(request);
+                    }
+                } catch (SQLException e) {
+                    logger.error("Error al obtener nombre del proyecto: {}", e.getMessage(), e);
+                }
+            }
 
             String selectedStatus = filterComboBox.getValue();
             if (!"Todos".equals(selectedStatus)) {
-                requests.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
+                filteredList.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
             }
 
-            filteredList.addAll(requests);
-
             if (filteredList.isEmpty()) {
-                statusLabel.setText("No se encontraron solicitudes para la matrícula: " + searchQuery);
+                statusLabel.setText("No se encontraron solicitudes para la búsqueda: " + searchQuery);
             } else {
                 statusLabel.setText("");
             }

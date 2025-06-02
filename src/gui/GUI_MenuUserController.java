@@ -73,7 +73,7 @@ public class GUI_MenuUserController {
         } else if (role == Role.ACADEMICO) {
             setButtonVisibility(buttonViewStudentList, true);
             setButtonVisibility(buttonCheckPresentationGrade, true);
-            setButtonVisibility(buttonEvaluatePresentation, true);
+            setButtonVisibility(buttonEvaluatePresentation, false);
             setButtonVisibility(buttonViewAcademicList, false);
             setButtonVisibility(buttonViewOrganizationList, false);
             setButtonVisibility(buttonViewRepresentativeList, false);
@@ -83,7 +83,7 @@ public class GUI_MenuUserController {
         } else if (role == Role.COORDINADOR) {
             setButtonVisibility(buttonViewStudentList, true);
             setButtonVisibility(buttonCheckPresentationGrade, true);
-            setButtonVisibility(buttonEvaluatePresentation, true);
+            setButtonVisibility(buttonEvaluatePresentation, false);
             setButtonVisibility(buttonViewAcademicList, true);
             setButtonVisibility(buttonViewOrganizationList, true);
             setButtonVisibility(buttonViewRepresentativeList, true);

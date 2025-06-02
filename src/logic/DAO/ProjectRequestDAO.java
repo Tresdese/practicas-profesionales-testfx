@@ -21,10 +21,11 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
+
             stmt.setString(1, request.getTuiton());
-            stmt.setString(2, request.getOrganizationId());
-            stmt.setString(3, request.getProjectId());
-            stmt.setString(4, request.getRepresentativeId());
+            stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
+            stmt.setInt(3, Integer.parseInt(request.getProjectId()));
+            stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -37,7 +38,8 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setObject(17, request.getStatus());
+            stmt.setString(17, request.getStatus().toString().toLowerCase()); // Convertir a minúsculas
+
             return stmt.executeUpdate() > 0;
         }
     }
@@ -47,9 +49,9 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
-            stmt.setString(2, request.getOrganizationId());
-            stmt.setString(3, request.getProjectId());
-            stmt.setString(4, request.getRepresentativeId());
+            stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
+            stmt.setInt(3, Integer.parseInt(request.getProjectId()));      // Convertir a int
+            stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
             stmt.setString(7, request.getImmediateObjectives());
@@ -62,7 +64,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setObject(17, request.getStatus());
+            stmt.setString(17, request.getStatus().toString().toLowerCase());
             stmt.setInt(18, request.getRequestId());
             return stmt.executeUpdate() > 0;
         }
@@ -134,9 +136,9 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         return new ProjectRequestDTO(
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),
-                rs.getString("idOrganizacion"),
-                rs.getString("idProyecto"),
-                rs.getString("idRepresentante"),
+                String.valueOf(rs.getInt("idOrganizacion")),
+                String.valueOf(rs.getInt("idRepresentante")),
+                String.valueOf(rs.getInt("idProyecto")),
                 rs.getString("descripcion"),
                 rs.getString("objetivoGeneral"),
                 rs.getString("objetivosInmediatos"),
