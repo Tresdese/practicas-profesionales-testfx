@@ -100,7 +100,7 @@ public class GUI_RegisterStudentController {
             );
 
             try (ConecctionDataBase connectionDB = new ConecctionDataBase(); Connection connection = connectionDB.connectDB()) {
-                StudentService studentService = new StudentService(connection);
+                StudentService studentService = new StudentService();
                 studentService.registerStudent(student);
 
                 statusLabel.setText("¡Estudiante registrado exitosamente!");

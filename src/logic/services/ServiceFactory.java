@@ -12,7 +12,7 @@ public class ServiceFactory {
         if (studentService == null) {
             try {
                 Connection connection = new ConecctionDataBase().connectDB();
-                studentService = new StudentService(connection);
+                studentService = new StudentService();
             } catch (Exception e) {
                 throw new RuntimeException("Error al inicializar StudentService: " + e.getMessage(), e);
             }

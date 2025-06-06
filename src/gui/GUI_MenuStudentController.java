@@ -13,9 +13,12 @@ import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import logic.services.StudentService;
+
 public class GUI_MenuStudentController {
 
     private StudentDTO student;
+    private StudentService studentService;
 
     private static final Logger logger = LogManager.getLogger(GUI_MenuStudentController.class);
 
@@ -61,7 +64,8 @@ public class GUI_MenuStudentController {
                     student.getPhone(),
                     student.getEmail()
             );
-            updateProfileController.setCurrentStudent(student); // Asegúrate de pasar el objeto completo
+            updateProfileController.setCurrentStudent(student);
+            updateProfileController.setStudentService(studentService);
 
             Stage stage = new Stage();
             stage.setTitle("Modificar Perfil");
@@ -125,5 +129,9 @@ public class GUI_MenuStudentController {
 
     public void setStudent(StudentDTO student) {
         this.student = student;
+    }
+
+    public void setStudentService(StudentService studentService) {
+        this.studentService = studentService;
     }
 }

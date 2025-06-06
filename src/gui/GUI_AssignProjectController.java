@@ -8,16 +8,30 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.DAO.StudentProjectDAO;
+import logic.DAO.ProjectDAO;
+import logic.DAO.LinkedOrganizationDAO;
+import logic.DAO.RepresentativeDAO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
+import logic.DTO.LinkedOrganizationDTO;
+import logic.DTO.RepresentativeDTO;
 import logic.services.ProjectService;
 import logic.services.ServiceConfig;
+import logic.utils.AssignmentData;
+import logic.utils.AssignmentPDFGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import logic.gmail.GmailService;
+import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
+import static logic.drive.GoogleDriveUploader.uploadFile;
 
 public class GUI_AssignProjectController {
 
@@ -48,29 +62,22 @@ public class GUI_AssignProjectController {
             this.serviceConfig = new ServiceConfig();
             projectService = serviceConfig.getProjectService();
             studentProjectDAO = new StudentProjectDAO();
-        } catch (RuntimeException e) {
-            logger.error("Error al inicializar servicios: {}", e.getMessage(), e);
-            statusLabel.setText("Error interno. Intente más tarde.");
-            buttonAssignProject.setDisable(true);
-        } catch (SQLException e) {
-            logger.error("Error al conectar a la base de datos: {}", e.getMessage(), e);
-            statusLabel.setText("Error de conexión a la base de datos.");
-            buttonAssignProject.setDisable(true);
+
+            projectChoiceBox.setConverter(new javafx.util.StringConverter<ProjectDTO>() {
+                @Override
+                public String toString(ProjectDTO project) {
+                    return project != null ? project.getName() : "";
+                }
+                @Override
+                public ProjectDTO fromString(String string) {
+                    return null;
+                }
+            });
+
+            loadProjects();
+        } catch (Exception e) {
+            logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
         }
-
-        projectChoiceBox.setConverter(new javafx.util.StringConverter<ProjectDTO>() {
-            @Override
-            public String toString(ProjectDTO project) {
-                return project != null ? project.getName() : "";
-            }
-
-            @Override
-            public ProjectDTO fromString(String string) {
-                return null;
-            }
-        });
-
-        loadProjects();
     }
 
     public void setStudent(StudentDTO student) {
@@ -82,20 +89,12 @@ public class GUI_AssignProjectController {
 
     private void loadProjects() {
         try {
-            List<ProjectDTO> availableProjects = projectService.getAllProjects();
-            ObservableList<ProjectDTO> projectList = FXCollections.observableArrayList(availableProjects);
-            projectChoiceBox.setItems(projectList);
-
-            if (!projectList.isEmpty()) {
-                projectChoiceBox.setValue(projectList.get(0));
-            } else {
-                statusLabel.setText("No hay proyectos disponibles para asignar");
-                buttonAssignProject.setDisable(true);
-            }
+            List<ProjectDTO> projects = projectService.getAllProjects();
+            ObservableList<ProjectDTO> observableProjects = FXCollections.observableArrayList(projects);
+            projectChoiceBox.setItems(observableProjects);
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los proyectos disponibles");
-            logger.error("Error al cargar los proyectos disponibles: {}", e.getMessage(), e);
-            buttonAssignProject.setDisable(true);
+            logger.error("Error al cargar proyectos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar proyectos.");
         }
     }
 
@@ -103,38 +102,119 @@ public class GUI_AssignProjectController {
     private void handleAssignProject() {
         if (student == null) {
             statusLabel.setText("No se ha seleccionado un estudiante");
+            statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
         ProjectDTO selectedProject = projectChoiceBox.getValue();
         if (selectedProject == null) {
             statusLabel.setText("Debe seleccionar un proyecto");
+            statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
         try {
-            StudentProjectDTO studentProject = new StudentProjectDTO(selectedProject.getIdProject(), student.getTuiton());
+            StudentProjectDTO studentProject = new StudentProjectDTO(
+                    selectedProject.getIdProject(),
+                    student.getTuiton()
+            );
+            boolean assigned = studentProjectDAO.insertStudentProject(studentProject);
 
-            boolean success = studentProjectDAO.insertStudentProject(studentProject);
-
-            if (success) {
-                statusLabel.setText("Proyecto asignado exitosamente");
-                statusLabel.setStyle("-fx-text-fill: green;");
-
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(1500);
-                        javafx.application.Platform.runLater(this::closeWindow);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }).start();
-            } else {
-                statusLabel.setText("No se pudo asignar el proyecto");
+            if (!assigned) {
+                statusLabel.setText("No se pudo asignar el proyecto.");
+                statusLabel.setStyle("-fx-text-fill: red;");
+                return;
             }
+
+            // Obtener datos de organización y representante
+            ProjectDAO projectDAO = new ProjectDAO();
+            ProjectDTO project = projectDAO.searchProjectById(selectedProject.getIdProject());
+            LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
+            LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
+            RepresentativeDAO repDAO = new RepresentativeDAO();
+            List<RepresentativeDTO> reps = repDAO.getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()));
+            RepresentativeDTO rep = reps.isEmpty() ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A") : reps.get(0);
+
+            // Preparar datos para el PDF
+            AssignmentData data = new AssignmentData();
+            data.setRepresentativeFirstName(rep.getNames());
+            data.setRepresentativeLastName(rep.getSurnames());
+            data.setOrganizationName(org.getName());
+            data.setOrganizationAddress(org.getAddress());
+            data.setStudentFirstName(student.getNames());
+            data.setStudentLastName(student.getSurnames());
+            data.setStudentTuiton(student.getTuiton());
+            data.setProjectName(project.getName());
+
+            // Generar PDF localmente
+            String fileName = "Asignacion_" + student.getTuiton() + ".pdf";
+            String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
+            AssignmentPDFGenerator.generatePDF(tempPath, data);
+
+            // Crear estructura de carpetas en Drive y subir PDF
+            String idPeriod = getIdPeriod();
+            String parentId = createDriveFolders(idPeriod);
+            String driveUrl = uploadFile(tempPath, parentId);
+
+            // Enviar correo al estudiante con el PDF adjunto
+            try {
+                String asunto = "Asignación de Prácticas Profesionales";
+                String cuerpo = "Estimado/a " + student.getNames() + ",\n\n" +
+                        "Se le informa que ha sido asignado al proyecto \"" + project.getName() + "\".\n" +
+                        "Adjunto encontrará el documento oficial de asignación.\n\n" +
+                        "Saludos,\nEquipo de Prácticas";
+                File pdfAdjunto = new File(tempPath);
+
+                logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), asunto, cuerpo, pdfAdjunto);
+                logger.info("Correo enviado a " + student.getEmail());
+            } catch (jakarta.mail.MessagingException | IOException ex) {
+                logger.error("Error al enviar correo: {}", ex.getMessage(), ex);
+                statusLabel.setText("Error al enviar correo al estudiante.");
+                statusLabel.setStyle("-fx-text-fill: red;");
+                return;
+            }
+
+            statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
+            statusLabel.setStyle("-fx-text-fill: green;");
+
+            closeWindow();
         } catch (SQLException e) {
-            statusLabel.setText("Error al asignar el proyecto");
-            logger.error("Error al asignar el proyecto: {}", e.getMessage(), e);
+            logger.error("Error de SQL al asignar proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+        } catch (IOException | GeneralSecurityException e) {
+            logger.error("Error al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error al subir PDF a Drive.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+        } catch (Exception e) {
+            logger.error("Error inesperado: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+        }
+    }
+
+    private String createDriveFolders(String idPeriod) {
+        try {
+            String parentId = null;
+            parentId = createOrGetFolder(idPeriod, parentId);
+            parentId = createOrGetFolder(student.getNRC(), parentId);
+            parentId = createOrGetFolder(student.getTuiton(), parentId);
+            parentId = createOrGetFolder("Asignacion", parentId);
+            return parentId;
+        } catch (IOException | GeneralSecurityException e) {
+            logger.error("Error al crear carpetas en Drive: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private String getIdPeriod() {
+        try {
+            logic.DAO.GroupDAO groupDAO = new logic.DAO.GroupDAO();
+            logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
+            return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
+        } catch (Exception e) {
+            logger.warn("No se pudo obtener el periodo del grupo", e);
+            return "PeriodoDesconocido";
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
 public class StudentService {
     private final StudentDAO studentDAO;
 
-    public StudentService(Connection connection) {
+    public StudentService() {
         this.studentDAO = new StudentDAO();
     }
 

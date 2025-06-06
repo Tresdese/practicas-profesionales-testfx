@@ -21,15 +21,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 public class GoogleDriveUploader {
 
     private static final String APPLICATION_NAME = "Mi Proyecto Java";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_FILE);
+    // Agrega el scope de Gmail junto con el de Drive
+    private static final List<String> SCOPES = Arrays.asList(
+            DriveScopes.DRIVE_FILE,
+            "https://www.googleapis.com/auth/gmail.send"
+    );
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
     private static final String FOLDER_ID = "1rnY4TPY-MjCPMbGOCAtOlhR24bT1AHh5";
 

@@ -13,9 +13,10 @@ module proyecto.practicas {
     requires com.google.api.client.extensions.jetty.auth;
     requires com.google.api.client.extensions.java6.auth;
     requires com.google.api.client.json.gson;
+    requires com.google.api.services.gmail;
+    requires jakarta.mail;
 
-    requires kernel;
-    requires io;
+    requires itextpdf;
 
     opens logic.drive to com.google.api.client.json.gson;
     opens gui to javafx.fxml;

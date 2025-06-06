@@ -79,6 +79,7 @@ public class GUI_LoginController {
                 controller.setStudent(student);
                 controller.setStudentName(student.getNames());
                 controller.setProfileImage();
+                controller.setStudentService(new logic.services.StudentService());
 
                 stage.setTitle("Menú Estudiante");
                 stage.show();
