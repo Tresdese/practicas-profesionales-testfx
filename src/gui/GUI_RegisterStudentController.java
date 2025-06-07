@@ -99,7 +99,7 @@ public class GUI_RegisterStudentController {
                     fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0
             );
 
-            try (ConecctionDataBase connectionDB = new ConecctionDataBase(); Connection connection = connectionDB.connectDB()) {
+            try {
                 StudentService studentService = new StudentService();
                 studentService.registerStudent(student);
 
