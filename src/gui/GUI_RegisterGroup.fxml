@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterGroupController">
+    <children>
+        <Label layoutX="160.0" layoutY="20.0" text="Registrar Grupo" textAlignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+        <Label layoutX="50.0" layoutY="70.0" text="NRC" />
+        <TextField fx:id="fieldNRC" layoutX="150.0" layoutY="65.0" prefWidth="250.0" />
+        <Label layoutX="50.0" layoutY="110.0" text="Nombre" />
+        <TextField fx:id="fieldName" layoutX="150.0" layoutY="105.0" prefWidth="250.0" />
+        <Label layoutX="50.0" layoutY="150.0" text="Académico" />
+        <ChoiceBox fx:id="choiceBoxAcademico" layoutX="150.0" layoutY="145.0" prefWidth="250.0" />
+        <Label layoutX="50.0" layoutY="190.0" text="Periodo" />
+        <ChoiceBox fx:id="choiceBoxPeriodo" layoutX="150.0" layoutY="185.0" prefWidth="250.0" />
+        <Button fx:id="registerButton" layoutX="180.0" layoutY="240.0" mnemonicParsing="false" text="Registrar Grupo" style="-fx-background-color: #2772d3;" textFill="WHITE"/>
+        <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="50.0" layoutY="290.0" prefWidth="400.0" textFill="red" wrapText="true">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+    </children>
+</AnchorPane>

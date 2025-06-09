@@ -72,7 +72,7 @@ class CriterionSelfAssessmentDAOTest {
         // 1. Insertar periodo
         PeriodDTO period = new PeriodDTO(periodIdBase, "Test Period",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
-        assertTrue(periodDAO.insertPeriod(period, connection), "No se pudo insertar el periodo");
+        assertTrue(periodDAO.insertPeriod(period), "No se pudo insertar el periodo");
 
         // 2. Insertar usuario
         UserDTO user = new UserDTO(userIdBase, "12345", "Nombre", "Apellido",

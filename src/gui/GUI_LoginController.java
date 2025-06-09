@@ -84,9 +84,6 @@ public class GUI_LoginController {
                 stage.setTitle("Menú Estudiante");
                 stage.show();
 
-                // Si quieres abrir directamente la ventana de registro de solicitud de proyecto, descomenta la siguiente línea:
-                // goToRegisterProjectRequest(student);
-
             } else if (user instanceof UserDTO) {
                 UserDTO generalUser = (UserDTO) user;
                 Role role = generalUser.getRole();

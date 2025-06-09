@@ -78,10 +78,10 @@ class ReportDAOTest {
     @Test
     void testInsertReport() throws SQLException {
         ReportDTO report = new ReportDTO("1", "Observaciones de prueba", String.valueOf(testEvidenceId));
-        boolean result = reportDAO.insertReport(report, connection);
+        boolean result = reportDAO.insertReport(report);
         assertTrue(result, "La inserción debería ser exitosa");
 
-        ReportDTO inserted = reportDAO.searchReportById("1", connection);
+        ReportDTO inserted = reportDAO.searchReportById("1");
         assertNotNull(inserted);
         assertEquals("Observaciones de prueba", inserted.getObservations());
         assertEquals(String.valueOf(testEvidenceId), inserted.getIdEvidence());

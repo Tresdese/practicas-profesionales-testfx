@@ -29,7 +29,7 @@ class ActivityDAOTest {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
         limpiarTablaYResetearAutoIncrement();
-        activityDAO = new ActivityDAO(connection);
+        activityDAO = new ActivityDAO();
         crearActividadBase();
     }
 

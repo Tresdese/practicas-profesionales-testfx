@@ -79,7 +79,7 @@ class PartialEvaluationDAOTest {
     private void crearObjetosBase() throws SQLException {
         // 1. Period
         PeriodDTO period = new PeriodDTO("1", "Test Period", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
-        periodDAO.insertPeriod(period, connection);
+        periodDAO.insertPeriod(period);
 
         // 2. User (para el grupo)
         UserDTO user = new UserDTO("1", "1001", "Nombre", "Apellido", "usuarioTest", "passTest", logic.DTO.Role.ACADEMICO);
