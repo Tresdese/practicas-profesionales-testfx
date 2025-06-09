@@ -87,11 +87,7 @@ public class GUI_CheckListOfStudentsController {
             return;
         }
 
-        columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
-        columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
-        columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
-        columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        columnnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
+        setColumns();
 
         addDetailsButtonToTable();
         addManagementButtonToTable();
@@ -118,14 +114,22 @@ public class GUI_CheckListOfStudentsController {
         applyRolRestrictions();
     }
 
-    void setButtonVisibility(Button btn, boolean visible) {
+    public void setButtonVisibility(Button btn, boolean visible) {
         if (btn != null) {
             btn.setVisible(visible);
             btn.setManaged(visible);
         }
     }
 
-    private void applyRolRestrictions() {
+    public void setColumns () {
+        columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
+        columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
+        columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
+        columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        columnnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
+    }
+
+    public void applyRolRestrictions() {
         if (userRole == Role.ACADEMICO_EVALUADOR) {
             setButtonVisibility(buttonRegisterStudent, false);
             setButtonVisibility(buttonAssignProject, false);
@@ -144,7 +148,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    private void openRegisterStudentWindow() {
+    public void openRegisterStudentWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterStudent.fxml"));
             Parent root = loader.load();
@@ -164,7 +168,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    private void openAssignProjectWindow() {
+    public void openAssignProjectWindow() {
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para asignar un proyecto");
             return;
@@ -187,7 +191,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    private void openReassignProjectWindow() {
+    public void openReassignProjectWindow() {
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para reasignar proyecto");
             return;
@@ -222,7 +226,11 @@ public class GUI_CheckListOfStudentsController {
 
         try {
             List<StudentDTO> students = studentService.getAllStudents();
-            studentList.addAll(students);
+            for (StudentDTO student : students) {
+                if (student.getState() == 1) {
+                    studentList.add(student);
+                }
+            }
             statusLabel.setText("");
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de los estudiantes.");
@@ -232,7 +240,7 @@ public class GUI_CheckListOfStudentsController {
         tableView.setItems(studentList);
     }
 
-    private void searchStudent() {
+    public void searchStudent() {
         String searchQuery = searchField.getText().trim();
         if (searchQuery.isEmpty()) {
             loadStudentData();
@@ -254,7 +262,7 @@ public class GUI_CheckListOfStudentsController {
         tableView.setItems(filteredList);
     }
 
-    private void addDetailsButtonToTable() {
+    public void addDetailsButtonToTable() {
         Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
             private final Button detailsButton = new Button("Ver detalles");
 
@@ -279,7 +287,7 @@ public class GUI_CheckListOfStudentsController {
         columnDetails.setCellFactory(cellFactory);
     }
 
-    private void addManagementButtonToTable() {
+    public void addManagementButtonToTable() {
         Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
             private final Button manageButton = new Button("Gestionar Estudiante");
 
@@ -304,7 +312,7 @@ public class GUI_CheckListOfStudentsController {
         columnManagement.setCellFactory(cellFactory);
     }
 
-    private void openManageStudentWindow(StudentDTO student) {
+    public void openManageStudentWindow(StudentDTO student) {
         ProjectDTO currentProject = null;
         try {
             StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(student.getTuiton());
