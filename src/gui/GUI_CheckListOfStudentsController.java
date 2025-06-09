@@ -110,14 +110,7 @@ public class GUI_CheckListOfStudentsController {
 
     public void setUserRole(Role userRole) {
         this.userRole = userRole;
-        applyRolRestrictions();
-    }
-
-    public void setButtonVisibility(Button btn, boolean visible) {
-        if (btn != null) {
-            btn.setVisible(visible);
-            btn.setManaged(visible);
-        }
+        applyRoleRestrictions();
     }
 
     public void setColumns () {
@@ -128,7 +121,14 @@ public class GUI_CheckListOfStudentsController {
         columnnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
     }
 
-    public void applyRolRestrictions() {
+    public void setButtonVisibility(Button btn, boolean visible) {
+        if (btn != null) {
+            btn.setVisible(visible);
+            btn.setManaged(visible);
+        }
+    }
+
+    public void applyRoleRestrictions() {
         if (userRole == Role.ACADEMICO_EVALUADOR) {
             setButtonVisibility(buttonRegisterStudent, false);
             setButtonVisibility(buttonAssignProject, false);
