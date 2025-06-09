@@ -16,6 +16,10 @@
             <Button fx:id="handleViewProjectRequest" text="Ver lista de solicitudes de prácticas" onAction="#handleViewProjectRequest" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button fx:id="buttonCheckPresentationGrade" text="Consultar Calificaciones de Presentación" onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button fx:id="buttonEvaluatePresentation" text="Calificar Presentación" onAction="#handleEvaluatePresentation" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonRegisterPeriod" text="Registrar Período" onAction="#handleRegisterPeriod" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+
+
+
         </VBox>
     </left>
     <center>

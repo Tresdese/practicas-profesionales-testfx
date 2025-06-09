@@ -40,7 +40,7 @@ class GroupDAOTest {
         limpiarTablasYAutoincrement();
         // Inserta periodo y usuario usando los DAOs, no directamente con la conexión
         PeriodDTO periodo = new PeriodDTO("1", "Periodo Test", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
-        periodDAO.insertPeriod(periodo, connection);
+        periodDAO.insertPeriod(periodo);
 
         UserDTO usuario = new UserDTO("1", "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMICO);
         userDAO.insertUser(usuario);

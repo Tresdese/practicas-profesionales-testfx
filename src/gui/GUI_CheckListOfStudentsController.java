@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import logic.DTO.ProjectDTO;
-import logic.DAO.ProjectDAO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
 import logic.services.ServiceFactory;

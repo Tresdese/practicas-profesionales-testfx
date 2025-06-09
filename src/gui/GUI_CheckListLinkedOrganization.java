@@ -39,6 +39,5 @@ public class GUI_CheckListLinkedOrganization extends Application {
     }
 }
 
-// TODO Que se muestren los que tienen estado activo (solo esos)
 // TODO que se actualice cuando se gestione una organización
 // TODO que se muestre el error de nombre repetido cuando se cambie el nombre y sea uno ya puesto

@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.PeriodDTO;
 
 public interface IPeriodDAO {
-    boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException;
+    boolean insertPeriod(PeriodDTO period) throws SQLException;
 
-    boolean updatePeriod(PeriodDTO period, Connection connection) throws SQLException;
+    boolean updatePeriod(PeriodDTO period) throws SQLException;
 
-    boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException;
+    boolean deletePeriodById(String idPeriod) throws SQLException;
 
-    PeriodDTO searchPeriodById(String idPeriod, Connection connection) throws SQLException;
+    PeriodDTO searchPeriodById(String idPeriod) throws SQLException;
 
-    List<PeriodDTO> getAllPeriods(Connection connection) throws SQLException;
+    List<PeriodDTO> getAllPeriods() throws SQLException;
 }

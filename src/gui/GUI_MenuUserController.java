@@ -44,6 +44,9 @@ public class GUI_MenuUserController {
     @FXML
     private Button handleViewProjectRequest;
 
+    @FXML
+    private Button buttonRegisterPeriod;
+
     private String userRole;
 
     public void setUserName(String userName) {
@@ -265,6 +268,26 @@ public class GUI_MenuUserController {
             logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Error inesperado al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
+    private void handleRegisterPeriod() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterPeriod.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Período");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al abrir la ventana de registro de período: {}", e.getMessage(), e);
         }
     }
 }

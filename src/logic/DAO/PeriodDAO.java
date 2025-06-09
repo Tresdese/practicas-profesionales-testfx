@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConecctionDataBase;
 import logic.DTO.PeriodDTO;
 import logic.interfaces.IPeriodDAO;
 
@@ -18,12 +19,14 @@ public class PeriodDAO implements IPeriodDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
 
     @Override
-    public boolean insertPeriod(PeriodDTO period, Connection connection) throws SQLException {
-        PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod(), connection);
+    public boolean insertPeriod(PeriodDTO period) throws SQLException {
+        PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod());
         if (existingPeriod != null && !"N/A".equals(existingPeriod.getIdPeriod())) {
             return false; // Ya existe, no insertar
         }
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, period.getIdPeriod());
             statement.setString(2, period.getName());
             statement.setTimestamp(3, period.getStartDate());
@@ -33,8 +36,10 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public boolean updatePeriod(PeriodDTO period, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updatePeriod(PeriodDTO period) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, period.getName());
             statement.setTimestamp(2, period.getStartDate());
             statement.setTimestamp(3, period.getEndDate());
@@ -44,17 +49,21 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public boolean deletePeriodById(String idPeriod, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deletePeriodById(String idPeriod) throws SQLException {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idPeriod);
             return statement.executeUpdate() > 0;
         }
     }
 
     @Override
-    public PeriodDTO searchPeriodById(String idPeriod, Connection connection) throws SQLException {
+    public PeriodDTO searchPeriodById(String idPeriod) throws SQLException {
         PeriodDTO period = new PeriodDTO("N/A", "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), java.sql.Timestamp.valueOf("0404-01-01 00:00:00"));
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idPeriod);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -66,9 +75,11 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public List<PeriodDTO> getAllPeriods(Connection connection) throws SQLException {
+    public List<PeriodDTO> getAllPeriods() throws SQLException {
         List<PeriodDTO> periods = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 periods.add(new PeriodDTO(resultSet.getString("idPeriodo"), resultSet.getString("nombre"), resultSet.getTimestamp("fechaInicio"), resultSet.getTimestamp("fechaFin")));
