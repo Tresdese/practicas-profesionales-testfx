@@ -6,13 +6,13 @@ import java.util.List;
 import logic.DTO.ScheduleOfActivitiesDTO;
 
 public interface IScheduleOfActivitiesDAO {
-    boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException;
+    boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException;
 
-    boolean updateScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException;
+    boolean updateScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException;
 
-    boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule, Connection connection) throws SQLException;
+    boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException;
 
-    ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule, Connection connection) throws SQLException;
+    ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule) throws SQLException;
 
-    List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities(Connection connection) throws SQLException;
+    List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities() throws SQLException;
 }

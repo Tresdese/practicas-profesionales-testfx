@@ -135,10 +135,10 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "1", "Hito 1", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            boolean result = scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            boolean result = scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            ScheduleOfActivitiesDTO insertedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("1", connection);
+            ScheduleOfActivitiesDTO insertedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("1");
             assertNotNull(insertedSchedule, "El cronograma debería existir en la base de datos");
             assertEquals("Hito 1", insertedSchedule.getMilestone(), "El hito debería coincidir");
         } catch (SQLException e) {
@@ -152,9 +152,9 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "2", "Hito 2", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
 
-            ScheduleOfActivitiesDTO retrievedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("2", connection);
+            ScheduleOfActivitiesDTO retrievedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("2");
             assertNotNull(retrievedSchedule, "Debería encontrar el cronograma");
             assertEquals("Hito 2", retrievedSchedule.getMilestone(), "El hito debería coincidir");
         } catch (SQLException e) {
@@ -168,15 +168,15 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "3", "Hito 3", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
 
             ScheduleOfActivitiesDTO updatedSchedule = new ScheduleOfActivitiesDTO(
                     "3", "Hito Actualizado", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(updatedSchedule, connection);
+            boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(updatedSchedule);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            ScheduleOfActivitiesDTO retrievedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("3", connection);
+            ScheduleOfActivitiesDTO retrievedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("3");
             assertNotNull(retrievedSchedule, "El cronograma debería existir después de actualizar");
             assertEquals("Hito Actualizado", retrievedSchedule.getMilestone(), "El hito debería actualizarse");
         } catch (SQLException e) {
@@ -190,12 +190,12 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "4", "Hito 4", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
 
-            boolean result = scheduleOfActivitiesDAO.deleteScheduleOfActivities(schedule, connection);
+            boolean result = scheduleOfActivitiesDAO.deleteScheduleOfActivities(schedule);
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            ScheduleOfActivitiesDTO deletedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("4", connection);
+            ScheduleOfActivitiesDTO deletedSchedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("4");
             assertEquals("N/A", deletedSchedule.getIdSchedule(), "El cronograma eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteScheduleOfActivities: " + e.getMessage());
@@ -211,8 +211,8 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule2 = new ScheduleOfActivitiesDTO(
                     "6", "Hito 6", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule1, connection);
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule2, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule1);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule2);
 
             List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities(connection);
             assertNotNull(schedules, "La lista no debería ser nula");
@@ -228,9 +228,9 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "7", "Hito 7", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            assertTrue(scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection));
+            assertTrue(scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule));
             assertThrows(SQLException.class, () -> {
-                scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+                scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
             });
         } catch (SQLException e) {
             fail("Error en testInsertScheduleOfActivities_Duplicate: " + e.getMessage());
@@ -243,7 +243,7 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "999", "Hito Inexistente", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(schedule, connection);
+            boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(schedule);
             assertFalse(result, "No debería actualizar un cronograma inexistente");
         } catch (SQLException e) {
             fail("Error en testUpdateScheduleOfActivities_NotExists: " + e.getMessage());
@@ -256,7 +256,7 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "888", "Hito Inexistente", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
-            boolean result = scheduleOfActivitiesDAO.deleteScheduleOfActivities(schedule, connection);
+            boolean result = scheduleOfActivitiesDAO.deleteScheduleOfActivities(schedule);
             assertFalse(result, "No debería eliminar un cronograma inexistente");
         } catch (SQLException e) {
             fail("Error en testDeleteScheduleOfActivities_NotExists: " + e.getMessage());
@@ -266,7 +266,7 @@ class ScheduleOfActivitiesDAOTest {
     @Test
     void testSearchScheduleOfActivitiesById_NotExists() {
         try {
-            ScheduleOfActivitiesDTO schedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("777", connection);
+            ScheduleOfActivitiesDTO schedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("777");
             assertEquals("N/A", schedule.getIdSchedule(), "El cronograma no existente debe devolver valores por defecto");
         } catch (SQLException e) {
             fail("Error en testSearchScheduleOfActivitiesById_NotExists: " + e.getMessage());
@@ -291,7 +291,7 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     null, null, null, null, null
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
         }, "No debería permitir insertar cronograma con datos nulos");
     }
 
@@ -301,7 +301,7 @@ class ScheduleOfActivitiesDAOTest {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                     "20", "Hito FK", new Timestamp(System.currentTimeMillis()), "NO_EXISTE", "99999"
             );
-            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule);
         }, "No debería permitir insertar cronograma con FK inválidas");
     }
 }
