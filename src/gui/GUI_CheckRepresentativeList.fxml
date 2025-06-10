@@ -10,7 +10,6 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="676.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckRepresentativeListController">
-
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
@@ -39,4 +38,6 @@
         </Label>
         <Button fx:id="buttonRegisterRepresentative" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Representante" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-    </children></AnchorPane>
+        <Label fx:id="labelRepresentativeCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+    </children>
+</AnchorPane>

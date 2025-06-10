@@ -76,6 +76,9 @@ public class GUI_CheckProjectRequestListController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label labelRequestCounts; // <-- AGREGADO
+
     private ProjectRequestDTO selectedRequest;
     private ProjectRequestDAO projectRequestDAO;
     private ProjectDAO projectDAO;
@@ -172,6 +175,7 @@ public class GUI_CheckProjectRequestListController {
         }
 
         tableView.setItems(requestList);
+        updateRequestCounts(requestList); // <-- AGREGADO
     }
 
     private void setAllCellValueFactories() {
@@ -249,6 +253,7 @@ public class GUI_CheckProjectRequestListController {
         }
 
         tableView.setItems(filteredList);
+        updateRequestCounts(filteredList); // <-- AGREGADO
     }
 
     private void addDetailsButtonToTable() {
@@ -372,5 +377,11 @@ public class GUI_CheckProjectRequestListController {
             logger.error("Error al actualizar estado en la base de datos: {}", e.getMessage(), e);
             statusLabel.setText("Error al actualizar en la base de datos");
         }
+    }
+
+    // --- AGREGADO ---
+    private void updateRequestCounts(ObservableList<ProjectRequestDTO> list) {
+        int total = list.size();
+        labelRequestCounts.setText("Totales: " + total);
     }
 }

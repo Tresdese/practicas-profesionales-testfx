@@ -37,5 +37,6 @@
         </Label>
         <Button fx:id="buttonRegisterGroup" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Grupo" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
+        <Label fx:id="labelGroupCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

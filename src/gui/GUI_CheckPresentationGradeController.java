@@ -1,6 +1,8 @@
 package gui;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -35,6 +37,8 @@ public class GUI_CheckPresentationGradeController {
     private TableColumn<EvaluationPresentationDTO, Void> colVerDetalles;
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label labelEvaluationCounts;
 
     private static final Logger logger = LogManager.getLogger(GUI_CheckPresentationGradeController.class);
 
@@ -110,23 +114,34 @@ public class GUI_CheckPresentationGradeController {
 
             if (student == null) {
                 statusLabel.setText("No se encontró información del estudiante.");
+                updateEvaluationCounts(FXCollections.observableArrayList());
                 return;
             }
 
             EvaluationPresentationDAO evaluationDAO = new EvaluationPresentationDAO();
             List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuiton(student.getTuiton());
 
+            ObservableList<EvaluationPresentationDTO> data = FXCollections.observableArrayList(studentEvaluations);
+
             if (studentEvaluations == null || studentEvaluations.isEmpty()) {
                 statusLabel.setText("No tienes evaluaciones de presentación registradas.");
-            } else {
-                tableView.getItems().setAll(studentEvaluations);
             }
+            tableView.setItems(data);
+            updateEvaluationCounts(data);
+
         } catch (SQLException e) {
             logger.error("Error de base de datos al cargar las evaluaciones: {}", e.getMessage(), e);
             statusLabel.setText("Error de base de datos al cargar las evaluaciones.");
+            updateEvaluationCounts(FXCollections.observableArrayList());
         } catch (Exception e) {
             logger.error("Error inesperado al cargar las evaluaciones: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al cargar las evaluaciones.");
+            updateEvaluationCounts(FXCollections.observableArrayList());
         }
+    }
+
+    private void updateEvaluationCounts(ObservableList<EvaluationPresentationDTO> list) {
+        int total = list.size();
+        labelEvaluationCounts.setText("Totales: " + total);
     }
 }

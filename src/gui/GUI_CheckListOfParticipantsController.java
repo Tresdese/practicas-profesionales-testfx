@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -17,6 +18,7 @@ import logic.DTO.StudentProjectViewDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -39,6 +41,9 @@ public class GUI_CheckListOfParticipantsController {
     @FXML
     private TableColumn<StudentProjectViewDTO, Void> columnGradePresentation;
 
+    @FXML
+    private Label labelParticipantCounts;
+
     private final StudentProjectViewDAO studentProjectViewDAO = new StudentProjectViewDAO();
     private int presentationId = -1;
 
@@ -60,6 +65,8 @@ public class GUI_CheckListOfParticipantsController {
     private void loadStudentProjectData() {
         if (presentationId <= 0) {
             logger.warn("El ID de la presentación no es válido: " + presentationId);
+            tableView.setItems(FXCollections.observableArrayList());
+            updateParticipantCounts(FXCollections.observableArrayList());
             return;
         }
 
@@ -67,16 +74,24 @@ public class GUI_CheckListOfParticipantsController {
 
         try {
             List<StudentProjectViewDTO> studentProjectData = studentProjectViewDAO.getStudentProjectViewByPresentationId(presentationId);
+            ObservableList<StudentProjectViewDTO> data = FXCollections.observableArrayList(studentProjectData);
+            tableView.setItems(data);
+            updateParticipantCounts(data);
             if (studentProjectData.isEmpty()) {
                 logger.warn("No se encontraron datos para la presentación con ID: " + presentationId);
             } else {
-                ObservableList<StudentProjectViewDTO> data = FXCollections.observableArrayList(studentProjectData);
-                tableView.setItems(data);
                 logger.info("Datos cargados exitosamente en la tabla.");
             }
         } catch (SQLException e) {
             logger.error("Error al cargar los datos de estudiantes y proyectos.", e);
+            tableView.setItems(FXCollections.observableArrayList());
+            updateParticipantCounts(FXCollections.observableArrayList());
         }
+    }
+
+    private void updateParticipantCounts(ObservableList<StudentProjectViewDTO> list) {
+        int total = list.size();
+        labelParticipantCounts.setText("Totales: " + total);
     }
 
     private void addGradePresentationButtonToTable() {
@@ -117,8 +132,10 @@ public class GUI_CheckListOfParticipantsController {
             stage.setScene(new Scene(root));
             stage.setTitle("Calificar Presentación - " + participant.getStudentName());
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de calificación.", e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al abrir la ventana de calificación.", e);
         }
     }
 }

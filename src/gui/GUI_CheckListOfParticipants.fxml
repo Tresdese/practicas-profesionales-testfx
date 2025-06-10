@@ -15,4 +15,5 @@
             <TableColumn fx:id="columnGradePresentation" text="Calificar Presentación" prefWidth="150.0"/>
         </columns>
     </TableView>
+    <Label fx:id="labelParticipantCounts" layoutX="25.0" layoutY="680.0" text="Totales: 0"/>
 </AnchorPane>
