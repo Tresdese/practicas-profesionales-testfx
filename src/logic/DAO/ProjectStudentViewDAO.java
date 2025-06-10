@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ProjectStudentViewDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.ProjectDTO;
@@ -21,7 +21,7 @@ public class ProjectStudentViewDAO {
     public ProjectDTO getProjectByTuition(String tuition) throws SQLException {
         logger.info("Obteniendo proyecto para matrícula: " + tuition);
         ProjectDTO project = null;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITION)) {
 
@@ -45,24 +45,4 @@ public class ProjectStudentViewDAO {
         }
         return project;
     }
-
-//    public StudentDTO getStudentByTuition(String tuition) throws SQLException {
-//        logger.info("Obteniendo nombre del estudiante para matrícula: " + tuition);
-//        String studentName = null;
-//        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
-//             Connection connection = connectionDataBase.connectDB();
-//             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_STUDENT_BY_TUITION)) {
-//
-//            statement.setString(1, tuition);
-//            try (ResultSet resultSet = statement.executeQuery()) {
-//                if (resultSet.next()) {
-//                    studentName = resultSet.getString("studentName");
-//                }
-//            }
-//        } catch (SQLException e) {
-//            logger.error("Error al obtener el nombre del estudiante para la matrícula: " + tuition, e);
-//            throw e;
-//        }
-//        return studentName;
-//    }
 }

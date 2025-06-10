@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ActivityDTO;
 import logic.interfaces.IActivityDAO;
 
@@ -21,7 +21,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
 
 
     public boolean insertActivity(ActivityDTO activity) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, activity.getActivityId());
@@ -31,7 +31,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
     }
 
     public boolean updateActivity(ActivityDTO activity) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, activity.getActivityName());
@@ -41,7 +41,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
     }
 
     public boolean deleteActivity(ActivityDTO activity) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, activity.getActivityId());
@@ -51,7 +51,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
 
     public ActivityDTO searchActivityById(String idActivity) throws SQLException {
         ActivityDTO activity = new ActivityDTO("invalido","invalido");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idActivity);
@@ -66,7 +66,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
 
     public int getActivityByName (String name) throws SQLException {
         int id = -1;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
@@ -82,7 +82,7 @@ public class ActivityDAO implements IActivityDAO { // TODO implementar la interf
     public List<ActivityDTO> getAllActivities() throws SQLException {
         List<ActivityDTO> activities = new ArrayList<>();
         String SQL_SELECT_ALL = "SELECT * FROM actividad";
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

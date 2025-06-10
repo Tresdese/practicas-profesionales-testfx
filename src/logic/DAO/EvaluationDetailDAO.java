@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.EvaluationDetailDTO;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ public class EvaluationDetailDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM detalle_evaluacion";
 
     public void insertEvaluationDetail(EvaluationDetailDTO detail) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, detail.getIdEvaluation()); // ID de evaluación
@@ -30,7 +30,7 @@ public class EvaluationDetailDAO {
     }
 
     public boolean updateEvaluationDetail(EvaluationDetailDTO detail) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, detail.getIdEvaluation());
@@ -42,7 +42,7 @@ public class EvaluationDetailDAO {
     }
 
     public boolean deleteEvaluationDetail(int idDetail) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idDetail);
@@ -52,7 +52,7 @@ public class EvaluationDetailDAO {
 
     public EvaluationDetailDTO searchEvaluationDetailById(int idDetail) throws SQLException {
         EvaluationDetailDTO detail = null;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idDetail);
@@ -72,7 +72,7 @@ public class EvaluationDetailDAO {
 
     public List<EvaluationDetailDTO> getAllEvaluationDetails() throws SQLException {
         List<EvaluationDetailDTO> details = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

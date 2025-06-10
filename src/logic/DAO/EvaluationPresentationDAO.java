@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.EvaluationPresentationDTO;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ public class EvaluationPresentationDAO {
     private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM evaluacion_presentacion WHERE matricula = ?";
 
     public int insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, evaluation.getIdProject());
@@ -40,7 +40,7 @@ public class EvaluationPresentationDAO {
     }
 
     public boolean updateEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, evaluation.getIdProject());
@@ -53,7 +53,7 @@ public class EvaluationPresentationDAO {
     }
 
     public boolean deleteEvaluationPresentation(int idEvaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idEvaluation);
@@ -63,7 +63,7 @@ public class EvaluationPresentationDAO {
 
     public EvaluationPresentationDTO searchEvaluationPresentationById(int idEvaluation) throws SQLException {
         EvaluationPresentationDTO evaluation = null;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idEvaluation);
@@ -84,7 +84,7 @@ public class EvaluationPresentationDAO {
 
     public List<EvaluationPresentationDTO> getAllEvaluationPresentations() throws SQLException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
@@ -103,7 +103,7 @@ public class EvaluationPresentationDAO {
 
     public int getLastInsertedId() throws SQLException {
         String SQL_LAST_INSERT_ID = "SELECT LAST_INSERT_ID()";
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_LAST_INSERT_ID);
              ResultSet resultSet = statement.executeQuery()) {
@@ -116,7 +116,7 @@ public class EvaluationPresentationDAO {
 
     public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_TUITON)) {
             statement.setString(1, tuiton);

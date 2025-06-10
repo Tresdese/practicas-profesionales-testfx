@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ReportDTO;
 import logic.interfaces.IReportDAO;
 
@@ -18,7 +18,7 @@ public class ReportDAO implements IReportDAO {
 
     @Override
     public boolean insertReport(ReportDTO report) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setDate(1, new java.sql.Date(report.getReportDate().getTime()));
@@ -45,7 +45,7 @@ public class ReportDAO implements IReportDAO {
 
     @Override
     public boolean updateReport(ReportDTO report) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setDate(1, new java.sql.Date(report.getReportDate().getTime()));
@@ -64,7 +64,7 @@ public class ReportDAO implements IReportDAO {
 
     @Override
     public boolean deleteReport(String numberReport) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
             stmt.setInt(1, Integer.parseInt(numberReport));
@@ -74,7 +74,7 @@ public class ReportDAO implements IReportDAO {
 
     @Override
     public ReportDTO searchReportById(String numberReport) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_ID)) {
             stmt.setInt(1, Integer.parseInt(numberReport));
@@ -101,7 +101,7 @@ public class ReportDAO implements IReportDAO {
     @Override
     public List<ReportDTO> getAllReports() throws SQLException {
         List<ReportDTO> reports = new ArrayList<>();
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_ALL);
              ResultSet rs = stmt.executeQuery()) {

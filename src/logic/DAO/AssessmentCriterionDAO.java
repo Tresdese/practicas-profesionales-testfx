@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.AssessmentCriterionDTO;
 
 import java.sql.Connection;
@@ -19,7 +19,7 @@ public class AssessmentCriterionDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM criterio_de_evaluacion";
 
     public boolean insertAssessmentCriterion(AssessmentCriterionDTO criterion) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, criterion.getIdCriterion());
@@ -29,7 +29,7 @@ public class AssessmentCriterionDAO {
     }
 
     public boolean updateAssessmentCriterion(AssessmentCriterionDTO criterion) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, criterion.getNameCriterion());
@@ -39,7 +39,7 @@ public class AssessmentCriterionDAO {
     }
 
     public boolean deleteAssessmentCriterion(String idCriterion) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idCriterion);
@@ -49,7 +49,7 @@ public class AssessmentCriterionDAO {
 
     public AssessmentCriterionDTO searchAssessmentCriterionById(String idCriterion) throws SQLException {
         AssessmentCriterionDTO assessmentCriterion = new AssessmentCriterionDTO("N/A", "N/A");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idCriterion);
@@ -67,7 +67,7 @@ public class AssessmentCriterionDAO {
 
     public List<AssessmentCriterionDTO> getAllAssessmentCriteria() throws SQLException {
         List<AssessmentCriterionDTO> criteria = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

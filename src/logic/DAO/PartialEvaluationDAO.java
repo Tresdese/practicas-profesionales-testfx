@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.PartialEvaluationDTO;
 import logic.interfaces.IPartialEvaluationDAO;
 
@@ -19,7 +19,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evaluacion_parcial";
 
     public boolean insertPartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, evaluation.getIdEvaluation());
@@ -31,7 +31,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     }
 
     public boolean updatePartialEvaluation(PartialEvaluationDTO evaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setDouble(1, evaluation.getAverage());
@@ -43,7 +43,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
     }
 
     public boolean deletePartialEvaluation(String idEvaluation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idEvaluation);
@@ -53,7 +53,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
 
     public PartialEvaluationDTO searchPartialEvaluationById(String idEvaluation) throws SQLException {
         PartialEvaluationDTO partialEvaluation = new PartialEvaluationDTO("N/A", -1, "N/A", "N/A");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idEvaluation);
@@ -68,7 +68,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
 
     public List<PartialEvaluationDTO> getAllPartialEvaluations() throws SQLException {
         List<PartialEvaluationDTO> evaluations = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

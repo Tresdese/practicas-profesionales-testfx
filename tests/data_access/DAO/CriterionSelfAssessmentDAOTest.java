@@ -28,7 +28,7 @@ class CriterionSelfAssessmentDAOTest {
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
         createBaseObjects();
-        criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO(connection);
+        criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO();
     }
 
     @AfterAll
@@ -230,7 +230,7 @@ class CriterionSelfAssessmentDAOTest {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM autoevaluacion_criterio");
         }
-        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
         List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
         assertTrue(all.isEmpty(), "There should be at least one self-assessment-criterion record");
     }
@@ -326,7 +326,7 @@ class CriterionSelfAssessmentDAOTest {
     void testSearchByCompositeKey() throws SQLException {
         int selfAssessmentId = insertTestSelfAssessment();
         int criteriaId = insertTestCriteria("Criterio Key");
-        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
         CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(selfAssessmentId, criteriaId, 6.0f, "Buscar");
         dao.insertCriterionSelfAssessment(dto);
 
@@ -340,7 +340,7 @@ class CriterionSelfAssessmentDAOTest {
         stmt.execute("DELETE FROM autoevaluacion_criterio");
         stmt.close();
 
-        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
         List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
         assertTrue(all.isEmpty());
     }

@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ProjectPresentationDTO;
 import logic.DTO.Tipe;
 
@@ -21,7 +21,7 @@ public class ProjectPresentationDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM presentacion_proyecto";
 
     public boolean insertProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, projectPresentation.getIdPresentation());
@@ -33,7 +33,7 @@ public class ProjectPresentationDAO {
     }
 
     public boolean updateProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, projectPresentation.getIdProject());
@@ -45,7 +45,7 @@ public class ProjectPresentationDAO {
     }
 
     public boolean deleteProjectPresentation(int idPresentation) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idPresentation);
@@ -55,7 +55,7 @@ public class ProjectPresentationDAO {
 
     public ProjectPresentationDTO searchProjectPresentationById(int idPresentation) throws SQLException {
         ProjectPresentationDTO projectPresentation = null;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idPresentation);
@@ -75,7 +75,7 @@ public class ProjectPresentationDAO {
 
     public List<ProjectPresentationDTO> searchProjectPresentationsByProjectId(String idProject) throws SQLException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_PROJECT_ID)) {
             statement.setString(1, idProject);
@@ -95,7 +95,7 @@ public class ProjectPresentationDAO {
 
     public List<ProjectPresentationDTO> getAllProjectPresentations() throws SQLException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
@@ -115,7 +115,7 @@ public class ProjectPresentationDAO {
         List<ProjectPresentationDTO> upcomingPresentations = new ArrayList<>();
         String SQL_SELECT_UPCOMING = "SELECT * FROM presentacion_proyecto WHERE fecha > NOW() ORDER BY fecha ASC";
 
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_UPCOMING);
              ResultSet resultSet = statement.executeQuery()) {

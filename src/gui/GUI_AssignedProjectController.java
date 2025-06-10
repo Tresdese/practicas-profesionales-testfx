@@ -18,7 +18,7 @@ import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -113,8 +113,7 @@ public class GUI_AssignedProjectController {
     }
 
     private void fillOrganizationAndRepresentativeLabels(int idOrganization) {
-        try (ConecctionDataBase db = new ConecctionDataBase();
-             Connection conn = db.connectDB()) {
+        try {
 
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
             LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));

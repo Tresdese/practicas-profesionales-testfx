@@ -1,6 +1,6 @@
 package gui;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DAO.GroupDAO;

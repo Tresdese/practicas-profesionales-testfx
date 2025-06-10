@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ActivityReportDTO;
 import logic.interfaces.IActivityReportDAO;
 
@@ -20,7 +20,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM reporte_actividad";
 
     public boolean insertActivityReport(ActivityReportDTO activityReport) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, activityReport.getNumberReport());
@@ -32,7 +32,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
     }
 
     public boolean updateActivityReport(ActivityReportDTO activityReport) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, activityReport.getIdActivity());
@@ -44,7 +44,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
     }
 
     public boolean deleteActivityReport(String reportNumber) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, reportNumber);
@@ -54,7 +54,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
 
     public ActivityReportDTO searchActivityReportByReportNumber(String reportNumber) throws SQLException {
         ActivityReportDTO activityReport = new ActivityReportDTO("N/A", "N/A", 0, "");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, reportNumber);
@@ -74,7 +74,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
 
     public List<ActivityReportDTO> getAllActivityReports() throws SQLException {
         List<ActivityReportDTO> activityReports = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

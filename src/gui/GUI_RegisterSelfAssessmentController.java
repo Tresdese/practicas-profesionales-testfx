@@ -16,7 +16,7 @@ import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.DTO.EvidenceDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import java.security.GeneralSecurityException;
 
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
@@ -308,9 +308,8 @@ public class GUI_RegisterSelfAssessmentController {
     }
 
     private boolean saveCriteria(int selfAssessmentId) {
-        try (ConecctionDataBase db = new ConecctionDataBase();
-             Connection conn = db.connectDB()) {
-            CriterionSelfAssessmentDAO criterionDAO = new CriterionSelfAssessmentDAO(conn);
+        try {
+            CriterionSelfAssessmentDAO criterionDAO = new CriterionSelfAssessmentDAO();
             for (CriterionInput input : criterionInputs) {
                 CriterionSelfAssessmentDTO critDTO = new CriterionSelfAssessmentDTO(
                         selfAssessmentId,

@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ProjectDTO;
 import logic.interfaces.IProjectDAO;
 
@@ -22,7 +22,7 @@ public class ProjectDAO implements IProjectDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM proyecto";
 
     public boolean insertProject(ProjectDTO project) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, project.getIdProject());
@@ -37,7 +37,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     public boolean updateProject(ProjectDTO project) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, project.getName());
@@ -52,7 +52,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     public boolean deleteProject(String idProject) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idProject);
@@ -62,7 +62,7 @@ public class ProjectDAO implements IProjectDAO {
 
     public ProjectDTO searchProjectById(String idProject) throws SQLException {
         ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idProject);
@@ -85,7 +85,7 @@ public class ProjectDAO implements IProjectDAO {
 
     public ProjectDTO searchProjectByName(String name) throws SQLException {
         ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
@@ -108,7 +108,7 @@ public class ProjectDAO implements IProjectDAO {
 
     public String getProyectNameById(String idProject) throws SQLException {
         String projectName = "";
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_NAME_BY_ID)) {
             statement.setString(1, idProject);
@@ -123,7 +123,7 @@ public class ProjectDAO implements IProjectDAO {
 
     public List<ProjectDTO> getAllProjects() throws SQLException {
         List<ProjectDTO> projects = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

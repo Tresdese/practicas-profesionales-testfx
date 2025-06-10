@@ -1,6 +1,6 @@
 package logic.services;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 
 import java.sql.Connection;
 
@@ -11,7 +11,7 @@ public class ServiceFactory {
     public static StudentService getStudentService() {
         if (studentService == null) {
             try {
-                Connection connection = new ConecctionDataBase().connectDB();
+                Connection connection = new ConnectionDataBase().connectDB();
                 studentService = new StudentService();
             } catch (Exception e) {
                 throw new RuntimeException("Error al inicializar StudentService: " + e.getMessage(), e);
@@ -25,7 +25,7 @@ public class ServiceFactory {
     public static UserService getUserService() {
         if (userService == null) {
             try {
-                Connection connection = new ConecctionDataBase().connectDB();
+                Connection connection = new ConnectionDataBase().connectDB();
                 userService = new UserService(connection);
             } catch (Exception e) {
                 throw new RuntimeException("Error al inicializar UserService: " + e.getMessage(), e);

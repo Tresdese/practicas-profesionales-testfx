@@ -54,7 +54,7 @@ public class GUI_ManageAcademicController implements Initializable {
 
     @FXML
     private void handleSaveChanges() {
-        try (Connection connection = new data_access.ConecctionDataBase().connectDB()) {
+        try {
             UserDAO userDAO = new UserDAO();
 
             if (!areFieldsFilled()) {

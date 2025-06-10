@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ProjectRequestDTO;
 import logic.DTO.ProjectStatus;
 import logic.interfaces.IProjectRequestDAO;
@@ -21,7 +21,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     @Override
     public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
 
@@ -48,7 +48,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     @Override
     public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
@@ -74,7 +74,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     }
 
     public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_STATUS)) {
             stmt.setString(1, status);
@@ -85,7 +85,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     @Override
     public boolean deleteProjectRequest(int requestId) throws SQLException {
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
             stmt.setInt(1, requestId);
@@ -96,7 +96,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     @Override
     public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
         ProjectRequestDTO request = null;
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT)) {
             stmt.setInt(1, requestId);
@@ -111,7 +111,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_ALL);
              ResultSet rs = stmt.executeQuery()) {
@@ -124,7 +124,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     public List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_TUITON)) {
             stmt.setString(1, tuiton);
@@ -163,7 +163,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     public List<ProjectRequestDTO> getProjectRequestsByStatus(String status) throws SQLException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConecctionDataBase db = new ConecctionDataBase();
+        try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_STATE)) {
             stmt.setString(1, status);

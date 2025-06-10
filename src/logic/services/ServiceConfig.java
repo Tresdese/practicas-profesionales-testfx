@@ -1,6 +1,6 @@
 package logic.services;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,10 +10,10 @@ import java.sql.SQLException;
 public class ServiceConfig {
     private static final Logger logger = LogManager.getLogger(ServiceConfig.class);
 
-    private final ConecctionDataBase connectionDB;
+    private final ConnectionDataBase connectionDB;
 
     public ServiceConfig() {
-        this.connectionDB = new ConecctionDataBase();
+        this.connectionDB = new ConnectionDataBase();
     }
 
     public UserService getUserService() throws SQLException {

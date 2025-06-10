@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.StudentDTO;
 import logic.interfaces.IStudentDAO;
 
@@ -25,7 +25,7 @@ public class StudentDAO implements IStudentDAO {
     private static final String SQL_COUNT_BY_EMAIL = "SELECT COUNT(*) FROM estudiante WHERE correo = ?";
 
     public boolean insertStudent(StudentDTO student) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, student.getTuiton());
@@ -44,7 +44,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean updateStudent(StudentDTO student) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, student.getState());
@@ -63,7 +63,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean updateStudentState(String tuiton, int state) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATE)) {
             statement.setInt(1, state);
@@ -73,7 +73,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean deleteStudent(String tuiton) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, tuiton);
@@ -83,7 +83,7 @@ public class StudentDAO implements IStudentDAO {
 
     public StudentDTO searchStudentByTuiton(String tuiton) throws SQLException {
         StudentDTO student = new StudentDTO("N/A", 0, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0.0);
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, tuiton);
@@ -110,7 +110,7 @@ public class StudentDAO implements IStudentDAO {
 
     public List<StudentDTO> getAllStudents() throws SQLException {
         List<StudentDTO> students = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
@@ -135,7 +135,7 @@ public class StudentDAO implements IStudentDAO {
 
     public StudentDTO searchStudentByUserAndPassword(String username, String password) throws SQLException {
         StudentDTO student = new StudentDTO("N/A", 0, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0.0);
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD)) {
             statement.setString(1, username);
@@ -162,7 +162,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean isTuitonRegistered(String tuiton) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_TUITON)) {
             statement.setString(1, tuiton);
@@ -176,7 +176,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean isPhoneRegistered(String phone) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_PHONE)) {
             statement.setString(1, phone);
@@ -190,7 +190,7 @@ public class StudentDAO implements IStudentDAO {
     }
 
     public boolean isEmailRegistered(String email) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_EMAIL)) {
             statement.setString(1, email);

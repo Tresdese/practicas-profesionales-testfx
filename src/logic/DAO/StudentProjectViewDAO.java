@@ -1,6 +1,6 @@
 package logic.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentProjectViewDTO;
 
@@ -23,7 +23,7 @@ public class StudentProjectViewDAO {
         List<StudentProjectViewDTO> studentProjectViews = new ArrayList<>();
         logger.info("Ejecutando consulta para idPresentacion: " + presentationId);
 
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_PRESENTATION_ID)) {
 

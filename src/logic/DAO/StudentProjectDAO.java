@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.StudentProjectDTO;
 import logic.interfaces.IStudentProjectDAO;
 
@@ -21,7 +21,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM proyecto_estudiante";
 
     public boolean insertStudentProject(StudentProjectDTO studentProject) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, studentProject.getIdProject());
@@ -34,7 +34,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
         if (studentProject.getIdProject() == null) {
             throw new SQLException("idProyecto no puede ser nulo");
         }
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PROJECT)) {
             statement.setString(1, studentProject.getIdProject());
@@ -44,7 +44,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     }
 
     public boolean deleteStudentProject(StudentProjectDTO studentProject) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, studentProject.getIdProject());
@@ -54,7 +54,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
 
     public StudentProjectDTO searchStudentProjectByIdProject(String idProject) throws SQLException {
         StudentProjectDTO studentProject = new StudentProjectDTO("N/A", "N/A");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idProject);
@@ -69,7 +69,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
 
 public StudentProjectDTO searchStudentProjectByIdTuiton(String tuiton) throws SQLException {
         StudentProjectDTO studentProject = new StudentProjectDTO("N/A", "N/A");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITON)) {
             statement.setString(1, tuiton);
@@ -84,7 +84,7 @@ public StudentProjectDTO searchStudentProjectByIdTuiton(String tuiton) throws SQ
 
     public List<StudentProjectDTO> getAllStudentProjects() throws SQLException {
         List<StudentProjectDTO> studentProjects = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {

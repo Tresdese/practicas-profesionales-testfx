@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DTO.EvidenceDTO;
 import logic.interfaces.IEvidenceDAO;
 
@@ -16,7 +16,7 @@ public class EvidenceDAO implements IEvidenceDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evidencia";
 
     public boolean insertEvidence(EvidenceDTO evidence) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, evidence.getIdEvidence());
@@ -28,7 +28,7 @@ public class EvidenceDAO implements IEvidenceDAO {
     }
 
     public boolean updateEvidence(EvidenceDTO evidence) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, evidence.getEvidenceName());
@@ -40,7 +40,7 @@ public class EvidenceDAO implements IEvidenceDAO {
     }
 
     public boolean deleteEvidence(int idEvidence) throws SQLException {
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idEvidence);
@@ -50,7 +50,7 @@ public class EvidenceDAO implements IEvidenceDAO {
 
     public EvidenceDTO searchEvidenceById(int idEvidence) throws SQLException {
         EvidenceDTO evidence = new EvidenceDTO(-1, "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), "N/A");
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, idEvidence);
@@ -65,7 +65,7 @@ public class EvidenceDAO implements IEvidenceDAO {
 
     public List<EvidenceDTO> getAllEvidences() throws SQLException {
         List<EvidenceDTO> evidences = new ArrayList<>();
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
@@ -79,7 +79,7 @@ public class EvidenceDAO implements IEvidenceDAO {
 
     public int getNextEvidenceId() throws SQLException {
         int nextId = 1;
-        try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery("SELECT MAX(idEvidencia) FROM evidencia")) {

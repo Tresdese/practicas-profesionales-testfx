@@ -1,6 +1,6 @@
 package logic.services;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.StudentDAO;
 import logic.DAO.UserDAO;
 import logic.DTO.StudentDTO;
@@ -16,7 +16,7 @@ public class LoginService {
     private final UserDAO userDAO;
 
     public LoginService() throws SQLException {
-        Connection connection = new ConecctionDataBase().connectDB();
+        Connection connection = new ConnectionDataBase().connectDB();
         this.studentDAO = new StudentDAO();
         this.userDAO = new UserDAO();
     }
