@@ -50,6 +50,9 @@ public class GUI_CheckListLinkedOrganizationController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label labelOrganizationCounts;
+
     private LinkedOrganizationDTO selectedLinkedOrganization;
     private LinkedOrganizationService linkedOrganizationService;
 
@@ -82,7 +85,6 @@ public class GUI_CheckListLinkedOrganizationController {
         });
     }
 
-
     private void openRegisterOrganizationWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterLinkedOrganization.fxml"));
@@ -112,6 +114,7 @@ public class GUI_CheckListLinkedOrganizationController {
         }
 
         tableView.setItems(organizationList);
+        updateOrganizationCounts(organizationList);
     }
 
     private void searchOrganization() {
@@ -134,6 +137,7 @@ public class GUI_CheckListLinkedOrganizationController {
         }
 
         tableView.setItems(filteredList);
+        updateOrganizationCounts(filteredList);
     }
 
     private void addDetailsButtonToTable() {
@@ -196,5 +200,10 @@ public class GUI_CheckListLinkedOrganizationController {
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
         }
+    }
+
+    private void updateOrganizationCounts(ObservableList<LinkedOrganizationDTO> list) {
+        int total = list.size();
+        labelOrganizationCounts.setText("Totales: " + total);
     }
 }

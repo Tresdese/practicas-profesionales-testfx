@@ -59,6 +59,9 @@ public class GUI_MenuUserController {
     @FXML
     private Button buttonManageActivity;
 
+    @FXML
+    private Button buttonLogout;
+
     private String userRole;
 
     public void setUserName(String userName) {
@@ -373,6 +376,19 @@ public class GUI_MenuUserController {
             stage.show();
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de actividades: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Login.fxml"));
+            Stage stage = (Stage) buttonLogout.getScene().getWindow();
+            stage.setScene(new Scene(loader.load()));
+            stage.setTitle("Inicio de Sesión");
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
         }
     }
 }

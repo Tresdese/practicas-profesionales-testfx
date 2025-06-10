@@ -12,10 +12,6 @@ public class GUI_MenuUser extends Application {
 
     private static final Logger logger = LogManager.getLogger(GUI_MenuUser.class);
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(Stage primaryStage) {
         try {

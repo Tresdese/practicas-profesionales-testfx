@@ -41,6 +41,18 @@ public class GUI_CheckListOfPresentationsController {
     @FXML
     private TableColumn<ProjectPresentationDTO, Void> columnRegisterEvaluation;
 
+    @FXML
+    private Label statusLabel;
+
+    @FXML
+    private Label labelPresentationCounts;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private Button searchButton;
+
     private final ProjectPresentationDAO projectPresentationDAO = new ProjectPresentationDAO();
     private ProjectPresentationDTO selectedPresentation;
 
@@ -64,6 +76,8 @@ public class GUI_CheckListOfPresentationsController {
             selectedPresentation = newValue;
             tableView.refresh();
         });
+
+        searchButton.setOnAction(event -> searchPresentation());
     }
 
     private void loadUpcomingPresentations() {
@@ -71,24 +85,62 @@ public class GUI_CheckListOfPresentationsController {
             List<ProjectPresentationDTO> upcomingPresentations = projectPresentationDAO.getUpcomingPresentations();
             logger.info("Cantidad de presentaciones obtenidas: " + upcomingPresentations.size());
 
+            ObservableList<ProjectPresentationDTO> data = FXCollections.observableArrayList(upcomingPresentations);
+            tableView.setItems(data);
+            updatePresentationCounts(data);
+
             if (upcomingPresentations.isEmpty()) {
                 logger.info("No hay presentaciones próximas para mostrar.");
             } else {
-                // Imprimir los datos de cada presentación
                 for (ProjectPresentationDTO presentation : upcomingPresentations) {
                     logger.info("Presentación obtenida: ID=" + presentation.getIdPresentation() +
                             ", Proyecto=" + presentation.getIdProject() +
                             ", Fecha=" + presentation.getDate() +
                             ", Tipo=" + presentation.getTipe());
                 }
-
-                ObservableList<ProjectPresentationDTO> data = FXCollections.observableArrayList(upcomingPresentations);
-                tableView.setItems(data);
                 logger.info("Próximas presentaciones cargadas exitosamente.");
             }
         } catch (SQLException e) {
             logger.error("Error al cargar las próximas presentaciones.", e);
+            tableView.setItems(FXCollections.observableArrayList());
+            updatePresentationCounts(FXCollections.observableArrayList());
         }
+    }
+
+    private void searchPresentation() {
+        String searchQuery = searchField.getText().trim();
+        if (searchQuery.isEmpty()) {
+            loadUpcomingPresentations();
+            return;
+        }
+
+        ObservableList<ProjectPresentationDTO> filteredList = FXCollections.observableArrayList();
+
+        try {
+            // Buscar por ID de presentación (numérico)
+            try {
+                int id = Integer.parseInt(searchQuery);
+                ProjectPresentationDTO presentation = projectPresentationDAO.searchProjectPresentationById(id);
+                if (presentation != null) {
+                    filteredList.add(presentation);
+                }
+            } catch (NumberFormatException e) {
+                // Si no es numérico, buscar por ID de proyecto (string)
+                List<ProjectPresentationDTO> presentations = projectPresentationDAO.searchProjectPresentationsByProjectId(searchQuery);
+                filteredList.addAll(presentations);
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error al buscar presentaciones.");
+            logger.error("Error al buscar presentaciones: {}", e.getMessage(), e);
+        }
+
+        tableView.setItems(filteredList);
+        updatePresentationCounts(filteredList);
+    }
+
+    private void updatePresentationCounts(ObservableList<ProjectPresentationDTO> list) {
+        int total = list.size();
+        labelPresentationCounts.setText("Totales: " + total);
     }
 
     private void addRegisterEvaluationButtonToTable() {

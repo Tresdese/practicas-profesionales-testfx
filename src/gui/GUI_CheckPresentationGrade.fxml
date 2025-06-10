@@ -16,6 +16,7 @@
                 <TableColumn fx:id="colVerDetalles" text="Ver Detalles" />
             </columns>
         </TableView>
+        <Label fx:id="labelEvaluationCounts" text="Totales: 0"/>
         <Label fx:id="statusLabel" text="" style="-fx-text-fill: #D32F2F;"/>
     </VBox>
 </AnchorPane>

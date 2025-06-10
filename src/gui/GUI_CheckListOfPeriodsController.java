@@ -53,6 +53,9 @@ public class GUI_CheckListOfPeriodsController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label labelPeriodCounts;
+
     private PeriodDTO selectedPeriod;
     private PeriodDAO periodDAO;
     private Role userRole;
@@ -103,6 +106,7 @@ public class GUI_CheckListOfPeriodsController {
             logger.error("Error al cargar los periodos: {}", e.getMessage(), e);
         }
         tableViewPeriods.setItems(periodList);
+        updatePeriodCounts(periodList);
     }
 
     public void searchPeriod() {
@@ -125,6 +129,12 @@ public class GUI_CheckListOfPeriodsController {
         }
 
         tableViewPeriods.setItems(filteredList);
+        updatePeriodCounts(filteredList);
+    }
+
+    private void updatePeriodCounts(ObservableList<PeriodDTO> list) {
+        int total = list.size();
+        labelPeriodCounts.setText("Totales: " + total);
     }
 
     public void setUserRole(Role userRole) {
@@ -159,7 +169,6 @@ public class GUI_CheckListOfPeriodsController {
             {
                 detailsButton.setOnAction(event -> {
                     PeriodDTO period = getTableView().getItems().get(getIndex());
-                    // Aquí puedes mostrar detalles del periodo
                     System.out.println("Detalles de: " + period.getIdPeriod());
                 });
             }

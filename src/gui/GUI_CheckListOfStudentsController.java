@@ -69,7 +69,7 @@ public class GUI_CheckListOfStudentsController {
     private Button buttonReassignProject;
 
     @FXML
-    private Label statusLabel;
+    private Label statusLabel, labelStudentCounts;
 
     private StudentDTO selectedStudent;
     private StudentService studentService;
@@ -92,6 +92,7 @@ public class GUI_CheckListOfStudentsController {
         addManagementButtonToTable();
 
         loadStudentData();
+        updateStudentCounts();
 
         searchButton.setOnAction(event -> searchStudent());
         buttonRegisterStudent.setOnAction(event -> openRegisterStudentWindow());
@@ -222,7 +223,6 @@ public class GUI_CheckListOfStudentsController {
 
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
-
         try {
             List<StudentDTO> students = studentService.getAllStudents();
             for (StudentDTO student : students) {
@@ -235,8 +235,8 @@ public class GUI_CheckListOfStudentsController {
             statusLabel.setText("Error al cargar los datos de los estudiantes.");
             logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
         }
-
         tableView.setItems(studentList);
+        updateStudentCounts();
     }
 
     public void searchStudent() {
@@ -259,6 +259,26 @@ public class GUI_CheckListOfStudentsController {
         }
 
         tableView.setItems(filteredList);
+    }
+
+    private void updateStudentCounts() {
+        try {
+            List<StudentDTO> students = studentService.getAllStudents();
+            int total = students.size();
+            int activos = 0;
+            int inactivos = 0;
+            for (StudentDTO s : students) {
+                if (s.getState() == 1) {
+                    activos++;
+                } else {
+                    inactivos++;
+                }
+            }
+            labelStudentCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+        } catch (SQLException e) {
+            labelStudentCounts.setText("Error al contar estudiantes");
+            logger.error("Error al contar estudiantes: {}", e.getMessage(), e);
+        }
     }
 
     public void addDetailsButtonToTable() {
