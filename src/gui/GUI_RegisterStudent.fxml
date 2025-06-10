@@ -28,7 +28,7 @@
       <PasswordField fx:id="fieldConfirmPassword" layoutX="463.0" layoutY="180.0" />
       <TextField fx:id="fieldConfirmPasswordVisible" layoutX="463.0" layoutY="180.0" managed="false" visible="false" />
       <Button fx:id="togglePasswordVisibility" layoutX="610.0" layoutY="140.0" mnemonicParsing="false" text="🙈" />
-      <TextField fx:id="fieldNRC" layoutX="167.0" layoutY="220.0" />
+      <ChoiceBox fx:id="choiceBoxNRC" layoutX="167.0" layoutY="220.0" prefWidth="160.0"/>
       <TextField fx:id="fieldCreditAdvance" layoutX="463.0" layoutY="220.0" />
       <Label layoutX="347.0" layoutY="104.0" text="Usuario" />
       <Label layoutX="347.0" layoutY="144.0" text="Contraseña" />
