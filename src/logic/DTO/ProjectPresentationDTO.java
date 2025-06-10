@@ -12,7 +12,7 @@ public class ProjectPresentationDTO {
         this.idPresentation = 0;
         this.idProject = "";
         this.date = null;
-        this.tipe = Tipe.None;
+        this.tipe = Tipe.Parcial;
     }
 
     public ProjectPresentationDTO(int idPresentation, String idProject, Timestamp date, Tipe tipe) {

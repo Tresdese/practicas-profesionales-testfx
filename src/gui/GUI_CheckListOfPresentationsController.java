@@ -53,6 +53,9 @@ public class GUI_CheckListOfPresentationsController {
     @FXML
     private Button searchButton;
 
+    @FXML
+    private Button registerPresentationButton;
+
     private final ProjectPresentationDAO projectPresentationDAO = new ProjectPresentationDAO();
     private ProjectPresentationDTO selectedPresentation;
 
@@ -78,6 +81,7 @@ public class GUI_CheckListOfPresentationsController {
         });
 
         searchButton.setOnAction(event -> searchPresentation());
+        registerPresentationButton.setOnAction(event -> openRegisterPresentationWindow());
     }
 
     private void loadUpcomingPresentations() {
@@ -187,5 +191,28 @@ public class GUI_CheckListOfPresentationsController {
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de Lista de Participantes.", e);
         }
+    }
+
+    private void openRegisterPresentationWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterPresentation.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterPresentationController controller = loader.getController();
+            controller.setParentController(this); // Pasa la referencia
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Registrar Presentación");
+            stage.show();
+
+            logger.info("Ventana de Registrar Presentación abierta correctamente.");
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de Registrar Presentación.", e);
+        }
+    }
+
+    public void reloadPresentations() {
+        loadUpcomingPresentations();
     }
 }
