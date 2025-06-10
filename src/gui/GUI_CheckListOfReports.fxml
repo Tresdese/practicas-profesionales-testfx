@@ -11,12 +11,12 @@
         <Label layoutX="200.0" layoutY="20.0" text="Reportes del Estudiante" style="-fx-font-size: 18px;"/>
         <TableView fx:id="tableReports" layoutX="30.0" layoutY="60.0" prefWidth="540.0" prefHeight="300.0">
             <columns>
-                <TableColumn fx:id="colNumber" text="No. Reporte" prefWidth="80.0"/>
-                <TableColumn fx:id="colDate" text="Fecha" prefWidth="100.0"/>
-                <TableColumn fx:id="colHours" text="Horas" prefWidth="60.0"/>
-                <TableColumn fx:id="colObjective" text="Objetivo General" prefWidth="150.0"/>
-                <TableColumn fx:id="colResult" text="Resultado" prefWidth="100.0"/>
-                <TableColumn fx:id="colEvidence" text="Acción" prefWidth="80.0"/>
+                <TableColumn fx:id="columnNumber" text="No. Reporte" prefWidth="80.0"/>
+                <TableColumn fx:id="columnDate" text="Fecha" prefWidth="100.0"/>
+                <TableColumn fx:id="columnHours" text="Horas" prefWidth="60.0"/>
+                <TableColumn fx:id="columnObjective" text="Objetivo General" prefWidth="150.0"/>
+                <TableColumn fx:id="columnResult" text="Resultado" prefWidth="100.0"/>
+                <TableColumn fx:id="columnEvidence" text="Acción" prefWidth="80.0"/>
             </columns>
         </TableView>
     </children>
