@@ -5,8 +5,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import logic.DAO.ActivityDAO;
 import logic.DAO.ActivityReportDAO;
@@ -35,49 +39,70 @@ public class GUI_RegisterReportController {
 
     @FXML
     private TextField progressPercentageField;
+
     @FXML
     private TextArea observationsArea;
+
     @FXML
-    private Button handleRegister;
+    private Button handleRegister, buttonRegisterActivity;
+
     @FXML
     private ComboBox<ActivityDTO> activityComboBox;
 
     @FXML
     private TextField careerField;
+
     @FXML
     private TextField nrcField;
+
     @FXML
     private TextField professorField;
+
     @FXML
     private TextField schoolPeriodField;
+
     @FXML
     private TextField studentField;
+
     @FXML
     private TextField organizationField;
+
     @FXML
     private TextField projectField;
+
     @FXML
     private TextField totalHoursField;
+
     @FXML
     private TextField reportDateField;
+
     @FXML
     private TextArea generalObjectiveArea;
+
     @FXML
     private TextArea methodologyArea;
+
     @FXML
     private TextArea obtainedResultArea;
+
     @FXML
     private TableView<ActivityReportDTO> activitiesTable;
+
     @FXML
     private TableColumn<ActivityReportDTO, String> activityColumn;
+
     @FXML
     private TableColumn<ActivityReportDTO, Integer> progressColumn;
+
     @FXML
     private TableColumn<ActivityReportDTO, String> observationColumn;
+
     @FXML
     private TextArea generalObservationsArea;
+
     @FXML
     private TextField evidenceFileTextField;
+
     private File selectedEvidenceFile;
 
     private StudentDTO student;
@@ -334,6 +359,34 @@ public class GUI_RegisterReportController {
         } catch (Exception e) {
             showAlert("Error inesperado al registrar el informe.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar informe", e);
+        }
+    }
+
+    @FXML
+    public void handleRegisterNewActivity() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageActivity.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Gestión de Actividades");
+            stage.setScene(new Scene(root));
+            stage.setOnHiding(event -> {reloadActivitiesComboBox();});
+            stage.show();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al abrir la ventana de actividades: {}", e);
+        }
+    }
+
+    private void reloadActivitiesComboBox() {
+        try {
+            ActivityDAO activityDAO = new ActivityDAO();
+            activityComboBox.setItems(FXCollections.observableArrayList(activityDAO.getAllActivities()));
+        } catch (SQLException e) {
+            showAlert("Error de base de datos al recargar actividades.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al recargar actividades", e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al recargar actividades.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al recargar actividades", e);
         }
     }
 
