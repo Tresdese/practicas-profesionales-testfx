@@ -3,7 +3,7 @@ package data_access.DAO;
 import logic.DAO.ActivityScheduleDAO;
 import logic.DTO.ActivityScheduleDTO;
 import org.junit.jupiter.api.*;
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -21,7 +21,7 @@ class ActivityScheduleDAOTest {
 
     @BeforeAll
     void setUpAll() throws Exception {
-        connection = new ConecctionDataBase().connectDB();
+        connection = new ConnectionDataBase().connectDB();
         activityScheduleDAO = new ActivityScheduleDAO();
         clearTablesAndResetAutoIncrement();
         createBaseRecords();
@@ -326,6 +326,6 @@ class ActivityScheduleDAOTest {
         assertThrows(SQLException.class, () -> {
             activityScheduleDAO.insertActivitySchedule(activitySchedule, connection);
         }, "Operating with a closed connection should throw an exception.");
-        connection = new data_access.ConecctionDataBase().connectDB();
+        connection = new ConnectionDataBase().connectDB();
     }
 }

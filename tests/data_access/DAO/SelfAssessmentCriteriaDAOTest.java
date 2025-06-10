@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.SelfAssessmentCriteriaDAO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 import org.junit.jupiter.api.*;
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SelfAssessmentCriteriaDAOTest {
 
-    private static ConecctionDataBase connectionDB;
+    private static ConnectionDataBase connectionDB;
     private static Connection connection;
     private SelfAssessmentCriteriaDAO selfAssessmentCriteriaDAO;
 
     @BeforeAll
     static void setUpAll() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {

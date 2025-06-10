@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConecctionDataBase implements AutoCloseable {
+public class ConnectionDataBase implements AutoCloseable {
 
     private String URL;
     private String USER;
@@ -20,7 +20,7 @@ public class ConecctionDataBase implements AutoCloseable {
 
     private static final Logger logger = LogManager.getLogger(TestApp.class);
 
-    public ConecctionDataBase() {
+    public ConnectionDataBase() {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("out/resources/config.properties")) {
             properties.load(input);

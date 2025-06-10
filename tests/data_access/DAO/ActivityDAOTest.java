@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.ActivityDAO;
 import logic.DTO.ActivityDTO;
 import org.apache.logging.log4j.LogManager;
@@ -19,14 +19,14 @@ class ActivityDAOTest {
 
     private static final Logger logger = LogManager.getLogger(ActivityDAOTest.class);
 
-    private ConecctionDataBase connectionDB;
+    private ConnectionDataBase connectionDB;
     private Connection connection;
     private ActivityDAO activityDAO;
     private int idActividadBase;
 
     @BeforeAll
     void setUpAll() throws SQLException {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         limpiarTablaYResetearAutoIncrement();
         activityDAO = new ActivityDAO();

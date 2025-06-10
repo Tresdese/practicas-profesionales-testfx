@@ -1,9 +1,8 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.RepresentativeDAO;
 import logic.DTO.RepresentativeDTO;
-import logic.DTO.LinkedOrganizationDTO;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -16,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RepresentativeDAOTest {
 
-    private ConecctionDataBase connectionDB;
+    private ConnectionDataBase connectionDB;
     private Connection connection;
     private RepresentativeDAO representativeDAO;
     private int testOrganizationId;
 
     @BeforeAll
     void setUpAll() throws Exception {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
         createBaseOrganization();

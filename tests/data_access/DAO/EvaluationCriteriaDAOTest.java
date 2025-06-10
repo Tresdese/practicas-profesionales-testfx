@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.EvaluationCriteriaDAO;
 import logic.DTO.EvaluationCriteriaDTO;
 import org.apache.logging.log4j.LogManager;
@@ -18,13 +18,13 @@ class EvaluationCriteriaDAOTest {
 
     private static final Logger logger = LogManager.getLogger(EvaluationCriteriaDAOTest.class);
 
-    private static ConecctionDataBase connectionDB;
+    private static ConnectionDataBase connectionDB;
     private static Connection connection;
     private EvaluationCriteriaDAO evaluationCriteriaDAO;
 
     @BeforeAll
     static void setUpClass() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {

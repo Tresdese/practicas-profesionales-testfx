@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import org.junit.jupiter.api.*;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StudentDAOTest {
 
-    private static ConecctionDataBase connectionDB;
+    private static ConnectionDataBase connectionDB;
     private static Connection connection;
     private StudentDAO studentDAO;
     private static final int TEST_PERIODO_ID = 1001;
@@ -23,7 +23,7 @@ class StudentDAOTest {
 
     @BeforeAll
     static void setUpClass() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {

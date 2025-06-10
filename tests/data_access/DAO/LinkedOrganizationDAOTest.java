@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.LinkedOrganizationDAO;
 import logic.DTO.LinkedOrganizationDTO;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +19,7 @@ class LinkedOrganizationDAOTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        ConecctionDataBase connectionDB = new ConecctionDataBase();
+        ConnectionDataBase connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         connection.createStatement().execute("DELETE FROM organizacion_vinculada");

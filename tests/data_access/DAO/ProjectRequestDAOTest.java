@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProjectRequestDAOTest {
 
-    private ConecctionDataBase connectionDB;
+    private ConnectionDataBase connectionDB;
     private Connection connection;
     private LinkedOrganizationDAO linkedOrganizationDAO;
     private UserDAO userDAO;
@@ -36,7 +36,7 @@ class ProjectRequestDAOTest {
 
     @BeforeAll
     void setUpAll() throws Exception {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         userDAO = new UserDAO();

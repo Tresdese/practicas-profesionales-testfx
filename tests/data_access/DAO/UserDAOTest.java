@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.UserDAO;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserDAOTest {
 
-    private static ConecctionDataBase connectionDB;
+    private static ConnectionDataBase connectionDB;
     private static Connection connection;
     private UserDAO userDAO;
 
     @BeforeAll
     static void setUpAll() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {

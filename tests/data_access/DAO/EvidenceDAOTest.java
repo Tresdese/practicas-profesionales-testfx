@@ -1,7 +1,7 @@
 package data_access.DAO;
 
 import java.util.Date;
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.EvidenceDAO;
 import logic.DTO.EvidenceDTO;
 import org.junit.jupiter.api.*;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EvidenceDAOTest {
 
-    private static ConecctionDataBase connectionDB;
+    private static ConnectionDataBase connectionDB;
     private static Connection connection;
 
     private EvidenceDAO evidenceDAO;
@@ -21,7 +21,7 @@ class EvidenceDAOTest {
 
     @BeforeAll
     static void setUpClass() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {

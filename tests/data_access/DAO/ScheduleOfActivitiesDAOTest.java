@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.ScheduleOfActivitiesDAO;
 import logic.DTO.ScheduleOfActivitiesDTO;
 import org.junit.jupiter.api.*;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ScheduleOfActivitiesDAOTest {
 
-    private ConecctionDataBase connectionDB;
+    private ConnectionDataBase connectionDB;
     private Connection connection;
     private ScheduleOfActivitiesDAO scheduleOfActivitiesDAO;
     private int baseUserId;
@@ -24,7 +24,7 @@ class ScheduleOfActivitiesDAOTest {
 
     @BeforeAll
     void setUpAll() throws SQLException {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
         createBaseRecords();

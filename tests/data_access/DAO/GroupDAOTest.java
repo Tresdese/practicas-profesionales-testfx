@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.GroupDAO;
 import logic.DAO.PeriodDAO;
 import logic.DAO.UserDAO;
@@ -27,7 +27,7 @@ class GroupDAOTest {
 
     @BeforeAll
     void setUpAll() throws Exception {
-        ConecctionDataBase db = new ConecctionDataBase();
+        ConnectionDataBase db = new ConnectionDataBase();
         connection = db.connectDB();
         groupDAO = new GroupDAO();
         periodDAO = new PeriodDAO();

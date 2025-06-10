@@ -1,6 +1,6 @@
 package data_access.DAO;
 
-import data_access.ConecctionDataBase;
+import data_access.ConnectionDataBase;
 import logic.DAO.PeriodDAO;
 import logic.DTO.PeriodDTO;
 import org.junit.jupiter.api.*;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PeriodDAOTest {
-    private ConecctionDataBase connectionDB;
+    private ConnectionDataBase connectionDB;
     private Connection connection;
     private PeriodDAO periodDAO;
 
@@ -27,7 +27,7 @@ class PeriodDAOTest {
 
     @BeforeAll
     void setUpAll() {
-        connectionDB = new ConecctionDataBase();
+        connectionDB = new ConnectionDataBase();
         try {
             connection = connectionDB.connectDB();
             periodDAO = new PeriodDAO();
