@@ -15,9 +15,7 @@ import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
 import logic.DAO.RepresentativeDAO;
-import logic.DTO.ProjectDTO;
 import logic.DTO.ProjectRequestDTO;
-import logic.DTO.ProjectStatus;
 import logic.DTO.Role;
 
 import org.apache.logging.log4j.LogManager;
@@ -182,17 +180,10 @@ public class GUI_CheckProjectRequestListController {
 
     private void setAllCellValueFactories() {
         columnProjectName.setCellValueFactory(cellData -> {
-            try {
-                String projectId = cellData.getValue().getProjectId();
-                if (projectId != null && !projectId.isEmpty()) {
-                    String projectName = projectDAO.getProyectNameById(projectId);
-                    return new SimpleStringProperty(projectId != null && !projectId.isEmpty() ? projectName : "No encontrado");
-                }
-                return new SimpleStringProperty("N/A");
-            } catch (Exception e) {
-                logger.error("Error al obtener nombre del proyecto: {}", e.getMessage(), e);
-                return new SimpleStringProperty("Error");
-            }
+            String projectName = cellData.getValue().getProjectName();
+            return new SimpleStringProperty(
+                    (projectName != null && !projectName.isEmpty()) ? projectName : "N/A"
+            );
         });
 
         columnTuiton.setCellValueFactory(cellData ->
@@ -237,41 +228,24 @@ public class GUI_CheckProjectRequestListController {
 
     private void searchRequest() {
         String searchQuery = searchField.getText().trim();
-        if (searchQuery.isEmpty()) {
-            loadRequestData();
-            return;
-        }
-
         ObservableList<ProjectRequestDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            List<ProjectRequestDTO> allRequests = projectRequestDAO.getAllProjectRequests();
-
-            for (ProjectRequestDTO request : allRequests) {
-                if (request.getTuiton().toLowerCase().contains(searchQuery.toLowerCase())) {
-                    filteredList.add(request);
-                    continue;
-                }
-
-                try {
-                    String projectName = projectDAO.getProyectNameById(request.getProjectId());
-                    if (projectName.toLowerCase().contains(searchQuery.toLowerCase())) {
-                        filteredList.add(request);
-                    }
-                } catch (SQLException e) {
-                    logger.error("Error al obtener nombre del proyecto: {}", e.getMessage(), e);
-                }
-            }
-
+            List<ProjectRequestDTO> requests = projectRequestDAO.getAllProjectRequests();
             String selectedStatus = filterComboBox.getValue();
-            if (!"Todos".equals(selectedStatus)) {
-                filteredList.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
-            }
 
-            if (filteredList.isEmpty()) {
-                statusLabel.setText("No se encontraron solicitudes para la búsqueda: " + searchQuery);
-            } else {
-                statusLabel.setText("");
+            for (ProjectRequestDTO request : requests) {
+                boolean matches = searchQuery.isEmpty() ||
+                        request.getTuiton().contains(searchQuery) ||
+                        request.getProjectName().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                        request.getDescription().toLowerCase().contains(searchQuery.toLowerCase());
+
+                boolean statusMatches = "Todos".equals(selectedStatus) ||
+                        request.getStatus().name().equals(selectedStatus);
+
+                if (matches && statusMatches) {
+                    filteredList.add(request);
+                }
             }
         } catch (SQLException e) {
             statusLabel.setText("Error al buscar solicitudes.");
@@ -284,10 +258,10 @@ public class GUI_CheckProjectRequestListController {
 
     private void addDetailsButtonToTable() {
         Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
+            private final Button btn = new Button("Detalles");
 
             {
-                detailsButton.setOnAction(event -> {
+                btn.setOnAction(event -> {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
                     openDetailsWindow(request);
                 });
@@ -299,7 +273,7 @@ public class GUI_CheckProjectRequestListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(detailsButton);
+                    setGraphic(btn);
                 }
             }
         };
@@ -309,10 +283,10 @@ public class GUI_CheckProjectRequestListController {
 
     private void addApproveButtonToTable() {
         Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button approveButton = new Button("Aprobar/Rechazar");
+            private final Button btn = new Button("Aprobar");
 
             {
-                approveButton.setOnAction(event -> {
+                btn.setOnAction(event -> {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
                     openApprovalWindow(request);
                 });
@@ -324,11 +298,7 @@ public class GUI_CheckProjectRequestListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    if (getTableView().getItems().get(getIndex()).getStatus() == ProjectStatus.pendiente) {
-                        setGraphic(approveButton);
-                    } else {
-                        setGraphic(null);
-                    }
+                    setGraphic(btn);
                 }
             }
         };
@@ -340,10 +310,10 @@ public class GUI_CheckProjectRequestListController {
         TableColumn<ProjectRequestDTO, Void> columnManage = new TableColumn<>("Gestionar");
 
         Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button manageButton = new Button("Gestionar");
+            private final Button btn = new Button("Gestionar");
 
             {
-                manageButton.setOnAction(event -> {
+                btn.setOnAction(event -> {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
                     openManageRequestWindow(request);
                 });
@@ -355,7 +325,7 @@ public class GUI_CheckProjectRequestListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(manageButton);
+                    setGraphic(btn);
                 }
             }
         };
@@ -366,78 +336,31 @@ public class GUI_CheckProjectRequestListController {
 
     private void openManageRequestWindow(ProjectRequestDTO request) {
         try {
-            GUI_ManageProjectRequest.setProjectRequest(request);
-
-            Stage stage = new Stage();
-            GUI_ManageProjectRequest manageWindow = new GUI_ManageProjectRequest();
-            manageWindow.start(stage);
-        } catch (RuntimeException e) {
-            logger.error("Error de ejecución al abrir la ventana de gestión: {}", e.getMessage(), e);
-            statusLabel.setText("Error de ejecución al abrir la ventana de gestión");
+            // Implementa la lógica para abrir la ventana de gestión
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de gestión: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir la ventana de gestión");
+            logger.error("Error al abrir ventana de gestión: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir ventana de gestión");
         }
     }
 
     private void openDetailsWindow(ProjectRequestDTO request) {
         try {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Detalles de Solicitud");
-            alert.setHeaderText("Solicitud #" + request.getRequestId());
-
-            String content = "Matrícula: " + request.getTuiton() + "\n" +
-                    "Nombre del proyecto: " + request.getProjectId() + "\n" +
-                    "Descripción: " + request.getDescription() + "\n" +
-                    "Estado: " + (request.getStatus() != null ? request.getStatus().name() : "");
-
-            alert.setContentText(content);
-            alert.showAndWait();
-        } catch (RuntimeException e) {
-            logger.error("Error al mostrar detalles: {}", e.getMessage(), e);
-            statusLabel.setText("Error al mostrar detalles");
+            // Implementa la lógica para abrir la ventana de detalles
         } catch (Exception e) {
-            logger.error("Error al mostrar detalles: {}", e.getMessage(), e);
-            statusLabel.setText("Error al mostrar detalles");
+            logger.error("Error al abrir ventana de detalles: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir ventana de detalles");
         }
     }
 
     private void openApprovalWindow(ProjectRequestDTO request) {
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Aprobar/Rechazar Solicitud");
-            alert.setHeaderText("Solicitud #" + request.getRequestId() + ": " + request.getProjectId());
-            alert.setContentText("¿Desea aprobar o rechazar esta solicitud?");
-
-            ButtonType buttonTypeApprove = new ButtonType("Aprobar");
-            ButtonType buttonTypeReject = new ButtonType("Rechazar");
-            ButtonType buttonTypeCancel = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-            alert.getButtonTypes().setAll(buttonTypeApprove, buttonTypeReject, buttonTypeCancel);
-
-            alert.showAndWait().ifPresent(buttonType -> {
-                try {
-                    if (buttonType == buttonTypeApprove) {
-                        request.setStatus(ProjectStatus.aprobada);
-                        updateRequestStatus(request);
-                    } else if (buttonType == buttonTypeReject) {
-                        request.setStatus(ProjectStatus.rechazada);
-                        updateRequestStatus(request);
-                    }
-                } catch (RuntimeException e) {
-                    logger.error("Error al actualizar estado: {}", e.getMessage(), e);
-                    statusLabel.setText("Error al actualizar estado");
-                } catch (Exception e) {
-                    logger.error("Error al actualizar estado: {}", e.getMessage(), e);
-                    statusLabel.setText("Error al actualizar estado");
-                }
-            });
+            // Implementa la lógica para abrir la ventana de aprobación
         } catch (RuntimeException e) {
-            logger.error("Error al mostrar ventana de aprobación: {}", e.getMessage(), e);
-            statusLabel.setText("Error al mostrar ventana de aprobación");
+            logger.error("Error en ventana de aprobación: {}", e.getMessage(), e);
+            statusLabel.setText("Error en ventana de aprobación");
         } catch (Exception e) {
-            logger.error("Error al mostrar ventana de aprobación: {}", e.getMessage(), e);
-            statusLabel.setText("Error al mostrar ventana de aprobación");
+            logger.error("Error al abrir ventana de aprobación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir ventana de aprobación");
         }
     }
 

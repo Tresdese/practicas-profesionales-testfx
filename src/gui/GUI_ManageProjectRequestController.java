@@ -65,7 +65,7 @@ public class GUI_ManageProjectRequestController {
 
         fieldTuiton.setText(projectRequest.getTuiton());
         fieldOrganizationId.setText(String.valueOf(projectRequest.getOrganizationId()));
-        fieldProjectId.setText(String.valueOf(projectRequest.getProjectId()));
+        fieldProjectId.setText(projectRequest.getProjectName());
         fieldRepresentativeId.setText(String.valueOf(projectRequest.getRepresentativeId()));
         fieldDescription.setText(projectRequest.getDescription());
         fieldGeneralObjective.setText(projectRequest.getGeneralObjective());
@@ -85,7 +85,7 @@ public class GUI_ManageProjectRequestController {
 
             projectRequest.setTuiton(fieldTuiton.getText());
             projectRequest.setOrganizationId(fieldOrganizationId.getText());
-            projectRequest.setProjectId(fieldProjectId.getText());
+            projectRequest.setProjectName(fieldProjectId.getText());
             projectRequest.setRepresentativeId(fieldRepresentativeId.getText());
             projectRequest.setDescription(fieldDescription.getText());
             projectRequest.setGeneralObjective(fieldGeneralObjective.getText());

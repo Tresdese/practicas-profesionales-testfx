@@ -31,19 +31,19 @@ class PartialEvaluationDAOTest {
         evidenceDAO = new EvidenceDAO();
         periodDAO = new PeriodDAO();
         userDAO = new UserDAO();
-        limpiarTablasYResetearAutoIncrement();
-        crearObjetosBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseObjects();
     }
 
     @BeforeEach
     void setUp() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
-        crearObjetosBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseObjects();
     }
 
     @AfterAll
     void tearDownAll() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -54,10 +54,10 @@ class PartialEvaluationDAOTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
     }
 
-    private void limpiarTablasYResetearAutoIncrement() throws SQLException {
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute("SET FOREIGN_KEY_CHECKS=0");
         stmt.execute("TRUNCATE TABLE evaluacion_parcial");
@@ -76,12 +76,12 @@ class PartialEvaluationDAOTest {
         stmt.close();
     }
 
-    private void crearObjetosBase() throws SQLException {
+    private void createBaseObjects() throws SQLException {
         // 1. Period
         PeriodDTO period = new PeriodDTO("1", "Test Period", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
         periodDAO.insertPeriod(period);
 
-        // 2. User (para el grupo)
+        // 2. User (for group)
         UserDTO user = new UserDTO("1", "1001", "Nombre", "Apellido", "usuarioTest", "passTest", logic.DTO.Role.ACADEMICO);
         userDAO.insertUser(user);
 

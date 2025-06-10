@@ -25,20 +25,20 @@ class RepresentativeDAOTest {
     void setUpAll() throws Exception {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
-        limpiarTablasYResetearAutoIncrement();
-        crearOrganizacionBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseOrganization();
     }
 
     @BeforeEach
     void setUp() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
-        crearOrganizacionBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseOrganization();
         representativeDAO = new RepresentativeDAO();
     }
 
     @AfterAll
     void tearDownAll() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -49,10 +49,10 @@ class RepresentativeDAOTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
     }
 
-    private void limpiarTablasYResetearAutoIncrement() throws SQLException {
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute("SET FOREIGN_KEY_CHECKS=0");
         stmt.execute("TRUNCATE TABLE representante");
@@ -63,7 +63,7 @@ class RepresentativeDAOTest {
         stmt.close();
     }
 
-    private void crearOrganizacionBase() throws SQLException {
+    private void createBaseOrganization() throws SQLException {
         String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES ('Org Test', 'Direccion Test')";
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
@@ -77,7 +77,7 @@ class RepresentativeDAOTest {
     }
 
     @Test
-    void testInsertRepresentative() throws SQLException {
+    void insertRepresentativeSuccessfully() throws SQLException {
         RepresentativeDTO representative = new RepresentativeDTO(
                 "1", "Nombre Test", "Apellido Test", "test@example.com", String.valueOf(testOrganizationId)
         );
@@ -93,7 +93,7 @@ class RepresentativeDAOTest {
     }
 
     @Test
-    void testSearchRepresentativeById() throws SQLException {
+    void searchRepresentativeByIdSuccessfully() throws SQLException {
         insertTestRepresentative("2", "Nombre Consulta", "Apellido Consulta", "consulta@example.com", String.valueOf(testOrganizationId));
         RepresentativeDTO rep = representativeDAO.searchRepresentativeById("2");
         assertNotNull(rep, "Debería encontrar el representante");
@@ -104,7 +104,7 @@ class RepresentativeDAOTest {
     }
 
     @Test
-    void testUpdateRepresentative() throws SQLException {
+    void updateRepresentativeSuccessfully() throws SQLException {
         insertTestRepresentative("3", "Nombre Original", "Apellido Original", "original@example.com", String.valueOf(testOrganizationId));
         RepresentativeDTO repToUpdate = new RepresentativeDTO(
                 "3", "Nombre Actualizado", "Apellido Actualizado", "actualizado@example.com", String.valueOf(testOrganizationId)
@@ -121,7 +121,7 @@ class RepresentativeDAOTest {
     }
 
     @Test
-    void testDeleteRepresentative() throws SQLException {
+    void deleteRepresentativeSuccessfully() throws SQLException {
         insertTestRepresentative("4", "Nombre Delete", "Apellido Delete", "delete@example.com", String.valueOf(testOrganizationId));
         RepresentativeDTO beforeDelete = representativeDAO.searchRepresentativeById("4");
         assertNotNull(beforeDelete, "El representante debería existir antes de eliminarlo");
@@ -134,7 +134,7 @@ class RepresentativeDAOTest {
     }
 
     @Test
-    void testGetAllRepresentatives() throws SQLException {
+    void getAllRepresentativesSuccessfully() throws SQLException {
         insertTestRepresentative("5", "Nombre Lista", "Apellido Lista", "lista@example.com", String.valueOf(testOrganizationId));
         List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives();
         assertNotNull(representatives, "La lista no debería ser nula");

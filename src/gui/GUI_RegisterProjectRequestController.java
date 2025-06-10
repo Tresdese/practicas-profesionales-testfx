@@ -123,7 +123,7 @@ public class GUI_RegisterProjectRequestController {
                     student.getTuiton(),
                     org.getIddOrganization(),
                     rep.getIdRepresentative(),
-                    String.valueOf(project.getIdProject()), // Usar el ID del proyecto en lugar del nombre
+                    project.getName(), // Corregido: se usa el nombre del proyecto
                     fieldDescription.getText(),
                     fieldGeneralObjective.getText(),
                     fieldImmediateObjectives.getText(),
@@ -144,15 +144,13 @@ public class GUI_RegisterProjectRequestController {
             boolean success = dao.insertProjectRequest(request);
 
             if (success) {
-                setStatus("Solicitud registrada correctamente.", false);
+                statusLabel.setText("Solicitud registrada correctamente.");
                 clearFields();
             } else {
-                setStatus("Error al registrar la solicitud.", true);
+                statusLabel.setText("Error al registrar la solicitud.");
             }
-        } catch (NumberFormatException e) {
-            setStatus("Verifica los campos numéricos.", true);
         } catch (Exception e) {
-            setStatus("Error: " + e.getMessage(), true);
+            statusLabel.setText("Error: " + e.getMessage());
         }
     }
 

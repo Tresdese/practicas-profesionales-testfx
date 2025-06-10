@@ -2,6 +2,7 @@ package logic.DAO;
 
 import data_access.ConecctionDataBase;
 import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
 import logic.interfaces.IProjectRequestDAO;
 
 import java.sql.*;
@@ -9,14 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectRequestDAO implements IProjectRequestDAO {
-    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, idProyecto, idRepresentante, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, idProyecto=?, idRepresentante=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
+    private static final String SQL_INSERT = "INSERT INTO solicitud_proyecto (matricula, idOrganizacion, nombreProyecto, idRepresentante, descripcion, objetivoGeneral, objetivosInmediatos, objetivosMediatos, metodologia, recursos, actividades, responsabilidades, duracion, diasHorario, usuariosDirectos, usuariosIndirectos, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE solicitud_proyecto SET matricula=?, idOrganizacion=?, nombreProyecto=?, idRepresentante=?, descripcion=?, objetivoGeneral=?, objetivosInmediatos=?, objetivosMediatos=?, metodologia=?, recursos=?, actividades=?, responsabilidades=?, duracion=?, diasHorario=?, usuariosDirectos=?, usuariosIndirectos=?, estado=? WHERE idSolicitud=?";
     private static final String SQL_UPDATE_STATUS = "UPDATE solicitud_proyecto SET estado=? WHERE idSolicitud=?";
     private static final String SQL_DELETE = "DELETE FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT = "SELECT * FROM solicitud_proyecto WHERE idSolicitud=?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM solicitud_proyecto";
     private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM solicitud_proyecto WHERE matricula=?";
+    private static final String SQL_SELECT_BY_STATE = "SELECT * FROM solicitud_proyecto WHERE estado=?";
 
+    @Override
     public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -24,7 +27,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
-            stmt.setInt(3, Integer.parseInt(request.getProjectId()));
+            stmt.setString(3, request.getProjectName());
             stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
@@ -38,19 +41,19 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().toString().toLowerCase()); // Convertir a minúsculas
-
+            stmt.setString(17, request.getStatus().name());
             return stmt.executeUpdate() > 0;
         }
     }
 
+    @Override
     public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
             stmt.setString(1, request.getTuiton());
             stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
-            stmt.setInt(3, Integer.parseInt(request.getProjectId()));      // Convertir a int
+            stmt.setString(3, request.getProjectName());
             stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
             stmt.setString(5, request.getDescription());
             stmt.setString(6, request.getGeneralObjective());
@@ -64,7 +67,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
             stmt.setString(14, request.getScheduleDays());
             stmt.setInt(15, request.getDirectUsers());
             stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().toString().toLowerCase());
+            stmt.setString(17, request.getStatus().name());
             stmt.setInt(18, request.getRequestId());
             return stmt.executeUpdate() > 0;
         }
@@ -80,6 +83,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         }
     }
 
+    @Override
     public boolean deleteProjectRequest(int requestId) throws SQLException {
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
@@ -89,6 +93,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         }
     }
 
+    @Override
     public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
         ProjectRequestDTO request = null;
         try (ConecctionDataBase db = new ConecctionDataBase();
@@ -97,7 +102,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
             stmt.setInt(1, requestId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    request = mapResultSet(rs);
+                    request = mapResultSetToDTO(rs);
                 }
             }
         }
@@ -105,40 +110,40 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     }
 
     public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException {
-        List<ProjectRequestDTO> list = new ArrayList<>();
+        List<ProjectRequestDTO> requests = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_ALL);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                list.add(mapResultSet(rs));
+                requests.add(mapResultSetToDTO(rs));
             }
         }
-        return list;
+        return requests;
     }
 
-    public List<ProjectRequestDTO> searchProjectRequestByTuiton(String tuiton) throws SQLException {
-        List<ProjectRequestDTO> list = new ArrayList<>();
+    public List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException {
+        List<ProjectRequestDTO> requests = new ArrayList<>();
         try (ConecctionDataBase db = new ConecctionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_TUITON)) {
             stmt.setString(1, tuiton);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    list.add(mapResultSet(rs));
+                    requests.add(mapResultSetToDTO(rs));
                 }
             }
         }
-        return list;
+        return requests;
     }
 
-    private ProjectRequestDTO mapResultSet(ResultSet rs) throws SQLException {
+    private ProjectRequestDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         return new ProjectRequestDTO(
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),
                 String.valueOf(rs.getInt("idOrganizacion")),
                 String.valueOf(rs.getInt("idRepresentante")),
-                String.valueOf(rs.getInt("idProyecto")),
+                rs.getString("nombreProyecto"),
                 rs.getString("descripcion"),
                 rs.getString("objetivoGeneral"),
                 rs.getString("objetivosInmediatos"),
@@ -154,5 +159,20 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
                 rs.getString("estado"),
                 rs.getString("fechaSolicitud")
         );
+    }
+
+    public List<ProjectRequestDTO> getProjectRequestsByStatus(String status) throws SQLException {
+        List<ProjectRequestDTO> requests = new ArrayList<>();
+        try (ConecctionDataBase db = new ConecctionDataBase();
+             Connection conn = db.connectDB();
+             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_STATE)) {
+            stmt.setString(1, status);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    requests.add(mapResultSetToDTO(rs));
+                }
+            }
+        }
+        return requests;
     }
 }

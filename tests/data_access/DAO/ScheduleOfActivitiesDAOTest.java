@@ -16,24 +16,24 @@ class ScheduleOfActivitiesDAOTest {
     private ConecctionDataBase connectionDB;
     private Connection connection;
     private ScheduleOfActivitiesDAO scheduleOfActivitiesDAO;
-    private int idUsuarioBase;
-    private String idPeriodoBase;
-    private String nrcBase;
-    private String matriculaBase;
-    private String idEvidenciaBase;
+    private int baseUserId;
+    private String basePeriodId;
+    private String baseNrc;
+    private String baseTuition;
+    private String baseEvidenceId;
 
     @BeforeAll
     void setUpAll() throws SQLException {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
-        limpiarTablasYResetearAutoIncrement();
-        crearRegistrosBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseRecords();
         scheduleOfActivitiesDAO = new ScheduleOfActivitiesDAO();
     }
 
     @AfterAll
     void tearDownAll() throws SQLException {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -42,11 +42,11 @@ class ScheduleOfActivitiesDAOTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        limpiarTablasYResetearAutoIncrement();
-        crearRegistrosBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseRecords();
     }
 
-    private void limpiarTablasYResetearAutoIncrement() throws SQLException {
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM cronograma_de_actividades");
             stmt.execute("ALTER TABLE cronograma_de_actividades AUTO_INCREMENT = 1");
@@ -60,10 +60,10 @@ class ScheduleOfActivitiesDAOTest {
         }
     }
 
-    private void crearRegistrosBase() throws SQLException {
-        // Insertar usuario base
-        String sqlUsuario = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sqlUsuario, Statement.RETURN_GENERATED_KEYS)) {
+    private void createBaseRecords() throws SQLException {
+        // Insert base user
+        String userSql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, 1001);
             ps.setString(2, "Academico");
             ps.setString(3, "Prueba");
@@ -73,35 +73,35 @@ class ScheduleOfActivitiesDAOTest {
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    idUsuarioBase = rs.getInt(1);
+                    baseUserId = rs.getInt(1);
                 }
             }
         }
-        // Insertar periodo base
-        String sqlPeriodo = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
-        idPeriodoBase = "1";
-        try (PreparedStatement ps = connection.prepareStatement(sqlPeriodo)) {
-            ps.setString(1, idPeriodoBase);
+        // Insert base period
+        String periodSql = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
+        basePeriodId = "1";
+        try (PreparedStatement ps = connection.prepareStatement(periodSql)) {
+            ps.setString(1, basePeriodId);
             ps.setString(2, "Periodo Base");
             ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
             ps.setDate(4, new java.sql.Date(System.currentTimeMillis()));
             ps.executeUpdate();
         }
-        // Insertar grupo base
-        String sqlGrupo = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
-        nrcBase = "101";
-        try (PreparedStatement ps = connection.prepareStatement(sqlGrupo)) {
-            ps.setString(1, nrcBase);
+        // Insert base group
+        String groupSql = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
+        baseNrc = "101";
+        try (PreparedStatement ps = connection.prepareStatement(groupSql)) {
+            ps.setString(1, baseNrc);
             ps.setString(2, "Grupo Base");
-            ps.setInt(3, idUsuarioBase);
-            ps.setString(4, idPeriodoBase);
+            ps.setInt(3, baseUserId);
+            ps.setString(4, basePeriodId);
             ps.executeUpdate();
         }
-        // Insertar estudiante base
-        String sqlEstudiante = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        matriculaBase = "A12345678";
-        try (PreparedStatement ps = connection.prepareStatement(sqlEstudiante)) {
-            ps.setString(1, matriculaBase);
+        // Insert base student
+        String studentSql = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        baseTuition = "A12345678";
+        try (PreparedStatement ps = connection.prepareStatement(studentSql)) {
+            ps.setString(1, baseTuition);
             ps.setInt(2, 1);
             ps.setString(3, "Juan");
             ps.setString(4, "Pérez");
@@ -109,21 +109,21 @@ class ScheduleOfActivitiesDAOTest {
             ps.setString(6, "juan.perez@example.com");
             ps.setString(7, "juanperez");
             ps.setString(8, "password123");
-            ps.setString(9, nrcBase);
+            ps.setString(9, baseNrc);
             ps.setInt(10, 50);
             ps.setDouble(11, 85.5);
             ps.executeUpdate();
         }
-        // Insertar evidencia base
-        String sqlEvidencia = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sqlEvidencia, Statement.RETURN_GENERATED_KEYS)) {
+        // Insert base evidence
+        String evidenceSql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(evidenceSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, "Evidencia Base");
             ps.setDate(2, new java.sql.Date(System.currentTimeMillis()));
             ps.setString(3, "/ruta/evidencia/base");
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    idEvidenciaBase = String.valueOf(rs.getInt(1));
+                    baseEvidenceId = String.valueOf(rs.getInt(1));
                 }
             }
         }
@@ -133,7 +133,7 @@ class ScheduleOfActivitiesDAOTest {
     void testInsertScheduleOfActivities() {
         try {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
-                    "1", "Hito 1", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "1", "Hito 1", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             boolean result = scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
             assertTrue(result, "La inserción debería ser exitosa");
@@ -150,7 +150,7 @@ class ScheduleOfActivitiesDAOTest {
     void testSearchScheduleOfActivitiesById() {
         try {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
-                    "2", "Hito 2", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "2", "Hito 2", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
 
@@ -166,12 +166,12 @@ class ScheduleOfActivitiesDAOTest {
     void testUpdateScheduleOfActivities() {
         try {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
-                    "3", "Hito 3", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "3", "Hito 3", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
 
             ScheduleOfActivitiesDTO updatedSchedule = new ScheduleOfActivitiesDTO(
-                    "3", "Hito Actualizado", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "3", "Hito Actualizado", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(updatedSchedule, connection);
             assertTrue(result, "La actualización debería ser exitosa");
@@ -188,7 +188,7 @@ class ScheduleOfActivitiesDAOTest {
     void testDeleteScheduleOfActivities() {
         try {
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
-                    "4", "Hito Eliminar", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "4", "Hito 4", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
 
@@ -206,10 +206,10 @@ class ScheduleOfActivitiesDAOTest {
     void testGetAllSchedulesOfActivities() {
         try {
             ScheduleOfActivitiesDTO schedule1 = new ScheduleOfActivitiesDTO(
-                    "5", "Hito Lista 1", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "5", "Hito 5", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             ScheduleOfActivitiesDTO schedule2 = new ScheduleOfActivitiesDTO(
-                    "6", "Hito Lista 2", new Timestamp(System.currentTimeMillis()), matriculaBase, idEvidenciaBase
+                    "6", "Hito 6", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
             );
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule1, connection);
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule2, connection);
@@ -220,5 +220,88 @@ class ScheduleOfActivitiesDAOTest {
         } catch (SQLException e) {
             fail("Error en testGetAllSchedulesOfActivities: " + e.getMessage());
         }
+    }
+
+    @Test
+    void testInsertScheduleOfActivities_Duplicate() {
+        try {
+            ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                    "7", "Hito 7", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
+            );
+            assertTrue(scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection));
+            assertThrows(SQLException.class, () -> {
+                scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+            });
+        } catch (SQLException e) {
+            fail("Error en testInsertScheduleOfActivities_Duplicate: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateScheduleOfActivities_NotExists() {
+        try {
+            ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                    "999", "Hito Inexistente", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
+            );
+            boolean result = scheduleOfActivitiesDAO.updateScheduleOfActivities(schedule, connection);
+            assertFalse(result, "No debería actualizar un cronograma inexistente");
+        } catch (SQLException e) {
+            fail("Error en testUpdateScheduleOfActivities_NotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testDeleteScheduleOfActivities_NotExists() {
+        try {
+            ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                    "888", "Hito Inexistente", new Timestamp(System.currentTimeMillis()), baseTuition, baseEvidenceId
+            );
+            boolean result = scheduleOfActivitiesDAO.deleteScheduleOfActivities(schedule, connection);
+            assertFalse(result, "No debería eliminar un cronograma inexistente");
+        } catch (SQLException e) {
+            fail("Error en testDeleteScheduleOfActivities_NotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testSearchScheduleOfActivitiesById_NotExists() {
+        try {
+            ScheduleOfActivitiesDTO schedule = scheduleOfActivitiesDAO.searchScheduleOfActivitiesById("777", connection);
+            assertEquals("N/A", schedule.getIdSchedule(), "El cronograma no existente debe devolver valores por defecto");
+        } catch (SQLException e) {
+            fail("Error en testSearchScheduleOfActivitiesById_NotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testGetAllSchedulesOfActivities_EmptyTable() {
+        try {
+            clearTablesAndResetAutoIncrement();
+            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities(connection);
+            assertNotNull(schedules, "La lista no debe ser nula");
+            assertEquals(0, schedules.size(), "La lista debe estar vacía si no hay cronogramas");
+        } catch (SQLException e) {
+            fail("Error en testGetAllSchedulesOfActivities_EmptyTable: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testInsertScheduleOfActivities_NullOrInvalidData() {
+        assertThrows(SQLException.class, () -> {
+            ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                    null, null, null, null, null
+            );
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+        }, "No debería permitir insertar cronograma con datos nulos");
+    }
+
+    @Test
+    void testInsertScheduleOfActivities_InvalidForeignKeys() {
+        assertThrows(SQLException.class, () -> {
+            ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
+                    "20", "Hito FK", new Timestamp(System.currentTimeMillis()), "NO_EXISTE", "99999"
+            );
+            scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule, connection);
+        }, "No debería permitir insertar cronograma con FK inválidas");
     }
 }
