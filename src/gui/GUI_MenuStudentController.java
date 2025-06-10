@@ -32,6 +32,12 @@ public class GUI_MenuStudentController {
     @FXML
     private Button buttonLogout;
 
+    @FXML
+    private Button buttonRegisterActivitySchedule;
+
+    @FXML
+    private Button buttonLinkActivityToSchedule;
+
     public void setStudentName(String studentName) {
         welcomeLabel.setText("Hola, " + studentName);
     }
@@ -61,7 +67,6 @@ public class GUI_MenuStudentController {
 
             GUI_UpdateProfileController updateProfileController = loader.getController();
 
-            // Pasar los datos del estudiante al controlador de actualización
             updateProfileController.setStudentData(
                     student.getNames(),
                     student.getSurnames(),
@@ -132,6 +137,24 @@ public class GUI_MenuStudentController {
     }
 
     @FXML
+    private void handleRegisterActivitySchedule() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterActivitySchedule.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterActivityScheduleController controller = loader.getController();
+            controller.setStudent(this.student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Evidencia y Cronograma");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de evidencia: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
     private void handleLogout() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Login.fxml"));
@@ -141,6 +164,22 @@ public class GUI_MenuStudentController {
             stage.show();
         } catch (Exception e) {
             logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
+    private void handleLinkActivityToSchedule() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_LinkActivityToSchedule.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Vincular Actividad a Cronograma");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al abrir la ventana de vinculación: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo abrir la ventana de vinculación.");
         }
     }
 

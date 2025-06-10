@@ -15,12 +15,10 @@
             <center>
                 <TableView fx:id="tableView" editable="false" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnMilestone" prefWidth="180.0" text="Hito" />
-                        <TableColumn fx:id="columnEstimatedDate" prefWidth="180.0" text="Fecha Estimada" />
-                        <TableColumn fx:id="columnTuition" prefWidth="120.0" text="Matrícula" />
-                        <TableColumn fx:id="columnEvidence" prefWidth="200.0" text="Evidencia" />
-                        <TableColumn fx:id="columnDetails" prefWidth="140.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="130.0" text="Gestionar" />
+                        <TableColumn fx:id="columnMilestone" prefWidth="149.0" text="Hito" />
+                        <TableColumn fx:id="columnEstimatedDate" prefWidth="267.0" text="Fecha Estimada" />
+                        <TableColumn fx:id="columnTuition" prefWidth="207.0" text="Matrícula" />
+                        <TableColumn fx:id="columnEvidence" prefWidth="326.0" text="Evidencia" />
                     </columns>
                 </TableView>
             </center>

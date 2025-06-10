@@ -43,12 +43,6 @@ public class GUI_CheckScheduleActivityListController {
     private TableColumn<ScheduleOfActivitiesDTO, String> columnEvidence;
 
     @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, Void> columnDetails;
-
-    @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, Void> columnManagement;
-
-    @FXML
     private Button searchButton;
 
     @FXML
@@ -83,9 +77,6 @@ public class GUI_CheckScheduleActivityListController {
             String evidenceName = getEvidenceNameById(idEvidence);
             return new SimpleStringProperty(evidenceName);
         });
-
-        addDetailsButtonToTable();
-        addManagementButtonToTable();
 
         loadScheduleData();
 
@@ -155,53 +146,6 @@ public class GUI_CheckScheduleActivityListController {
         }
         tableView.setItems(filteredList);
         updateScheduleCounts(filteredList);
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<ScheduleOfActivitiesDTO, Void>, TableCell<ScheduleOfActivitiesDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-            {
-                detailsButton.setOnAction(event -> {
-                    if (getIndex() < 0 || getIndex() >= getTableView().getItems().size()) return;
-                    ScheduleOfActivitiesDTO schedule = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + schedule.getMilestone());
-                });
-            }
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedSchedule == null || getIndex() < 0 || getIndex() >= getTableView().getItems().size() || !getTableView().getItems().get(getIndex()).equals(selectedSchedule)) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-        columnDetails.setCellFactory(cellFactory);
-    }
-
-    private void addManagementButtonToTable() {
-        Callback<TableColumn<ScheduleOfActivitiesDTO, Void>, TableCell<ScheduleOfActivitiesDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button manageButton = new Button("Gestionar Cronograma");
-            {
-                manageButton.setOnAction(event -> {
-                    if (getIndex() < 0 || getIndex() >= getTableView().getItems().size()) return;
-                    ScheduleOfActivitiesDTO schedule = getTableView().getItems().get(getIndex());
-                    // Aquí puedes abrir una ventana de gestión si la implementas
-                    System.out.println("Gestionar: " + schedule.getMilestone());
-                });
-            }
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedSchedule == null || getIndex() < 0 || getIndex() >= getTableView().getItems().size() || !getTableView().getItems().get(getIndex()).equals(selectedSchedule)) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(manageButton);
-                }
-            }
-        };
-        columnManagement.setCellFactory(cellFactory);
     }
 
     private void updateScheduleCounts(ObservableList<ScheduleOfActivitiesDTO> list) {
