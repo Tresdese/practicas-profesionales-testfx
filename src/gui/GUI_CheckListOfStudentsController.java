@@ -308,16 +308,13 @@ public class GUI_CheckListOfStudentsController {
 
     public void openDetailsStudentWindow(StudentDTO student) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DetailsStudent.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckStudentDetails.fxml"));
             Parent root = loader.load();
-
-            // Obtener el controlador y pasar el estudiante
-            GUI_DetailsStudentController controller = loader.getController();
-            controller.setStudent(student);
-
+            GUI_CheckStudentDetailsController controller = loader.getController();
+            controller.setStudentData(selectedStudent);
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
             stage.setTitle("Detalles del Estudiante");
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             logger.error("No se pudo cargar la ventana de detalles: {}", e.getMessage(), e);
