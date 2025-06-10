@@ -1,6 +1,5 @@
 package gui;
 
-import data_access.ConnectionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import logic.DAO.GroupDAO;
@@ -13,7 +12,6 @@ import logic.utils.PasswordHasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public class GUI_RegisterStudentController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldCreditAdvance;
+    private TextField fieldTuition, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldCreditAdvance;
 
     @FXML
     private ChoiceBox<String> choiceBoxNRC;
@@ -89,7 +87,7 @@ public class GUI_RegisterStudentController {
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 return;
             }
-            String tuiton = fieldTuiton.getText();
+            String tuiton = fieldTuition.getText();
             String email = fieldEmail.getText();
             String phone = fieldPhone.getText();
             StudentValidator.validateStudentData(tuiton, email, phone);
@@ -116,7 +114,7 @@ public class GUI_RegisterStudentController {
                 if (parentController != null) {
                     parentController.loadStudentData();
                 }
-            } catch (SQLException | RepeatedTuiton | RepeatedPhone | RepeatedEmail e) {
+            } catch (SQLException | RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
                 logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
                 statusLabel.setText(e.getMessage());
                 statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -147,7 +145,7 @@ public class GUI_RegisterStudentController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldTuiton.getText().isEmpty() &&
+        return !fieldTuition.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
                 !fieldPhone.getText().isEmpty() &&

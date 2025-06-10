@@ -13,7 +13,7 @@ import logic.DAO.LinkedOrganizationDAO;
 public class GUI_DetailsStudentController {
 
     @FXML
-    private Label labelTuiton;
+    private Label labelTuition;
     @FXML
     private Label labelNames;
     @FXML
@@ -33,7 +33,7 @@ public class GUI_DetailsStudentController {
 
     public void setStudent(StudentDTO student) {
         if (student != null) {
-            labelTuiton.setText(student.getTuiton());
+            labelTuition.setText(student.getTuition());
             labelNames.setText(student.getNames());
             labelSurnames.setText(student.getSurnames());
             labelEmail.setText(student.getEmail());
@@ -47,7 +47,7 @@ public class GUI_DetailsStudentController {
     private void showAssignedProject(StudentDTO student) {
         try {
             StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-            StudentProjectDTO studentProject = studentProjectDAO.searchStudentProjectByIdTuiton(student.getTuiton());
+            StudentProjectDTO studentProject = studentProjectDAO.searchStudentProjectByIdTuiton(student.getTuition());
             if (studentProject != null && studentProject.getIdProject() != null && !studentProject.getIdProject().isEmpty()) {
                 ProjectDAO projectDAO = new ProjectDAO();
                 ProjectDTO project = projectDAO.searchProjectById(studentProject.getIdProject());

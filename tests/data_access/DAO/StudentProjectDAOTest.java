@@ -150,7 +150,7 @@ class StudentProjectDAOTest {
 
         StudentProjectDTO insertedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
         assertNotNull(insertedProject, "El proyecto de estudiante debería existir en la base de datos");
-        assertEquals(testStudentTuition, insertedProject.getTuiton(), "La matrícula debería coincidir");
+        assertEquals(testStudentTuition, insertedProject.getTuition(), "La matrícula debería coincidir");
     }
 
     @Test
@@ -159,7 +159,7 @@ class StudentProjectDAOTest {
 
         StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
         assertNotNull(retrievedProject, "Debería encontrar el proyecto de estudiante");
-        assertEquals(testStudentTuition, retrievedProject.getTuiton(), "La matrícula debería coincidir");
+        assertEquals(testStudentTuition, retrievedProject.getTuition(), "La matrícula debería coincidir");
     }
 
     @Test
@@ -188,7 +188,7 @@ class StudentProjectDAOTest {
 
         StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject(newProjectId);
         assertNotNull(retrievedProject, "El proyecto de estudiante debería existir después de actualizar");
-        assertEquals(testStudentTuition, retrievedProject.getTuiton(), "La matrícula debería seguir siendo la misma");
+        assertEquals(testStudentTuition, retrievedProject.getTuition(), "La matrícula debería seguir siendo la misma");
     }
 
     @Test
@@ -211,7 +211,7 @@ class StudentProjectDAOTest {
         assertNotNull(projects, "La lista no debería ser nula");
         assertFalse(projects.isEmpty(), "La lista no debería estar vacía");
         boolean found = projects.stream()
-                .anyMatch(p -> p.getIdProject().equals(String.valueOf(testProjectId)) && p.getTuiton().equals(testStudentTuition));
+                .anyMatch(p -> p.getIdProject().equals(String.valueOf(testProjectId)) && p.getTuition().equals(testStudentTuition));
         assertTrue(found, "El proyecto de estudiante de prueba debería estar en la lista");
     }
 
@@ -318,8 +318,8 @@ class StudentProjectDAOTest {
         List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
         assertNotNull(projects, "La lista no debe ser nula");
         assertTrue(projects.size() >= 2, "Debe haber al menos dos registros");
-        boolean found1 = projects.stream().anyMatch(p -> p.getTuiton().equals(testStudentTuition));
-        boolean found2 = projects.stream().anyMatch(p -> p.getTuiton().equals(tuition2));
+        boolean found1 = projects.stream().anyMatch(p -> p.getTuition().equals(testStudentTuition));
+        boolean found2 = projects.stream().anyMatch(p -> p.getTuition().equals(tuition2));
         assertTrue(found1 && found2, "Ambos proyectos deben estar en la lista");
     }
 }

@@ -146,7 +146,7 @@ class PartialEvaluationDAOTest {
         assertNotNull(result, "La evaluación parcial no debe ser nula");
         assertEquals("1", result.getIdEvaluation());
         assertEquals(90.0, result.getAverage());
-        assertEquals("S123", result.getTuiton());
+        assertEquals("S123", result.getTuition());
         assertEquals("1", result.getEvidence());
     }
 

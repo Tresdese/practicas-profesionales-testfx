@@ -1,7 +1,7 @@
 package logic.DTO;
 
 public class StudentDTO {
-    private String tuiton;
+    private String tuition;
     private int state;
     private String names;
     private String surnames;
@@ -14,7 +14,7 @@ public class StudentDTO {
     private double finalGrade; // Nuevo atributo
 
     public StudentDTO() {
-        this.tuiton = "";
+        this.tuition = "";
         this.state = 1;
         this.names = "";
         this.surnames = "";
@@ -27,8 +27,8 @@ public class StudentDTO {
         this.finalGrade = 0.0;
     }
 
-    public StudentDTO(String tuiton, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance, double finalGrade) {
-        this.tuiton = tuiton;
+    public StudentDTO(String tuition, int state, String names, String surnames, String phone, String email, String user, String password, String NRC, String creditAdvance, double finalGrade) {
+        this.tuition = tuition;
         this.state = state;
         this.names = names;
         this.surnames = surnames;
@@ -41,12 +41,12 @@ public class StudentDTO {
         this.finalGrade = finalGrade;
     }
 
-    public String getTuiton() {
-        return tuiton;
+    public String getTuition() {
+        return tuition;
     }
 
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
+    public void setTuition(String tuition) {
+        this.tuition = tuition;
     }
 
     public int getState() {
@@ -124,7 +124,7 @@ public class StudentDTO {
     @Override
     public String toString() {
         return "StudentDTO{" +
-                "tuiton='" + tuiton + '\'' +
+                "tuition='" + tuition + '\'' +
                 ", state=" + state +
                 ", names='" + names + '\'' +
                 ", surnames='" + surnames + '\'' +
@@ -144,7 +144,7 @@ public class StudentDTO {
         if (!(obj instanceof StudentDTO)) return false;
         StudentDTO that = (StudentDTO) obj;
         return state == that.state &&
-                tuiton.equals(that.tuiton) &&
+                tuition.equals(that.tuition) &&
                 names.equals(that.names) &&
                 surnames.equals(that.surnames) &&
                 phone.equals(that.phone) &&

@@ -185,7 +185,7 @@ class EvaluationPresentationDAOTest {
 
         EvaluationPresentationDTO found = evaluationDAO.searchEvaluationPresentationById(id);
         assertNotNull(found);
-        assertEquals(studentMatricula, found.getTuiton());
+        assertEquals(studentMatricula, found.getTuition());
     }
 
     @Test
@@ -260,7 +260,7 @@ class EvaluationPresentationDAOTest {
 
         List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuiton(studentMatricula);
         assertFalse(list.isEmpty());
-        assertEquals(studentMatricula, list.get(0).getTuiton());
+        assertEquals(studentMatricula, list.get(0).getTuition());
     }
 
     @Test

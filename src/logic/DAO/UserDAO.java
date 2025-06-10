@@ -12,7 +12,7 @@ import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.interfaces.IUserDAO;
 
-public class UserDAO implements IUserDAO { // TODO implementar la interfaz IUserDAO
+public class UserDAO implements IUserDAO {
 
     private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";

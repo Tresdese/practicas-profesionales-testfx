@@ -56,7 +56,7 @@ public class GUI_UpdateProfileController {
             StudentValidator.validateStudentData(email, phone);
 
             StudentDTO updatedStudent = new StudentDTO(
-                    currentStudent.getTuiton(),
+                    currentStudent.getTuition(),
                     currentStudent.getState(),
                     fieldNames.getText(),
                     fieldSurnames.getText(),

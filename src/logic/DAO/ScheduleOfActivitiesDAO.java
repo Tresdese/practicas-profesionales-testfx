@@ -22,7 +22,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
             statement.setString(1, schedule.getIdSchedule());
             statement.setString(2, schedule.getMilestone());
             statement.setTimestamp(3, schedule.getEstimatedDate());
-            statement.setString(4, schedule.getTuiton());
+            statement.setString(4, schedule.getTuition());
             statement.setString(5, schedule.getIdEvidence());
             return statement.executeUpdate() > 0;
         }
@@ -32,7 +32,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, schedule.getMilestone());
             statement.setTimestamp(2, schedule.getEstimatedDate());
-            statement.setString(3, schedule.getTuiton());
+            statement.setString(3, schedule.getTuition());
             statement.setString(4, schedule.getIdEvidence());
             statement.setString(5, schedule.getIdSchedule());
             return statement.executeUpdate() > 0;
@@ -87,6 +87,4 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         }
         return schedules;
     }
-
-    //TODO hacer metodo para verificar si existe un cronograma de actividades
 }

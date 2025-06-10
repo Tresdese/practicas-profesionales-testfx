@@ -37,7 +37,7 @@ public class AssignmentPDFGenerator {
             body.add(new Chunk("Licenciatura en Ingeniería de Software, hacemos de su conocimiento que el C. ", FONT_NORMAL));
             body.add(new Chunk((data.getStudentFirstName() + " " + data.getStudentLastName()).toUpperCase(), FONT_BOLD));
             body.add(new Chunk(", estudiante de la Licenciatura con matrícula ", FONT_NORMAL));
-            body.add(new Chunk(data.getStudentTuiton(), FONT_BOLD));
+            body.add(new Chunk(data.getStudentTuition(), FONT_BOLD));
             body.add(new Chunk(", ha sido asignado al\nproyecto de ", FONT_NORMAL));
             body.add(new Chunk(data.getProjectName().toUpperCase(), FONT_BOLD));
             body.add(new Chunk(", a su digno cargo a partir del ", FONT_NORMAL));

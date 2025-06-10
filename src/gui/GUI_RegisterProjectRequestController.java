@@ -73,7 +73,7 @@ public class GUI_RegisterProjectRequestController {
         if (org != null) {
             try {
                 RepresentativeDAO repDao = new RepresentativeDAO();
-                List<RepresentativeDTO> reps = repDao.getRepresentativesByOrganization(org.getIddOrganization());
+                List<RepresentativeDTO> reps = repDao.getRepresentativesByOrganization(org.getIdOrganization());
                 comboRepresentative.setItems(FXCollections.observableArrayList(reps));
             } catch (SQLException e) {
                 setStatus("Error cargando representantes.", true);
@@ -88,7 +88,7 @@ public class GUI_RegisterProjectRequestController {
             try {
                 ProjectDAO projectDao = new ProjectDAO();
                 List<ProjectDTO> projects = projectDao.getAllProjects();
-                int orgId = Integer.parseInt(org.getIddOrganization());
+                int orgId = Integer.parseInt(org.getIdOrganization());
                 projects.removeIf(p -> p.getIdOrganization() != orgId);
                 comboProject.setItems(FXCollections.observableArrayList(projects));
 
@@ -120,8 +120,8 @@ public class GUI_RegisterProjectRequestController {
 
             ProjectRequestDTO request = new ProjectRequestDTO(
                     0,
-                    student.getTuiton(),
-                    org.getIddOrganization(),
+                    student.getTuition(),
+                    org.getIdOrganization(),
                     rep.getIdRepresentative(),
                     project.getName(), // Corregido: se usa el nombre del proyecto
                     fieldDescription.getText(),

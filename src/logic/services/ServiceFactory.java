@@ -11,7 +11,6 @@ public class ServiceFactory {
     public static StudentService getStudentService() {
         if (studentService == null) {
             try {
-                Connection connection = new ConnectionDataBase().connectDB();
                 studentService = new StudentService();
             } catch (Exception e) {
                 throw new RuntimeException("Error al inicializar StudentService: " + e.getMessage(), e);

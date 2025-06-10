@@ -2,7 +2,6 @@ package gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -11,16 +10,12 @@ import javafx.scene.control.TextField;
 
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
-import logic.DTO.Role;
-import logic.DTO.UserDTO;
 import logic.exceptions.InvalidData;
 import logic.exceptions.RepeatedId;
 import logic.services.LinkedOrganizationService;
 import logic.services.RepresentativeService;
 import logic.services.ServiceConfig;
 import logic.exceptions.EmptyFields;
-import logic.utils.PasswordHasher;
-import logic.utils.StaffNumberValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +24,7 @@ import java.util.List;
 
 public class GUI_RegisterRepresentativeController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterLinkedOrganizationController.class);
+    private static final Logger logger = LogManager.getLogger(GUI_RegisterRepresentativeController.class);
 
     @FXML
     private Button buttonRegisterUser;
@@ -89,11 +84,11 @@ public class GUI_RegisterRepresentativeController {
             String organization = organizationBox.getValue();
 
             LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organization);
-            if (linkedOrganization == null || linkedOrganization.getIddOrganization() == null) {
+            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
                 throw new InvalidData("La organización seleccionada no es válida.");
             }
 
-            String organizationId = linkedOrganization.getIddOrganization();
+            String organizationId = linkedOrganization.getIdOrganization();
 
             RepresentativeDTO representative = new RepresentativeDTO("0", names, surname, email, organizationId);
 

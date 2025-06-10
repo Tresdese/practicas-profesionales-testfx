@@ -24,7 +24,7 @@ public class LinkedOrganizationService {
             throw new IllegalArgumentException("La organización no puede ser nula.");
         }
 
-        if (organizationDAO.isLinkedOrganizationRegistered(organization.getIddOrganization())) {
+        if (organizationDAO.isLinkedOrganizationRegistered(organization.getIdOrganization())) {
             throw new RepeatedId("El ID de la organización ya está registrado.");
         }
 

@@ -17,13 +17,13 @@ public class ProjectStudentViewDTO {
     private Integer NRC;
     private Integer creditProgress;
 
-    public ProjectStudentViewDTO(int projectId, String projectName, String description, Date estimatedDate, Date startDate, String tuiton, String firstName, String lastName, String phone, String email, String username, Integer NRC, Integer creditProgress) {
+    public ProjectStudentViewDTO(int projectId, String projectName, String description, Date estimatedDate, Date startDate, String tuition, String firstName, String lastName, String phone, String email, String username, Integer NRC, Integer creditProgress) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.description = description;
         this.estimatedDate = estimatedDate;
         this.startDate = startDate;
-        this.tuition = tuiton;
+        this.tuition = tuition;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -48,7 +48,7 @@ public class ProjectStudentViewDTO {
     public Date getStartDate() { return startDate; }
     public void setStartDate(Date startDate) { this.startDate = startDate; }
 
-    public String getEnrollment() { return tuition; }
+    public String getTuition() { return tuition; }
     public void setEnrollment(String tuiton) { this.tuition = tuiton; }
 
     public String getFirstName() { return firstName; }

@@ -132,7 +132,7 @@ public class GUI_ManageProjectController {
                 if (organization != null) {
                     organizationBox.setValue(organization.getName());
                 }
-            } //TOO
+            }
         } catch (SQLException e) {
             logger.error("Error al obtener la organización del proyecto: {}", e.getMessage(), e);
         }
@@ -182,10 +182,10 @@ public class GUI_ManageProjectController {
 
             if (organizationName != null && !organizationName.isEmpty()) {
                 LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organizationName);
-                if (linkedOrganization == null || linkedOrganization.getIddOrganization() == null) {
+                if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
                     throw new IllegalArgumentException("La organización seleccionada no es válida.");
                 }
-                project.setIdOrganization(Integer.parseInt(linkedOrganization.getIddOrganization()));
+                project.setIdOrganization(Integer.parseInt(linkedOrganization.getIdOrganization()));
             }
 
             if (academicFullName != null && !academicFullName.isEmpty()) {

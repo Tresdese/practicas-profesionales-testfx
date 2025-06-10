@@ -24,7 +24,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, evaluation.getIdEvaluation());
             statement.setDouble(2, evaluation.getAverage());
-            statement.setString(3, evaluation.getTuiton());
+            statement.setString(3, evaluation.getTuition());
             statement.setString(4, evaluation.getEvidence());
             return statement.executeUpdate() > 0;
         }
@@ -35,7 +35,7 @@ public class PartialEvaluationDAO implements IPartialEvaluationDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setDouble(1, evaluation.getAverage());
-            statement.setString(2, evaluation.getTuiton());
+            statement.setString(2, evaluation.getTuition());
             statement.setString(3, evaluation.getEvidence());
             statement.setString(4, evaluation.getIdEvaluation());
             return statement.executeUpdate() > 0;

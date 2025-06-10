@@ -2,16 +2,16 @@ package logic.DTO;
 
 public class StudentProjectDTO {
     private String idProject;
-    private String tuiton;
+    private String tuition;
 
     public StudentProjectDTO() {
         this.idProject = "";
-        this.tuiton = "";
+        this.tuition = "";
     }
 
-    public StudentProjectDTO(String idProject, String tuiton) {
+    public StudentProjectDTO(String idProject, String tuition) {
         this.idProject = idProject;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
     }
 
     public String getIdProject() {
@@ -22,19 +22,19 @@ public class StudentProjectDTO {
         this.idProject = idProject;
     }
 
-    public String getTuiton() {
-        return tuiton;
+    public String getTuition() {
+        return tuition;
     }
 
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
+    public void setTuition(String tuition) {
+        this.tuition = tuition;
     }
 
     @Override
     public String toString() {
         return "StudentProjectDTO{" +
                 "idProject='" + idProject + '\'' +
-                ", tuiton='" + tuiton + '\'' +
+                ", tuiton='" + tuition + '\'' +
                 '}';
     }
 
@@ -46,6 +46,6 @@ public class StudentProjectDTO {
         StudentProjectDTO that = (StudentProjectDTO) obj;
 
         if (!idProject.equals(that.idProject)) return false;
-        return tuiton.equals(that.tuiton);
+        return tuition.equals(that.tuition);
     }
 }

@@ -2,7 +2,7 @@ package logic.DTO;
 
 public class ProjectRequestDTO {
     private int requestId;
-    private String tuiton;
+    private String tuition;
     private String organizationId;
     private String representativeId;
     private String projectName; // Cambiado de projectId a projectName
@@ -23,7 +23,7 @@ public class ProjectRequestDTO {
 
     public ProjectRequestDTO() {
         this.requestId = 0;
-        this.tuiton = "";
+        this.tuition = "";
         this.organizationId = "";
         this.representativeId = "";
         this.projectName = "";
@@ -45,7 +45,7 @@ public class ProjectRequestDTO {
 
     public ProjectRequestDTO(
             int requestId,
-            String tuiton,
+            String tuition,
             String organizationId,
             String representativeId,
             String projectName, // Cambiado aquí
@@ -65,7 +65,7 @@ public class ProjectRequestDTO {
             String requestDate
     ) {
         this.requestId = requestId;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
         this.organizationId = organizationId;
         this.representativeId = representativeId;
         this.projectName = projectName;
@@ -89,8 +89,8 @@ public class ProjectRequestDTO {
     public int getRequestId() { return requestId; }
     public void setRequestId(int requestId) { this.requestId = requestId; }
 
-    public String getTuiton() { return tuiton; }
-    public void setTuiton(String tuiton) { this.tuiton = tuiton; }
+    public String getTuition() { return tuition; }
+    public void setTuition(String tuition) { this.tuition = tuition; }
 
     public String getOrganizationId() { return organizationId; }
     public void setOrganizationId(String organizationId) { this.organizationId = organizationId; }

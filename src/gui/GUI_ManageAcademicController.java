@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ResourceBundle;
 
 public class GUI_ManageAcademicController implements Initializable {
@@ -21,7 +20,7 @@ public class GUI_ManageAcademicController implements Initializable {
     private static final Logger logger = LogManager.getLogger(GUI_ManageAcademicController.class);
 
     @FXML
-    private TextField fieldNumberOffStaff, fieldNames, fieldSurnames, fieldUserName, fieldPassword;
+    private TextField fieldNumberOfStaff, fieldNames, fieldSurnames, fieldUserName, fieldPassword;
 
     @FXML
     private ChoiceBox<Role> roleBox;
@@ -44,7 +43,7 @@ public class GUI_ManageAcademicController implements Initializable {
 
         this.academic = academic;
 
-        fieldNumberOffStaff.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
+        fieldNumberOfStaff.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
         fieldNames.setText(academic.getNames() != null ? academic.getNames() : "");
         fieldSurnames.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
         fieldUserName.setText(academic.getUserName() != null ? academic.getUserName() : "");
@@ -61,7 +60,7 @@ public class GUI_ManageAcademicController implements Initializable {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String numberOffStaff = fieldNumberOffStaff.getText();
+            String numberOffStaff = fieldNumberOfStaff.getText();
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
             String userName = fieldUserName.getText();
@@ -90,7 +89,7 @@ public class GUI_ManageAcademicController implements Initializable {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNumberOffStaff.getText().isEmpty() &&
+        return !fieldNumberOfStaff.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
                 !fieldUserName.getText().isEmpty() &&

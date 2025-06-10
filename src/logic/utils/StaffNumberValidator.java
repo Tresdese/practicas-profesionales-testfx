@@ -6,7 +6,7 @@ public class StaffNumberValidator {
 
     public static void validate(String id) {
         if (!id.matches("^\\d{5}$")) {
-            throw new InvalidData("El número de personal debe tener exactamente 8 números.");
+            throw new InvalidData("El número de personal debe tener exactamente 5 números.");
         }
     }
 

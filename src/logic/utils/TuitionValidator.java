@@ -2,7 +2,7 @@ package logic.utils;
 
 import logic.exceptions.InvalidData;
 
-public class TuitonValidator {
+public class TuitionValidator {
 
     public static void validate(String tuiton) {
         if (!tuiton.matches("^S\\d{8}$")) {

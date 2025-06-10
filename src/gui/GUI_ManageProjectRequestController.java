@@ -20,7 +20,7 @@ public class GUI_ManageProjectRequestController {
     private static final Logger logger = LogManager.getLogger(GUI_ManageProjectRequestController.class);
 
     @FXML
-    private TextField fieldTuiton, fieldOrganizationId, fieldProjectId, fieldRepresentativeId;
+    private TextField fieldTuition, fieldOrganizationId, fieldProjectId, fieldRepresentativeId;
 
     @FXML
     private TextField fieldDuration, fieldScheduleDays, fieldDirectUsers, fieldIndirectUsers;
@@ -63,7 +63,7 @@ public class GUI_ManageProjectRequestController {
 
         this.projectRequest = projectRequest;
 
-        fieldTuiton.setText(projectRequest.getTuiton());
+        fieldTuition.setText(projectRequest.getTuition());
         fieldOrganizationId.setText(String.valueOf(projectRequest.getOrganizationId()));
         fieldProjectId.setText(projectRequest.getProjectName());
         fieldRepresentativeId.setText(String.valueOf(projectRequest.getRepresentativeId()));
@@ -83,7 +83,7 @@ public class GUI_ManageProjectRequestController {
                 throw new IllegalArgumentException("Todos los campos obligatorios deben estar llenos.");
             }
 
-            projectRequest.setTuiton(fieldTuiton.getText());
+            projectRequest.setTuition(fieldTuition.getText());
             projectRequest.setOrganizationId(fieldOrganizationId.getText());
             projectRequest.setProjectName(fieldProjectId.getText());
             projectRequest.setRepresentativeId(fieldRepresentativeId.getText());
@@ -131,7 +131,7 @@ public class GUI_ManageProjectRequestController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldTuiton.getText().isEmpty() &&
+        return !fieldTuition.getText().isEmpty() &&
                 !fieldOrganizationId.getText().isEmpty() &&
                 !fieldProjectId.getText().isEmpty() &&
                 !fieldRepresentativeId.getText().isEmpty() &&

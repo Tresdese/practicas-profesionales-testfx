@@ -6,22 +6,22 @@ public class ScheduleOfActivitiesDTO {
     private String idSchedule;
     private String milestone;
     private Timestamp estimatedDate;
-    private String tuiton;
+    private String tuition;
     private String idEvidence;
 
     public ScheduleOfActivitiesDTO() {
         this.idSchedule = "";
         this.milestone = "";
         this.estimatedDate = null;
-        this.tuiton = "";
+        this.tuition = "";
         this.idEvidence = "";
     }
 
-    public ScheduleOfActivitiesDTO(String idSchedule, String milestone, Timestamp estimatedDate, String tuiton, String idEvidence) {
+    public ScheduleOfActivitiesDTO(String idSchedule, String milestone, Timestamp estimatedDate, String tuition, String idEvidence) {
         this.idSchedule = idSchedule;
         this.milestone = milestone;
         this.estimatedDate = estimatedDate;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
         this.idEvidence = idEvidence;
     }
 
@@ -49,12 +49,12 @@ public class ScheduleOfActivitiesDTO {
         this.estimatedDate = estimatedDate;
     }
 
-    public String getTuiton() {
-        return tuiton;
+    public String getTuition() {
+        return tuition;
     }
 
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
+    public void setTuition(String tuition) {
+        this.tuition = tuition;
     }
 
     public String getIdEvidence() {
@@ -71,7 +71,7 @@ public class ScheduleOfActivitiesDTO {
                 "idSchedule='" + idSchedule + '\'' +
                 ", milestone='" + milestone + '\'' +
                 ", estimatedDate=" + estimatedDate +
-                ", tuiton='" + tuiton + '\'' +
+                ", tuition='" + tuition + '\'' +
                 ", idEvidence='" + idEvidence + '\'' +
                 '}';
     }
@@ -86,7 +86,7 @@ public class ScheduleOfActivitiesDTO {
         if (!idSchedule.equals(that.idSchedule)) return false;
         if (!milestone.equals(that.milestone)) return false;
         if (!estimatedDate.equals(that.estimatedDate)) return false;
-        if (!tuiton.equals(that.tuiton)) return false;
+        if (!tuition.equals(that.tuition)) return false;
         return idEvidence.equals(that.idEvidence);
     }
 }

@@ -7,7 +7,7 @@
    <children>
       <Label layoutX="220.0" layoutY="30.0" text="Detalle del Estudiante" style="-fx-font-size: 18px;"/>
       <Label layoutX="80.0" layoutY="90.0" text="Matrícula:"/>
-      <Label fx:id="labelTuiton" layoutX="200.0" layoutY="90.0" text=""/>
+      <Label fx:id="labelTuition" layoutX="200.0" layoutY="90.0" text=""/>
       <Label layoutX="80.0" layoutY="130.0" text="Nombres:"/>
       <Label fx:id="labelNames" layoutX="200.0" layoutY="130.0" text=""/>
       <Label layoutX="80.0" layoutY="170.0" text="Apellidos:"/>
