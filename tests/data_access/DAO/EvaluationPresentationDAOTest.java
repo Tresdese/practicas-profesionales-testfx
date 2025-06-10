@@ -89,7 +89,7 @@ class EvaluationPresentationDAOTest {
         // Period
         periodId = 20241;
         PeriodDTO period = new PeriodDTO(String.valueOf(periodId), "2024-1", new java.sql.Timestamp(System.currentTimeMillis()), new java.sql.Timestamp(System.currentTimeMillis() + 1000000));
-        periodDAO.insertPeriod(period, connection);
+        periodDAO.insertPeriod(period);
 
         // Group
         nrc = 12345;

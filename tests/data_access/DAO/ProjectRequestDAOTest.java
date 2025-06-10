@@ -98,7 +98,7 @@ class ProjectRequestDAOTest {
     private void createBaseData() throws SQLException {
         PeriodDTO period = new PeriodDTO(String.valueOf(TEST_PERIOD_ID), "Periodo Test",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
-        periodDAO.insertPeriod(period, connection);
+        periodDAO.insertPeriod(period);
 
         GroupDTO group = new GroupDTO(String.valueOf(TEST_NRC), "Grupo Test", null, String.valueOf(TEST_PERIOD_ID));
         groupDAO.insertGroup(group);
