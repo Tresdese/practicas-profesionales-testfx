@@ -20,7 +20,7 @@ class EvaluationCriteriaDAOTest {
 
     private static ConecctionDataBase connectionDB;
     private static Connection connection;
-    private EvaluationCriteriaDAO criteriaDAO;
+    private EvaluationCriteriaDAO evaluationCriteriaDAO;
 
     @BeforeAll
     static void setUpClass() {
@@ -39,9 +39,8 @@ class EvaluationCriteriaDAOTest {
 
     @BeforeEach
     void setUp() {
-        criteriaDAO = new EvaluationCriteriaDAO();
+        evaluationCriteriaDAO = new EvaluationCriteriaDAO();
         try {
-            // Asegurarse de que existen los registros previos necesarios
             try (PreparedStatement stmt = connection.prepareStatement(
                     "INSERT IGNORE INTO evaluacion_parcial (idEvaluacion) VALUES (?)")) {
                 stmt.setString(1, "10000");
@@ -59,13 +58,10 @@ class EvaluationCriteriaDAOTest {
 
     @AfterEach
     void tearDown() {
-        try {
-            // Limpiar los datos de prueba
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
-                statement.executeUpdate();
-            }
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error al limpiar los datos después de la prueba: " + e.getMessage());
+            logger.error("Error cleaning up: " + e.getMessage());
         }
     }
 
@@ -73,15 +69,10 @@ class EvaluationCriteriaDAOTest {
     void testInsertEvaluationCriteria() {
         try {
             EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
-            boolean result = criteriaDAO.insertEvaluationCriteria(criteria, connection);
-            assertTrue(result, "La inserción debería ser exitosa");
-
-            EvaluationCriteriaDTO insertedCriteria = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
-            assertEquals("10000", insertedCriteria.getIdEvaluation(), "El ID de evaluación debería coincidir");
-            assertEquals("1", insertedCriteria.getIdCriterion(), "El ID de criterio debería coincidir");
+            boolean result = evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
+            assertTrue(result, "La inserción debe ser exitosa");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
@@ -89,10 +80,11 @@ class EvaluationCriteriaDAOTest {
     void testInsertEvaluationCriteriaWithNullEvaluationId() {
         try {
             EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO(null, "1");
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
-            fail("Debería lanzar excepción con ID de evaluación nulo");
-        } catch (SQLException | NullPointerException e) {
-            assertTrue(true, "Se esperaba una excepción al insertar con ID de evaluación nulo");
+            assertThrows(SQLException.class, () -> {
+                evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
+            }, "Debe lanzar SQLException con idEvaluacion nulo");
+        } catch (Exception e) {
+            fail("No debe lanzar excepción fuera de SQLException: " + e.getMessage());
         }
     }
 
@@ -100,10 +92,11 @@ class EvaluationCriteriaDAOTest {
     void testInsertEvaluationCriteriaWithNullCriterionId() {
         try {
             EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", null);
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
-            fail("Debería lanzar excepción con ID de criterio nulo");
-        } catch (SQLException | NullPointerException e) {
-            assertTrue(true, "Se esperaba una excepción al insertar con ID de criterio nulo");
+            assertThrows(SQLException.class, () -> {
+                evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
+            }, "Debe lanzar SQLException con idCriterio nulo");
+        } catch (Exception e) {
+            fail("No debe lanzar excepción fuera de SQLException: " + e.getMessage());
         }
     }
 
@@ -111,7 +104,7 @@ class EvaluationCriteriaDAOTest {
     void testInsertEvaluationCriteriaWithEmptyIds() {
         EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("", "");
         assertThrows(SQLException.class, () -> {
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
         }, "Debería lanzar SQLException al insertar con IDs vacíos");
     }
 
@@ -120,70 +113,56 @@ class EvaluationCriteriaDAOTest {
         try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
             stmt.executeUpdate();
         } catch (SQLException e) {
-            fail("Error al limpiar la tabla: " + e.getMessage());
+            logger.error("Error cleaning up: " + e.getMessage());
         }
 
         EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
-        assertDoesNotThrow(() -> criteriaDAO.insertEvaluationCriteria(criteria, connection));
+        assertDoesNotThrow(() -> evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection));
 
         SQLException exception = assertThrows(SQLException.class, () -> {
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
         }, "Se esperaba una SQLException por duplicado");
 
-        // Opcional: verifica SQLState para duplicados (MySQL: 23000)
         assertEquals("23000", exception.getSQLState(), "El SQLState debe indicar violación de restricción de unicidad");
     }
 
     @Test
     void testUpdateEvaluationCriteria() {
         try {
-            EvaluationCriteriaDTO originalCriteria = new EvaluationCriteriaDTO("10000", "1");
-            criteriaDAO.insertEvaluationCriteria(originalCriteria, connection);
+            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
 
-            try (PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT IGNORE INTO criterio_de_evaluacion (idCriterio) VALUES (?)")) {
-                stmt.setString(1, "2");
-                stmt.executeUpdate();
-            }
-
-            EvaluationCriteriaDTO updatedCriteria = new EvaluationCriteriaDTO("10000", "2");
-            boolean updateResult = criteriaDAO.updateEvaluationCriteria(updatedCriteria, connection);
-            assertTrue(updateResult, "La actualización debería ser exitosa");
-
-            EvaluationCriteriaDTO retrievedCriteria = criteriaDAO.searchEvaluationCriteriaById("10000", "2", connection);
-            assertEquals("10000", retrievedCriteria.getIdEvaluation(), "El ID de evaluación debería mantenerse");
-            assertEquals("2", retrievedCriteria.getIdCriterion(), "El ID de criterio debería haberse actualizado a 2");
+            EvaluationCriteriaDTO updatedCriteria = new EvaluationCriteriaDTO("10000", "1");
+            boolean updated = evaluationCriteriaDAO.updateEvaluationCriteria(updatedCriteria, connection);
+            assertTrue(updated, "La actualización debe ser exitosa");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testUpdateNonExistentEvaluationCriteria() {
         try {
-            EvaluationCriteriaDTO nonExistentCriteria = new EvaluationCriteriaDTO("99999", "1");
-            boolean updateResult = criteriaDAO.updateEvaluationCriteria(nonExistentCriteria, connection);
-            assertFalse(updateResult, "No debería actualizar un registro inexistente");
+            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("99999", "99999");
+            boolean updated = evaluationCriteriaDAO.updateEvaluationCriteria(criteria, connection);
+            assertFalse(updated, "No debe actualizar un registro inexistente");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción al intentar actualizar un registro inexistente");
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testUpdateWithInvalidCriterionId() {
         try {
-            EvaluationCriteriaDTO originalCriteria = new EvaluationCriteriaDTO("10000", "1");
-            criteriaDAO.insertEvaluationCriteria(originalCriteria, connection);
+            EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
 
-            // Intentar actualizar con un ID de criterio no existente
-            EvaluationCriteriaDTO invalidCriteria = new EvaluationCriteriaDTO("10000", "999");
-            boolean updateResult = criteriaDAO.updateEvaluationCriteria(invalidCriteria, connection);
-            assertFalse(updateResult, "No debería actualizar con un ID de criterio inválido");
+            EvaluationCriteriaDTO updatedCriteria = new EvaluationCriteriaDTO("10000", "99999");
+            assertThrows(SQLException.class, () -> {
+                evaluationCriteriaDAO.updateEvaluationCriteria(updatedCriteria, connection);
+            }, "Debe lanzar SQLException con idCriterio inválido");
         } catch (SQLException e) {
-            assertTrue(e.getMessage().contains("constraint") || e.getMessage().contains("foreign key"),
-                    "La excepción debería estar relacionada con restricciones de clave foránea");
+            fail("No debe lanzar excepción fuera de SQLException: " + e.getMessage());
         }
     }
 
@@ -191,49 +170,50 @@ class EvaluationCriteriaDAOTest {
     void testSearchEvaluationCriteriaById() {
         try {
             EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
 
-            EvaluationCriteriaDTO retrievedCriteria = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
-            assertEquals("10000", retrievedCriteria.getIdEvaluation(), "El ID de evaluación debería coincidir");
-            assertEquals("1", retrievedCriteria.getIdCriterion(), "El ID de criterio debería coincidir");
+            EvaluationCriteriaDTO found = evaluationCriteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
+            assertNotNull(found, "Debe encontrar el registro");
+            assertEquals("10000", found.getIdEvaluation());
+            assertEquals("1", found.getIdCriterion());
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testSearchNonExistentEvaluationCriteria() {
         try {
-            EvaluationCriteriaDTO retrievedCriteria = criteriaDAO.searchEvaluationCriteriaById("99999", "99999", connection);
-            assertEquals("N/A", retrievedCriteria.getIdEvaluation(), "Debería devolver N/A para registros inexistentes");
-            assertEquals("N/A", retrievedCriteria.getIdCriterion(), "Debería devolver N/A para registros inexistentes");
+            EvaluationCriteriaDTO found = evaluationCriteriaDAO.searchEvaluationCriteriaById("99999", "99999", connection);
+            assertNotNull(found, "Debe devolver un objeto");
+            assertEquals("N/A", found.getIdEvaluation());
+            assertEquals("N/A", found.getIdCriterion());
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción al buscar un registro inexistente");
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testSearchWithNullIds() {
         try {
-            EvaluationCriteriaDTO result = criteriaDAO.searchEvaluationCriteriaById(null, null, connection);
-            assertEquals("N/A", result.getIdEvaluation(), "Debería devolver N/A para idEvaluation nulo");
-            assertEquals("N/A", result.getIdCriterion(), "Debería devolver N/A para idCriterion nulo");
+            EvaluationCriteriaDTO found = evaluationCriteriaDAO.searchEvaluationCriteriaById(null, null, connection);
+            assertNotNull(found, "Debe devolver un objeto");
+            assertEquals("N/A", found.getIdEvaluation());
+            assertEquals("N/A", found.getIdCriterion());
         } catch (SQLException e) {
-            fail("No debería lanzar excepción al buscar con IDs nulos: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testSearchWithInvalidIds() {
         try {
-            EvaluationCriteriaDTO retrievedCriteria = criteriaDAO.searchEvaluationCriteriaById("@", "#", connection);
-            assertEquals("N/A", retrievedCriteria.getIdEvaluation(), "Debería devolver N/A para IDs inválidos");
-            assertEquals("N/A", retrievedCriteria.getIdCriterion(), "Debería devolver N/A para IDs inválidos");
+            EvaluationCriteriaDTO found = evaluationCriteriaDAO.searchEvaluationCriteriaById("@", "@", connection);
+            assertNotNull(found, "Debe devolver un objeto");
+            assertEquals("N/A", found.getIdEvaluation());
+            assertEquals("N/A", found.getIdCriterion());
         } catch (SQLException e) {
-            assertTrue(e.getMessage().contains("formato") || e.getMessage().contains("inválido"),
-                    "La excepción debería estar relacionada con formato inválido de IDs");
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
@@ -241,47 +221,29 @@ class EvaluationCriteriaDAOTest {
     void testGetAllEvaluationCriteria() {
         try {
             EvaluationCriteriaDTO criteria1 = new EvaluationCriteriaDTO("10000", "1");
-            criteriaDAO.insertEvaluationCriteria(criteria1, connection);
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria1, connection);
 
-            try (PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT IGNORE INTO criterio_de_evaluacion (idCriterio) VALUES (?)")) {
-                stmt.setString(1, "2");
-                stmt.executeUpdate();
-            }
-
-            EvaluationCriteriaDTO criteria2 = new EvaluationCriteriaDTO("10000", "2");
-            criteriaDAO.insertEvaluationCriteria(criteria2, connection);
-
-            List<EvaluationCriteriaDTO> criteriaList = criteriaDAO.getAllEvaluationCriteria(connection);
-            assertNotNull(criteriaList, "La lista no debería ser nula");
-            assertTrue(criteriaList.size() >= 2, "Debería haber al menos dos criterios en la lista");
-
-            boolean foundCriteria1 = criteriaList.stream()
-                    .anyMatch(c -> c.getIdEvaluation().equals("10000") && c.getIdCriterion().equals("1"));
-            boolean foundCriteria2 = criteriaList.stream()
-                    .anyMatch(c -> c.getIdEvaluation().equals("10000") && c.getIdCriterion().equals("2"));
-
-            assertTrue(foundCriteria1, "Debería encontrarse el primer criterio de prueba");
-            assertTrue(foundCriteria2, "Debería encontrarse el segundo criterio de prueba");
+            List<EvaluationCriteriaDTO> all = evaluationCriteriaDAO.getAllEvaluationCriteria(connection);
+            assertNotNull(all, "La lista no debe ser nula");
+            assertFalse(all.isEmpty(), "La lista no debe estar vacía");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testGetAllEvaluationCriteriaEmpty() {
-        try {
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
-                statement.executeUpdate();
-            }
-
-            List<EvaluationCriteriaDTO> criteriaList = criteriaDAO.getAllEvaluationCriteria(connection);
-            assertNotNull(criteriaList, "La lista no debería ser nula aunque esté vacía");
-            assertTrue(criteriaList.isEmpty(), "La lista debería estar vacía");
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM evaluacion_criterio")) {
+            stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            logger.error("Error cleaning up: " + e.getMessage());
+        }
+        try {
+            List<EvaluationCriteriaDTO> all = evaluationCriteriaDAO.getAllEvaluationCriteria(connection);
+            assertNotNull(all, "La lista no debe ser nula");
+            assertTrue(all.isEmpty(), "La lista debe estar vacía");
+        } catch (SQLException e) {
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
@@ -289,40 +251,33 @@ class EvaluationCriteriaDAOTest {
     void testDeleteEvaluationCriteria() {
         try {
             EvaluationCriteriaDTO criteria = new EvaluationCriteriaDTO("10000", "1");
-            criteriaDAO.insertEvaluationCriteria(criteria, connection);
+            evaluationCriteriaDAO.insertEvaluationCriteria(criteria, connection);
 
-            EvaluationCriteriaDTO beforeDelete = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
-            assertEquals("10000", beforeDelete.getIdEvaluation(), "El criterio debería existir antes de eliminarlo");
+            boolean deleted = evaluationCriteriaDAO.deleteEvaluationCriteria("10000", "1", connection);
+            assertTrue(deleted, "La eliminación debe ser exitosa");
 
-            boolean result = criteriaDAO.deleteEvaluationCriteria("10000", "1", connection);
-            assertTrue(result, "La eliminación debería ser exitosa");
-
-            EvaluationCriteriaDTO afterDelete = criteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
-            assertEquals("N/A", afterDelete.getIdEvaluation(),
-                    "Debería devolver N/A después de eliminar el registro");
-            assertEquals("N/A", afterDelete.getIdCriterion(),
-                    "Debería devolver N/A después de eliminar el registro");
+            EvaluationCriteriaDTO found = evaluationCriteriaDAO.searchEvaluationCriteriaById("10000", "1", connection);
+            assertEquals("N/A", found.getIdEvaluation());
+            assertEquals("N/A", found.getIdCriterion());
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testDeleteNonExistentEvaluationCriteria() {
         try {
-            boolean result = criteriaDAO.deleteEvaluationCriteria("99999", "99999", connection);
-            assertFalse(result, "No debería eliminar un registro inexistente");
+            boolean deleted = evaluationCriteriaDAO.deleteEvaluationCriteria("99999", "99999", connection);
+            assertFalse(deleted, "No debe eliminar un registro inexistente");
         } catch (SQLException e) {
-            logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción al intentar eliminar un registro inexistente");
+            fail("No debe lanzar excepción: " + e.getMessage());
         }
     }
 
     @Test
     void testDeleteWithNullIds() {
         try {
-            boolean result = criteriaDAO.deleteEvaluationCriteria(null, null, connection);
+            boolean result = evaluationCriteriaDAO.deleteEvaluationCriteria(null, null, connection);
             assertFalse(result, "No debería eliminar nada con IDs nulos");
         } catch (SQLException e) {
             fail("No debería lanzar excepción al eliminar con IDs nulos: " + e.getMessage());

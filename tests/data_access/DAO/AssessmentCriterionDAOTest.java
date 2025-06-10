@@ -29,7 +29,7 @@ class AssessmentCriterionDAOTest {
         try {
             connection = connectionDB.connectDB();
         } catch (SQLException e) {
-            fail("Error al conectar a la base de datos: " + e.getMessage());
+            fail("Error connecting to the database: " + e.getMessage());
         }
     }
 
@@ -47,24 +47,24 @@ class AssessmentCriterionDAOTest {
     void testInsertAssessmentCriterion() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterion = String.valueOf(randomNumber);
-            String nombreCriterio = "Criterio de Prueba " + randomNumber;
+            String criterionId = String.valueOf(randomNumber);
+            String criterionName = "Criterio de Prueba " + randomNumber;
 
-            testCriterion = new AssessmentCriterionDTO(idCriterion, nombreCriterio);
+            testCriterion = new AssessmentCriterionDTO(criterionId, criterionName);
             boolean result = assessmentCriterionDAO.insertAssessmentCriterion(testCriterion);
-            assertTrue(result, "La inserción debería ser exitosa");
+            assertTrue(result, "Insertion should be successful");
 
             List<AssessmentCriterionDTO> criteria = assessmentCriterionDAO.getAllAssessmentCriteria();
             AssessmentCriterionDTO insertedCriterion = criteria.stream()
-                    .filter(c -> c.getIdCriterion().equals(idCriterion))
+                    .filter(c -> c.getIdCriterion().equals(criterionId))
                     .findFirst()
                     .orElse(null);
 
-            assertNotNull(insertedCriterion, "El criterio debería existir en la base de datos");
-            assertEquals(nombreCriterio, insertedCriterion.getNameCriterion(), "El nombre debería coincidir");
+            assertNotNull(insertedCriterion, "Criterion should exist in the database");
+            assertEquals(criterionName, insertedCriterion.getNameCriterion(), "Name should match");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
@@ -72,20 +72,20 @@ class AssessmentCriterionDAOTest {
     void testInsertAssessmentCriterionWithEmptyName() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterion = String.valueOf(100000 + randomNumber);
+            String criterionId = String.valueOf(100000 + randomNumber);
 
-            testCriterion = new AssessmentCriterionDTO(idCriterion, "");
+            testCriterion = new AssessmentCriterionDTO(criterionId, "");
             boolean result = assessmentCriterionDAO.insertAssessmentCriterion(testCriterion);
 
             if (result) {
-                AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterion);
-                assertEquals("", retrievedCriterion.getNameCriterion(), "El nombre vacío debería almacenarse");
+                AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
+                assertEquals("", retrievedCriterion.getNameCriterion(), "Empty name should be stored");
             } else {
-                assertFalse(result, "No debería permitir insertar con nombre vacío");
+                assertFalse(result, "Should not allow insert with empty name");
             }
         } catch (SQLException e) {
             assertTrue(e.getMessage().contains("constraint") || e.getMessage().contains("validation"),
-                    "La excepción debería estar relacionada con restricciones de validación");
+                    "Exception should be related to validation constraints");
         }
     }
 
@@ -93,14 +93,14 @@ class AssessmentCriterionDAOTest {
     void testInsertAssessmentCriterionWithNullName() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterion = String.valueOf(200000 + randomNumber);
+            String criterionId = String.valueOf(200000 + randomNumber);
 
-            testCriterion = new AssessmentCriterionDTO(idCriterion, null);
+            testCriterion = new AssessmentCriterionDTO(criterionId, null);
             boolean result = assessmentCriterionDAO.insertAssessmentCriterion(testCriterion);
-            assertFalse(result, "No debería permitir insertar con nombre nulo");
+            assertFalse(result, "Should not allow insert with null name");
         } catch (SQLException e) {
             assertTrue(e.getMessage().contains("null") || e.getMessage().contains("constraint"),
-                    "La excepción debería estar relacionada con valores nulos");
+                    "Exception should be related to null values");
         }
     }
 
@@ -108,35 +108,35 @@ class AssessmentCriterionDAOTest {
     void testSearchAssessmentCriterionById() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterio = String.valueOf(300000 + randomNumber);
-            String nombreCriterio = "Criterio para Consulta " + randomNumber;
+            String criterionId = String.valueOf(300000 + randomNumber);
+            String criterionName = "Criterio para Consulta " + randomNumber;
 
-            testCriterion = new AssessmentCriterionDTO(idCriterio, nombreCriterio);
+            testCriterion = new AssessmentCriterionDTO(criterionId, criterionName);
             boolean inserted = assessmentCriterionDAO.insertAssessmentCriterion(testCriterion);
-            assertTrue(inserted, "La inserción previa debería ser exitosa");
+            assertTrue(inserted, "Previous insertion should be successful");
 
-            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio);
-            assertNotNull(retrievedCriterion, "Debería encontrar el criterio");
-            assertEquals(idCriterio, retrievedCriterion.getIdCriterion(), "El ID debería coincidir");
-            assertEquals(nombreCriterio, retrievedCriterion.getNameCriterion(), "El nombre debería coincidir");
+            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
+            assertNotNull(retrievedCriterion, "Should find the criterion");
+            assertEquals(criterionId, retrievedCriterion.getIdCriterion(), "ID should match");
+            assertEquals(criterionName, retrievedCriterion.getNameCriterion(), "Name should match");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
     @Test
     void testSearchNonExistentCriterion() {
         try {
-            String idInexistente = "999999";
-            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idInexistente);
+            String nonExistentId = "999999";
+            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(nonExistentId);
 
-            assertNotNull(retrievedCriterion, "Siempre debería devolver un objeto");
-            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Debería devolver N/A como ID para criterios inexistentes");
-            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Debería devolver N/A como nombre para criterios inexistentes");
+            assertNotNull(retrievedCriterion, "Should always return an object");
+            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Should return N/A as ID for non-existent criteria");
+            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Should return N/A as name for non-existent criteria");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
@@ -144,11 +144,11 @@ class AssessmentCriterionDAOTest {
     void testSearchCriterionWithNullId() {
         try {
             AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(null);
-            assertNotNull(retrievedCriterion, "Siempre debería devolver un objeto");
-            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Debería devolver N/A como ID para criterios nulos");
-            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Debería devolver N/A como nombre para criterios nulos");
+            assertNotNull(retrievedCriterion, "Should always return an object");
+            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Should return N/A as ID for null criteria");
+            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Should return N/A as name for null criteria");
         } catch (SQLException e) {
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
@@ -156,39 +156,39 @@ class AssessmentCriterionDAOTest {
     void testUpdateAssessmentCriterion() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterio = String.valueOf(400000 + randomNumber);
-            String nombreOriginal = "Criterio Original " + randomNumber;
-            String nombreActualizado = "Criterio Actualizado " + randomNumber;
+            String criterionId = String.valueOf(400000 + randomNumber);
+            String originalName = "Criterio Original " + randomNumber;
+            String updatedName = "Criterio Actualizado " + randomNumber;
 
-            AssessmentCriterionDTO originalCriterion = new AssessmentCriterionDTO(idCriterio, nombreOriginal);
+            AssessmentCriterionDTO originalCriterion = new AssessmentCriterionDTO(criterionId, originalName);
             assessmentCriterionDAO.insertAssessmentCriterion(originalCriterion);
 
-            AssessmentCriterionDTO insertedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio);
-            assertEquals(nombreOriginal, insertedCriterion.getNameCriterion(), "El nombre original debe estar correcto");
+            AssessmentCriterionDTO insertedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
+            assertEquals(originalName, insertedCriterion.getNameCriterion(), "Original name should be correct");
 
-            AssessmentCriterionDTO updatedCriterion = new AssessmentCriterionDTO(idCriterio, nombreActualizado);
+            AssessmentCriterionDTO updatedCriterion = new AssessmentCriterionDTO(criterionId, updatedName);
             boolean updateResult = assessmentCriterionDAO.updateAssessmentCriterion(updatedCriterion);
-            assertTrue(updateResult, "La actualización debería ser exitosa");
+            assertTrue(updateResult, "Update should be successful");
 
-            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio);
-            assertNotNull(retrievedCriterion, "El criterio debería existir");
-            assertEquals(nombreActualizado, retrievedCriterion.getNameCriterion(), "El nombre debería actualizarse");
+            AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
+            assertNotNull(retrievedCriterion, "Criterion should exist");
+            assertEquals(updatedName, retrievedCriterion.getNameCriterion(), "Name should be updated");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
     @Test
     void testUpdateNonExistentCriterion() {
         try {
-            String idInexistente = "888888";
-            AssessmentCriterionDTO nonExistentCriterion = new AssessmentCriterionDTO(idInexistente, "Nombre Actualizado");
+            String nonExistentId = "888888";
+            AssessmentCriterionDTO nonExistentCriterion = new AssessmentCriterionDTO(nonExistentId, "Nombre Actualizado");
             boolean updateResult = assessmentCriterionDAO.updateAssessmentCriterion(nonExistentCriterion);
-            assertFalse(updateResult, "No debería actualizar un criterio inexistente");
+            assertFalse(updateResult, "Should not update a non-existent criterion");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción al intentar actualizar un criterio inexistente");
+            fail("Should not throw exception when trying to update a non-existent criterion");
         }
     }
 
@@ -196,23 +196,23 @@ class AssessmentCriterionDAOTest {
     void testGetAllAssessmentCriteria() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterio = String.valueOf(500000 + randomNumber);
-            String nombreCriterio = "Criterio para Listar " + randomNumber;
+            String criterionId = String.valueOf(500000 + randomNumber);
+            String criterionName = "Criterio para Listar " + randomNumber;
 
-            AssessmentCriterionDTO criterionToInsert = new AssessmentCriterionDTO(idCriterio, nombreCriterio);
+            AssessmentCriterionDTO criterionToInsert = new AssessmentCriterionDTO(criterionId, criterionName);
             boolean inserted = assessmentCriterionDAO.insertAssessmentCriterion(criterionToInsert);
-            assertTrue(inserted, "La inserción previa debería ser exitosa");
+            assertTrue(inserted, "Previous insertion should be successful");
 
             List<AssessmentCriterionDTO> criteria = assessmentCriterionDAO.getAllAssessmentCriteria();
-            assertNotNull(criteria, "La lista no debería ser nula");
-            assertFalse(criteria.isEmpty(), "La lista no debería estar vacía");
+            assertNotNull(criteria, "List should not be null");
+            assertFalse(criteria.isEmpty(), "List should not be empty");
 
             boolean found = criteria.stream()
-                    .anyMatch(c -> c.getIdCriterion().equals(idCriterio) && c.getNameCriterion().equals(nombreCriterio));
-            assertTrue(found, "Nuestro criterio de prueba debería estar en la lista");
+                    .anyMatch(c -> c.getIdCriterion().equals(criterionId) && c.getNameCriterion().equals(criterionName));
+            assertTrue(found, "Our test criterion should be in the list");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
@@ -220,39 +220,39 @@ class AssessmentCriterionDAOTest {
     void testDeleteAssessmentCriterion() {
         try {
             int randomNumber = (int) (Math.random() * 1000);
-            String idCriterio = String.valueOf(600000 + randomNumber);
-            String nombreCriterio = "Criterio para Eliminar " + randomNumber;
+            String criterionId = String.valueOf(600000 + randomNumber);
+            String criterionName = "Criterio para Eliminar " + randomNumber;
 
-            AssessmentCriterionDTO criterionToDelete = new AssessmentCriterionDTO(idCriterio, nombreCriterio);
+            AssessmentCriterionDTO criterionToDelete = new AssessmentCriterionDTO(criterionId, criterionName);
             boolean inserted = assessmentCriterionDAO.insertAssessmentCriterion(criterionToDelete);
-            assertTrue(inserted, "La inserción previa debería ser exitosa");
+            assertTrue(inserted, "Previous insertion should be successful");
 
-            AssessmentCriterionDTO before = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio);
-            assertEquals(nombreCriterio, before.getNameCriterion(), "El criterio debería existir antes de eliminarlo");
+            AssessmentCriterionDTO before = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
+            assertEquals(criterionName, before.getNameCriterion(), "Criterion should exist before deleting");
 
-            boolean deleted = assessmentCriterionDAO.deleteAssessmentCriterion(idCriterio);
-            assertTrue(deleted, "La eliminación debería ser exitosa");
+            boolean deleted = assessmentCriterionDAO.deleteAssessmentCriterion(criterionId);
+            assertTrue(deleted, "Deletion should be successful");
 
-            AssessmentCriterionDTO after = assessmentCriterionDAO.searchAssessmentCriterionById(idCriterio);
+            AssessmentCriterionDTO after = assessmentCriterionDAO.searchAssessmentCriterionById(criterionId);
             assertEquals("N/A", after.getIdCriterion(),
-                    "Después de eliminar, debería devolver N/A como ID para criterios inexistentes");
+                    "After deleting, should return N/A as ID for non-existent criteria");
             assertEquals("N/A", after.getNameCriterion(),
-                    "Después de eliminar, debería devolver N/A como nombre para criterios inexistentes");
+                    "After deleting, should return N/A as name for non-existent criteria");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción: " + e.getMessage());
+            fail("Should not throw exception: " + e.getMessage());
         }
     }
 
     @Test
     void testDeleteNonExistentCriterion() {
         try {
-            String idInexistente = "777777";
-            boolean deleted = assessmentCriterionDAO.deleteAssessmentCriterion(idInexistente);
-            assertFalse(deleted, "No debería eliminar un criterio inexistente");
+            String nonExistentId = "777777";
+            boolean deleted = assessmentCriterionDAO.deleteAssessmentCriterion(nonExistentId);
+            assertFalse(deleted, "Should not delete a non-existent criterion");
         } catch (SQLException e) {
             logger.error("Error: " + e.getMessage());
-            fail("No debería lanzar excepción al intentar eliminar un criterio inexistente");
+            fail("Should not throw exception when trying to delete a non-existent criterion");
         }
     }
 
@@ -260,11 +260,11 @@ class AssessmentCriterionDAOTest {
     void testGetInvalidIdCriterion() {
         try {
             AssessmentCriterionDTO retrievedCriterion = assessmentCriterionDAO.searchAssessmentCriterionById("@");
-            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Debería devolver N/A para ID inválido");
-            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Debería devolver N/A para ID inválido");
+            assertEquals("N/A", retrievedCriterion.getIdCriterion(), "Should return N/A for invalid ID");
+            assertEquals("N/A", retrievedCriterion.getNameCriterion(), "Should return N/A for invalid ID");
         } catch (SQLException e) {
             assertTrue(e.getMessage().contains("formato") || e.getMessage().contains("inválido") ||
-                    e.getMessage().contains("number"), "Debería lanzar excepción por formato inválido");
+                    e.getMessage().contains("number"), "Should throw exception for invalid format");
         }
     }
 }

@@ -31,6 +31,9 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     }
 
     public boolean updateStudentProject(StudentProjectDTO studentProject) throws SQLException {
+        if (studentProject.getIdProject() == null) {
+            throw new SQLException("idProyecto no puede ser nulo");
+        }
         try (ConecctionDataBase connectionDataBase = new ConecctionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PROJECT)) {

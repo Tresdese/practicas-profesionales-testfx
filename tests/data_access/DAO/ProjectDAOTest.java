@@ -16,30 +16,30 @@ class ProjectDAOTest {
     private ConecctionDataBase connectionDB;
     private Connection connection;
     private UserDAO userDAO;
-    private LinkedOrganizationDAO organizationDAO;
+    private LinkedOrganizationDAO linkedOrganizationDAO;
     private ProjectDAO projectDAO;
 
-    private int userId;
-    private int organizationId;
+    private int testUserId;
+    private int testOrganizationId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
-        organizationDAO = new LinkedOrganizationDAO();
+        linkedOrganizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
 
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
     }
 
     @BeforeEach
     void setUp() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
-        crearUsuarioYOrganizacionBase();
+        clearTablesAndResetAutoIncrement();
+        createBaseUserAndOrganization();
     }
 
-    private void limpiarTablasYResetearAutoIncrement() throws SQLException {
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute("SET FOREIGN_KEY_CHECKS=0");
         stmt.execute("TRUNCATE TABLE proyecto");
@@ -52,15 +52,15 @@ class ProjectDAOTest {
         stmt.close();
     }
 
-    private void crearUsuarioYOrganizacionBase() throws SQLException {
-        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
-        organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
+    private void createBaseUserAndOrganization() throws SQLException {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+        testOrganizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
 
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
-        userId = insertarUsuarioYObtenerId(user);
+        testUserId = insertUserAndGetId(user);
     }
 
-    private int insertarUsuarioYObtenerId(UserDTO user) throws SQLException {
+    private int insertUserAndGetId(UserDTO user) throws SQLException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getStaffNumber());
@@ -91,42 +91,42 @@ class ProjectDAOTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        limpiarTablasYResetearAutoIncrement();
+        clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void testInsertProject() throws Exception {
+    void insertProjectSuccessfully() throws Exception {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Test",
                 "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId),
-                organizationId
+                String.valueOf(testUserId),
+                testOrganizationId
         );
         boolean inserted = projectDAO.insertProject(project);
         assertTrue(inserted, "El proyecto debe insertarse correctamente");
     }
 
     @Test
-    void testGetAllProjects() throws Exception {
-        testInsertProject();
+    void getAllProjectsSuccessfully() throws Exception {
+        insertProjectSuccessfully();
         List<ProjectDTO> projects = projectDAO.getAllProjects();
         assertNotNull(projects);
         assertFalse(projects.isEmpty());
     }
 
     @Test
-    void testSearchProjectById() throws Exception {
+    void searchProjectByIdSuccessfully() throws Exception {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Buscar",
                 "Descripción Buscar",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId),
-                organizationId
+                String.valueOf(testUserId),
+                testOrganizationId
         );
         projectDAO.insertProject(project);
 
@@ -140,15 +140,15 @@ class ProjectDAOTest {
     }
 
     @Test
-    void testUpdateProject() throws Exception {
+    void updateProjectSuccessfully() throws Exception {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Actualizar",
                 "Descripción Original",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId),
-                organizationId
+                String.valueOf(testUserId),
+                testOrganizationId
         );
         projectDAO.insertProject(project);
 
@@ -166,15 +166,15 @@ class ProjectDAOTest {
     }
 
     @Test
-    void testDeleteProject() throws Exception {
+    void deleteProjectSuccessfully() throws Exception {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Eliminar",
                 "Descripción Eliminar",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId),
-                organizationId
+                String.valueOf(testUserId),
+                testOrganizationId
         );
         projectDAO.insertProject(project);
 
@@ -186,5 +186,79 @@ class ProjectDAOTest {
 
         ProjectDTO deletedProject = projectDAO.searchProjectById(toDelete.getIdProject());
         assertEquals("-1", deletedProject.getIdProject());
+    }
+
+    @Test
+    void insertProjectWithNullData() {
+        ProjectDTO project = new ProjectDTO(null, null, null, null, null, null, 0);
+        assertThrows(SQLException.class, () -> projectDAO.insertProject(project),
+                "No debe permitir insertar proyecto con datos nulos");
+    }
+
+    @Test
+    void updateNonExistentProject() throws Exception {
+        ProjectDTO project = new ProjectDTO("9999", "No existe", "Desc", new Timestamp(System.currentTimeMillis()),
+                new Timestamp(System.currentTimeMillis()), String.valueOf(testUserId), testOrganizationId);
+        boolean updated = projectDAO.updateProject(project);
+        assertFalse(updated, "No debe actualizar un proyecto inexistente");
+    }
+
+    @Test
+    void deleteNonExistentProject() throws Exception {
+        boolean deleted = projectDAO.deleteProject("9999");
+        assertFalse(deleted, "No debe eliminar un proyecto inexistente");
+    }
+
+    @Test
+    void insertDuplicateProjectName() throws Exception {
+        ProjectDTO project1 = new ProjectDTO(null, "Proyecto Duplicado", "Desc1",
+                new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
+                String.valueOf(testUserId), testOrganizationId);
+        ProjectDTO project2 = new ProjectDTO(null, "Proyecto Duplicado", "Desc2",
+                new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
+                String.valueOf(testUserId), testOrganizationId);
+
+        boolean inserted1 = projectDAO.insertProject(project1);
+        boolean inserted2 = projectDAO.insertProject(project2);
+
+        assertTrue(inserted1, "Debe permitir insertar el primer proyecto");
+        assertTrue(inserted2, "Debe permitir insertar duplicados si la base de datos lo permite");
+    }
+
+    @Test
+    void getAllProjectsWhenTableIsEmpty() throws Exception {
+        clearTablesAndResetAutoIncrement();
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        assertNotNull(projects);
+        assertTrue(projects.isEmpty(), "La lista debe estar vacía si no hay proyectos");
+    }
+
+    @Test
+    void insertAndRetrieveMultipleProjects() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            ProjectDTO project = new ProjectDTO(null, "Proyecto" + i, "Desc" + i,
+                    new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
+                    String.valueOf(testUserId), testOrganizationId);
+            projectDAO.insertProject(project);
+        }
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        assertTrue(projects.size() >= 3, "Debe haber al menos tres proyectos");
+    }
+
+    @Test
+    void updateProjectWithNullData() throws Exception {
+        ProjectDTO project = new ProjectDTO(null, "Proyecto Null", "Desc",
+                new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
+                String.valueOf(testUserId), testOrganizationId);
+        projectDAO.insertProject(project);
+        List<ProjectDTO> projects = projectDAO.getAllProjects();
+        ProjectDTO toUpdate = projects.get(0);
+
+        toUpdate.setName(null);
+        toUpdate.setDescription(null);
+        toUpdate.setIdUser(null);
+
+        assertThrows(SQLException.class, () -> projectDAO.updateProject(toUpdate),
+                "No debe permitir actualizar proyecto con datos nulos");
     }
 }
