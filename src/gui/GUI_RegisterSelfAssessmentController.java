@@ -16,7 +16,7 @@ import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.DTO.EvidenceDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
-import data_access.ConnectionDataBase;
+
 import java.security.GeneralSecurityException;
 
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
@@ -25,7 +25,6 @@ import static logic.drive.GoogleDriveUploader.uploadFile;
 import java.util.Date;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -236,7 +235,7 @@ public class GUI_RegisterSelfAssessmentController {
             String parentId = null;
             parentId = createOrGetFolder(idPeriod, parentId);
             parentId = createOrGetFolder(student.getNRC(), parentId);
-            parentId = createOrGetFolder(student.getTuiton(), parentId);
+            parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Autoevaluacion", parentId);
             return parentId;
         } catch (IOException | GeneralSecurityException e) {
@@ -280,7 +279,7 @@ public class GUI_RegisterSelfAssessmentController {
                     0,
                     "",
                     averageGrade,
-                    student != null ? student.getTuiton() : "",
+                    student != null ? student.getTuition() : "",
                     Integer.parseInt(selectedProject.getIdProject()),
                     evidenceId,
                     new Date(),

@@ -10,11 +10,11 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnTuiton" prefWidth="120.0" text="Matricula" />
+                        <TableColumn fx:id="columnTuition" prefWidth="120.0" text="Matricula" />
                         <TableColumn fx:id="columnNames" prefWidth="150.0" text="Nombres" />
                         <TableColumn fx:id="columnSurnames" prefWidth="150.0" text="Apellidos" />
                         <TableColumn fx:id="columnEmail" prefWidth="150.0" text="Correo" />
-                        <TableColumn fx:id="columnnNRC" prefWidth="100.0" text="NRC" />
+                        <TableColumn fx:id="columnNRC" prefWidth="100.0" text="NRC" />
                         <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
                         <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
                     </columns>

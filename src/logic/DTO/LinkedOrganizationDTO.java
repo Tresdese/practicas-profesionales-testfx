@@ -1,28 +1,28 @@
 package logic.DTO;
 
 public class LinkedOrganizationDTO {
-    private String iddOrganization;
+    private String idOrganization;
     private String name;
     private String address;
 
     public LinkedOrganizationDTO() {
-        this.iddOrganization = "";
+        this.idOrganization = "";
         this.name = "";
         this.address = "";
     }
 
-    public LinkedOrganizationDTO(String iddOrganization, String name, String address) {
-        this.iddOrganization = iddOrganization;
+    public LinkedOrganizationDTO(String idOrganization, String name, String address) {
+        this.idOrganization = idOrganization;
         this.name = name;
         this.address = address;
     }
 
-    public String getIddOrganization() {
-        return iddOrganization;
+    public String getIdOrganization() {
+        return idOrganization;
     }
 
-    public void setIddOrganization(String iddOrganization) {
-        this.iddOrganization = iddOrganization;
+    public void setIdOrganization(String idOrganization) {
+        this.idOrganization = idOrganization;
     }
 
     public String getName() {
@@ -53,7 +53,7 @@ public class LinkedOrganizationDTO {
 
         LinkedOrganizationDTO that = (LinkedOrganizationDTO) obj;
 
-        if (!iddOrganization.equals(that.iddOrganization)) return false;
+        if (!idOrganization.equals(that.idOrganization)) return false;
         if (!name.equals(that.name)) return false;
         return address.equals(that.address);
     }

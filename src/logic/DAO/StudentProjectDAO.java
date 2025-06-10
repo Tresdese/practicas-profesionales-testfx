@@ -17,7 +17,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
     private final static String SQL_UPDATE_PROJECT = "UPDATE proyecto_estudiante SET idProyecto = ? WHERE matricula = ?";
     private final static String SQL_DELETE = "DELETE FROM proyecto_estudiante WHERE idProyecto = ?";
     private final static String SQL_SELECT = "SELECT * FROM proyecto_estudiante WHERE idProyecto = ?";
-    private final static String SQL_SELECT_PROJECT_BY_TUITON = "SELECT * FROM proyecto_estudiante WHERE matricula = ?";
+    private final static String SQL_SELECT_PROJECT_BY_TUITION = "SELECT * FROM proyecto_estudiante WHERE matricula = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM proyecto_estudiante";
 
     public boolean insertStudentProject(StudentProjectDTO studentProject) throws SQLException {
@@ -25,7 +25,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, studentProject.getIdProject());
-            statement.setString(2, studentProject.getTuiton());
+            statement.setString(2, studentProject.getTuition());
             return statement.executeUpdate() > 0;
         }
     }
@@ -38,7 +38,7 @@ public class StudentProjectDAO implements IStudentProjectDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PROJECT)) {
             statement.setString(1, studentProject.getIdProject());
-            statement.setString(2, studentProject.getTuiton());
+            statement.setString(2, studentProject.getTuition());
             return statement.executeUpdate() > 0;
         }
     }
@@ -71,7 +71,7 @@ public StudentProjectDTO searchStudentProjectByIdTuiton(String tuiton) throws SQ
         StudentProjectDTO studentProject = new StudentProjectDTO("N/A", "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITON)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITION)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {

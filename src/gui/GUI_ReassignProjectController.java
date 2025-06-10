@@ -47,7 +47,7 @@ public class GUI_ReassignProjectController {
         }
         try {
             StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-            StudentProjectDTO studentProjectDTO = new StudentProjectDTO(selectedProject.getIdProject(), student.getTuiton());
+            StudentProjectDTO studentProjectDTO = new StudentProjectDTO(selectedProject.getIdProject(), student.getTuition());
             studentProjectDAO.updateStudentProject(studentProjectDTO);
             statusLabel.setText("Proyecto reasignado correctamente.");
             closeWindow();

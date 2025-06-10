@@ -3,20 +3,20 @@ package logic.DTO;
 public class PartialEvaluationDTO {
     private String idEvaluation;
     private double average;
-    private String tuiton;
+    private String tuition;
     private String evidence;
 
     public PartialEvaluationDTO() {
         this.idEvaluation = "";
         this.average = 0;
-        this.tuiton = "";
+        this.tuition = "";
         this.evidence = "";
     }
 
-    public PartialEvaluationDTO(String idEvaluation, double average, String tuiton, String evidence) {
+    public PartialEvaluationDTO(String idEvaluation, double average, String tuition, String evidence) {
         this.idEvaluation = idEvaluation;
         this.average = average;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
         this.evidence = evidence;
     }
 
@@ -36,12 +36,12 @@ public class PartialEvaluationDTO {
         this.average = average;
     }
 
-    public String getTuiton() {
-        return tuiton;
+    public String getTuition() {
+        return tuition;
     }
 
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
+    public void setTuition(String tuition) {
+        this.tuition = tuition;
     }
 
     public String getEvidence() {
@@ -57,7 +57,7 @@ public class PartialEvaluationDTO {
         return "PartialEvaluationDTO{" +
                 "idEvaluation='" + idEvaluation + '\'' +
                 ", average=" + average +
-                ", tuiton='" + tuiton + '\'' +
+                ", tuiton='" + tuition + '\'' +
                 ", evidence='" + evidence + '\'' +
                 '}';
     }
@@ -71,7 +71,7 @@ public class PartialEvaluationDTO {
 
         if (Double.compare(that.average, average) != 0) return false;
         if (!idEvaluation.equals(that.idEvaluation)) return false;
-        if (!tuiton.equals(that.tuiton)) return false;
+        if (!tuition.equals(that.tuition)) return false;
         return evidence.equals(that.evidence);
     }
 }

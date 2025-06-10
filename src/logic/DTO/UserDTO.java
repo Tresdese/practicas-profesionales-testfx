@@ -5,7 +5,7 @@ public class UserDTO {
     private int state;
     private String staffNumber;
     private String names;
-    private String surname;
+    private String surnames;
     private String userName;
     private String password;
     private Role role;
@@ -15,18 +15,18 @@ public class UserDTO {
         this.state = 1;
         this.staffNumber = "";
         this.names = "";
-        this.surname = "";
+        this.surnames = "";
         this.userName = "";
         this.password = "";
         this.role = null;
     }
 
-    public UserDTO(String idUser, String staffNumber, String names, String surname, String userName, String password, Role role) {
+    public UserDTO(String idUser, String staffNumber, String names, String surnames, String userName, String password, Role role) {
         this.idUser = idUser;
         this.state = 1;
         this.staffNumber = staffNumber;
         this.names = names;
-        this.surname = surname;
+        this.surnames = surnames;
         this.userName = userName;
         this.password = password;
         this.role = role;
@@ -65,11 +65,11 @@ public class UserDTO {
     }
 
     public String getSurnames() {
-        return surname;
+        return surnames;
     }
 
     public void setSurnames(String surname) {
-        this.surname = surname;
+        this.surnames = surname;
     }
 
     public String getUserName() {
@@ -120,7 +120,7 @@ public class UserDTO {
                 ", state=" + state +
                 ", numberOffStaff='" + staffNumber + '\'' +
                 ", names='" + names + '\'' +
-                ", surname='" + surname + '\'' +
+                ", surname='" + surnames + '\'' +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
@@ -138,7 +138,7 @@ public class UserDTO {
         if (!idUser.equals(userDTO.idUser)) return false;
         if (!staffNumber.equals(userDTO.staffNumber)) return false;
         if (!names.equals(userDTO.names)) return false;
-        if (!surname.equals(userDTO.surname)) return false;
+        if (!surnames.equals(userDTO.surnames)) return false;
         if (!userName.equals(userDTO.userName)) return false;
         if (!password.equals(userDTO.password)) return false;
         return role != null ? role.equals(userDTO.role) : userDTO.role == null;

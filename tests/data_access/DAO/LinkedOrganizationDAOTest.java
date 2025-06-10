@@ -75,7 +75,7 @@ class LinkedOrganizationDAOTest {
         String generatedId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization);
         LinkedOrganizationDTO result = linkedOrganizationDAO.searchLinkedOrganizationById(generatedId);
         assertNotNull(result, "La organización no debería ser nula");
-        assertEquals(generatedId, result.getIddOrganization());
+        assertEquals(generatedId, result.getIdOrganization());
         assertEquals("Org A", result.getName());
         assertEquals("Address A", result.getAddress());
     }
@@ -84,7 +84,7 @@ class LinkedOrganizationDAOTest {
     void searchLinkedOrganizationByIdWhenNotExists() throws SQLException {
         LinkedOrganizationDTO result = linkedOrganizationDAO.searchLinkedOrganizationById("999");
         assertNotNull(result, "La organización no debería ser nula");
-        assertEquals("N/A", result.getIddOrganization());
+        assertEquals("N/A", result.getIdOrganization());
         assertEquals("N/A", result.getName());
         assertEquals("N/A", result.getAddress());
     }

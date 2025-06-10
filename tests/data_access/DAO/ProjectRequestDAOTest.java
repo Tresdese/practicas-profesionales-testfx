@@ -183,7 +183,7 @@ class ProjectRequestDAOTest {
         assertFalse(requests.isEmpty(), "Debe haber al menos una solicitud de proyecto");
 
         ProjectRequestDTO insertedRequest = requests.get(0);
-        assertEquals(studentTuiton, insertedRequest.getTuiton());
+        assertEquals(studentTuiton, insertedRequest.getTuition());
         assertEquals(projectName, insertedRequest.getProjectName());
         assertEquals("Descripción de la solicitud de proyecto", insertedRequest.getDescription());
         assertEquals("Objetivo general de la solicitud", insertedRequest.getGeneralObjective());
@@ -245,7 +245,7 @@ class ProjectRequestDAOTest {
         ProjectRequestDTO found = projectRequestDAO.searchProjectRequestById(id);
         assertNotNull(found);
         assertEquals(id, found.getRequestId());
-        assertEquals(studentTuiton, found.getTuiton());
+        assertEquals(studentTuiton, found.getTuition());
     }
 
     @Test
@@ -303,7 +303,7 @@ class ProjectRequestDAOTest {
         List<ProjectRequestDTO> requests = projectRequestDAO.getProjectRequestsByTuiton(studentTuiton);
         assertEquals(2, requests.size());
         for (ProjectRequestDTO req : requests) {
-            assertEquals(studentTuiton, req.getTuiton());
+            assertEquals(studentTuiton, req.getTuition());
         }
     }
 

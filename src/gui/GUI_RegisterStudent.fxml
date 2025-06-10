@@ -12,7 +12,7 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TextField fx:id="fieldTuiton" layoutX="167.0" layoutY="60.0" promptText="Ejem: S23014069" />
+      <TextField fx:id="fieldTuition" layoutX="167.0" layoutY="60.0" promptText="Ejem: S23014069" />
       <TextField fx:id="fieldNames" layoutX="167.0" layoutY="100.0" />
       <TextField fx:id="fieldSurnames" layoutX="167.0" layoutY="140.0" />
       <TextField fx:id="fieldPhone" layoutX="167.0" layoutY="180.0" />

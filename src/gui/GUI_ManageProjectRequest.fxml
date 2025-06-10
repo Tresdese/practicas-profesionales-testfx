@@ -17,7 +17,7 @@
         </Label>
 
         <Label layoutX="69.0" layoutY="70.0" text="Matrícula:" />
-        <TextField fx:id="fieldTuiton" layoutX="220.0" layoutY="66.0" prefWidth="200.0" />
+        <TextField fx:id="fieldTuition" layoutX="220.0" layoutY="66.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="100.0" text="ID Organización:" />
         <TextField fx:id="fieldOrganizationId" layoutX="220.0" layoutY="96.0" prefWidth="200.0" />

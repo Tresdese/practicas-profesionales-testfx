@@ -46,7 +46,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
-            statement.setString(3, organization.getIddOrganization());
+            statement.setString(3, organization.getIdOrganization());
             return statement.executeUpdate() > 0;
         }
     }

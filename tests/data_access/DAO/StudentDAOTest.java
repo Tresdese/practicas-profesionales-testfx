@@ -77,7 +77,7 @@ class StudentDAOTest {
             boolean result = studentDAO.insertStudent(student);
             assertTrue(result, "La inserción debería ser exitosa");
 
-            StudentDTO insertedStudent = studentDAO.searchStudentByTuiton("S12345442");
+            StudentDTO insertedStudent = studentDAO.searchStudentByTuition("S12345442");
             assertNotNull(insertedStudent, "El estudiante debería existir en la base de datos");
             assertEquals("Juan", insertedStudent.getNames(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -86,11 +86,11 @@ class StudentDAOTest {
     }
 
     @Test
-    void testSearchStudentByTuiton() {
+    void testSearchStudentByTuition() {
         try {
             insertTestStudent("S54321768", 1, "Juana", "Lopez", "0987654321", "juana.lopez@example.com", "juanalopez", "password123", String.valueOf(TEST_NRC), "75");
 
-            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton("S54321768");
+            StudentDTO retrievedStudent = studentDAO.searchStudentByTuition("S54321768");
             assertNotNull(retrievedStudent, "Debería encontrar el estudiante");
             assertEquals("Juana", retrievedStudent.getNames(), "El nombre debería coincidir");
         } catch (SQLException e) {
@@ -107,7 +107,7 @@ class StudentDAOTest {
             boolean result = studentDAO.updateStudent(updatedStudent);
             assertTrue(result, "La actualización debería ser exitosa");
 
-            StudentDTO retrievedStudent = studentDAO.searchStudentByTuiton("S67890755");
+            StudentDTO retrievedStudent = studentDAO.searchStudentByTuition("S67890755");
             assertNotNull(retrievedStudent, "El estudiante debería existir después de actualizar");
             assertEquals("Actualizado", retrievedStudent.getNames(), "El nombre debería actualizarse");
         } catch (SQLException e) {
@@ -123,8 +123,8 @@ class StudentDAOTest {
             boolean result = studentDAO.deleteStudent("S22222174");
             assertTrue(result, "La eliminación debería ser exitosa");
 
-            StudentDTO deletedStudent = studentDAO.searchStudentByTuiton("S22222174");
-            assertEquals("N/A", deletedStudent.getTuiton(), "El estudiante eliminado no debería existir");
+            StudentDTO deletedStudent = studentDAO.searchStudentByTuition("S22222174");
+            assertEquals("N/A", deletedStudent.getTuition(), "El estudiante eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteStudent: " + e.getMessage());
         }
@@ -139,7 +139,7 @@ class StudentDAOTest {
             assertNotNull(students, "La lista no debería ser nula");
             assertFalse(students.isEmpty(), "La lista no debería estar vacía");
 
-            boolean found = students.stream().anyMatch(s -> s.getTuiton().equals("S33333798"));
+            boolean found = students.stream().anyMatch(s -> s.getTuition().equals("S33333798"));
             assertTrue(found, "El estudiante de prueba debería estar en la lista");
         } catch (SQLException e) {
             fail("Error en testGetAllStudents: " + e.getMessage());

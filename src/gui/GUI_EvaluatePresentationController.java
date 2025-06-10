@@ -37,7 +37,7 @@ public class GUI_EvaluatePresentationController {
     private final List<TextField> scoreFields = new ArrayList<>();
     private List<AssessmentCriterionDTO> criteriaList;
     private int presentationId;
-    private String tuiton;
+    private String tuition;
 
     @FXML
     public void initialize() {
@@ -113,7 +113,7 @@ public class GUI_EvaluatePresentationController {
 
     public void setPresentationIdAndTuiton(int presentationId, String tuiton) {
         this.presentationId = presentationId;
-        this.tuiton = tuiton;
+        this.tuition = tuiton;
         logger.info("ID de la presentación configurado: " + presentationId + ", Matrícula: " + tuiton);
     }
 
@@ -161,7 +161,7 @@ public class GUI_EvaluatePresentationController {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0,
                     presentationId,
-                    tuiton,
+                    tuition,
                     new java.util.Date(),
                     averageScore
             );

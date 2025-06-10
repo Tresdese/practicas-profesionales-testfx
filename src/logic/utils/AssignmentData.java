@@ -11,7 +11,7 @@ public class AssignmentData {
     private String organizationAddress;
     private String studentFirstName;
     private String studentLastName;
-    private String studentTuiton;
+    private String studentTuition;
     private String projectName;
 
     public String getRepresentativeFirstName() {
@@ -62,12 +62,12 @@ public class AssignmentData {
         this.studentLastName = studentLastName;
     }
 
-    public String getStudentTuiton() {
-        return studentTuiton;
+    public String getStudentTuition() {
+        return studentTuition;
     }
 
-    public void setStudentTuiton(String studentTuiton) {
-        this.studentTuiton = studentTuiton;
+    public void setStudentTuition(String studentTuition) {
+        this.studentTuition = studentTuition;
     }
 
     public String getProjectName() {

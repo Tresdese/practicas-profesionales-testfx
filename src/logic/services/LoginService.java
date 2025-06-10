@@ -25,7 +25,7 @@ public class LoginService {
         String hashedPassword = PasswordHasher.hashPassword(plainPassword);
 
         StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword);
-        if (student != null && !"N/A".equals(student.getTuiton())) {
+        if (student != null && !"N/A".equals(student.getTuition())) {
             return student;
         }
 

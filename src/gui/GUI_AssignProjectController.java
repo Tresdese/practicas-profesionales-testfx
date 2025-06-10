@@ -29,7 +29,6 @@ import java.util.List;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import logic.gmail.GmailService;
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
 import static logic.drive.GoogleDriveUploader.uploadFile;
 
@@ -116,7 +115,7 @@ public class GUI_AssignProjectController {
         try {
             StudentProjectDTO studentProject = new StudentProjectDTO(
                     selectedProject.getIdProject(),
-                    student.getTuiton()
+                    student.getTuition()
             );
             boolean assigned = studentProjectDAO.insertStudentProject(studentProject);
 
@@ -143,11 +142,11 @@ public class GUI_AssignProjectController {
             data.setOrganizationAddress(org.getAddress());
             data.setStudentFirstName(student.getNames());
             data.setStudentLastName(student.getSurnames());
-            data.setStudentTuiton(student.getTuiton());
+            data.setStudentTuition(student.getTuition());
             data.setProjectName(project.getName());
 
             // Generar PDF localmente
-            String fileName = "Asignacion_" + student.getTuiton() + ".pdf";
+            String fileName = "Asignacion_" + student.getTuition() + ".pdf";
             String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
             AssignmentPDFGenerator.generatePDF(tempPath, data);
 
@@ -198,7 +197,7 @@ public class GUI_AssignProjectController {
             String parentId = null;
             parentId = createOrGetFolder(idPeriod, parentId);
             parentId = createOrGetFolder(student.getNRC(), parentId);
-            parentId = createOrGetFolder(student.getTuiton(), parentId);
+            parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Asignacion", parentId);
             return parentId;
         } catch (IOException | GeneralSecurityException e) {

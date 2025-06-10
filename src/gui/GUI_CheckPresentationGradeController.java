@@ -119,7 +119,7 @@ public class GUI_CheckPresentationGradeController {
             }
 
             EvaluationPresentationDAO evaluationDAO = new EvaluationPresentationDAO();
-            List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuiton(student.getTuiton());
+            List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuiton(student.getTuition());
 
             ObservableList<EvaluationPresentationDTO> data = FXCollections.observableArrayList(studentEvaluations);
 

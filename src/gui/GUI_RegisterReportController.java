@@ -250,7 +250,7 @@ public class GUI_RegisterReportController {
             String parentId = null;
             parentId = createOrGetFolder(idPeriod, parentId);
             parentId = createOrGetFolder(student.getNRC(), parentId);
-            parentId = createOrGetFolder(student.getTuiton(), parentId);
+            parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Reporte", parentId);
             return parentId;
         } catch (IOException | GeneralSecurityException e) {
@@ -323,7 +323,7 @@ public class GUI_RegisterReportController {
                     methodologyArea.getText(),
                     obtainedResultArea.getText(),
                     Integer.parseInt(projectId),
-                    student.getTuiton(),
+                    student.getTuition(),
                     generalObservationsArea.getText(),
                     String.valueOf(evidenceId)
             );

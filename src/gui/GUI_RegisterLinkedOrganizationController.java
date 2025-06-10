@@ -56,7 +56,7 @@ public class GUI_RegisterLinkedOrganizationController {
 
             LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
             String generatedId = organizationService.registerOrganization(organization);
-            organization.setIddOrganization(generatedId);
+            organization.setIdOrganization(generatedId);
 
             statusLabel.setText("¡Organización registrada exitosamente!");
             statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);

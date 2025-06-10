@@ -2,7 +2,6 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.ProjectRequestDTO;
-import logic.DTO.ProjectStatus;
 import logic.interfaces.IProjectRequestDAO;
 
 import java.sql.*;
@@ -25,7 +24,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
 
-            stmt.setString(1, request.getTuiton());
+            stmt.setString(1, request.getTuition());
             stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
             stmt.setString(3, request.getProjectName());
             stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
@@ -51,7 +50,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
-            stmt.setString(1, request.getTuiton());
+            stmt.setString(1, request.getTuition());
             stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
             stmt.setString(3, request.getProjectName());
             stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));

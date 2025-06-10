@@ -34,7 +34,7 @@ public class UserService {
         return success;
     }
 
-    public void updateStudent(UserDTO user) throws SQLException {
+    public void updateUser(UserDTO user) throws SQLException {
         boolean success = userDAO.updateUser(user);
         if (!success) {
             throw new SQLException("No se pudo actualizar la organizacion.");

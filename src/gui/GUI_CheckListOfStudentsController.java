@@ -33,7 +33,7 @@ public class GUI_CheckListOfStudentsController {
     private TableView<StudentDTO> tableView;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnTuiton;
+    private TableColumn<StudentDTO, String> columnTuition;
 
     @FXML
     private TableColumn<StudentDTO, String> columnNames;
@@ -45,7 +45,7 @@ public class GUI_CheckListOfStudentsController {
     private TableColumn<StudentDTO, String> columnEmail;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnnNRC;
+    private TableColumn<StudentDTO, String> columnNRC;
 
     @FXML
     private TableColumn<StudentDTO, Void> columnDetails;
@@ -115,11 +115,11 @@ public class GUI_CheckListOfStudentsController {
     }
 
     public void setColumns () {
-        columnTuiton.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
+        columnTuition.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
         columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
         columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        columnnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
+        columnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
     }
 
     public void setButtonVisibility(Button btn, boolean visible) {
@@ -198,7 +198,7 @@ public class GUI_CheckListOfStudentsController {
         }
         ProjectDTO currentProject = null;
         try {
-            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuiton());
+            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuition());
             if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
                 currentProject = new logic.DAO.ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
             }
@@ -249,7 +249,7 @@ public class GUI_CheckListOfStudentsController {
         ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            StudentDTO student = studentService.searchStudentByTuiton(searchQuery);
+            StudentDTO student = studentService.searchStudentByTuition(searchQuery);
             if (student != null) {
                 filteredList.add(student);
             }
@@ -352,7 +352,7 @@ public class GUI_CheckListOfStudentsController {
     public void openManageStudentWindow(StudentDTO student) {
         ProjectDTO currentProject = null;
         try {
-            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(student.getTuiton());
+            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(student.getTuition());
             if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
                 currentProject = new logic.DAO.ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
             }

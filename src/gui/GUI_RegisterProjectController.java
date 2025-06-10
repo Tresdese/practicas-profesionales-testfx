@@ -97,11 +97,11 @@ public class GUI_RegisterProjectController {
             LocalDate endDate = endDatePicker.getValue();
 
             LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organization);
-            if (linkedOrganization == null || linkedOrganization.getIddOrganization() == null) {
+            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
                 throw new InvalidData("La organización seleccionada no es válida.");
             }
 
-            String organizationId = linkedOrganization.getIddOrganization();
+            String organizationId = linkedOrganization.getIdOrganization();
             String academicId = getAcademicIdByName(academic);
 
             ProjectDTO project = new ProjectDTO(

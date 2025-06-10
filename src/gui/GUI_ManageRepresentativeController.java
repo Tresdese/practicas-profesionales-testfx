@@ -112,11 +112,11 @@ public class GUI_ManageRepresentativeController {
             representative.setEmail(email);
 
             LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organizationName);
-            if (linkedOrganization == null || linkedOrganization.getIddOrganization() == null) {
+            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
                 throw new IllegalArgumentException("La organización seleccionada no es válida.");
             }
 
-            representative.setIdOrganization(linkedOrganization.getIddOrganization());
+            representative.setIdOrganization(linkedOrganization.getIdOrganization());
 
             boolean success = representativeService.updateRepresentative(representative);
 

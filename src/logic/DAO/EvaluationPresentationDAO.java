@@ -24,7 +24,7 @@ public class EvaluationPresentationDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, evaluation.getIdProject());
-            statement.setString(2, evaluation.getTuiton());
+            statement.setString(2, evaluation.getTuition());
             statement.setDate(3, new java.sql.Date(evaluation.getDate().getTime()));
             statement.setDouble(4, evaluation.getAverage());
             statement.executeUpdate();
@@ -44,7 +44,7 @@ public class EvaluationPresentationDAO {
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, evaluation.getIdProject());
-            statement.setString(2, evaluation.getTuiton());
+            statement.setString(2, evaluation.getTuition());
             statement.setDate(3, new java.sql.Date(evaluation.getDate().getTime()));
             statement.setDouble(4, evaluation.getAverage());
             statement.setInt(5, evaluation.getIdEvaluation());

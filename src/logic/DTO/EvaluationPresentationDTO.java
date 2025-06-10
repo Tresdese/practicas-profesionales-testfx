@@ -5,30 +5,30 @@ import java.util.Date;
 public class EvaluationPresentationDTO {
     private int idEvaluation;
     private int idProject;
-    private String tuiton;
+    private String tuition;
     private Date date;
     private double average;
 
     public EvaluationPresentationDTO() {
         this.idEvaluation = 0;
         this.idProject = 0;
-        this.tuiton = "";
+        this.tuition = "";
         this.date = null;
         this.average = 0.0;
     }
 
-    public EvaluationPresentationDTO(int idEvaluation, int idProject, String tuiton, Date date, double average) {
+    public EvaluationPresentationDTO(int idEvaluation, int idProject, String tuition, Date date, double average) {
         this.idEvaluation = idEvaluation;
         this.idProject = idProject;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
         this.date = date;
         this.average = average;
     }
 
-    public EvaluationPresentationDTO(int idProject, String tuiton, Date date, double average) {
+    public EvaluationPresentationDTO(int idProject, String tuition, Date date, double average) {
         this.idEvaluation = 0;
         this.idProject = idProject;
-        this.tuiton = tuiton;
+        this.tuition = tuition;
         this.date = date;
         this.average = average;
     }
@@ -49,12 +49,12 @@ public class EvaluationPresentationDTO {
         this.idProject = idProject;
     }
 
-    public String getTuiton() {
-        return tuiton;
+    public String getTuition() {
+        return tuition;
     }
 
-    public void setTuiton(String tuiton) {
-        this.tuiton = tuiton;
+    public void setTuition(String tuition) {
+        this.tuition = tuition;
     }
 
     public Date getDate() {
@@ -78,7 +78,7 @@ public class EvaluationPresentationDTO {
         return "EvaluationPresentation{" +
                 "idEvaluation=" + idEvaluation +
                 ", idProject=" + idProject +
-                ", tuiton='" + tuiton + '\'' +
+                ", tuiton='" + tuition + '\'' +
                 ", date=" + date +
                 ", average=" + average +
                 '}';
@@ -94,7 +94,7 @@ public class EvaluationPresentationDTO {
         if (idEvaluation != that.idEvaluation) return false;
         if (idProject != that.idProject) return false;
         if (Double.compare(that.average, average) != 0) return false;
-        if (!tuiton.equals(that.tuiton)) return false;
+        if (!tuition.equals(that.tuition)) return false;
         return date.equals(that.date);
     }
 }

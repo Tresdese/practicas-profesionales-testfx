@@ -4,9 +4,8 @@ import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import logic.exceptions.RepeatedEmail;
 import logic.exceptions.RepeatedPhone;
-import logic.exceptions.RepeatedTuiton;
+import logic.exceptions.RepeatedTuition;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,9 +16,9 @@ public class StudentService {
         this.studentDAO = new StudentDAO();
     }
 
-    public void registerStudent(StudentDTO student) throws SQLException, RepeatedTuiton, RepeatedPhone, RepeatedEmail {
-        if (studentDAO.isTuitonRegistered(student.getTuiton())) {
-            throw new RepeatedTuiton("La matrícula ya está registrada.");
+    public void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
+        if (studentDAO.isTuitonRegistered(student.getTuition())) {
+            throw new RepeatedTuition("La matrícula ya está registrada.");
         }
 
         if (studentDAO.isPhoneRegistered(student.getPhone())) {
@@ -47,7 +46,7 @@ public class StudentService {
         return studentDAO.getAllStudents();
     }
 
-    public StudentDTO searchStudentByTuiton(String tuiton) throws SQLException {
-        return studentDAO.searchStudentByTuiton(tuiton);
+    public StudentDTO searchStudentByTuition(String tuition) throws SQLException {
+        return studentDAO.searchStudentByTuition(tuition);
     }
 }

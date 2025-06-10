@@ -187,7 +187,7 @@ public class GUI_CheckProjectRequestListController {
         });
 
         columnTuiton.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getTuiton()));
+                new SimpleStringProperty(cellData.getValue().getTuition()));
 
         columnDescription.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getDescription()));
@@ -236,7 +236,7 @@ public class GUI_CheckProjectRequestListController {
 
             for (ProjectRequestDTO request : requests) {
                 boolean matches = searchQuery.isEmpty() ||
-                        request.getTuiton().contains(searchQuery) ||
+                        request.getTuition().contains(searchQuery) ||
                         request.getProjectName().toLowerCase().contains(searchQuery.toLowerCase()) ||
                         request.getDescription().toLowerCase().contains(searchQuery.toLowerCase());
 

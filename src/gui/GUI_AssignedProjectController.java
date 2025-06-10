@@ -18,9 +18,7 @@ import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import data_access.ConnectionDataBase;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import logic.exceptions.ProjectNotFound;
 
@@ -50,7 +48,7 @@ public class GUI_AssignedProjectController {
     public void setStudent(StudentDTO student) {
         this.student = student;
         try {
-            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            StudentProjectDTO studentProject = getStudentProject(student.getTuition());
             if (isStudentProjectNA(studentProject)) {
                 showNoProjectAssigned();
                 return;
@@ -80,7 +78,7 @@ public class GUI_AssignedProjectController {
     private StudentProjectDTO getStudentProject(String tuiton) throws Exception {
         StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
         for (StudentProjectDTO sp : studentProjectDAO.getAllStudentProjects()) {
-            if (sp.getTuiton().equals(tuiton)) {
+            if (sp.getTuition().equals(tuiton)) {
                 return sp;
             }
         }
@@ -88,7 +86,7 @@ public class GUI_AssignedProjectController {
     }
 
     private boolean isStudentProjectNA(StudentProjectDTO sp) {
-        return sp == null || "N/A".equals(sp.getIdProject()) || "N/A".equals(sp.getTuiton());
+        return sp == null || "N/A".equals(sp.getIdProject()) || "N/A".equals(sp.getTuition());
     }
 
     private ProjectDTO getProject(String idProject) throws Exception {
@@ -124,7 +122,7 @@ public class GUI_AssignedProjectController {
             }
 
             RepresentativeDAO repDAO = new RepresentativeDAO();
-            RepresentativeDTO rep = getRepresentativeByOrganization(repDAO, org.getIddOrganization());
+            RepresentativeDTO rep = getRepresentativeByOrganization(repDAO, org.getIdOrganization());
             if (isRepresentativeNA(rep)) {
                 representativeLabel.setText("No asignado");
             } else {
@@ -142,7 +140,7 @@ public class GUI_AssignedProjectController {
     }
 
     private boolean isOrganizationNA(LinkedOrganizationDTO org) {
-        return org == null || "N/A".equals(org.getIddOrganization());
+        return org == null || "N/A".equals(org.getIdOrganization());
     }
 
     private RepresentativeDTO getRepresentativeByOrganization(RepresentativeDAO repDAO, String idOrganization) throws Exception {
@@ -225,7 +223,7 @@ public class GUI_AssignedProjectController {
     @FXML
     private void handleOpenSelfAssessment() {
         try {
-            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            StudentProjectDTO studentProject = getStudentProject(student.getTuition());
             ProjectDTO project = getProject(studentProject.getIdProject());
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterSelfAssessment.fxml"));
@@ -293,7 +291,7 @@ public class GUI_AssignedProjectController {
             controller.setReportContext(
                     professorName, // Aquí se pasa el nombre en vez del id
                     nrc, period, studentName, organization,
-                    project.getName(), project.getIdProject(), student.getTuiton()
+                    project.getName(), project.getIdProject(), student.getTuition()
             );
             Stage stage = new Stage();
             stage.setTitle("Registrar Informe");
@@ -310,7 +308,7 @@ public class GUI_AssignedProjectController {
     @FXML
     private void handleOpenRegisterReport() {
         try {
-            StudentProjectDTO studentProject = getStudentProject(student.getTuiton());
+            StudentProjectDTO studentProject = getStudentProject(student.getTuition());
             ProjectDTO project = getProject(studentProject.getIdProject());
             String nrc = student.getNRC();
             String[] profAndPeriod = getProfessorAndPeriod(nrc);
