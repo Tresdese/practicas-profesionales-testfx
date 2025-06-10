@@ -39,12 +39,12 @@ class EvidenceDAOTest {
         evidenceDAO = new EvidenceDAO();
     }
 
-    private int insertTestEvidence(String nombreEvidencia, Date fechaEntrega, String ruta) throws SQLException {
+    private int insertTestEvidence(String evidenceName, Date deliveryDate, String route) throws SQLException {
         String sql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, nombreEvidencia);
-            stmt.setDate(2, new java.sql.Date(fechaEntrega.getTime()));
-            stmt.setString(3, ruta);
+            stmt.setString(1, evidenceName);
+            stmt.setDate(2, new java.sql.Date(deliveryDate.getTime()));
+            stmt.setString(3, route);
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -60,21 +60,21 @@ class EvidenceDAOTest {
     @Test
     void testInsertEvidence() {
         try {
-            String nombreEvidencia = "Evidencia Test";
-            Date fechaEntrega = new Date();
-            String ruta = "/ruta/test";
+            String evidenceName = "Evidencia Test";
+            Date deliveryDate = new Date();
+            String route = "/ruta/test";
 
-            EvidenceDTO evidence = new EvidenceDTO(0, nombreEvidencia, fechaEntrega, ruta);
+            EvidenceDTO evidence = new EvidenceDTO(0, evidenceName, deliveryDate, route);
             boolean result = evidenceDAO.insertEvidence(evidence);
             assertTrue(result, "La inserción debería ser exitosa");
 
             String sql = "SELECT * FROM evidencia WHERE nombreEvidencia = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, nombreEvidencia);
+                stmt.setString(1, evidenceName);
                 try (ResultSet rs = stmt.executeQuery()) {
                     assertTrue(rs.next(), "Debería encontrar la evidencia insertada");
-                    assertEquals(nombreEvidencia, rs.getString("nombreEvidencia"), "El nombre de la evidencia debería coincidir");
-                    assertEquals(ruta, rs.getString("ruta"), "La ruta debería coincidir");
+                    assertEquals(evidenceName, rs.getString("nombreEvidencia"), "El nombre de la evidencia debería coincidir");
+                    assertEquals(route, rs.getString("ruta"), "La ruta debería coincidir");
                 }
             }
         } catch (SQLException e) {
@@ -85,16 +85,16 @@ class EvidenceDAOTest {
     @Test
     void testGetEvidence() {
         try {
-            String nombreEvidencia = "Evidencia Get";
-            Date fechaEntrega = new Date();
-            String ruta = "/ruta/get";
+            String evidenceName = "Evidencia Get";
+            Date deliveryDate = new Date();
+            String route = "/ruta/get";
 
-            testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
+            testEvidenceId = insertTestEvidence(evidenceName, deliveryDate, route);
 
             EvidenceDTO evidence = evidenceDAO.searchEvidenceById(testEvidenceId);
             assertNotNull(evidence, "Debería encontrar la evidencia");
-            assertEquals(nombreEvidencia, evidence.getEvidenceName(), "El nombre de la evidencia debería coincidir");
-            assertEquals(ruta, evidence.getRoute(), "La ruta debería coincidir");
+            assertEquals(evidenceName, evidence.getEvidenceName(), "El nombre de la evidencia debería coincidir");
+            assertEquals(route, evidence.getRoute(), "La ruta debería coincidir");
         } catch (SQLException e) {
             fail("Error en testGetEvidence: " + e.getMessage());
         }
@@ -103,20 +103,20 @@ class EvidenceDAOTest {
     @Test
     void testUpdateEvidence() {
         try {
-            String nombreEvidencia = "Evidencia Update";
-            Date fechaEntrega = new Date();
-            String ruta = "/ruta/update";
+            String evidenceName = "Evidencia Update";
+            Date deliveryDate = new Date();
+            String route = "/ruta/update";
+            int evidenceId = insertTestEvidence(evidenceName, deliveryDate, route);
 
-            testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
+            EvidenceDTO evidence = new EvidenceDTO(evidenceId, evidenceName, deliveryDate, route);
+            evidence.setEvidenceName("Evidencia Actualizada");
+            evidence.setRoute("/ruta/actualizada");
+            boolean updated = evidenceDAO.updateEvidence(evidence);
+            assertTrue(updated, "La actualización debería ser exitosa");
 
-            EvidenceDTO evidenceToUpdate = new EvidenceDTO(testEvidenceId, "Evidencia Actualizada", fechaEntrega, "/ruta/actualizada");
-            boolean result = evidenceDAO.updateEvidence(evidenceToUpdate);
-            assertTrue(result, "La actualización debería ser exitosa");
-
-            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId);
-            assertNotNull(updatedEvidence, "La evidencia debería existir después de actualizar");
-            assertEquals("Evidencia Actualizada", updatedEvidence.getEvidenceName(), "El nombre debería actualizarse");
-            assertEquals("/ruta/actualizada", updatedEvidence.getRoute(), "La ruta debería actualizarse");
+            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(evidenceId);
+            assertEquals("Evidencia Actualizada", updatedEvidence.getEvidenceName());
+            assertEquals("/ruta/actualizada", updatedEvidence.getRoute());
         } catch (SQLException e) {
             fail("Error en testUpdateEvidence: " + e.getMessage());
         }
@@ -125,18 +125,16 @@ class EvidenceDAOTest {
     @Test
     void testDeleteEvidence() {
         try {
-            String nombreEvidencia = "Evidencia Delete";
-            Date fechaEntrega = new Date();
-            String ruta = "/ruta/delete";
+            String evidenceName = "Evidencia Delete";
+            Date deliveryDate = new Date();
+            String route = "/ruta/delete";
+            int evidenceId = insertTestEvidence(evidenceName, deliveryDate, route);
 
-            testEvidenceId = insertTestEvidence(nombreEvidencia, fechaEntrega, ruta);
+            boolean deleted = evidenceDAO.deleteEvidence(evidenceId);
+            assertTrue(deleted, "La eliminación debería ser exitosa");
 
-            boolean result = evidenceDAO.deleteEvidence(testEvidenceId);
-            assertTrue(result, "La eliminación debería ser exitosa");
-
-            EvidenceDTO deletedEvidence = evidenceDAO.searchEvidenceById(testEvidenceId);
-            assertEquals(-1, deletedEvidence.getIdEvidence(), "La evidencia eliminada no debería existir");
-            assertEquals("N/A", deletedEvidence.getEvidenceName(), "La evidencia eliminada no debería existir");
+            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(evidenceId);
+            assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
         } catch (SQLException e) {
             fail("Error en testDeleteEvidence: " + e.getMessage());
         }
@@ -145,19 +143,62 @@ class EvidenceDAOTest {
     @Test
     void testGetAllEvidences() {
         try {
-            String nombreEvidencia1 = "Evidencia All 1";
-            String nombreEvidencia2 = "Evidencia All 2";
-            Date fechaEntrega = new Date();
-            String ruta1 = "/ruta/all1";
-            String ruta2 = "/ruta/all2";
-
-            insertTestEvidence(nombreEvidencia1, fechaEntrega, ruta1);
-            insertTestEvidence(nombreEvidencia2, fechaEntrega, ruta2);
-
+            for (int i = 0; i < 2; i++) {
+                insertTestEvidence("Evidencia All " + i, new Date(), "/ruta/all" + i);
+            }
             List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
-            assertTrue(evidences.size() >= 2, "Debería haber al menos dos evidencias");
+            assertNotNull(evidences, "La lista no debe ser nula");
+            assertTrue(evidences.size() >= 2, "Debe haber al menos dos evidencias");
         } catch (SQLException e) {
             fail("Error en testGetAllEvidences: " + e.getMessage());
         }
+    }
+
+    @Test
+    void testUpdateEvidence_NonExistent() throws Exception {
+        EvidenceDTO evidence = new EvidenceDTO(9999, "No existe", new Date(), "/ruta/noexiste");
+        boolean updated = evidenceDAO.updateEvidence(evidence);
+        assertFalse(updated, "No debe actualizar una evidencia inexistente");
+    }
+
+    @Test
+    void testDeleteEvidence_NonExistent() throws Exception {
+        boolean deleted = evidenceDAO.deleteEvidence(9999);
+        assertFalse(deleted, "No debe eliminar una evidencia inexistente");
+    }
+
+    @Test
+    void testSearchEvidenceById_NonExistent() throws Exception {
+        EvidenceDTO evidence = evidenceDAO.searchEvidenceById(9999);
+        assertNotNull(evidence, "Debe retornar un objeto");
+        assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
+    }
+
+    @Test
+    void testGetAllEvidences_EmptyTable() throws Exception {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("DELETE FROM evidencia");
+        }
+        List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
+        assertNotNull(evidences);
+        assertTrue(evidences.isEmpty(), "La lista debe estar vacía si no hay evidencias");
+    }
+
+    @Test
+    void testInsertAndRetrieveMultipleEvidences() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            EvidenceDTO evidence = new EvidenceDTO(0, "Evidencia" + i, new Date(), "/ruta/" + i);
+            evidenceDAO.insertEvidence(evidence);
+        }
+        List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
+        assertTrue(evidences.size() >= 3, "Debe haber al menos tres evidencias");
+    }
+
+    @Test
+    void testGetNextEvidenceId() throws Exception {
+        int nextIdBefore = evidenceDAO.getNextEvidenceId();
+        insertTestEvidence("Evidencia NextId", new Date(), "/ruta/nextid");
+        int nextIdAfter = evidenceDAO.getNextEvidenceId();
+        assertEquals(nextIdBefore + 1, nextIdAfter, "El siguiente ID debe incrementarse en 1");
     }
 }

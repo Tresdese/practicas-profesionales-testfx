@@ -32,18 +32,18 @@ class GroupDAOTest {
         groupDAO = new GroupDAO();
         periodDAO = new PeriodDAO();
         userDAO = new UserDAO();
-        limpiarTablasYAutoincrement();
+        clearTablesAndResetAutoIncrement();
     }
 
     @BeforeEach
     void setUp() throws Exception {
-        limpiarTablasYAutoincrement();
-        // Inserta periodo y usuario usando los DAOs, no directamente con la conexión
-        PeriodDTO periodo = new PeriodDTO("1", "Periodo Test", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
-        periodDAO.insertPeriod(periodo, connection);
+        clearTablesAndResetAutoIncrement();
+        // Insert period and user using DAOs, not directly with the connection
+        PeriodDTO period = new PeriodDTO("1", "Periodo Test", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
+        periodDAO.insertPeriod(period, connection);
 
-        UserDTO usuario = new UserDTO("1", "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMICO);
-        userDAO.insertUser(usuario);
+        UserDTO user = new UserDTO("1", "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMICO);
+        userDAO.insertUser(user);
     }
 
     @AfterAll
@@ -53,7 +53,7 @@ class GroupDAOTest {
         }
     }
 
-    private void limpiarTablasYAutoincrement() throws SQLException {
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute("DELETE FROM grupo");
         stmt.execute("DELETE FROM usuario");

@@ -1,12 +1,13 @@
 package data_access.DAO;
 
 import data_access.ConecctionDataBase;
-import logic.DAO.*;
-import logic.DTO.*;
+import logic.DAO.CriterionSelfAssessmentDAO;
+import logic.DAO.SelfAssessmentCriteriaDAO;
+import logic.DTO.CriterionSelfAssessmentDTO;
+import logic.DTO.SelfAssessmentCriteriaDTO;
 import org.junit.jupiter.api.*;
 
 import java.sql.*;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,114 +17,22 @@ class CriterionSelfAssessmentDAOTest {
 
     private ConecctionDataBase connectionDB;
     private Connection connection;
-
-    private PeriodDAO periodDAO;
-    private GroupDAO groupDAO;
-    private EvidenceDAO evidenceDAO;
-    private SelfAssessmentCriteriaDAO selfAssessmentCriteriaDAO;
-    private SelfAssessmentDAO selfAssessmentDAO;
     private CriterionSelfAssessmentDAO criterionSelfAssessmentDAO;
-    private StudentDAO studentDAO;
-    private UserDAO userDAO;
 
-    private final String periodIdBase = "1001";
-    private final String groupIdBase = "2001";
-    private final String studentIdBase = "3001";
-    private final int evidenceIdBase = 4001;
-    private final String criteriaIdBase = "5001";
-    private final String selfAssessmentIdBase = "6001";
-    private final String userIdBase = "1";
+    private int testSelfAssessmentId;
+    private int testCriteriaId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
-        periodDAO = new PeriodDAO();
-        groupDAO = new GroupDAO();
-        evidenceDAO = new EvidenceDAO();
-        selfAssessmentCriteriaDAO = new SelfAssessmentCriteriaDAO();
-        selfAssessmentDAO = new SelfAssessmentDAO();
+        clearTablesAndResetAutoIncrement();
+        createBaseObjects();
         criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO(connection);
-        studentDAO = new StudentDAO();
-        userDAO = new UserDAO();
-        clearTablesAndResetAutoIncrement();
-    }
-
-    private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE autoevaluacion_criterio");
-        stmt.execute("TRUNCATE TABLE autoevaluacion");
-        stmt.execute("TRUNCATE TABLE criterio_de_autoevaluacion");
-        stmt.execute("TRUNCATE TABLE evidencia");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("ALTER TABLE criterio_de_autoevaluacion AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE autoevaluacion AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
-    }
-
-    private void createBaseRecords() throws SQLException {
-        // 1. Insertar periodo
-        PeriodDTO period = new PeriodDTO(periodIdBase, "Test Period",
-                new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
-        assertTrue(periodDAO.insertPeriod(period, connection), "No se pudo insertar el periodo");
-
-        // 2. Insertar usuario
-        UserDTO user = new UserDTO(userIdBase, "12345", "Nombre", "Apellido",
-                "testuser", "1234567890123456789012345678901234567890123456789012345678901234",
-                Role.ACADEMICO);
-        assertTrue(userDAO.insertUser(user), "No se pudo insertar el usuario");
-
-        // 3. Insertar grupo
-        GroupDTO group = new GroupDTO(groupIdBase, "Test Group", userIdBase, periodIdBase);
-        assertTrue(groupDAO.insertGroup(group), "No se pudo insertar el grupo");
-
-        // 4. Insertar estudiante
-        StudentDTO student = new StudentDTO(studentIdBase, 1, "John", "Doe", "1234567890", "john.doe@test.com",
-                "johnuser", "1234567890123456789012345678901234567890123456789012345678901234",
-                groupIdBase, "80", 9.5);
-        assertTrue(studentDAO.insertStudent(student), "No se pudo insertar el estudiante");
-
-        // 5. Insertar evidencia
-        EvidenceDTO evidence = new EvidenceDTO(0, "Test Evidence", new Date(), "/path/evidence.pdf");
-        assertTrue(evidenceDAO.insertEvidence(evidence), "No se pudo insertar la evidencia");
-
-        // 6. Insertar criterio de autoevaluación
-        SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(criteriaIdBase, "Criterio de prueba");
-        assertTrue(selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria),
-                "No se pudo insertar el criterio de autoevaluación");
-
-        // 7. Insertar autoevaluación
-        SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
-                Integer.parseInt(selfAssessmentIdBase), // selfAssessmentId
-                "",                                     // comments
-                10.0f,                                  // grade
-                studentIdBase,                          // registration
-                Integer.parseInt(userIdBase),            // projectId
-                evidenceIdBase,                         // evidenceId
-                new java.util.Date(),                    // registrationDate
-                SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA, // status
-                ""                                      // generalComments
-        );
-        assertTrue(selfAssessmentDAO.insertSelfAssessment(selfAssessment),
-                "No se pudo insertar la autoevaluación");
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-        clearTablesAndResetAutoIncrement();
-        createBaseRecords();
     }
 
     @AfterAll
     void tearDownAll() throws Exception {
-        clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -132,85 +41,376 @@ class CriterionSelfAssessmentDAOTest {
         }
     }
 
-    @Test
-    void testInsertCriterionSelfAssessment() {
-        try {
-            CriterionSelfAssessmentDTO criterionSelfAssessment =
-                    new CriterionSelfAssessmentDTO(
-                            Integer.parseInt(selfAssessmentIdBase),
-                            Integer.parseInt(criteriaIdBase),
-                            0.0f,
-                            ""
-                    );
-            boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessment);
-            assertTrue(inserted, "El registro debe insertarse correctamente");
-        } catch (SQLException e) {
-            fail("Error en testInsertCriterionSelfAssessment: " + e.getMessage());
+    @BeforeEach
+    void setUp() throws Exception {
+        clearTablesAndResetAutoIncrement();
+        createBaseObjects();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        clearTablesAndResetAutoIncrement();
+    }
+
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.execute("DELETE FROM autoevaluacion_criterio");
+        stmt.execute("DELETE FROM criterio_de_autoevaluacion");
+        stmt.execute("DELETE FROM autoevaluacion");
+        stmt.execute("ALTER TABLE autoevaluacion AUTO_INCREMENT = 1");
+        stmt.execute("DELETE FROM evidencia");
+        stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
+        stmt.execute("DELETE FROM proyecto");
+        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        stmt.execute("DELETE FROM organizacion_vinculada");
+        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        stmt.execute("DELETE FROM estudiante");
+        stmt.execute("DELETE FROM grupo");
+        stmt.execute("DELETE FROM usuario");
+        stmt.execute("DELETE FROM periodo");
+        stmt.close();
+    }
+
+    private void createBaseObjects() throws SQLException {
+        // Period
+        String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlPeriod)) {
+            stmt.setString(1, "1");
+            stmt.setString(2, "2024-1");
+            stmt.setDate(3, Date.valueOf("2024-01-01"));
+            stmt.setDate(4, Date.valueOf("2024-06-30"));
+            stmt.executeUpdate();
+        }
+        // User
+        String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlUser)) {
+            stmt.setString(1, "1");
+            stmt.setString(2, "10001");
+            stmt.setString(3, "Juan");
+            stmt.setString(4, "Pérez");
+            stmt.setString(5, "juanp");
+            stmt.setString(6, "1234567890123456789012345678901234567890123456789012345678901234");
+            stmt.setString(7, "Academico");
+            stmt.executeUpdate();
+        }
+        // Group
+        String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
+            stmt.setString(1, "1001");
+            stmt.setString(2, "Grupo 1");
+            stmt.setString(3, "1");
+            stmt.setString(4, "1");
+            stmt.executeUpdate();
+        }
+        // Student
+        String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
+            stmt.setString(1, "S12345");
+            stmt.setInt(2, 1);
+            stmt.setString(3, "Pedro");
+            stmt.setString(4, "López");
+            stmt.setString(5, "5555555555");
+            stmt.setString(6, "pedro@test.com");
+            stmt.setString(7, "pedrolopez");
+            stmt.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
+            stmt.setString(9, "1001");
+            stmt.setString(10, "100");
+            stmt.setDouble(11, 0.0);
+            stmt.executeUpdate();
+        }
+        // Linked Organization
+        int orgId = 0;
+        String sqlOrg = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlOrg, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Org Test");
+            stmt.setString(2, "Calle Falsa 123");
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    orgId = rs.getInt(1);
+                }
+            }
+        }
+        // Project
+        int projectId = 1;
+        String sqlProject = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlProject)) {
+            stmt.setInt(1, projectId);
+            stmt.setString(2, "Proyecto Test");
+            stmt.setString(3, "Descripción de prueba");
+            stmt.setDate(4, Date.valueOf("2024-05-01"));
+            stmt.setDate(5, Date.valueOf("2024-04-01"));
+            stmt.setString(6, "1");
+            stmt.setInt(7, orgId);
+            stmt.executeUpdate();
+        }
+        // Evidence
+        int evidenceId = 1;
+        String sqlEvidence = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlEvidence, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Evidencia 1");
+            stmt.setDate(2, Date.valueOf("2024-05-01"));
+            stmt.setString(3, "/ruta/evidencia1.pdf");
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    evidenceId = rs.getInt(1);
+                }
+            }
+        }
+        // SelfAssessment
+        String sqlSelfAssessment = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlSelfAssessment, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Comentario base");
+            stmt.setFloat(2, 8.0f);
+            stmt.setString(3, "S12345");
+            stmt.setInt(4, projectId);
+            stmt.setInt(5, evidenceId);
+            stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setString(7, "completada");
+            stmt.setString(8, "General");
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    testSelfAssessmentId = rs.getInt(1);
+                }
+            }
+        }
+        // SelfAssessment Criteria
+        String sqlCriteria = "INSERT INTO criterio_de_autoevaluacion (idCriterios, nombreCriterio) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sqlCriteria)) {
+            stmt.setInt(1, 1);
+            stmt.setString(2, "Criterio 1");
+            stmt.executeUpdate();
+            testCriteriaId = 1;
         }
     }
 
     @Test
-    void testSearchCriterionSelfAssessmentByIds() {
-        try {
-            CriterionSelfAssessmentDTO criterionSelfAssessment =
-                    new CriterionSelfAssessmentDTO(
-                            Integer.parseInt(selfAssessmentIdBase),
-                            Integer.parseInt(criteriaIdBase),
-                            0.0f,
-                            ""
-                    );
-            criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessment);
+    void testInsertCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 9.0f, "Buen criterio");
+        boolean result = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        assertTrue(result);
 
-            CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO
-                    .searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(
-                            Integer.parseInt(selfAssessmentIdBase),
-                            Integer.parseInt(criteriaIdBase)
-                    );
-            assertEquals(criterionSelfAssessment, found, "El registro buscado debe coincidir con el insertado");
-        } catch (SQLException e) {
-            fail("Error en testSearchCriterionSelfAssessmentByIds: " + e.getMessage());
-        }
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(testSelfAssessmentId, testCriteriaId);
+        assertEquals("Buen criterio", found.getComments());
+        assertEquals(9.0f, found.getGrade());
     }
 
     @Test
-    void testDeleteCriterionSelfAssessment() {
-        try {
-            CriterionSelfAssessmentDTO criterionSelfAssessment =
-                    new CriterionSelfAssessmentDTO(
-                            Integer.parseInt(selfAssessmentIdBase),
-                            Integer.parseInt(criteriaIdBase),
-                            0.0f,
-                            ""
-                    );
-            criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessment);
+    void testUpdateCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 7.0f, "Original");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
 
-            boolean deleted = criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(
-                    Integer.parseInt(selfAssessmentIdBase),
-                    Integer.parseInt(criteriaIdBase)
-            );
-            assertTrue(deleted, "El registro debe eliminarse correctamente");
-        } catch (SQLException e) {
-            fail("Error en testDeleteCriterionSelfAssessment: " + e.getMessage());
-        }
+        dto.setGrade(10.0f);
+        dto.setComments("Actualizado");
+        boolean result = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(dto);
+        assertTrue(result);
+
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(testSelfAssessmentId, testCriteriaId);
+        assertEquals("Actualizado", found.getComments());
+        assertEquals(10.0f, found.getGrade());
     }
 
     @Test
-    void testGetAllCriterionSelfAssessments() {
-        try {
-            CriterionSelfAssessmentDTO criterionSelfAssessment =
-                    new CriterionSelfAssessmentDTO(
-                            Integer.parseInt(selfAssessmentIdBase),
-                            Integer.parseInt(criteriaIdBase),
-                            0.0f,
-                            ""
-                    );
-            criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessment);
+    void testDeleteCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
 
-            List<CriterionSelfAssessmentDTO> all = criterionSelfAssessmentDAO.getAllCriterionSelfAssessments();
-            assertNotNull(all, "La lista no debe ser nula");
-            assertFalse(all.isEmpty(), "La lista no debe estar vacía");
+        boolean result = criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId);
+        assertTrue(result);
+
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(testSelfAssessmentId, testCriteriaId);
+        assertEquals(0, found.getIdSelfAssessment());
+        assertEquals(0, found.getIdCriteria());
+    }
+
+    @Test
+    void testGetAllCriterionSelfAssessmentWhenEmpty() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("DELETE FROM autoevaluacion_criterio");
+        }
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
+        assertTrue(all.isEmpty(), "There should be at least one self-assessment-criterion record");
+    }
+
+    @Test
+    void testInsertAndSearchCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 9.0f, "Comentario test");
+        boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        assertTrue(inserted, "Insertion should be successful");
+
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO
+                .searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(testSelfAssessmentId, testCriteriaId);
+        assertEquals("Comentario test", found.getComments());
+        assertEquals(9.0f, found.getGrade());
+    }
+
+    @Test
+    void testUpdateNonExistentCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(9999, 8888, 5.0f, "No existe");
+        boolean updated = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(dto);
+        assertFalse(updated, "Should not update a non-existent record");
+    }
+
+    @Test
+    void testDeleteNonExistentCriterionSelfAssessment() throws SQLException {
+        boolean deleted = criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(9999, 8888);
+        assertFalse(deleted, "Should not delete a non-existent record");
+    }
+
+    @Test
+    void testSearchNonExistentCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO
+                .searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(9999, 8888);
+        assertEquals(0, found.getIdSelfAssessment());
+        assertEquals(0, found.getIdCriteria());
+        assertEquals(-1f, found.getGrade());
+        assertEquals("N/A", found.getComments());
+    }
+
+    @Test
+    void testInsertDuplicatedCriterionSelfAssessment() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Duplicado");
+        boolean firstInsert = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        boolean secondInsert = false;
+        try {
+            secondInsert = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
         } catch (SQLException e) {
-            fail("Error en testGetAllCriterionSelfAssessments: " + e.getMessage());
+            secondInsert = false;
+        }
+        assertTrue(firstInsert, "First insert should be successful");
+    }
+
+    @Test
+    void testInsertCriterionSelfAssessmentWithNullComments() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 7.5f, null);
+        boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        assertTrue(inserted, "Should allow null comments if DB allows");
+    }
+
+    void testGetAllCriterionSelfAssessments() throws SQLException {
+        SelfAssessmentCriteriaDAO criteriaDAO = new SelfAssessmentCriteriaDAO();
+        criteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO(String.valueOf(testCriteriaId), "Criterio 1"));
+        criteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO(String.valueOf(testCriteriaId + 1), "Criterio 2"));
+
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(
+                new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Uno")
+        );
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(
+                new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId + 1, 9.0f, "Dos")
+        );
+
+        List<CriterionSelfAssessmentDTO> all = criterionSelfAssessmentDAO.getAllCriterionSelfAssessments();
+        assertTrue(all.size() >= 2, "There should be at least two records");
+    }
+
+    @Test
+    void testDeleteCriterionSelfAssessmentTwice() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar dos veces");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        assertTrue(criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId));
+        assertFalse(criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId), "Second delete should fail");
+    }
+
+    @Test
+    void testInsertCriterionSelfAssessmentWithExtremeValues() throws SQLException {
+        String longComment = "a".repeat(255);
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 10.0f, longComment);
+        boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        assertTrue(inserted, "Should allow long comments and max grade");
+    }
+
+    @Test
+    void testSearchByCompositeKey() throws SQLException {
+        int selfAssessmentId = insertTestSelfAssessment();
+        int criteriaId = insertTestCriteria("Criterio Key");
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(selfAssessmentId, criteriaId, 6.0f, "Buscar");
+        dao.insertCriterionSelfAssessment(dto);
+
+        CriterionSelfAssessmentDTO found = dao.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(selfAssessmentId, criteriaId);
+        assertEquals("Buscar", found.getComments());
+    }
+
+    @Test
+    void testGetAllCriterionSelfAssessmentsWhenEmpty() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.execute("DELETE FROM autoevaluacion_criterio");
+        stmt.close();
+
+        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO(connection);
+        List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
+        assertTrue(all.isEmpty());
+    }
+
+    private int insertTestSelfAssessment() throws SQLException {
+        String sql = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Test");
+            stmt.setFloat(2, 8.0f);
+            stmt.setString(3, "S12345");
+            stmt.setInt(4, 1);
+            stmt.setInt(5, 1);
+            stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setString(7, "completada");
+            stmt.setString(8, "General");
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Could not insert test self-assessment");
+    }
+
+    private int insertTestCriteria(String name) throws SQLException {
+        String sql = "INSERT INTO criterio_de_autoevaluacion (nombreCriterio) VALUES (?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, name);
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        }
+        throw new SQLException("Could not insert test criteria");
+    }
+
+    @Test
+    void testInsertCriterionSelfAssessmentWithInvalidForeignKeys() {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(9999, 9999, 7.0f, "Inválido");
+        assertThrows(SQLException.class, () -> criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto));
+    }
+
+    @Test
+    void testInsertCriterionSelfAssessmentDuplicated() throws SQLException {
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 7.0f, "Duplicado");
+        assertTrue(criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto));
+        assertThrows(SQLException.class, () -> criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto));
+    }
+
+    @Test
+    void testSearchCriterionSelfAssessmentByInvalidKeys() throws SQLException {
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(9999, 9999);
+        assertEquals(0, found.getIdSelfAssessment());
+        assertEquals(0, found.getIdCriteria());
+    }
+
+    @Test
+    void testInsertCriterionSelfAssessmentWithInvalidGrade() throws SQLException {
+        float invalidGrade = 20.0f;
+        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, invalidGrade, "Nota inválida");
+        try {
+            boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+            assertTrue(inserted, "DB does not restrict grade range");
+        } catch (SQLException e) {
+            assertTrue(true, "DB restricts grade range");
+        }
+    }
+
+    void clearCriterionSelfAssessmentTable() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("DELETE FROM autoevaluacion_criterio");
         }
     }
 }

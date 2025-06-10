@@ -7,14 +7,10 @@ import java.util.List;
 
 public interface IProjectRequestDAO {
     boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException;
-
     boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException;
-
+    boolean updateProjectRequestStatus(int requestId, String status) throws SQLException;
     boolean deleteProjectRequest(int requestId) throws SQLException;
-
     ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException;
-
     List<ProjectRequestDTO> getAllProjectRequests() throws SQLException;
-
-    List<ProjectRequestDTO> searchProjectRequestByTuiton(String tuiton) throws SQLException;
+    List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException;
 }

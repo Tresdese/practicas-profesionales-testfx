@@ -29,7 +29,7 @@ class ActivityDAOTest {
         connectionDB = new ConecctionDataBase();
         connection = connectionDB.connectDB();
         limpiarTablaYResetearAutoIncrement();
-        activityDAO = new ActivityDAO(connection);
+        activityDAO = new ActivityDAO();
         crearActividadBase();
     }
 
@@ -108,5 +108,40 @@ class ActivityDAOTest {
     void testGetNonExistentActivity() throws SQLException {
         ActivityDTO activity = activityDAO.searchActivityById("99999");
         assertEquals("invalido", activity.getActivityId(), "No debería encontrar una actividad inexistente.");
+    }
+
+    @Test
+    void testGetAllActivities() throws SQLException {
+        activityDAO.insertActivity(new ActivityDTO(null, "Otra Actividad"));
+        var actividades = activityDAO.getAllActivities();
+        assertEquals(2, actividades.size(), "Debe haber dos actividades en la base de datos.");
+    }
+
+    @Test
+    void testGetActivityByNameNoExiste() throws SQLException {
+        int id = activityDAO.getActivityByName("NoExiste");
+        assertEquals(-1, id, "Debe devolver -1 si la actividad no existe.");
+    }
+
+    @Test
+    void testInsertActivityConIdExistente() throws SQLException {
+        int id = activityDAO.getActivityByName("Actividad Base");
+        ActivityDTO actividadDuplicada = new ActivityDTO(String.valueOf(id), "Duplicada");
+        assertThrows(SQLException.class, () -> activityDAO.insertActivity(actividadDuplicada),
+                "Debe lanzar excepción al insertar con id existente.");
+    }
+
+    @Test
+    void testUpdateActivityNoExistente() throws SQLException {
+        ActivityDTO actividadNoExiste = new ActivityDTO("99999", "NoExiste");
+        boolean actualizado = activityDAO.updateActivity(actividadNoExiste);
+        assertFalse(actualizado, "No debe actualizar una actividad inexistente.");
+    }
+
+    @Test
+    void testDeleteActivityNoExistente() throws SQLException {
+        ActivityDTO actividadNoExiste = new ActivityDTO("99999", null);
+        boolean eliminado = activityDAO.deleteActivity(actividadNoExiste);
+        assertFalse(eliminado, "No debe eliminar una actividad inexistente.");
     }
 }

@@ -19,18 +19,14 @@ class LinkedOrganizationDAOTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        // Configura la conexión a la base de datos real
-        ConecctionDataBase conecctionDataBase = new ConecctionDataBase();
-        connection = conecctionDataBase.connectDB();
+        ConecctionDataBase connectionDB = new ConecctionDataBase();
+        connection = connectionDB.connectDB();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
-
-        // Limpia la tabla antes de cada prueba
         connection.createStatement().execute("DELETE FROM organizacion_vinculada");
     }
 
     @AfterEach
     void tearDown() throws SQLException {
-        // Limpia la tabla después de cada prueba
         connection.createStatement().execute("DELETE FROM organizacion_vinculada");
         connection.close();
     }
@@ -38,9 +34,7 @@ class LinkedOrganizationDAOTest {
     @Test
     void insertLinkedOrganizationAndGetIdSuccessfully() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org A", "Address A");
-
         String generatedId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization);
-
         assertNotNull(generatedId, "El ID generado no debería ser nulo");
         assertFalse(generatedId.isEmpty(), "El ID generado no debería estar vacío");
     }
@@ -49,19 +43,15 @@ class LinkedOrganizationDAOTest {
     void updateLinkedOrganizationSuccessfully() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org A", "Address A");
         String generatedId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization);
-
         LinkedOrganizationDTO updatedOrganization = new LinkedOrganizationDTO(generatedId, "Updated Org", "Updated Address");
         boolean result = linkedOrganizationDAO.updateLinkedOrganization(updatedOrganization);
-
         assertTrue(result, "La organización debería actualizarse correctamente");
     }
 
     @Test
     void updateLinkedOrganizationFailsWhenNotExists() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO("999", "Nonexistent Org", "Nonexistent Address");
-
         boolean result = linkedOrganizationDAO.updateLinkedOrganization(organization);
-
         assertFalse(result, "No debería permitir actualizar una organización inexistente");
     }
 
@@ -69,16 +59,13 @@ class LinkedOrganizationDAOTest {
     void deleteLinkedOrganizationSuccessfully() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org A", "Address A");
         String generatedId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization);
-
         boolean result = linkedOrganizationDAO.deleteLinkedOrganization(generatedId);
-
         assertTrue(result, "La organización debería eliminarse correctamente");
     }
 
     @Test
     void deleteLinkedOrganizationFailsWhenNotExists() throws SQLException {
         boolean result = linkedOrganizationDAO.deleteLinkedOrganization("999");
-
         assertFalse(result, "No debería permitir eliminar una organización inexistente");
     }
 
@@ -86,9 +73,7 @@ class LinkedOrganizationDAOTest {
     void searchLinkedOrganizationByIdWhenExists() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org A", "Address A");
         String generatedId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization);
-
         LinkedOrganizationDTO result = linkedOrganizationDAO.searchLinkedOrganizationById(generatedId);
-
         assertNotNull(result, "La organización no debería ser nula");
         assertEquals(generatedId, result.getIddOrganization());
         assertEquals("Org A", result.getName());
@@ -98,7 +83,6 @@ class LinkedOrganizationDAOTest {
     @Test
     void searchLinkedOrganizationByIdWhenNotExists() throws SQLException {
         LinkedOrganizationDTO result = linkedOrganizationDAO.searchLinkedOrganizationById("999");
-
         assertNotNull(result, "La organización no debería ser nula");
         assertEquals("N/A", result.getIddOrganization());
         assertEquals("N/A", result.getName());
@@ -111,9 +95,7 @@ class LinkedOrganizationDAOTest {
         LinkedOrganizationDTO org2 = new LinkedOrganizationDTO(null, "Org B", "Address B");
         linkedOrganizationDAO.insertLinkedOrganizationAndGetId(org1);
         linkedOrganizationDAO.insertLinkedOrganizationAndGetId(org2);
-
         List<LinkedOrganizationDTO> result = linkedOrganizationDAO.getAllLinkedOrganizations();
-
         assertNotNull(result, "La lista de organizaciones no debería ser nula");
         assertEquals(2, result.size(), "Debería haber 2 organizaciones en la lista");
     }
@@ -121,7 +103,6 @@ class LinkedOrganizationDAOTest {
     @Test
     void getAllLinkedOrganizationsReturnsEmptyListWhenNoOrganizationsExist() throws SQLException {
         List<LinkedOrganizationDTO> result = linkedOrganizationDAO.getAllLinkedOrganizations();
-
         assertNotNull(result, "La lista de organizaciones no debería ser nula");
         assertTrue(result.isEmpty(), "La lista de organizaciones debería estar vacía");
     }
