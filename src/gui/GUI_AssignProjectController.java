@@ -125,7 +125,6 @@ public class GUI_AssignProjectController {
                 return;
             }
 
-            // Obtener datos de organización y representante
             ProjectDAO projectDAO = new ProjectDAO();
             ProjectDTO project = projectDAO.searchProjectById(selectedProject.getIdProject());
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
@@ -134,7 +133,6 @@ public class GUI_AssignProjectController {
             List<RepresentativeDTO> reps = repDAO.getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()));
             RepresentativeDTO rep = reps.isEmpty() ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A") : reps.get(0);
 
-            // Preparar datos para el PDF
             AssignmentData data = new AssignmentData();
             data.setRepresentativeFirstName(rep.getNames());
             data.setRepresentativeLastName(rep.getSurnames());
@@ -145,30 +143,27 @@ public class GUI_AssignProjectController {
             data.setStudentTuition(student.getTuition());
             data.setProjectName(project.getName());
 
-            // Generar PDF localmente
             String fileName = "Asignacion_" + student.getTuition() + ".pdf";
             String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
             AssignmentPDFGenerator.generatePDF(tempPath, data);
 
-            // Crear estructura de carpetas en Drive y subir PDF
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             String driveUrl = uploadFile(tempPath, parentId);
 
-            // Enviar correo al estudiante con el PDF adjunto
             try {
-                String asunto = "Asignación de Prácticas Profesionales";
-                String cuerpo = "Estimado/a " + student.getNames() + ",\n\n" +
+                String subject = "Asignación de Prácticas Profesionales";
+                String body = "Estimado/a " + student.getNames() + ",\n\n" +
                         "Se le informa que ha sido asignado al proyecto \"" + project.getName() + "\".\n" +
                         "Adjunto encontrará el documento oficial de asignación.\n\n" +
                         "Saludos,\nEquipo de Prácticas";
-                File pdfAdjunto = new File(tempPath);
+                File pdfAttachment = new File(tempPath);
 
-                logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), asunto, cuerpo, pdfAdjunto);
-                logger.info("Correo enviado a " + student.getEmail());
+                logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), subject, body, pdfAttachment);
+                logger.info("Email sent to " + student.getEmail());
             } catch (jakarta.mail.MessagingException | IOException ex) {
-                logger.error("Error al enviar correo: {}", ex.getMessage(), ex);
-                statusLabel.setText("Error al enviar correo al estudiante.");
+                logger.error("Error sending email: {}", ex.getMessage(), ex);
+                statusLabel.setText("Error sending email to the student.");
                 statusLabel.setStyle("-fx-text-fill: red;");
                 return;
             }
