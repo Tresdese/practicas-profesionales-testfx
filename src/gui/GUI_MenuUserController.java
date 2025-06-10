@@ -148,7 +148,7 @@ public class GUI_MenuUserController {
     @FXML
     private void handleEvaluatePresentation() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_EvaluatePresentation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfPresentations.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setTitle("Calificar Presentación");
