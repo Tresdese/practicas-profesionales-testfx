@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.ChoiceBox?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterActivityScheduleController">
-    <children>
-        <Label layoutX="150.0" layoutY="30.0" text="Registrar Cronograma de Actividades" textAlignment="CENTER">
-            <font>
-                <Font size="18.0"/>
-            </font>
-        </Label>
-        <Label layoutX="80.0" layoutY="130.0" text="Hito"/>
-        <TextField fx:id="fieldMilestone" layoutX="220.0" layoutY="126.0" prefWidth="250.0"/>
-        <Label layoutX="80.0" layoutY="170.0" text="Fecha Estimada"/>
-        <DatePicker fx:id="fieldEstimatedDate" layoutX="220.0" layoutY="166.0" prefWidth="250.0"/>
-        <Label layoutX="80.0" layoutY="210.0" text="Matrícula"/>
-        <TextField fx:id="fieldTuition" layoutX="220.0" layoutY="206.0" prefWidth="250.0"/>
-        <Label layoutX="80.0" layoutY="250.0" text="Evidencia"/>
-        <ChoiceBox fx:id="choiceEvidence" layoutX="220.0" layoutY="246.0" prefWidth="250.0"/>
-        <Button fx:id="buttonRegisterSchedule" layoutX="220.0" layoutY="300.0" mnemonicParsing="false" onAction="#handleRegisterActivitySchedule" style="-fx-background-color: #2772d3;" text="Registrar Cronograma" textFill="WHITE"/>
-        <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="50.0" layoutY="350.0" prefWidth="500.0" textFill="red" wrapText="true">
-            <font>
-                <Font size="16.0"/>
-            </font>
-        </Label>
-    </children>
+<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterActivityScheduleController">
+    <VBox spacing="25" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30" AnchorPane.bottomAnchor="20">
+        <!-- Sección Evidencia -->
+        <VBox spacing="10">
+            <Label style="-fx-font-size: 18px;" text="Registrar Evidencia" />
+            <Label text="Nombre de la Evidencia:" />
+            <TextField fx:id="evidenceNameField" promptText="Nombre de la evidencia" />
+            <Label text="Fecha de Entrega:" />
+            <DatePicker fx:id="deliveryDatePicker" />
+            <Label text="Archivo de Evidencia:" />
+            <HBox spacing="8">
+                <TextField fx:id="evidenceFileTextField" editable="false" prefWidth="250" promptText="Ruta del archivo" />
+                <Button fx:id="selectFileButton" onAction="#handleSelectEvidenceFile" text="Seleccionar Archivo" />
+            </HBox>
+            <Button fx:id="registerEvidenceButton" onAction="#handleRegisterEvidence" text="Registrar Evidencia" prefWidth="150" />
+        </VBox>
+        <Separator />
+        <!-- Sección Cronograma -->
+        <VBox spacing="10">
+            <Label style="-fx-font-size: 18px;" text="Registrar Cronograma de Actividades" />
+            <Label text="Hito:" />
+            <TextField fx:id="fieldMilestone" promptText="Hito" />
+            <Label text="Fecha Estimada:" />
+            <DatePicker fx:id="fieldEstimatedDate" />
+            <Label text="Matrícula:" />
+            <TextField fx:id="fieldTuition" promptText="Matrícula" />
+            <Label text="Evidencia:" />
+            <ChoiceBox fx:id="choiceEvidence" />
+            <Button fx:id="registerScheduleButton" onAction="#handleRegisterActivitySchedule" text="Registrar Cronograma" prefWidth="180" />
+            <Label fx:id="statusLabel" textFill="red" wrapText="true" />
+        </VBox>
+    </VBox>
 </AnchorPane>

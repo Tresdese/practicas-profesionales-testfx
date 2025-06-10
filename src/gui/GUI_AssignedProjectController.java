@@ -282,7 +282,6 @@ public class GUI_AssignedProjectController {
 
     private void showRegisterReportWindow(ProjectDTO project, String professorId, String nrc, String period, String studentName, String organization) {
         try {
-            // Obtener el nombre del profesor usando el id
             String professorName = getProfessorNameById(professorId);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterReport.fxml"));

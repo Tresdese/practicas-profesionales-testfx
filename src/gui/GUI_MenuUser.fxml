@@ -3,24 +3,55 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="400.0" prefWidth="725.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_MenuUserController">
+<BorderPane prefHeight="400.0" prefWidth="725.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gui.GUI_MenuUserController">
     <left>
         <VBox spacing="15.0" alignment="TOP_CENTER" style="-fx-background-color: #2A3E8C; -fx-padding: 20;">
             <Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-text-fill: white;" text="Hola, Usuario" />
-            <Button fx:id="buttonViewStudentList" text="Ver lista de estudiantes" onAction="#handleViewStudentList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewAcademicList" text="Ver lista de académicos" onAction="#handleViewAcademicList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewOrganizationList" text="Ver lista de organizaciones" onAction="#handleViewOrganizationList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewRepresentativeList" text="Ver lista de representantes" onAction="#handleViewRepresentativeList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewProjectList" text="Ver lista de proyectos" onAction="#handleViewProjectList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="handleViewProjectRequest" text="Ver lista de solicitudes de prácticas" onAction="#handleViewProjectRequest" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonCheckPresentationGrade" text="Consultar Calificaciones de Presentación" onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonEvaluatePresentation" text="Calificar Presentación" onAction="#handleEvaluatePresentation" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewPeriodList" text="Ver lista de períodos" onAction="#handleViewPeriodList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewGroupList" text="Ver lista de grupos" onAction="#handleViewGroupList" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageAssessmentCriteria" text="Gestionar Criterios de Evaluación" onAction="#handleManageAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageSelfAssessmentCriteria" text="Gestionar Criterios de Autoevaluación" onAction="#handleManageSelfAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageActivity" text="Gestionar Actividades" onAction="#handleManageActivity" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonLogout" text="Cerrar sesión" onAction="#handleLogout" style="-fx-background-color: #FF4C4C; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewStudentList" text="Ver lista de estudiantes"
+                    onAction="#handleViewStudentList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewAcademicList" text="Ver lista de académicos"
+                    onAction="#handleViewAcademicList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewOrganizationList" text="Ver lista de organizaciones"
+                    onAction="#handleViewOrganizationList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewRepresentativeList" text="Ver lista de representantes"
+                    onAction="#handleViewRepresentativeList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewProjectList" text="Ver lista de proyectos"
+                    onAction="#handleViewProjectList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="handleViewProjectRequest" text="Ver lista de solicitudes de prácticas"
+                    onAction="#handleViewProjectRequest" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonCheckPresentationGrade" text="Consultar Calificaciones de Presentación"
+                    onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonEvaluatePresentation" text="Calificar Presentación"
+                    onAction="#handleEvaluatePresentation" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewPeriodList" text="Ver lista de períodos"
+                    onAction="#handleViewPeriodList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonViewGroupList" text="Ver lista de grupos"
+                    onAction="#handleViewGroupList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonManageAssessmentCriteria" text="Gestionar Criterios de Evaluación"
+                    onAction="#handleManageAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonManageSelfAssessmentCriteria" text="Gestionar Criterios de Autoevaluación"
+                    onAction="#handleManageSelfAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonManageActivity" text="Gestionar Actividades"
+                    onAction="#handleManageActivity" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonLogout" text="Cerrar sesión"
+                    onAction="#handleLogout" style="-fx-background-color: #FF4C4C; -fx-text-fill: white;
+                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
         </VBox>
     </left>
     <center>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="370.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckStudentDetailsController">
+    <children>
+        <Label layoutX="170.0" layoutY="20.0" text="Detalles del Estudiante">
+            <font>
+                <Font size="20.0" />
+            </font>
+        </Label>
+        <Label layoutX="90.0" layoutY="48.0" text="Matrícula:" />
+        <Label fx:id="labelTuition" layoutX="210.0" layoutY="48.0" />
+        <Label layoutX="90.0" layoutY="78.0" text="Nombres:" />
+        <Label fx:id="labelNames" layoutX="210.0" layoutY="78.0" />
+        <Label layoutX="90.0" layoutY="108.0" text="Apellidos:" />
+        <Label fx:id="labelSurnames" layoutX="210.0" layoutY="108.0" />
+        <Label layoutX="90.0" layoutY="138.0" text="NRC:" />
+        <Label fx:id="labelNRC" layoutX="210.0" layoutY="138.0" />
+        <Label layoutX="90.0" layoutY="168.0" text="Avance Crediticio:" />
+        <Label fx:id="labelCreditAdvance" layoutX="210.0" layoutY="168.0" />
+        <Label layoutX="90.0" layoutY="198.0" text="Calificación Final:" />
+        <Label fx:id="labelFinalGrade" layoutX="210.0" layoutY="198.0" />
+        <Label layoutX="90.0" layoutY="228.0" text="Proyecto (ID):" />
+        <Label fx:id="labelProjectId" layoutX="210.0" layoutY="228.0" />
+        <Label layoutX="90.0" layoutY="258.0" text="Proyecto (Nombre):" />
+        <Label fx:id="labelProjectName" layoutX="210.0" layoutY="258.0" />
+        <Label fx:id="statusLabel" layoutX="20.0" layoutY="320.0" textFill="RED" />
+    </children>
+</AnchorPane>
