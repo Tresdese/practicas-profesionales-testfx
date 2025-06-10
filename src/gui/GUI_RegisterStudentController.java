@@ -3,6 +3,8 @@ package gui;
 import data_access.ConecctionDataBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import logic.DAO.GroupDAO;
+import logic.DTO.GroupDTO;
 import logic.DTO.StudentDTO;
 import logic.exceptions.*;
 import logic.services.StudentService;
@@ -13,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class GUI_RegisterStudentController {
 
@@ -22,7 +25,10 @@ public class GUI_RegisterStudentController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldNRC, fieldCreditAdvance;
+    private TextField fieldTuiton, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldCreditAdvance;
+
+    @FXML
+    private ChoiceBox<String> choiceBoxNRC;
 
     @FXML
     private PasswordField fieldPassword, fieldConfirmPassword;
@@ -38,6 +44,7 @@ public class GUI_RegisterStudentController {
     public void initialize() {
         togglePasswordVisibility.setText("🙈");
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
+        loadNRCs();
     }
 
     public void setParentController(GUI_CheckListOfStudentsController parentController) {
@@ -96,7 +103,7 @@ public class GUI_RegisterStudentController {
 
             StudentDTO student = new StudentDTO(
                     tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
-                    fieldUser.getText(), PasswordHasher.hashPassword(password), fieldNRC.getText(), fieldCreditAdvance.getText(), 0.0
+                    fieldUser.getText(), PasswordHasher.hashPassword(password), choiceBoxNRC.getValue(), fieldCreditAdvance.getText(), 0.0
             );
 
             try {
@@ -125,6 +132,20 @@ public class GUI_RegisterStudentController {
         }
     }
 
+    private void loadNRCs() {
+        try {
+            GroupDAO groupDAO = new GroupDAO();
+            List<GroupDTO> groups = groupDAO.getAllGroups();
+            for (GroupDTO group : groups) {
+                choiceBoxNRC.getItems().add(group.getNRC());
+            }
+        } catch (SQLException e) {
+            logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
+        }
+    }
+
     private boolean areFieldsFilled() {
         return !fieldTuiton.getText().isEmpty() &&
                 !fieldNames.getText().isEmpty() &&
@@ -134,7 +155,7 @@ public class GUI_RegisterStudentController {
                 !fieldUser.getText().isEmpty() &&
                 (!fieldPassword.getText().isEmpty() || !fieldPasswordVisible.getText().isEmpty()) &&
                 (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty()) &&
-                !fieldNRC.getText().isEmpty() &&
+                choiceBoxNRC.getValue() != null &&
                 !fieldCreditAdvance.getText().isEmpty();
     }
 }
