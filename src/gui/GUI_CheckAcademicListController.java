@@ -57,6 +57,9 @@ public class GUI_CheckAcademicListController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label labelAcademicCounts;
+
     private UserDTO selectedAcademic;
     private UserService userService;
 
@@ -102,7 +105,7 @@ public class GUI_CheckAcademicListController {
     public void loadAcademicData() {
         ObservableList<UserDTO> userList = FXCollections.observableArrayList();
         try {
-            List<UserDTO> users = userService.getAllUsers(); // Aquí ocurre el NullPointerException
+            List<UserDTO> users = userService.getAllUsers();
             userList.addAll(users);
             statusLabel.setText("");
         } catch (SQLException e) {
@@ -110,6 +113,7 @@ public class GUI_CheckAcademicListController {
             logger.error("Error al cargar los datos de los académicos: {}", e.getMessage(), e);
         }
         tableView.setItems(userList);
+        updateAcademicCounts();
     }
 
     public void searchAcademic() {
@@ -132,6 +136,7 @@ public class GUI_CheckAcademicListController {
         }
 
         tableView.setItems(filteredList);
+        updateAcademicCounts(filteredList);
     }
 
     private void addDetailsButtonToTable() {
@@ -193,5 +198,39 @@ public class GUI_CheckAcademicListController {
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión de académico: {}", e.getMessage(), e);
         }
+    }
+
+    private void updateAcademicCounts() {
+        try {
+            List<UserDTO> users = userService.getAllUsers();
+            int total = users.size();
+            int activos = 0;
+            int inactivos = 0;
+            for (UserDTO u : users) {
+                if (u.getState() == 1) {
+                    activos++;
+                } else {
+                    inactivos++;
+                }
+            }
+            labelAcademicCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+        } catch (SQLException e) {
+            labelAcademicCounts.setText("Error al contar académicos");
+            logger.error("Error al contar académicos: {}", e.getMessage(), e);
+        }
+    }
+
+    private void updateAcademicCounts(ObservableList<UserDTO> list) {
+        int total = list.size();
+        int activos = 0;
+        int inactivos = 0;
+        for (UserDTO u : list) {
+            if (u.getState() == 1) {
+                activos++;
+            } else {
+                inactivos++;
+            }
+        }
+        labelAcademicCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
     }
 }

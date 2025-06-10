@@ -56,16 +56,13 @@ public class GUI_CheckRepresentativeListController {
     private Label statusLabel;
 
     @FXML
+    private Label labelRepresentativeCounts;
+
+    @FXML
     private TableView<RepresentativeDTO> tableView;
 
     private RepresentativeDTO selectedRepresentative;
     private RepresentativeService representativeService;
-
-    private GUI_CheckRepresentativeListController parentController;
-
-    public void setRepresentativeService(RepresentativeService representativeService) {
-        this.representativeService = representativeService;
-    }
 
     public void initialize() {
         try {
@@ -92,7 +89,6 @@ public class GUI_CheckRepresentativeListController {
 
         searchButton.setOnAction(event -> searchRepresentative());
         buttonRegisterRepresentative.setOnAction(event -> openRegisterRepresentativeWindow());
-        // TODO hacer un metodo para inicializar los botones
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedRepresentative = (RepresentativeDTO) newValue;
@@ -107,8 +103,7 @@ public class GUI_CheckRepresentativeListController {
             }
 
             ServiceConfig serviceConfig = new ServiceConfig();
-            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
-                    .searchLinkedOrganizationById(organizationId);
+            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService().searchLinkedOrganizationById(organizationId);
 
             return (organization != null) ? organization.getName() : "Organización no encontrada";
         } catch (Exception e) {
@@ -146,6 +141,7 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(representativeList);
+        updateRepresentativeCounts(representativeList); // <-- AGREGADO
     }
 
     private void searchRepresentative() {
@@ -168,6 +164,7 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(filteredList);
+        updateRepresentativeCounts(filteredList); // <-- AGREGADO
     }
 
     private void addDetailsButtonToTable() {
@@ -181,7 +178,6 @@ public class GUI_CheckRepresentativeListController {
                     }
                     RepresentativeDTO representative = getTableView().getItems().get(getIndex());
                     System.out.println("Detalles de: " + representative.getNames() + " " + representative.getSurnames());
-                    // TODO Lógica para mostrar detalles del representante
                 });
             }
 
@@ -238,5 +234,10 @@ public class GUI_CheckRepresentativeListController {
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión de representante: {}", e.getMessage(), e);
         }
+    }
+
+    private void updateRepresentativeCounts(ObservableList<RepresentativeDTO> list) {
+        int total = list.size();
+        labelRepresentativeCounts.setText("Totales: " + total);
     }
 }

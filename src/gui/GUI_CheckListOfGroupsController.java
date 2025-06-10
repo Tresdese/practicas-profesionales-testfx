@@ -50,6 +50,9 @@ public class GUI_CheckListOfGroupsController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Label labelGroupCounts;
+
     private GroupDTO selectedGroup;
     private GroupDAO groupDAO;
     private Role userRole;
@@ -100,6 +103,7 @@ public class GUI_CheckListOfGroupsController {
             logger.error("Error al cargar los grupos: {}", e.getMessage(), e);
         }
         tableViewGroups.setItems(groupList);
+        updateGroupCounts(groupList);
     }
 
     public void searchGroup() {
@@ -122,6 +126,12 @@ public class GUI_CheckListOfGroupsController {
         }
 
         tableViewGroups.setItems(filteredList);
+        updateGroupCounts(filteredList);
+    }
+
+    private void updateGroupCounts(ObservableList<GroupDTO> list) {
+        int total = list.size();
+        labelGroupCounts.setText("Totales: " + total);
     }
 
     public void setUserRole(Role userRole) {

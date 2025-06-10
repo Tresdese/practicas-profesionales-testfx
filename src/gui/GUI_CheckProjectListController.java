@@ -69,6 +69,9 @@ public class GUI_CheckProjectListController {
     @FXML
     private TableView<ProjectDTO> tableView;
 
+    @FXML
+    private Label labelProjectCounts;
+
     private ProjectDTO selectedProject;
     private ProjectService projectService;
     private ServiceConfig serviceConfig;
@@ -121,7 +124,7 @@ public class GUI_CheckProjectListController {
     private void setAllCellValueFactories() {
         projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("DD/MM/YYYY");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         projectStartDate.setCellValueFactory(cellData -> {
             if (cellData.getValue().getStartDate() != null) {
@@ -219,6 +222,7 @@ public class GUI_CheckProjectListController {
         }
 
         tableView.setItems(projectList);
+        updateProjectCounts(projectList);
     }
 
     private void searchProject() {
@@ -254,6 +258,12 @@ public class GUI_CheckProjectListController {
         }
 
         tableView.setItems(filteredList);
+        updateProjectCounts(filteredList);
+    }
+
+    private void updateProjectCounts(ObservableList<ProjectDTO> list) {
+        int total = list.size();
+        labelProjectCounts.setText("Totales: " + total);
     }
 
     private void addDetailsButtonToTable() {
@@ -267,7 +277,6 @@ public class GUI_CheckProjectListController {
                     }
                     ProjectDTO project = getTableView().getItems().get(getIndex());
                     System.out.println("Detalles de: " + project.getName());
-                    // TODO Lógica para mostrar detalles del proyecto
                 });
             }
 
