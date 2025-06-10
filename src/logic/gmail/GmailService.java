@@ -21,7 +21,6 @@ import java.util.Properties;
 public class GmailService {
 
     public static void sendEmail(String to, String subject, String bodyText) throws IOException, MessagingException {
-        // Reutiliza el método de credenciales de Drive
         final NetHttpTransport HTTP_TRANSPORT = new NetHttpTransport();
         Gmail service = new Gmail.Builder(
                 HTTP_TRANSPORT,
@@ -77,11 +76,9 @@ public class GmailService {
         email.addRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(to));email.setSubject(subject);
         //Se realiza aqui el import completo de la clase ya que causa conflicto con com.google.api.services.gmail.model.Message
 
-        // Cuerpo del mensaje
         MimeBodyPart textPart = new MimeBodyPart();
         textPart.setText(bodyText, "utf-8");
 
-        // Adjuntar archivo
         MimeBodyPart attachmentPart = new MimeBodyPart();
         try {
             attachmentPart.attachFile(attachment);
