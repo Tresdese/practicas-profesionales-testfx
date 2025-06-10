@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import data_access.ConnectionDataBase;
 import logic.DTO.ActivityScheduleDTO;
 import logic.interfaces.IActivityScheduleDAO;
 
@@ -17,16 +18,20 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
     private final static String SQL_SELECT = "SELECT * FROM cronograma_actividad WHERE idCronograma = ? AND idActividad = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_actividad";
 
-    public boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+    public boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, activitySchedule.getIdSchedule());
             statement.setInt(2, activitySchedule.getIdActivity());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+    public boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, newActivitySchedule.getIdSchedule());
             statement.setInt(2, newActivitySchedule.getIdActivity());
             statement.setInt(3, oldActivitySchedule.getIdSchedule());
@@ -35,16 +40,20 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         }
     }
 
-    public boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+    public boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, activitySchedule.getIdSchedule());
             statement.setInt(2, activitySchedule.getIdActivity());
             return statement.executeUpdate() > 0;
         }
     }
 
-    public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+    public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, activitySchedule.getIdSchedule());
             statement.setInt(2, activitySchedule.getIdActivity());
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -56,9 +65,11 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         return null;
     }
 
-    public List<ActivityScheduleDTO> getAllActivitySchedules(Connection connection) throws SQLException {
+    public List<ActivityScheduleDTO> getAllActivitySchedules() throws SQLException {
         List<ActivityScheduleDTO> activitySchedules = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 activitySchedules.add(new ActivityScheduleDTO(resultSet.getInt("idCronograma"), resultSet.getInt("idActividad")));

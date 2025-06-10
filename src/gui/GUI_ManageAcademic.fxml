@@ -12,7 +12,8 @@
         <Label layoutX="103.0" layoutY="20.0" text="Gestionar Académico">
             <font>
                 <Font size="20.0" />
-            </font></Label>
+            </font>
+        </Label>
 
         <Label layoutX="38.0" layoutY="79.0" text="Número de Personal:" />
         <TextField fx:id="fieldNumberOfStaff" layoutX="172.0" layoutY="75.0" />

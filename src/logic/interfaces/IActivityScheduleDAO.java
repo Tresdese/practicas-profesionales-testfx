@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IActivityScheduleDAO {
-    boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
-    boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule, Connection connection) throws SQLException;
-    boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
-    ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule, Connection connection) throws SQLException;
-    List<ActivityScheduleDTO> getAllActivitySchedules(Connection connection) throws SQLException;
+    boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException;
+    boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule) throws SQLException;
+    boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException;
+    ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule) throws SQLException;
+    List<ActivityScheduleDTO> getAllActivitySchedules() throws SQLException;
 }
