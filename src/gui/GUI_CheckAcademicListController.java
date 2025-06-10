@@ -206,14 +206,7 @@ public class GUI_CheckAcademicListController {
             int total = users.size();
             int activos = 0;
             int inactivos = 0;
-            for (UserDTO u : users) {
-                if (u.getState() == 1) {
-                    activos++;
-                } else {
-                    inactivos++;
-                }
-            }
-            labelAcademicCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+            labelAcademicCounts.setText("Totales: " + total);
         } catch (SQLException e) {
             labelAcademicCounts.setText("Error al contar académicos");
             logger.error("Error al contar académicos: {}", e.getMessage(), e);
@@ -224,13 +217,6 @@ public class GUI_CheckAcademicListController {
         int total = list.size();
         int activos = 0;
         int inactivos = 0;
-        for (UserDTO u : list) {
-            if (u.getState() == 1) {
-                activos++;
-            } else {
-                inactivos++;
-            }
-        }
-        labelAcademicCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+        labelAcademicCounts.setText("Totales: " + total);
     }
 }

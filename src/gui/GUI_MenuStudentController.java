@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,6 +28,9 @@ public class GUI_MenuStudentController {
 
     @FXML
     private ImageView profileImageView;
+
+    @FXML
+    private Button buttonLogout;
 
     public void setStudentName(String studentName) {
         welcomeLabel.setText("Hola, " + studentName);
@@ -124,6 +128,19 @@ public class GUI_MenuStudentController {
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
             showAlert("Error", "No se pudo abrir la ventana de registro.");
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Login.fxml"));
+            Stage stage = (Stage) buttonLogout.getScene().getWindow();
+            stage.setScene(new Scene(loader.load()));
+            stage.setTitle("Inicio de Sesión");
+            stage.show();
+        } catch (Exception e) {
+            logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
         }
     }
 

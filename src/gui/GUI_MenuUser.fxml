@@ -20,6 +20,7 @@
             <Button fx:id="buttonManageAssessmentCriteria" text="Gestionar Criterios de Evaluación" onAction="#handleManageAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button fx:id="buttonManageSelfAssessmentCriteria" text="Gestionar Criterios de Autoevaluación" onAction="#handleManageSelfAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button fx:id="buttonManageActivity" text="Gestionar Actividades" onAction="#handleManageActivity" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="buttonLogout" text="Cerrar sesión" onAction="#handleLogout" style="-fx-background-color: #FF4C4C; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
         </VBox>
     </left>
     <center>
