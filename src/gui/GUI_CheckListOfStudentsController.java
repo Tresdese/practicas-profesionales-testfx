@@ -115,7 +115,7 @@ public class GUI_CheckListOfStudentsController {
     }
 
     public void setColumns () {
-        columnTuition.setCellValueFactory(new PropertyValueFactory<>("tuiton"));
+        columnTuition.setCellValueFactory(new PropertyValueFactory<>("tuition"));
         columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
         columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
         columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));

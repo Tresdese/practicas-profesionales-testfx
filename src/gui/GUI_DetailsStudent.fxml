@@ -24,5 +24,7 @@
       <Label fx:id="labelProjectDescription" layoutX="200.0" layoutY="360.0" text=""/>
       <Label layoutX="100.0" layoutY="390.0" text="Organización:"/>
       <Label fx:id="labelProjectOrganization" layoutX="200.0" layoutY="390.0" text=""/>
+      <Button fx:id="buttonCheckReports" layoutX="220.0" layoutY="440.0"
+              text="Consultar Reportes" onAction="#handleCheckReports"/>
    </children>
 </AnchorPane>

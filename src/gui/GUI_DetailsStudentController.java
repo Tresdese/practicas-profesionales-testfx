@@ -1,7 +1,12 @@
 package gui;
 
+import javafx.application.HostServices;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
 import logic.DTO.ProjectDTO;
@@ -9,8 +14,15 @@ import logic.DTO.LinkedOrganizationDTO;
 import logic.DAO.StudentProjectDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.LinkedOrganizationDAO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class GUI_DetailsStudentController {
+
+    private static final Logger LOGGER = LogManager.getLogger(GUI_DetailsStudentController.class);
 
     @FXML
     private Label labelTuition;
@@ -22,14 +34,14 @@ public class GUI_DetailsStudentController {
     private Label labelEmail;
     @FXML
     private Label labelNRC;
-
-    // Campos para el proyecto
     @FXML
     private Label labelProjectName;
     @FXML
     private Label labelProjectDescription;
     @FXML
     private Label labelProjectOrganization;
+
+    private HostServices hostServices;
 
     public void setStudent(StudentDTO student) {
         if (student != null) {
@@ -39,7 +51,6 @@ public class GUI_DetailsStudentController {
             labelEmail.setText(student.getEmail());
             labelNRC.setText(student.getNRC());
 
-            // Mostrar proyecto asignado
             showAssignedProject(student);
         }
     }
@@ -68,10 +79,46 @@ public class GUI_DetailsStudentController {
                 labelProjectDescription.setText("-");
                 labelProjectOrganization.setText("-");
             }
+        } catch (SQLException e) {
+            LOGGER.error("Error de base de datos al obtener el proyecto asignado: {}", e.getMessage(), e);
+            labelProjectName.setText("Error BD");
+            labelProjectDescription.setText("Error BD");
+            labelProjectOrganization.setText("Error BD");
+        } catch (NullPointerException e) {
+            LOGGER.error("Referencia nula al obtener el proyecto asignado: {}", e.getMessage(), e);
+            labelProjectName.setText("Error");
+            labelProjectDescription.setText("Error");
+            labelProjectOrganization.setText("Error");
         } catch (Exception e) {
+            LOGGER.error("Error inesperado al obtener el proyecto asignado: {}", e.getMessage(), e);
             labelProjectName.setText("Error");
             labelProjectDescription.setText("Error");
             labelProjectOrganization.setText("Error");
         }
+    }
+
+    @FXML
+    private void handleCheckReports() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfReports.fxml"));
+            Parent root = loader.load();
+
+            GUI_CheckListOfReportsController controller = loader.getController();
+
+            controller.setStudentTuition(labelTuition.getText()); // Luego matrícula
+
+            Stage stage = new Stage();
+            stage.setTitle("Lista de Reportes");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.error("No se pudo abrir la ventana de reportes: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de reportes: {}", e.getMessage(), e);
+        }
+    }
+
+    public void setHostServices(HostServices hostServices) {
+        this.hostServices = hostServices;
     }
 }

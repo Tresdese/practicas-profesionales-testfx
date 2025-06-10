@@ -11,7 +11,7 @@ public class StudentDTO {
     private String password;
     private String NRC;
     private String creditAdvance;
-    private double finalGrade; // Nuevo atributo
+    private double finalGrade;
 
     public StudentDTO() {
         this.tuition = "";
