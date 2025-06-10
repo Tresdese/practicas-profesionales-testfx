@@ -26,5 +26,7 @@
       <Label fx:id="labelProjectOrganization" layoutX="200.0" layoutY="390.0" text=""/>
       <Button fx:id="buttonCheckReports" layoutX="220.0" layoutY="440.0"
               text="Consultar Reportes" onAction="#handleCheckReports"/>
+      <Button fx:id="buttonCheckSelfAssessment" layoutX="360.0" layoutY="440.0"
+              text="Ver Autoevaluación" onAction="#handleCheckSelfAssessment"/>
    </children>
 </AnchorPane>

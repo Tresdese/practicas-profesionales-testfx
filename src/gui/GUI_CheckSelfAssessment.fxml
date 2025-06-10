@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.GUI_CheckSelfAssessmentController"
+            prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <VBox layoutX="30" layoutY="20" spacing="20" prefWidth="540" prefHeight="360">
+            <children>
+                <Label text="Detalle de Autoevaluación" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-underline: true;"/>
+                <GridPane hgap="15" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120"/>
+                        <ColumnConstraints minWidth="300"/>
+                        <ColumnConstraints minWidth="120"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="30"/>
+                        <RowConstraints minHeight="30"/>
+                        <RowConstraints minHeight="30"/>
+                    </rowConstraints>
+                    <children>
+                        <Label text="Comentarios:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="labelComments" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;"/>
+                        <Label text="Calificación:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="labelGrade" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;"/>
+                        <Label text="Estado:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="labelStatus" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;"/>
+                        <Button fx:id="buttonViewEvidence" text="Ver Evidencia" onAction="#handleViewEvidence"
+                                GridPane.rowIndex="1" GridPane.columnIndex="2" style="-fx-background-color: #1976d2; -fx-text-fill: white;"/>
+                    </children>
+                </GridPane>
+                <Label text="Criterios asociados:" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                <ListView fx:id="listViewCriteria" prefHeight="150" style="-fx-background-color: #f9f9f9;"/>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

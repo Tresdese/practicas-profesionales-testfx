@@ -17,7 +17,6 @@ public class GUI_DetailsStudent extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DetailsStudent.fxml"));
         Parent root = loader.load();
         GUI_DetailsStudentController controller = loader.getController();
-        controller.setHostServices(getHostServices());
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

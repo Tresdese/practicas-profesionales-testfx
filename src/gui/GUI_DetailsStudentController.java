@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.DTO.StudentDTO;
+import javafx.scene.control.Button;
 import logic.DTO.StudentProjectDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.LinkedOrganizationDTO;
@@ -40,6 +41,8 @@ public class GUI_DetailsStudentController {
     private Label labelProjectDescription;
     @FXML
     private Label labelProjectOrganization;
+    @FXML
+    private Button buttonCheckSelfAssessment;
 
     private HostServices hostServices;
 
@@ -120,5 +123,24 @@ public class GUI_DetailsStudentController {
 
     public void setHostServices(HostServices hostServices) {
         this.hostServices = hostServices;
+    }
+
+    @FXML
+    private void handleCheckSelfAssessment() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckSelfAssessment.fxml"));
+            Parent root = loader.load();
+            GUI_CheckSelfAssessmentController controller = loader.getController();
+            controller.setStudentTuition(labelTuition.getText());
+
+            Stage stage = new Stage();
+            stage.setTitle("Autoevaluación");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.error("No se pudo abrir la ventana de autoevaluación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
+        }
     }
 }
