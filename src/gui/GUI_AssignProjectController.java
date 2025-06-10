@@ -69,7 +69,12 @@ public class GUI_AssignProjectController {
                 }
                 @Override
                 public ProjectDTO fromString(String string) {
-                    return null;
+                    for (ProjectDTO project : projectChoiceBox.getItems()) {
+                        if (project.getName().equals(string)) {
+                            return project;
+                        }
+                    }
+                    return projectChoiceBox.getItems().isEmpty() ? null : projectChoiceBox.getItems().get(0);
                 }
             });
 
