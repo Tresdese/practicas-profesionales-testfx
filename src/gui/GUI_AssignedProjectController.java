@@ -7,10 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import logic.DAO.LinkedOrganizationDAO;
-import logic.DAO.ProjectDAO;
-import logic.DAO.RepresentativeDAO;
-import logic.DAO.StudentProjectDAO;
+import logic.DAO.*;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.RepresentativeDTO;
@@ -40,6 +37,8 @@ public class GUI_AssignedProjectController {
     private Label representativeLabel;
     @FXML
     private Button checkPresentationGradeButton;
+    @FXML
+    private Button registerSelfAssessmentButton;
 
     private StudentDTO student;
 
@@ -63,6 +62,9 @@ public class GUI_AssignedProjectController {
             resetLabelsStyle();
             fillProjectLabels(project);
             fillOrganizationAndRepresentativeLabels(project.getIdOrganization());
+
+            checkIfSelfAssessmentExists(student.getTuition(), Integer.parseInt(studentProject.getIdProject()));
+
         } catch (ProjectNotFound e) {
             logger.warn("Proyecto no encontrado: {}", e.getMessage());
             showProjectNotFound();
@@ -72,6 +74,16 @@ public class GUI_AssignedProjectController {
         } catch (Exception e) {
             logger.error("Error inesperado al buscar el proyecto asignado: {}", e.getMessage(), e);
             showErrorLoadingProject();
+        }
+    }
+
+    private void checkIfSelfAssessmentExists(String matricula, int idProyecto) {
+        try {
+            SelfAssessmentDAO dao = new SelfAssessmentDAO();
+            boolean exists = dao.existsSelfAssessment(matricula, idProyecto);
+            registerSelfAssessmentButton.setDisable(exists);
+        } catch (Exception e) {
+            registerSelfAssessmentButton.setDisable(false); // Por defecto, habilitado si hay error
         }
     }
 

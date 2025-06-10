@@ -14,6 +14,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_DELETE = "DELETE FROM autoevaluacion WHERE idAutoevaluacion = ?";
     private final static String SQL_SELECT = "SELECT * FROM autoevaluacion WHERE idAutoevaluacion = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion";
+    private final static String SQL_EXISTS = "SELECT COUNT(*) FROM autoevaluacion WHERE matricula = ? AND idProyecto = ?";
 
     @Override
     public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
@@ -145,5 +146,20 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
                 SelfAssessmentDTO.EstadoAutoevaluacion.fromString(estado),
                 generalComments
         );
+    }
+
+    public boolean existsSelfAssessment(String matricula, int idProyecto) throws SQLException {
+        try (ConnectionDataBase db = new ConnectionDataBase();
+             Connection connection = db.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_EXISTS)) {
+            statement.setString(1, matricula);
+            statement.setInt(2, idProyecto);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }
