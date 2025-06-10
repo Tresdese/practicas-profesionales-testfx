@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="gui.GUI_RegisterPresentationController"
+            prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <Label layoutX="200.0" layoutY="20.0" text="Registrar Presentación">
+            <font>
+                <Font size="24.0"/>
+            </font>
+        </Label>
+
+        <Label layoutX="80.0" layoutY="130.0" text="ID Proyecto:"/>
+        <ComboBox fx:id="idProjectComboBox" layoutX="220.0" layoutY="125.0" prefWidth="250.0"/>
+
+        <Label layoutX="80.0" layoutY="180.0" text="Fecha:"/>
+        <DatePicker fx:id="dateField" layoutX="220.0" layoutY="175.0" prefWidth="150.0"/>
+        <Label layoutX="380.0" layoutY="180.0" text="Hora (HH:mm):"/>
+        <TextField fx:id="timeField" layoutX="480.0" layoutY="175.0" prefWidth="80.0" promptText="HH:mm"/>
+        <Label layoutX="80.0" layoutY="230.0" text="Tipo:"/>
+        <ComboBox fx:id="typeComboBox" layoutX="220.0" layoutY="225.0" prefWidth="250.0"/>
+
+        <Button fx:id="registerButton" layoutX="220.0" layoutY="290.0" prefWidth="150.0" text="Registrar"/>
+
+        <Label fx:id="statusLabel" layoutX="80.0" layoutY="340.0" textFill="RED"/>
+    </children>
+</AnchorPane>
