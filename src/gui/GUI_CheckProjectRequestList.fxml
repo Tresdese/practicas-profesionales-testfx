@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckProjectRequestListController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="728.0" prefWidth="1198.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckProjectRequestListController">
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="1130.0">
             <center>
@@ -19,34 +19,33 @@
                         <TableColumn fx:id="columnTuiton" prefWidth="100.0" text="Matrícula" />
                         <TableColumn fx:id="columnProjectName" prefWidth="150.0" text="Nombre Proyecto" />
                         <TableColumn fx:id="columnDescription" prefWidth="200.0" text="Descripción" />
-                        <TableColumn fx:id="columnOrganizationId" prefWidth="100.0" text="Organización" />
-                        <TableColumn fx:id="columnRepresentativeId" prefWidth="100.0" text="Representante" />
-                        <TableColumn fx:id="columnStatus" prefWidth="100.0" text="Estado" />
-                        <TableColumn fx:id="columnDetails" prefWidth="178.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnApprove" prefWidth="201.0" text="Aprobar/Rechazar" />
+                        <TableColumn fx:id="columnOrganizationId" prefWidth="127.0" text="Organización" />
+                        <TableColumn fx:id="columnRepresentativeId" prefWidth="166.0" text="Representante" />
+                        <TableColumn fx:id="columnStatus" prefWidth="144.0" text="Estado" />
+                        <TableColumn fx:id="columnApprove" prefWidth="242.0" text="Aprobar/Rechazar" />
                     </columns>
                 </TableView>
             </center>
         </BorderPane>
-        <TextField fx:id="searchField" layoutX="35.0" layoutY="46.0" prefHeight="26.0" prefWidth="700.0" promptText="Buscar por matrícula (Ejem: S23155487)" />
-        <ComboBox fx:id="filterComboBox" layoutX="750.0" layoutY="46.0" prefHeight="26.0" prefWidth="150.0" promptText="Filtrar por estado" />
-        <Button fx:id="searchButton" layoutX="915.0" layoutY="46.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
+        <TextField fx:id="searchField" layoutX="35.0" layoutY="42.0" prefHeight="26.0" prefWidth="700.0" promptText="Buscar por matrícula (Ejem: S23155487)" />
+        <ComboBox fx:id="filterComboBox" layoutX="750.0" layoutY="42.0" prefHeight="26.0" prefWidth="150.0" promptText="Filtrar por estado" />
+        <Button fx:id="searchButton" layoutX="915.0" layoutY="42.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #7cb0f3;" text="Buscar">
             <font>
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Button>
-        <Button fx:id="clearButton" layoutX="1025.0" layoutY="46.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #cccccc;" text="Limpiar">
+        <Button fx:id="clearButton" layoutX="1025.0" layoutY="42.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" style="-fx-background-color: #cccccc;" text="Limpiar">
             <font>
                 <Font name="System Bold Italic" size="12.0" />
             </font>
         </Button>
-        <Label layoutX="400.0" layoutY="10.0" text="Solicitudes de Proyectos">
+        <Label layoutX="413.0" text="Solicitudes de Proyectos">
             <font>
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterRequest" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #2772d3;" text="Registrar Nueva Solicitud" textFill="WHITE" />
-        <Button fx:id="buttonRefreshList" layoutX="700.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2772d3;" text="Actualizar Lista" textFill="WHITE" />
+        <Button fx:id="buttonRegisterRequest" layoutX="400.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #2772d3;" text="Registrar Nueva Solicitud" textFill="WHITE" />
+        <Button fx:id="buttonRefreshList" layoutX="699.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2772d3;" text="Actualizar Lista" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
         <Label fx:id="labelRequestCounts" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
     </children>

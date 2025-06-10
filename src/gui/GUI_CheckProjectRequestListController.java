@@ -50,9 +50,6 @@ public class GUI_CheckProjectRequestListController {
     private TableColumn<ProjectRequestDTO, String> columnStatus;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, Void> columnDetails;
-
-    @FXML
     private TableColumn<ProjectRequestDTO, Void> columnApprove;
 
     @FXML
@@ -77,7 +74,7 @@ public class GUI_CheckProjectRequestListController {
     private Label statusLabel;
 
     @FXML
-    private Label labelRequestCounts; // <-- AGREGADO
+    private Label labelRequestCounts;
 
     private ProjectRequestDTO selectedRequest;
     private ProjectRequestDAO projectRequestDAO;
@@ -100,15 +97,16 @@ public class GUI_CheckProjectRequestListController {
 
         setAllCellValueFactories();
 
-        addDetailsButtonToTable();
         addApproveButtonToTable();
-        addManageButtonToTable();
 
         ObservableList<String> statusOptions = FXCollections.observableArrayList(
                 "Todos", "pendiente", "aprobada", "rechazada"
         );
         filterComboBox.setItems(statusOptions);
         filterComboBox.setValue("Todos");
+
+        // Listener para filtrar automáticamente al cambiar el valor
+        filterComboBox.setOnAction(event -> loadRequestData());
 
         loadRequestData();
 
@@ -160,11 +158,13 @@ public class GUI_CheckProjectRequestListController {
         ObservableList<ProjectRequestDTO> requestList = FXCollections.observableArrayList();
 
         try {
-            List<ProjectRequestDTO> requests = projectRequestDAO.getAllProjectRequests();
-
+            List<ProjectRequestDTO> requests;
             String selectedStatus = filterComboBox.getValue();
-            if (!"Todos".equals(selectedStatus)) {
-                requests.removeIf(request -> !request.getStatus().name().equals(selectedStatus));
+
+            if ("Todos".equalsIgnoreCase(selectedStatus)) {
+                requests = projectRequestDAO.getAllProjectRequests();
+            } else {
+                requests = projectRequestDAO.getProjectRequestsByStatus(selectedStatus);
             }
 
             requestList.addAll(requests);
@@ -175,7 +175,7 @@ public class GUI_CheckProjectRequestListController {
         }
 
         tableView.setItems(requestList);
-        updateRequestCounts(requestList); // <-- AGREGADO
+        updateRequestCounts(requestList);
     }
 
     private void setAllCellValueFactories() {
@@ -240,8 +240,8 @@ public class GUI_CheckProjectRequestListController {
                         request.getProjectName().toLowerCase().contains(searchQuery.toLowerCase()) ||
                         request.getDescription().toLowerCase().contains(searchQuery.toLowerCase());
 
-                boolean statusMatches = "Todos".equals(selectedStatus) ||
-                        request.getStatus().name().equals(selectedStatus);
+                boolean statusMatches = "Todos".equalsIgnoreCase(selectedStatus) ||
+                        request.getStatus().name().equalsIgnoreCase(selectedStatus);
 
                 if (matches && statusMatches) {
                     filteredList.add(request);
@@ -253,32 +253,7 @@ public class GUI_CheckProjectRequestListController {
         }
 
         tableView.setItems(filteredList);
-        updateRequestCounts(filteredList); // <-- AGREGADO
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Detalles");
-
-            {
-                btn.setOnAction(event -> {
-                    ProjectRequestDTO request = getTableView().getItems().get(getIndex());
-                    openDetailsWindow(request);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
-            }
-        };
-
-        columnDetails.setCellFactory(cellFactory);
+        updateRequestCounts(filteredList);
     }
 
     private void addApproveButtonToTable() {
@@ -298,7 +273,13 @@ public class GUI_CheckProjectRequestListController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btn);
+                    ProjectRequestDTO request = getTableView().getItems().get(getIndex());
+                    // Solo mostrar el botón si el estado es "pendiente"
+                    if (request.getStatus().name().equalsIgnoreCase("pendiente")) {
+                        setGraphic(btn);
+                    } else {
+                        setGraphic(null);
+                    }
                 }
             }
         };
@@ -306,55 +287,21 @@ public class GUI_CheckProjectRequestListController {
         columnApprove.setCellFactory(cellFactory);
     }
 
-    private void addManageButtonToTable() {
-        TableColumn<ProjectRequestDTO, Void> columnManage = new TableColumn<>("Gestionar");
-
-        Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Gestionar");
-
-            {
-                btn.setOnAction(event -> {
-                    ProjectRequestDTO request = getTableView().getItems().get(getIndex());
-                    openManageRequestWindow(request);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btn);
-                }
-            }
-        };
-
-        columnManage.setCellFactory(cellFactory);
-        tableView.getColumns().add(columnManage);
-    }
-
-    private void openManageRequestWindow(ProjectRequestDTO request) {
-        try {
-            // Implementa la lógica para abrir la ventana de gestión
-        } catch (Exception e) {
-            logger.error("Error al abrir ventana de gestión: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir ventana de gestión");
-        }
-    }
-
-    private void openDetailsWindow(ProjectRequestDTO request) {
-        try {
-            // Implementa la lógica para abrir la ventana de detalles
-        } catch (Exception e) {
-            logger.error("Error al abrir ventana de detalles: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir ventana de detalles");
-        }
-    }
-
     private void openApprovalWindow(ProjectRequestDTO request) {
         try {
-            // Implementa la lógica para abrir la ventana de aprobación
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageRequest.fxml"));
+            Parent root = loader.load();
+
+            String orgName = organizationDAO.getOrganizationNameById(request.getOrganizationId());
+            String repName = representativeDAO.getRepresentativeNameById(request.getRepresentativeId());
+
+            GUI_ManageRequestController controller = loader.getController();
+            controller.setRequest(request, orgName, repName);
+
+            Stage stage = new Stage();
+            stage.setTitle("Aprobar/Rechazar Solicitud");
+            stage.setScene(new Scene(root));
+            stage.show();
         } catch (RuntimeException e) {
             logger.error("Error en ventana de aprobación: {}", e.getMessage(), e);
             statusLabel.setText("Error en ventana de aprobación");
@@ -379,7 +326,6 @@ public class GUI_CheckProjectRequestListController {
         }
     }
 
-    // --- AGREGADO ---
     private void updateRequestCounts(ObservableList<ProjectRequestDTO> list) {
         int total = list.size();
         labelRequestCounts.setText("Totales: " + total);
