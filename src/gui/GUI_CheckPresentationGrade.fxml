@@ -3,20 +3,19 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="gui.GUI_CheckPresentationGradeController" prefHeight="400.0" prefWidth="700.0">
-    <VBox alignment="CENTER" spacing="18" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" AnchorPane.bottomAnchor="20">
-        <Label text="Calificaciones de Presentación"
-               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C;" />
+<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckPresentationGradeController">
+    <VBox alignment="CENTER" spacing="18" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
+        <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C;" text="Calificaciones de Presentación" />
         <TableView fx:id="tableView" prefHeight="320" prefWidth="660">
             <columns>
                 <TableColumn fx:id="colIdEvaluacion" text="ID Evaluación" />
                 <TableColumn fx:id="colIdPresentacion" text="ID Presentación" />
-                <TableColumn fx:id="colFecha" text="Fecha" />
-                <TableColumn fx:id="colPromedio" text="Promedio" />
-                <TableColumn fx:id="colVerDetalles" text="Ver Detalles" />
+                <TableColumn fx:id="colFecha" prefWidth="222.99998474121094" text="Fecha" />
+                <TableColumn fx:id="colPromedio" prefWidth="100.20001220703125" text="Promedio" />
+                <TableColumn fx:id="colVerDetalles" prefWidth="177.0" text="Ver Detalles" />
             </columns>
         </TableView>
-        <Label fx:id="labelEvaluationCounts" text="Totales: 0"/>
-        <Label fx:id="statusLabel" text="" style="-fx-text-fill: #D32F2F;"/>
+        <Label fx:id="labelEvaluationCounts" text="Totales: 0" />
+        <Label fx:id="statusLabel" style="-fx-text-fill: #D32F2F;" text="" />
     </VBox>
 </AnchorPane>
