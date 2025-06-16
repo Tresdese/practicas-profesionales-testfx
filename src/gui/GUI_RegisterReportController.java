@@ -305,6 +305,23 @@ public class GUI_RegisterReportController {
             showAlert("Selecciona un archivo de evidencia.");
             return;
         }
+        int totalHours = Integer.parseInt(totalHoursField.getText());
+        ReportDAO reportDAO = new ReportDAO();
+        try {
+            int reportedHours = reportDAO.getTotalReportedHoursByStudent(student.getTuition());
+            if (reportedHours + totalHours > 420) {
+                showAlert("El alumno ya ha cumplido las 420 horas requeridas o las superaría con este informe.");
+                return;
+            }
+        }catch (SQLException e) {
+            showAlert("Error de base de datos al verificar horas reportadas.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
+            return;
+        } catch (Exception e) {
+            showAlert("Error inesperado al verificar horas reportadas.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al verificar horas reportadas", e);
+            return;
+        }
         int evidenceId = getNextEvidenceId();
         if (evidenceId == -1) return;
 
@@ -314,7 +331,7 @@ public class GUI_RegisterReportController {
         if (!insertEvidenceToDatabase(evidenceId, selectedEvidenceFile.getName(), driveUrl)) return;
 
         try {
-            int totalHours = Integer.parseInt(totalHoursField.getText());
+            totalHours = Integer.parseInt(totalHoursField.getText());
             ReportDTO report = new ReportDTO(
                     "0",
                     new Date(),
@@ -327,7 +344,7 @@ public class GUI_RegisterReportController {
                     generalObservationsArea.getText(),
                     String.valueOf(evidenceId)
             );
-            ReportDAO reportDAO = new ReportDAO();
+            reportDAO = new ReportDAO();
             boolean inserted = reportDAO.insertReport(report);
             if (inserted) {
                 String numReporte = report.getNumberReport();
