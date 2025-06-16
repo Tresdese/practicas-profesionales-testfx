@@ -19,6 +19,18 @@ public class GUI_RegisterStudentController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
 
+    private static final int MAX_NOMBRES = 50;
+
+    private static final int MAX_APELLIDOS = 50;
+
+    private static final int MAX_TELEFONO = 30;
+
+    private static final int MAX_CORREO = 100;
+
+    private static final int MAX_USUARIO = 50;
+
+    private static final int MAX_PASSWORD = 64;
+
     @FXML
     private Label statusLabel;
 
@@ -34,6 +46,9 @@ public class GUI_RegisterStudentController {
     @FXML
     private Button togglePasswordVisibility;
 
+    @FXML
+    private Label labelNamesCharCount, labelSurnamesCharCount, labelPhoneCharCount, labelEmailCharCount, labelUserCharCount, labelPasswordCharCount;
+
     private boolean isPasswordVisible = false;
 
     private GUI_CheckListOfStudentsController parentController;
@@ -43,6 +58,49 @@ public class GUI_RegisterStudentController {
         togglePasswordVisibility.setText("🙈");
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
         loadNRCs();
+
+        fieldNames.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_NOMBRES ? change : null
+        ));
+        labelNamesCharCount.setText("0/" + MAX_NOMBRES);
+        fieldNames.textProperty().addListener((observable, oldText, newText) ->
+                labelNamesCharCount.setText(newText.length() + "/" + MAX_NOMBRES)
+        );
+        fieldSurnames.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_APELLIDOS ? change : null
+        ));
+        labelSurnamesCharCount.setText("0/" + MAX_APELLIDOS);
+        fieldSurnames.textProperty().addListener((observable, oldText, newText) ->
+                labelSurnamesCharCount.setText(newText.length() + "/" + MAX_APELLIDOS)
+        );
+        fieldPhone.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_TELEFONO ? change : null
+        ));
+        labelPhoneCharCount.setText("0/" + MAX_TELEFONO);
+        fieldPhone.textProperty().addListener((observable, oldText, newText) ->
+                labelPhoneCharCount.setText(newText.length() + "/" + MAX_TELEFONO)
+        );
+        fieldEmail.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_CORREO ? change : null
+        ));
+        labelEmailCharCount.setText("0/" + MAX_CORREO);
+        fieldEmail.textProperty().addListener((observable, oldText, newText) ->
+                labelEmailCharCount.setText(newText.length() + "/" + MAX_CORREO)
+        );
+        fieldUser.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_USUARIO ? change : null
+        ));
+        labelUserCharCount.setText("0/" + MAX_USUARIO);
+        fieldUser.textProperty().addListener((observable, oldText, newText) ->
+                labelUserCharCount.setText(newText.length() + "/" + MAX_USUARIO)
+        );
+        fieldPassword.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_PASSWORD ? change : null
+        ));
+        labelPasswordCharCount.setText("0/" + MAX_PASSWORD);
+        fieldPassword.textProperty().addListener((observable, oldText, newText) ->
+                labelPasswordCharCount.setText(newText.length() + "/" + MAX_PASSWORD)
+        );
     }
 
     public void setParentController(GUI_CheckListOfStudentsController parentController) {
@@ -90,9 +148,10 @@ public class GUI_RegisterStudentController {
             String tuiton = fieldTuition.getText();
             String email = fieldEmail.getText();
             String phone = fieldPhone.getText();
-            StudentValidator.validateStudentData(tuiton, email, phone);
+            String password = fieldPassword.getText();
+            StudentValidator.validateStudentData(tuiton, email, phone, password);
 
-            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
+            password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
             String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
 
             if (!password.equals(confirmPassword)) {
