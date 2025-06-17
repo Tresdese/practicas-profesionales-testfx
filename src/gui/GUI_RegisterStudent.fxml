@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterStudentController">
    <children>
-      <Label fx:id="label" layoutX="258.0" layoutY="20.0" text="Registrar Estudiante" textAlignment="CENTER">
+      <Label fx:id="titleLabel" layoutX="258.0" layoutY="20.0" text="Registrar Estudiante" textAlignment="CENTER">
          <font>
             <Font size="18.0" />
          </font>
@@ -30,48 +30,46 @@
             <RowConstraints minHeight="30"/>
          </rowConstraints>
 
-         <!-- Primera columna -->
          <Label text="Matricula" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-         <TextField fx:id="fieldTuition" promptText="Ejem: S23014069" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+         <TextField fx:id="tuitionField" promptText="Ejem: S23014069" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
          <Label text="Nombres" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-         <TextField fx:id="fieldNames" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-         <Label fx:id="labelNamesCharCount" text="0/50" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+         <TextField fx:id="namesField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+         <Label fx:id="namesCharCountLabel" text="0/50" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
 
          <Label text="Apellidos" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-         <TextField fx:id="fieldSurnames" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-         <Label fx:id="labelSurnamesCharCount" text="0/50" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+         <TextField fx:id="surnamesField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+         <Label fx:id="surnamesCharCountLabel" text="0/50" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
 
          <Label text="Telefono" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-         <TextField fx:id="fieldPhone" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-         <Label fx:id="labelPhoneCharCount" text="0/30" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+         <TextField fx:id="phoneField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+         <Label fx:id="phoneCharCountLabel" text="0/30" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
 
          <Label text="NRC" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-         <ChoiceBox fx:id="choiceBoxNRC" prefHeight="26.0" prefWidth="150.0" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+         <ChoiceBox fx:id="nrcChoiceBox" prefHeight="26.0" prefWidth="150.0" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
          <Label text="Avance Crediticio" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-         <TextField fx:id="fieldCreditAdvance" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+         <TextField fx:id="creditAdvanceField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-         <!-- Segunda columna -->
          <Label text="Correo" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
-         <TextField fx:id="fieldEmail" GridPane.rowIndex="0" GridPane.columnIndex="4"/>
-         <Label fx:id="labelEmailCharCount" text="0/100" GridPane.rowIndex="0" GridPane.columnIndex="5"/>
+         <TextField fx:id="emailField" GridPane.rowIndex="0" GridPane.columnIndex="4"/>
+         <Label fx:id="emailCharCountLabel" text="0/100" GridPane.rowIndex="0" GridPane.columnIndex="5"/>
 
          <Label text="Usuario" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-         <TextField fx:id="fieldUser" GridPane.rowIndex="1" GridPane.columnIndex="4"/>
-         <Label fx:id="labelUserCharCount" text="0/50" GridPane.rowIndex="1" GridPane.columnIndex="5"/>
+         <TextField fx:id="userField" GridPane.rowIndex="1" GridPane.columnIndex="4"/>
+         <Label fx:id="userCharCountLabel" text="0/50" GridPane.rowIndex="1" GridPane.columnIndex="5"/>
 
          <Label text="Contraseña" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
-         <PasswordField fx:id="fieldPassword" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
-         <TextField fx:id="fieldPasswordVisible" managed="false" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
+         <PasswordField fx:id="passwordField" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
+         <TextField fx:id="passwordVisibleField" managed="false" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
          <Button fx:id="togglePasswordVisibility" text="🙈" GridPane.rowIndex="2" GridPane.columnIndex="5"/>
-         <Label fx:id="labelPasswordCharCount" text="0/64" GridPane.rowIndex="2" GridPane.columnIndex="6"/>
+         <Label fx:id="passwordCharCountLabel" text="0/64" GridPane.rowIndex="2" GridPane.columnIndex="6"/>
 
          <Label text="Confirmar Contraseña" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
-         <PasswordField fx:id="fieldConfirmPassword" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
-         <TextField fx:id="fieldConfirmPasswordVisible" managed="false" visible="false" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
+         <PasswordField fx:id="confirmPasswordField" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
+         <TextField fx:id="confirmPasswordVisibleField" managed="false" visible="false" GridPane.rowIndex="3" GridPane.columnIndex="4"/>
       </GridPane>
-      <Button fx:id="buttonRegisterStudent" layoutX="267.0" layoutY="300.0" mnemonicParsing="false" onAction="#handleRegisterStudent" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE"/>
+      <Button fx:id="registerStudentButton" layoutX="267.0" layoutY="300.0" mnemonicParsing="false" onAction="#handleRegisterStudent" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE"/>
       <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="108.0" layoutY="350.0" prefWidth="500.0" textFill="red" wrapText="true">
          <font>
             <Font size="18.0" />

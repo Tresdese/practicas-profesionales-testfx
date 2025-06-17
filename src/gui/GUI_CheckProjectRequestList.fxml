@@ -16,13 +16,13 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="1130.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnTuiton" prefWidth="100.0" text="Matrícula" />
-                        <TableColumn fx:id="columnProjectName" prefWidth="150.0" text="Nombre Proyecto" />
-                        <TableColumn fx:id="columnDescription" prefWidth="200.0" text="Descripción" />
-                        <TableColumn fx:id="columnOrganizationId" prefWidth="127.0" text="Organización" />
-                        <TableColumn fx:id="columnRepresentativeId" prefWidth="166.0" text="Representante" />
-                        <TableColumn fx:id="columnStatus" prefWidth="144.0" text="Estado" />
-                        <TableColumn fx:id="columnApprove" prefWidth="242.0" text="Aprobar/Rechazar" />
+                        <TableColumn fx:id="tuitonColumn" prefWidth="100.0" text="Matrícula" />
+                        <TableColumn fx:id="projectNameColumn" prefWidth="150.0" text="Nombre Proyecto" />
+                        <TableColumn fx:id="descriptionColumn" prefWidth="200.0" text="Descripción" />
+                        <TableColumn fx:id="organizationIdColumn" prefWidth="127.0" text="Organización" />
+                        <TableColumn fx:id="representativeIdColumn" prefWidth="166.0" text="Representante" />
+                        <TableColumn fx:id="statusColumn" prefWidth="144.0" text="Estado" />
+                        <TableColumn fx:id="approveColumn" prefWidth="242.0" text="Aprobar/Rechazar" />
                     </columns>
                 </TableView>
             </center>
@@ -44,8 +44,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterRequest" layoutX="400.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #2772d3;" text="Registrar Nueva Solicitud" textFill="WHITE" />
-        <Button fx:id="buttonRefreshList" layoutX="699.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2772d3;" text="Actualizar Lista" textFill="WHITE" />
+        <Button fx:id="registerRequestButton" layoutX="400.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #2772d3;" text="Registrar Nueva Solicitud" textFill="WHITE" />
+        <Button fx:id="refreshListButton" layoutX="699.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2772d3;" text="Actualizar Lista" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
         <Label fx:id="labelRequestCounts" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
     </children>

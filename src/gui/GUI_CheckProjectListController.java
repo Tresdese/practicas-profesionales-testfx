@@ -37,25 +37,25 @@ public class GUI_CheckProjectListController {
     private Button buttonRegisterProject;
 
     @FXML
-    private TableColumn<ProjectDTO, String> projectName;
+    private TableColumn<ProjectDTO, String> projectNameColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, String> projectStartDate;
+    private TableColumn<ProjectDTO, String> projectStartDateColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, String> projectEndDate;
+    private TableColumn<ProjectDTO, String> projectEndDateColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, String> projectOrganization;
+    private TableColumn<ProjectDTO, String> projectOrganizationColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, String> projectAcademic;
+    private TableColumn<ProjectDTO, String> projectAcademicColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, Void> columnDetails;
+    private TableColumn<ProjectDTO, Void> detailsColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, Void> columnManagement;
+    private TableColumn<ProjectDTO, Void> managementColumn;
 
     @FXML
     private Button searchButton;
@@ -70,7 +70,7 @@ public class GUI_CheckProjectListController {
     private TableView<ProjectDTO> tableView;
 
     @FXML
-    private Label labelProjectCounts;
+    private Label projectCountsLabel;
 
     private ProjectDTO selectedProject;
     private ProjectService projectService;
@@ -122,11 +122,11 @@ public class GUI_CheckProjectListController {
     }
 
     private void setAllCellValueFactories() {
-        projectName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        projectNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-        projectStartDate.setCellValueFactory(cellData -> {
+        projectStartDateColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getStartDate() != null) {
                 return new SimpleStringProperty(dateFormat.format(cellData.getValue().getStartDate()));
             } else {
@@ -134,7 +134,7 @@ public class GUI_CheckProjectListController {
             }
         });
 
-        projectEndDate.setCellValueFactory(cellData -> {
+        projectEndDateColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getApproximateDate() != null) {
                 return new SimpleStringProperty(dateFormat.format(cellData.getValue().getApproximateDate()));
             } else {
@@ -142,13 +142,13 @@ public class GUI_CheckProjectListController {
             }
         });
 
-        projectOrganization.setCellValueFactory(cellData -> {
+        projectOrganizationColumn.setCellValueFactory(cellData -> {
             String organizationId = String.valueOf(cellData.getValue().getIdOrganization());
             String organizationName = getOrganizationNameById(organizationId);
             return new SimpleStringProperty(organizationName);
         });
 
-        projectAcademic.setCellValueFactory(cellData -> {
+        projectAcademicColumn.setCellValueFactory(cellData -> {
             String academicId = cellData.getValue().getIdUser();
             String academicName = getAcademicNameById(academicId);
             return new SimpleStringProperty(academicName);
@@ -263,7 +263,7 @@ public class GUI_CheckProjectListController {
 
     private void updateProjectCounts(ObservableList<ProjectDTO> list) {
         int total = list.size();
-        labelProjectCounts.setText("Totales: " + total);
+        projectCountsLabel.setText("Totales: " + total);
     }
 
     private void addDetailsButtonToTable() {
@@ -291,7 +291,7 @@ public class GUI_CheckProjectListController {
             }
         };
 
-        columnDetails.setCellFactory(cellFactory);
+        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {
@@ -321,7 +321,7 @@ public class GUI_CheckProjectListController {
             }
         };
 
-        columnManagement.setCellFactory(cellFactory);
+        managementColumn.setCellFactory(cellFactory);
     }
 
     private void openManageProjectWindow(ProjectDTO project) {

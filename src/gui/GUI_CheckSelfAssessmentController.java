@@ -22,15 +22,17 @@ public class GUI_CheckSelfAssessmentController {
     private static final Logger LOGGER = LogManager.getLogger(GUI_CheckSelfAssessmentController.class);
 
     @FXML
-    private Label labelComments;
+    private Label commentsLabel;
     @FXML
-    private Label labelGrade;
+    private Label gradeLabel;
     @FXML
-    private Label labelStatus;
+    private Label statusLabel;
     @FXML
-    private ListView<String> listViewCriteria;
+    private Label noSelfAssessmentLabel;
     @FXML
-    private Button buttonViewEvidence;
+    private ListView<String> criteriaListView;
+    @FXML
+    private Button viewEvidenceButton;
 
     private int evidenceId = -1;
 
@@ -42,18 +44,25 @@ public class GUI_CheckSelfAssessmentController {
                 updateSelfAssessmentLabels(selfAssessment);
                 List<CriterionSelfAssessmentDTO> criterios = getCriteriaBySelfAssessmentId(selfAssessment.getSelfAssessmentId());
                 updateCriteriaList(criterios);
+                noSelfAssessmentLabel.setVisible(false);
+                viewEvidenceButton.setDisable(false);
             } else {
                 clearInterface("No registrada", "-", "-");
+                noSelfAssessmentLabel.setVisible(true);
+                viewEvidenceButton.setDisable(true);
             }
         } catch (SQLException e) {
             LOGGER.error("Error de base de datos al obtener la autoevaluación: {}", e.getMessage(), e);
             clearInterface("Error BD", "Error BD", "Error BD");
+            noSelfAssessmentLabel.setVisible(true);
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al obtener la autoevaluación: {}", e.getMessage(), e);
             clearInterface("Error", "Error", "Error");
+            noSelfAssessmentLabel.setVisible(true);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener la autoevaluación: {}", e.getMessage(), e);
             clearInterface("Error", "Error", "Error");
+            noSelfAssessmentLabel.setVisible(true);
         }
     }
 
@@ -75,15 +84,15 @@ public class GUI_CheckSelfAssessmentController {
     }
 
     private void updateSelfAssessmentLabels(SelfAssessmentDTO selfAssessment) {
-        labelComments.setText(selfAssessment.getComments());
-        labelGrade.setText(String.valueOf(selfAssessment.getGrade()));
-        labelStatus.setText(selfAssessment.getStatus().getValue());
+        commentsLabel.setText(selfAssessment.getComments());
+        gradeLabel.setText(String.valueOf(selfAssessment.getGrade()));
+        statusLabel.setText(selfAssessment.getStatus().getValue());
     }
 
     private void updateCriteriaList(List<CriterionSelfAssessmentDTO> criterios) {
-        listViewCriteria.getItems().clear();
+        criteriaListView.getItems().clear();
         for (var criterio : criterios) {
-            listViewCriteria.getItems().add(
+            criteriaListView.getItems().add(
                     "Criterio ID: " + criterio.getIdCriteria() +
                             " | Calificación: " + criterio.getGrade() +
                             " | Comentarios: " + criterio.getComments()
@@ -92,11 +101,11 @@ public class GUI_CheckSelfAssessmentController {
     }
 
     private void clearInterface(String comments, String grade, String status) {
-        labelComments.setText(comments);
-        labelGrade.setText(grade);
-        labelStatus.setText(status);
+        commentsLabel.setText(comments);
+        gradeLabel.setText(grade);
+        statusLabel.setText(status);
         evidenceId = -1;
-        listViewCriteria.getItems().clear();
+        criteriaListView.getItems().clear();
     }
 
     @FXML

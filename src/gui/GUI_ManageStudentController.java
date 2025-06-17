@@ -1,6 +1,5 @@
 package gui;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import logic.DAO.GroupDAO;
-import logic.DAO.ProjectDAO;
-import logic.DAO.StudentProjectDAO;
 import logic.DTO.GroupDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
@@ -27,14 +24,17 @@ public class GUI_ManageStudentController {
 
     private static final Logger logger = LogManager.getLogger(GUI_ManageStudentController.class);
 
-    @FXML
-    private TextField fieldNames, fieldSurnames, fieldCreditAdvance;
+    private static final int MAX_NAMES = 50;
+    private static final int MAX_SURNAMES = 50;
 
     @FXML
-    private ChoiceBox<String> choiceBoxNRC;
+    private TextField namesField, surnamesField, fieldCreditAdvance;
 
     @FXML
-    private Label statusLabel;
+    private ChoiceBox<String> nrcChoiceBox;
+
+    @FXML
+    private Label statusLabel, namesCharCountLabel, surnamesCharCountLabel;
 
     private StudentDTO student;
     private ProjectDTO currentProject;
@@ -46,6 +46,19 @@ public class GUI_ManageStudentController {
         try {
             this.studentService = ServiceFactory.getStudentService();
             loadNRCs();
+            namesField.setTextFormatter(new TextFormatter<>(change ->
+                    change.getControlNewText().length() <= MAX_NAMES ? change : null));
+            namesCharCountLabel.setText("0/" + MAX_NAMES);
+            namesField.textProperty().addListener((observable, oldText, newText) ->
+                    namesCharCountLabel.setText(newText.length() + "/" + MAX_NAMES)
+            );
+
+            surnamesField.setTextFormatter(new TextFormatter<>(change ->
+                    change.getControlNewText().length() <= MAX_SURNAMES ? change : null));
+            surnamesCharCountLabel.setText("0/" + MAX_SURNAMES);
+            surnamesField.textProperty().addListener((observable, oldText, newText) ->
+                    surnamesCharCountLabel.setText(newText.length() + "/" + MAX_SURNAMES)
+            );
         } catch (Exception e) {
             logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
             statusLabel.setText("Error al conectar con la base de datos.");
@@ -58,7 +71,7 @@ public class GUI_ManageStudentController {
             GroupDAO groupDAO = new GroupDAO();
             List<GroupDTO> groups = groupDAO.getAllGroups();
             for (GroupDTO group : groups) {
-                choiceBoxNRC.getItems().add(group.getNRC());
+                nrcChoiceBox.getItems().add(group.getNRC());
             }
         } catch (SQLException e) {
             logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
@@ -76,9 +89,9 @@ public class GUI_ManageStudentController {
         this.student = student;
         this.currentProject = currentProject;
 
-        fieldNames.setText(student.getNames() != null ? student.getNames() : "");
-        fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
-        choiceBoxNRC.setValue(student.getNRC() != null ? student.getNRC() : "");
+        namesField.setText(student.getNames() != null ? student.getNames() : "");
+        surnamesField.setText(student.getSurnames() != null ? student.getSurnames() : "");
+        nrcChoiceBox.setValue(student.getNRC() != null ? student.getNRC() : "");
         fieldCreditAdvance.setText(student.getCreditAdvance() != null ? student.getCreditAdvance() : "");
     }
 
@@ -96,9 +109,9 @@ public class GUI_ManageStudentController {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String names = fieldNames.getText();
-            String surnames = fieldSurnames.getText();
-            String nrc = choiceBoxNRC.getValue();
+            String names = namesField.getText();
+            String surnames = surnamesField.getText();
+            String nrc = nrcChoiceBox.getValue();
             String creditAdvance = fieldCreditAdvance.getText();
 
             student.setNames(names);
@@ -122,9 +135,9 @@ public class GUI_ManageStudentController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                choiceBoxNRC.getValue() != null &&
+        return !namesField.getText().isEmpty() &&
+                !surnamesField.getText().isEmpty() &&
+                nrcChoiceBox.getValue() != null &&
                 !fieldCreditAdvance.getText().isEmpty();
     }
 

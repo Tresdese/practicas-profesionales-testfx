@@ -23,16 +23,16 @@ public class GUI_RegisterGroupController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterGroupController.class);
 
     @FXML
-    private Label statusLabel;
+    private Label statusLabel, nameCharCountLabel;
 
     @FXML
-    private TextField fieldNRC, fieldName;
+    private TextField nrcField, nameField;
 
     @FXML
-    private ChoiceBox<UserDTO> choiceBoxAcademico;
+    private ChoiceBox<UserDTO> academicChoiceBox;
 
     @FXML
-    private ChoiceBox<PeriodDTO> choiceBoxPeriodo;
+    private ChoiceBox<PeriodDTO> periodChoiceBox;
 
     @FXML
     private Button registerButton;
@@ -45,6 +45,12 @@ public class GUI_RegisterGroupController {
         cargarAcademicos();
         cargarPeriodos();
         registerButton.setOnAction(event -> handleRegisterGroup());
+        nameField.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= 50 ? change : null));
+        nameCharCountLabel.setText("0/50");
+        nameField.textProperty().addListener((observable, oldText, newText) ->
+                nameCharCountLabel.setText(newText.length() + "/50")
+        );
     }
 
     private void cargarAcademicos() {
@@ -54,8 +60,8 @@ public class GUI_RegisterGroupController {
                     .filter(user -> user.getRole() == Role.ACADEMICO)
                     .collect(Collectors.toList());
             academicosList.setAll(academicos);
-            choiceBoxAcademico.setItems(academicosList);
-            choiceBoxAcademico.setConverter(new javafx.util.StringConverter<UserDTO>() {
+            academicChoiceBox.setItems(academicosList);
+            academicChoiceBox.setConverter(new javafx.util.StringConverter<UserDTO>() {
                 @Override
                 public String toString(UserDTO user) {
                     return user == null ? "" : user.getNames() + " " + user.getSurnames();
@@ -76,8 +82,8 @@ public class GUI_RegisterGroupController {
             PeriodDAO periodDAO = new PeriodDAO();
             List<PeriodDTO> periodos = periodDAO.getAllPeriods();
             periodosList.setAll(periodos);
-            choiceBoxPeriodo.setItems(periodosList);
-            choiceBoxPeriodo.setConverter(new javafx.util.StringConverter<PeriodDTO>() {
+            periodChoiceBox.setItems(periodosList);
+            periodChoiceBox.setConverter(new javafx.util.StringConverter<PeriodDTO>() {
                 @Override
                 public String toString(PeriodDTO period) {
                     return period == null ? "" : period.getName();
@@ -105,12 +111,12 @@ public class GUI_RegisterGroupController {
                 return;
             }
 
-            UserDTO academicoSeleccionado = choiceBoxAcademico.getValue();
-            PeriodDTO periodoSeleccionado = choiceBoxPeriodo.getValue();
+            UserDTO academicoSeleccionado = academicChoiceBox.getValue();
+            PeriodDTO periodoSeleccionado = periodChoiceBox.getValue();
 
             GroupDTO group = new GroupDTO(
-                    fieldNRC.getText(),
-                    fieldName.getText(),
+                    nrcField.getText(),
+                    nameField.getText(),
                     academicoSeleccionado.getIdUser(),
                     periodoSeleccionado.getIdPeriod()
             );
@@ -141,9 +147,9 @@ public class GUI_RegisterGroupController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNRC.getText().isEmpty() &&
-                !fieldName.getText().isEmpty() &&
-                choiceBoxAcademico.getValue() != null &&
-                choiceBoxPeriodo.getValue() != null;
+        return !nrcField.getText().isEmpty() &&
+                !nameField.getText().isEmpty() &&
+                academicChoiceBox.getValue() != null &&
+                periodChoiceBox.getValue() != null;
     }
 }
