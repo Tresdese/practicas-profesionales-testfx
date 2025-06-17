@@ -7,8 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import logic.DAO.GroupDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.StudentProjectDAO;
+import logic.DTO.GroupDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
@@ -19,13 +21,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class GUI_ManageStudentController {
 
     private static final Logger logger = LogManager.getLogger(GUI_ManageStudentController.class);
 
     @FXML
-    private TextField fieldNames, fieldSurnames, fieldNRC, fieldCreditAdvance;
+    private TextField fieldNames, fieldSurnames, fieldCreditAdvance;
+
+    @FXML
+    private ChoiceBox<String> choiceBoxNRC;
 
     @FXML
     private Label statusLabel;
@@ -39,10 +45,25 @@ public class GUI_ManageStudentController {
     private void initialize() {
         try {
             this.studentService = ServiceFactory.getStudentService();
+            loadNRCs();
         } catch (Exception e) {
             logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
             statusLabel.setText("Error al conectar con la base de datos.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
+
+    private void loadNRCs() {
+        try {
+            GroupDAO groupDAO = new GroupDAO();
+            List<GroupDTO> groups = groupDAO.getAllGroups();
+            for (GroupDTO group : groups) {
+                choiceBoxNRC.getItems().add(group.getNRC());
+            }
+        } catch (SQLException e) {
+            logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
         }
     }
 
@@ -57,7 +78,7 @@ public class GUI_ManageStudentController {
 
         fieldNames.setText(student.getNames() != null ? student.getNames() : "");
         fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
-        fieldNRC.setText(student.getNRC() != null ? student.getNRC() : "");
+        choiceBoxNRC.setValue(student.getNRC() != null ? student.getNRC() : "");
         fieldCreditAdvance.setText(student.getCreditAdvance() != null ? student.getCreditAdvance() : "");
     }
 
@@ -77,7 +98,7 @@ public class GUI_ManageStudentController {
 
             String names = fieldNames.getText();
             String surnames = fieldSurnames.getText();
-            String nrc = fieldNRC.getText();
+            String nrc = choiceBoxNRC.getValue();
             String creditAdvance = fieldCreditAdvance.getText();
 
             student.setNames(names);
@@ -103,7 +124,7 @@ public class GUI_ManageStudentController {
     private boolean areFieldsFilled() {
         return !fieldNames.getText().isEmpty() &&
                 !fieldSurnames.getText().isEmpty() &&
-                !fieldNRC.getText().isEmpty() &&
+                choiceBoxNRC.getValue() != null &&
                 !fieldCreditAdvance.getText().isEmpty();
     }
 

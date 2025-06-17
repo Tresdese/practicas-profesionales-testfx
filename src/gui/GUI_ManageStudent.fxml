@@ -16,7 +16,7 @@
         <Label layoutX="90.0" layoutY="98.0" text="Apellidos:" />
         <TextField fx:id="fieldSurnames" layoutX="210.0" layoutY="98.0" />
         <Label layoutX="90.0" layoutY="138.0" text="NRC:" />
-        <TextField fx:id="fieldNRC" layoutX="210.0" layoutY="138.0" />
+        <ChoiceBox fx:id="choiceBoxNRC" layoutX="210.0" layoutY="138.0" prefWidth="200.0"/>
         <Label layoutX="90.0" layoutY="178.0" text="Avance Crediticio:" />
         <TextField fx:id="fieldCreditAdvance" layoutX="210.0" layoutY="178.0" />
         <HBox layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0" alignment="CENTER">
