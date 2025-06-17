@@ -54,6 +54,8 @@ class CriterionSelfAssessmentDAOTest {
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
         Statement stmt = connection.createStatement();
+        stmt.execute("DELETE FROM cronograma_actividad");
+        stmt.execute("DELETE FROM cronograma_de_actividades");
         stmt.execute("DELETE FROM autoevaluacion_criterio");
         stmt.execute("DELETE FROM criterio_de_autoevaluacion");
         stmt.execute("DELETE FROM autoevaluacion");

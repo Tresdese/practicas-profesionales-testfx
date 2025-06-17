@@ -163,4 +163,124 @@ class StudentDAOTest {
             stmt.executeUpdate();
         }
     }
+
+    @Test
+    void testUpdateStudentState() {
+        try {
+            insertTestStudent("S88888888", 1, "Estado", "Prueba", "9999999999", "estado@prueba.com", "estadouser", "estadopass", String.valueOf(TEST_NRC), "10");
+            boolean updated = studentDAO.updateStudentState("S88888888", 2);
+            assertTrue(updated, "El estado debería actualizarse correctamente");
+
+            StudentDTO student = studentDAO.searchStudentByTuition("S88888888");
+            assertEquals(2, student.getState(), "El estado del estudiante debería ser 2");
+        } catch (SQLException e) {
+            fail("Error en testUpdateStudentState: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testSearchStudentByUserAndPassword() {
+        try {
+            insertTestStudent("S77777777", 1, "Usuario", "Clave", "8888888888", "usuario@clave.com", "usuarioprueba", "claveprueba", String.valueOf(TEST_NRC), "15");
+            StudentDTO student = studentDAO.searchStudentByUserAndPassword("usuarioprueba", "claveprueba");
+            assertNotNull(student, "El estudiante debería encontrarse");
+            assertEquals("S77777777", student.getTuition(), "La matrícula debería coincidir");
+        } catch (SQLException e) {
+            fail("Error en testSearchStudentByUserAndPassword: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testIsTuitonRegistered() {
+        try {
+            insertTestStudent("S99999999", 1, "Matricula", "Registrada", "7777777777", "matricula@reg.com", "matriculareg", "matriculapass", String.valueOf(TEST_NRC), "20");
+            assertTrue(studentDAO.isTuitonRegistered("S99999999"), "La matrícula debería estar registrada");
+            assertFalse(studentDAO.isTuitonRegistered("NO_EXISTE"), "La matrícula no debería estar registrada");
+        } catch (SQLException e) {
+            fail("Error en testIsTuitonRegistered: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testIsPhoneRegistered() {
+        try {
+            insertTestStudent("S66666666", 1, "Telefono", "Registrado", "6666666666", "telefono@reg.com", "telefonoreg", "telefonopass", String.valueOf(TEST_NRC), "25");
+            assertTrue(studentDAO.isPhoneRegistered("6666666666"), "El teléfono debería estar registrado");
+            assertFalse(studentDAO.isPhoneRegistered("0000000000"), "El teléfono no debería estar registrado");
+        } catch (SQLException e) {
+            fail("Error en testIsPhoneRegistered: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testIsEmailRegistered() {
+        try {
+            insertTestStudent("S55555555", 1, "Correo", "Registrado", "5555555555", "correo@reg.com", "correoreg", "correopass", String.valueOf(TEST_NRC), "30");
+            assertTrue(studentDAO.isEmailRegistered("correo@reg.com"), "El correo debería estar registrado");
+            assertFalse(studentDAO.isEmailRegistered("noexiste@correo.com"), "El correo no debería estar registrado");
+        } catch (SQLException e) {
+            fail("Error en testIsEmailRegistered: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testInsertStudentDuplicateTuition() {
+        try {
+            insertTestStudent("S11111111", 1, "Duplicado", "Test", "1111111111", "dup@test.com", "dupuser", "duppass", String.valueOf(TEST_NRC), "10");
+            StudentDTO duplicate = new StudentDTO("S11111111", 1, "Duplicado2", "Test2", "2222222222", "dup2@test.com", "dupuser2", "duppass2", String.valueOf(TEST_NRC), "20", 0.0);
+            assertThrows(SQLException.class, () -> studentDAO.insertStudent(duplicate), "No debe permitir insertar matrícula duplicada");
+        } catch (SQLException e) {
+            fail("Error en testInsertStudent_DuplicateTuition: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateStudentNonExistent() {
+        try {
+            StudentDTO nonExistent = new StudentDTO("S00000000", 1, "No", "Existe", "0000000000", "no@existe.com", "nouser", "nopass", String.valueOf(TEST_NRC), "0", 0.0);
+            boolean result = studentDAO.updateStudent(nonExistent);
+            assertFalse(result, "No debe actualizar un estudiante inexistente");
+        } catch (SQLException e) {
+            fail("Error en testUpdateStudent_NonExistent: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testDeleteStudentNonExistent() {
+        try {
+            boolean result = studentDAO.deleteStudent("S00000001");
+            assertFalse(result, "No debe eliminar un estudiante inexistente");
+        } catch (SQLException e) {
+            fail("Error en testDeleteStudent_NonExistent: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testSearchStudentByUserAndPasswordInvalidCredentials() {
+        try {
+            insertTestStudent("S22222222", 1, "Usuario", "Clave", "2222222222", "user@clave.com", "userprueba", "claveprueba", String.valueOf(TEST_NRC), "10");
+            StudentDTO student = studentDAO.searchStudentByUserAndPassword("userprueba", "clave_incorrecta");
+            assertEquals("N/A", student.getTuition(), "Debe devolver estudiante no encontrado");
+        } catch (SQLException e) {
+            fail("Error en testSearchStudentByUserAndPassword_InvalidCredentials: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testGetAllStudentsEmpty() {
+        try {
+            connection.prepareStatement("DELETE FROM estudiante").executeUpdate();
+            List<StudentDTO> students = studentDAO.getAllStudents();
+            assertNotNull(students, "La lista no debe ser nula");
+            assertTrue(students.isEmpty(), "La lista debe estar vacía si no hay estudiantes");
+        } catch (SQLException e) {
+            fail("Error en testGetAllStudents_Empty: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testInsertStudentWithNullFields() {
+        StudentDTO student = new StudentDTO(null, 1, null, null, null, null, null, null, String.valueOf(TEST_NRC), null, 0.0);
+        assertThrows(SQLException.class, () -> studentDAO.insertStudent(student), "No debe permitir insertar campos nulos obligatorios");
+    }
 }
