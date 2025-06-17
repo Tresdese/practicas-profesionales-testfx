@@ -20,15 +20,10 @@ public class GUI_RegisterStudentController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
 
     private static final int MAX_NOMBRES = 50;
-
     private static final int MAX_APELLIDOS = 50;
-
     private static final int MAX_TELEFONO = 30;
-
     private static final int MAX_CORREO = 100;
-
     private static final int MAX_USUARIO = 50;
-
     private static final int MAX_PASSWORD = 64;
 
     @FXML
@@ -139,54 +134,77 @@ public class GUI_RegisterStudentController {
 
     @FXML
     private void handleRegisterStudent() {
+        statusLabel.setText("");
+        statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+
+        if (!validateFields()) {
+            return;
+        }
+
+        StudentDTO student = buildStudentDTO();
+        if (student == null) {
+            return;
+        }
+
         try {
-            if (!areFieldsFilled()) {
-                statusLabel.setText("Todos los campos deben estar llenos.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                return;
+            registerStudent(student);
+            statusLabel.setText("¡Estudiante registrado exitosamente!");
+            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            if (parentController != null) {
+                parentController.loadStudentData();
             }
-            String tuiton = fieldTuition.getText();
-            String email = fieldEmail.getText();
-            String phone = fieldPhone.getText();
-            String password = fieldPassword.getText();
-            StudentValidator.validateStudentData(tuiton, email, phone, password);
-
-            password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
-            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
-
-            if (!password.equals(confirmPassword)) {
-                throw new PasswordDoesNotMatch("Las contraseñas no coinciden.");
-            }
-
-            StudentDTO student = new StudentDTO(
-                    tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
-                    fieldUser.getText(), PasswordHasher.hashPassword(password), choiceBoxNRC.getValue(), fieldCreditAdvance.getText(), 0.0
-            );
-
-            try {
-                StudentService studentService = new StudentService();
-                studentService.registerStudent(student);
-
-                statusLabel.setText("¡Estudiante registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-
-                if (parentController != null) {
-                    parentController.loadStudentData();
-                }
-            } catch (SQLException | RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
-                logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
-                statusLabel.setText(e.getMessage());
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            }
-        } catch (EmptyFields | InvalidData | PasswordDoesNotMatch e) {
-            logger.warn("Error de validación: {}", e.getMessage(), e);
+        } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        } catch (SQLException e) {
+            logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos. Intente más tarde.");
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
         }
+    }
+
+    private boolean validateFields() {
+        if (!areFieldsFilled()) {
+            statusLabel.setText("Todos los campos deben estar llenos.");
+            return false;
+        }
+        String tuition = fieldTuition.getText();
+        String email = fieldEmail.getText();
+        String phone = fieldPhone.getText();
+        String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
+        try {
+            StudentValidator.validateStudentData(tuition, email, phone, password);
+        } catch (InvalidData e) {
+            statusLabel.setText(e.getMessage());
+            return false;
+        }
+        String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
+        if (!password.equals(confirmPassword)) {
+            statusLabel.setText("Las contraseñas no coinciden.");
+            return false;
+        }
+        return true;
+    }
+
+    private StudentDTO buildStudentDTO() {
+        try {
+            String tuition = fieldTuition.getText();
+            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
+            return new StudentDTO(
+                    tuition, 1, fieldNames.getText(), fieldSurnames.getText(), fieldPhone.getText(), fieldEmail.getText(),
+                    fieldUser.getText(), PasswordHasher.hashPassword(password), choiceBoxNRC.getValue(), fieldCreditAdvance.getText(), 0.0
+            );
+        } catch (Exception e) {
+            statusLabel.setText("Error al construir los datos del estudiante.");
+            logger.error("Error al construir StudentDTO: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
+        StudentService studentService = new StudentService();
+        studentService.registerStudent(student);
     }
 
     private void loadNRCs() {
