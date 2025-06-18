@@ -103,6 +103,11 @@ public class GUI_RegisterReportController {
     @FXML
     private TextField evidenceFileTextField;
 
+    @FXML
+    private Label observationsCharCountLabel;
+
+    private static final int MAX_OBSERVATIONS = 200;
+
     private File selectedEvidenceFile;
 
     private StudentDTO student;
@@ -124,6 +129,15 @@ public class GUI_RegisterReportController {
             change.setRange(0, oldLength);
             return change;
         }));
+
+        progressPercentageField.setPromptText("0-100");
+        observationsArea.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_OBSERVATIONS ? change : null
+        ));
+        observationsCharCountLabel.setText("0/" + MAX_OBSERVATIONS);
+        observationsArea.textProperty().addListener((observable, oldText, newText) ->
+                observationsCharCountLabel.setText(newText.length() + "/" + MAX_OBSERVATIONS)
+        );
 
         activityColumn.setCellValueFactory(cellData -> {
             String idActivity = cellData.getValue().getIdActivity();
