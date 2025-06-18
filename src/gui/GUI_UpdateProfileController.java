@@ -15,11 +15,14 @@ public class GUI_UpdateProfileController {
 
     private static final Logger logger = LogManager.getLogger(GUI_UpdateProfileController.class);
 
-    @FXML
-    private TextField fieldNames, fieldSurnames, fieldPhone, fieldEmail;
+    private static final int MAX_NAMES = 50;
+    private static final int MAX_SURNAMES = 50;
 
     @FXML
-    private Label statusLabel;
+    private TextField fieldNames, surnamesField, phoneField, emailField;
+
+    @FXML
+    private Label statusLabel, namesCharCountLabel, surnamesCharCountLabel;
 
     private StudentDTO currentStudent;
     private StudentService studentService;
@@ -27,6 +30,26 @@ public class GUI_UpdateProfileController {
     public void setStudentService(StudentService studentService) {
         this.studentService = studentService;
     }
+
+    @FXML
+    public void initialize() {
+        fieldNames.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_NAMES ? change : null
+        ));
+        namesCharCountLabel.setText("0/" + MAX_NAMES);
+        fieldNames.textProperty().addListener((obs, oldText, newText) ->
+                namesCharCountLabel.setText(newText.length() + "/" + MAX_NAMES)
+        );
+
+        surnamesField.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= MAX_SURNAMES ? change : null
+        ));
+        surnamesCharCountLabel.setText("0/" + MAX_SURNAMES);
+        surnamesField.textProperty().addListener((obs, oldText, newText) ->
+                surnamesCharCountLabel.setText(newText.length() + "/" + MAX_SURNAMES)
+        );
+    }
+
 
     @FXML
     private void handleUpdateProfile() {
@@ -51,15 +74,15 @@ public class GUI_UpdateProfileController {
         }
 
         try {
-            String email = fieldEmail.getText();
-            String phone = fieldPhone.getText();
+            String email = emailField.getText();
+            String phone = phoneField.getText();
             StudentValidator.validateStudentData(email, phone);
 
             StudentDTO updatedStudent = new StudentDTO(
                     currentStudent.getTuition(),
                     currentStudent.getState(),
                     fieldNames.getText(),
-                    fieldSurnames.getText(),
+                    surnamesField.getText(),
                     phone,
                     email,
                     currentStudent.getUser(),
@@ -90,16 +113,16 @@ public class GUI_UpdateProfileController {
 
     private boolean areFieldsFilled() {
         return !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                !fieldPhone.getText().isEmpty() &&
-                !fieldEmail.getText().isEmpty();
+                !surnamesField.getText().isEmpty() &&
+                !phoneField.getText().isEmpty() &&
+                !emailField.getText().isEmpty();
     }
 
     public void setStudentData(String names, String surnames, String phone, String email) {
         fieldNames.setText(names);
-        fieldSurnames.setText(surnames);
-        fieldPhone.setText(phone);
-        fieldEmail.setText(email);
+        surnamesField.setText(surnames);
+        phoneField.setText(phone);
+        emailField.setText(email);
     }
 
     public void setCurrentStudent(StudentDTO student) {
