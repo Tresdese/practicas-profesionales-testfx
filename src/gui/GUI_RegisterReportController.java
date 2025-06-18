@@ -113,14 +113,26 @@ public class GUI_RegisterReportController {
 
     @FXML
     private void initialize() {
+        progressPercentageField.setTextFormatter(new TextFormatter<>(change -> {
+            String filtered = change.getControlNewText().replaceAll("[^\\d]", "");
+            if (filtered.length() > 3) {
+                filtered = filtered.substring(0, 3);
+            }
+            change.setText(filtered);
+            int oldLength = change.getControlText().length();
+            int newLength = filtered.length();
+            change.setRange(0, oldLength);
+            return change;
+        }));
+
         activityColumn.setCellValueFactory(cellData -> {
-            String id = cellData.getValue().getIdActivity();
-            String name = id;
+            String idActivity = cellData.getValue().getIdActivity();
+            String name = idActivity;
             try {
-                ActivityDAO dao = new ActivityDAO();
-                List<ActivityDTO> acts = dao.getAllActivities();
-                for (ActivityDTO act : acts) {
-                    if (act.getActivityId().equals(id)) {
+                ActivityDAO activityDAO = new ActivityDAO();
+                List<ActivityDTO> activities = activityDAO.getAllActivities();
+                for (ActivityDTO act : activities) {
+                    if (act.getActivityId().equals(idActivity)) {
                         name = act.getActivityName();
                         break;
                     }
@@ -181,20 +193,20 @@ public class GUI_RegisterReportController {
     @FXML
     public void handleRegisterActivity() {
         ActivityDTO selectedActivity = activityComboBox.getValue();
-        String progressStr = progressPercentageField.getText();
-        String obs = observationsArea.getText();
+        String progressString = progressPercentageField.getText();
+        String observations = observationsArea.getText();
 
-        if (selectedActivity == null || progressStr.isEmpty()) {
+        if (selectedActivity == null || progressString.isEmpty()) {
             showAlert("Selecciona una actividad y proporciona el porcentaje de avance.");
             return;
         }
         int progress;
         try {
-            progress = Integer.parseInt(progressStr);
+            progress = Integer.parseInt(progressString);
             if (progress < 0 || progress > 100) throw new NumberFormatException();
         } catch (NumberFormatException e) {
             showAlert("El porcentaje de avance debe ser un número entre 0 y 100.");
-            LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressStr, e);
+            LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressString, e);
             return;
         }
 
@@ -205,7 +217,7 @@ public class GUI_RegisterReportController {
             }
         }
 
-        activityReports.add(new ActivityReportDTO("", selectedActivity.getActivityId(), progress, obs));
+        activityReports.add(new ActivityReportDTO("", selectedActivity.getActivityId(), progress, observations));
         activitiesTable.refresh();
 
         progressPercentageField.clear();
