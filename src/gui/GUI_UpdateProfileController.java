@@ -33,20 +33,30 @@ public class GUI_UpdateProfileController {
 
     @FXML
     public void initialize() {
-        fieldNames.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_NAMES ? change : null
-        ));
-        namesCharCountLabel.setText("0/" + MAX_NAMES);
-        fieldNames.textProperty().addListener((obs, oldText, newText) ->
-                namesCharCountLabel.setText(newText.length() + "/" + MAX_NAMES)
-        );
+        configureTextFormatters();
+        configureCharCountLabels();
+    }
 
-        surnamesField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_SURNAMES ? change : null
-        ));
-        surnamesCharCountLabel.setText("0/" + MAX_SURNAMES);
-        surnamesField.textProperty().addListener((obs, oldText, newText) ->
-                surnamesCharCountLabel.setText(newText.length() + "/" + MAX_SURNAMES)
+    private void configureTextFormatters() {
+        fieldNames.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(fieldNames, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
         );
     }
 

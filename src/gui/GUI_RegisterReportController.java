@@ -142,25 +142,12 @@ public class GUI_RegisterReportController {
         progressPercentageField.setTextFormatter(createNumericTextFormatter(MAX_DIGITS));
         totalHoursField.setTextFormatter(createNumericTextFormatter(MAX_DIGITS));
         progressPercentageField.setPromptText("0-100");
-        observationsArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_OBSERVATIONS ? change : null
-        ));
 
-        generalObjectiveArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_GENERAL_OBJECTIVES ? change : null
-        ));
-
-        methodologyArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_METHODOLOGIES ? change : null
-        ));
-
-        obtainedResultArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_OBTAINED_RESULT ? change : null
-        ));
-
-        generalObservationsArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_GENERAL_OBSERVATIONS ? change : null
-        ));
+        configureTextAreaFormatter(observationsArea, MAX_OBSERVATIONS);
+        configureTextAreaFormatter(generalObjectiveArea, MAX_GENERAL_OBJECTIVES);
+        configureTextAreaFormatter(methodologyArea, MAX_METHODOLOGIES);
+        configureTextAreaFormatter(obtainedResultArea, MAX_OBTAINED_RESULT);
+        configureTextAreaFormatter(generalObservationsArea, MAX_GENERAL_OBSERVATIONS);
     }
 
     private TextFormatter<String> createNumericTextFormatter(int maxDigits) {
@@ -175,30 +162,24 @@ public class GUI_RegisterReportController {
         });
     }
 
+    private void configureTextAreaFormatter(TextArea textArea, int maxLength) {
+        textArea.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        ));
+    }
+
     private void configureCharCountLabels() {
-        observationsCharCountLabel.setText("0/" + MAX_OBSERVATIONS);
-        observationsArea.textProperty().addListener((obs, oldText, newText) ->
-                observationsCharCountLabel.setText(newText.length() + "/" + MAX_OBSERVATIONS)
-        );
+        configureCharCount(observationsArea, observationsCharCountLabel, MAX_OBSERVATIONS);
+        configureCharCount(generalObjectiveArea, generalObjectiveCharCountLabel, MAX_GENERAL_OBJECTIVES);
+        configureCharCount(methodologyArea, methodologyCharCountLabel, MAX_METHODOLOGIES);
+        configureCharCount(obtainedResultArea, obtainedResultCharCountLabel, MAX_OBTAINED_RESULT);
+        configureCharCount(generalObservationsArea, generalObservationsCharCountLabel, MAX_GENERAL_OBSERVATIONS);
+    }
 
-        generalObjectiveCharCountLabel.setText("0/" + MAX_GENERAL_OBJECTIVES);
-        generalObjectiveArea.textProperty().addListener((obs, oldText, newText) ->
-                generalObjectiveCharCountLabel.setText(newText.length() + "/" + MAX_GENERAL_OBJECTIVES)
-        );
-
-        methodologyCharCountLabel.setText("0/" + MAX_METHODOLOGIES);
-        methodologyArea.textProperty().addListener((obs, oldText, newText) ->
-                methodologyCharCountLabel.setText(newText.length() + "/" + MAX_METHODOLOGIES)
-        );
-
-        obtainedResultCharCountLabel.setText("0/" + MAX_OBTAINED_RESULT);
-        obtainedResultArea.textProperty().addListener((obs, oldText, newText) ->
-                obtainedResultCharCountLabel.setText(newText.length() + "/" + MAX_OBTAINED_RESULT)
-        );
-
-        generalObservationsCharCountLabel.setText("0/" + MAX_GENERAL_OBSERVATIONS);
-        generalObservationsArea.textProperty().addListener((obs, oldText, newText) ->
-                generalObservationsCharCountLabel.setText(newText.length() + "/" + MAX_GENERAL_OBSERVATIONS)
+    private void configureCharCount(TextArea textArea, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textArea.textProperty().addListener((obs, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
         );
     }
 
@@ -283,7 +264,11 @@ public class GUI_RegisterReportController {
         int progress;
         try {
             progress = Integer.parseInt(progressString);
-            if (progress < 0 || progress > 100) throw new NumberFormatException();
+            if (progress < 0 || progress > 100) {
+                showAlert("El porcentaje de avance debe ser un número entre 0 y 100.");
+                LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressString);
+                return;
+            }
         } catch (NumberFormatException e) {
             showAlert("El porcentaje de avance debe ser un número entre 0 y 100.");
             LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressString, e);

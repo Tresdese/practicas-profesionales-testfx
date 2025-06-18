@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import gui.CriterionInput;
+
 public class GUI_RegisterSelfAssessmentController {
 
     @FXML
@@ -44,7 +46,7 @@ public class GUI_RegisterSelfAssessmentController {
     @FXML
     private Button registerButton;
     @FXML
-    private Label statusLabel;
+    private Label statusLabel, commentsCharCountLabel;
 
     private File selectedEvidenceFile;
     private StudentDTO student;
@@ -55,8 +57,23 @@ public class GUI_RegisterSelfAssessmentController {
     @FXML
     public void initialize() {
         loadProjects();
+        configureTextFormatters();
+        configureCharCount();
         loadCriteria();
     }
+
+    private void configureTextFormatters() {
+        generalCommentsTextArea.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= 500 ? change : null
+        ));
+    }
+
+    private void configureCharCount() {
+        generalCommentsTextArea.textProperty().addListener((observable, oldText, newText) ->
+                commentsCharCountLabel.setText(newText.length() + "/500")
+        );
+    }
+
 
     public void setStudentAndProject(StudentDTO student, ProjectDTO project) {
         this.student = student;
@@ -86,6 +103,26 @@ public class GUI_RegisterSelfAssessmentController {
         }
     }
 
+    private void configureCriterionInputs() {
+        for (CriterionInput input : criterionInputs) {
+            input.gradeField.setTextFormatter(new TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("\\d{1,2}")) { // Permite hasta dos dígitos
+                    try {
+                        int value = Integer.parseInt(newText);
+                        if (value >= 1 && value <= 10) { // Valida el rango
+                            return change;
+                        }
+                    } catch (NumberFormatException e) {
+                        LOGGER.log(Level.WARNING, "Formato de calificación inválido", e);
+                    }
+                }
+                change.setText("");
+                return change;
+            }));
+        }
+    }
+
     private void loadCriteria() {
         try {
             SelfAssessmentCriteriaDAO criteriaDAO = new SelfAssessmentCriteriaDAO();
@@ -97,7 +134,8 @@ public class GUI_RegisterSelfAssessmentController {
                 criterionInputs.add(input);
                 criteriaVBox.getChildren().add(input.toHBox());
             }
-        } catch(SQLException e){
+            configureCriterionInputs(); // Llamada al método después de cargar los criterios
+        } catch (SQLException e) {
             showError("Error de base de datos al cargar criterios.");
             LOGGER.log(Level.SEVERE, "Error de SQL al cargar criterios", e);
         } catch (Exception e) {
@@ -105,6 +143,7 @@ public class GUI_RegisterSelfAssessmentController {
             LOGGER.log(Level.SEVERE, "Error al cargar criterios", e);
         }
     }
+
 
     @FXML
     private void handleSelectEvidenceFile(javafx.event.ActionEvent event) {
@@ -343,33 +382,4 @@ public class GUI_RegisterSelfAssessmentController {
         statusLabel.setText(message);
     }
 
-    private static class CriterionInput {
-        String idCriteria;
-        Label nameLabel;
-        TextField gradeField;
-        TextField commentsField;
-
-        CriterionInput(String idCriteria, String name) {
-            this.idCriteria = idCriteria;
-            this.nameLabel = new Label(name);
-            this.gradeField = new TextField();
-            this.gradeField.setPromptText("Calificación");
-            this.commentsField = new TextField();
-            this.commentsField.setPromptText("Comentarios");
-        }
-
-        HBox toHBox() {
-            HBox hbox = new HBox(12, nameLabel, gradeField, commentsField);
-            hbox.setStyle("-fx-padding: 4 0 4 0;");
-            return hbox;
-        }
-
-        String getGrade() {
-            return gradeField.getText();
-        }
-
-        String getComments() {
-            return commentsField.getText();
-        }
-    }
 }

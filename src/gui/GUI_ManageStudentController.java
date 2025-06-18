@@ -43,22 +43,38 @@ public class GUI_ManageStudentController {
 
     @FXML
     private void initialize() {
+        configureTextFormatters();
+        configureCharCountLabels();
+        loadNRCs();
+        initializeStudentService();
+    }
+
+    private void configureTextFormatters() {
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
+    private void initializeStudentService() {
         try {
             this.studentService = ServiceFactory.getStudentService();
-            loadNRCs();
-            namesField.setTextFormatter(new TextFormatter<>(change ->
-                    change.getControlNewText().length() <= MAX_NAMES ? change : null));
-            namesCharCountLabel.setText("0/" + MAX_NAMES);
-            namesField.textProperty().addListener((observable, oldText, newText) ->
-                    namesCharCountLabel.setText(newText.length() + "/" + MAX_NAMES)
-            );
-
-            surnamesField.setTextFormatter(new TextFormatter<>(change ->
-                    change.getControlNewText().length() <= MAX_SURNAMES ? change : null));
-            surnamesCharCountLabel.setText("0/" + MAX_SURNAMES);
-            surnamesField.textProperty().addListener((observable, oldText, newText) ->
-                    surnamesCharCountLabel.setText(newText.length() + "/" + MAX_SURNAMES)
-            );
         } catch (Exception e) {
             logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
             statusLabel.setText("Error al conectar con la base de datos.");
