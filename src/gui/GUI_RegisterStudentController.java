@@ -50,51 +50,45 @@ public class GUI_RegisterStudentController {
 
     @FXML
     public void initialize() {
+        configurePasswordVisibility();
+        configureTextFormatters();
+        configureCharCountLabels();
+        loadNRCs();
+    }
+
+    private void configurePasswordVisibility() {
         togglePasswordVisibility.setText("🙈");
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
-        loadNRCs();
+    }
 
-        namesField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_NAMES ? change : null
-        ));
-        namesCharCountLabel.setText("0/" + MAX_NAMES);
-        namesField.textProperty().addListener((observable, oldText, newText) ->
-                namesCharCountLabel.setText(newText.length() + "/" + MAX_NAMES)
+    private void configureTextFormatters() {
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+        phoneField.setTextFormatter(createTextFormatter(MAX_PHONE));
+        emailField.setTextFormatter(createTextFormatter(MAX_EMAIL));
+        userField.setTextFormatter(createTextFormatter(MAX_USER));
+        passwordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
         );
-        surnamesField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_SURNAMES ? change : null
-        ));
-        surnamesCharCountLabel.setText("0/" + MAX_SURNAMES);
-        surnamesField.textProperty().addListener((observable, oldText, newText) ->
-                surnamesCharCountLabel.setText(newText.length() + "/" + MAX_SURNAMES)
-        );
-        phoneField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_PHONE ? change : null
-        ));
-        phoneCharCountLabel.setText("0/" + MAX_PHONE);
-        phoneField.textProperty().addListener((observable, oldText, newText) ->
-                phoneCharCountLabel.setText(newText.length() + "/" + MAX_PHONE)
-        );
-        emailField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_EMAIL ? change : null
-        ));
-        emailCharCountLabel.setText("0/" + MAX_EMAIL);
-        emailField.textProperty().addListener((observable, oldText, newText) ->
-                emailCharCountLabel.setText(newText.length() + "/" + MAX_EMAIL)
-        );
-        userField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_USER ? change : null
-        ));
-        userCharCountLabel.setText("0/" + MAX_USER);
-        userField.textProperty().addListener((observable, oldText, newText) ->
-                userCharCountLabel.setText(newText.length() + "/" + MAX_USER)
-        );
-        passwordField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= MAX_PASSWORD ? change : null
-        ));
-        passwordCharCountLabel.setText("0/" + MAX_PASSWORD);
-        passwordField.textProperty().addListener((observable, oldText, newText) ->
-                passwordCharCountLabel.setText(newText.length() + "/" + MAX_PASSWORD)
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+        configureCharCount(phoneField, phoneCharCountLabel, MAX_PHONE);
+        configureCharCount(emailField, emailCharCountLabel, MAX_EMAIL);
+        configureCharCount(userField, userCharCountLabel, MAX_USER);
+        configureCharCount(passwordField, passwordCharCountLabel, MAX_PASSWORD);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
         );
     }
 
