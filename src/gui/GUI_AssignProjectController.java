@@ -135,7 +135,8 @@ public class GUI_AssignProjectController {
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
             LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
             RepresentativeDAO representativeDAO = new RepresentativeDAO();
-            List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives()
+            List<RepresentativeDTO> representatives = representativeDAO
+                    .getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()))
                     .stream()
                     .filter(representative -> {
                         if (representative.getIdDepartment() == null || representative.getIdDepartment().isEmpty()) return false;

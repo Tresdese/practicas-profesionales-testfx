@@ -1,9 +1,14 @@
 package gui;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import javafx.stage.Stage;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.services.LinkedOrganizationService;
 import logic.services.ServiceConfig;
@@ -23,6 +28,9 @@ public class GUI_ManageLinkedOrganizationController {
 
     @FXML
     private Label statusLabel;
+
+    @FXML
+    private Button registerDepartmentButton;
 
     private GUI_CheckListLinkedOrganizationController parentController;
 
@@ -85,6 +93,30 @@ public class GUI_ManageLinkedOrganizationController {
             statusLabel.setText("Error al actualizar la organización en la base de datos.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error SQL: {}", e.getMessage(), e);
+        }
+    }
+
+    @FXML
+    private void handleRegisterDepartament() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_RegisterDepartment.fxml"));
+            Parent root = loader.load();
+
+            GUI_RegisterDepartmentController controller = loader.getController();
+            if (organization != null) {
+                try {
+                    int orgId = Integer.parseInt(organization.getIdOrganization());
+                    controller.setOrganizationId(orgId);
+                } catch (NumberFormatException e) {
+                    logger.error("ID de organización no es un número válido: {}", organization.getIdOrganization());
+                }
+            }
+            Stage stage = new Stage();
+            stage.setTitle("Registrar Departamento");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            logger.error("Error al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
         }
     }
 
