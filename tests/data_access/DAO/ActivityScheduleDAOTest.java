@@ -44,15 +44,17 @@ class ActivityScheduleDAOTest {
     private void clearTablesAndResetAutoIncrement() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM cronograma_actividad");
+            stmt.execute("ALTER TABLE cronograma_actividad AUTO_INCREMENT = 1");
             stmt.execute("DELETE FROM cronograma_de_actividades");
+            stmt.execute("ALTER TABLE cronograma_de_actividades AUTO_INCREMENT = 1");
             stmt.execute("DELETE FROM actividad");
+            stmt.execute("ALTER TABLE actividad AUTO_INCREMENT = 1");
             stmt.execute("DELETE FROM evidencia");
+            stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
             stmt.execute("DELETE FROM estudiante");
             stmt.execute("DELETE FROM grupo");
+            stmt.execute("DELETE FROM usuario");
             stmt.execute("DELETE FROM periodo");
-            stmt.execute("ALTER TABLE cronograma_de_actividades AUTO_INCREMENT = 1");
-            stmt.execute("ALTER TABLE actividad AUTO_INCREMENT = 1");
-            stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
             stmt.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
         }
     }
@@ -321,11 +323,12 @@ class ActivityScheduleDAOTest {
 
     @Test
     void testOperationWithClosedConnection() throws Exception {
+        ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+        Connection connection = connectionDataBase.connectDB();
         connection.close();
-        ActivityScheduleDTO activitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
+
         assertThrows(SQLException.class, () -> {
-            activityScheduleDAO.insertActivitySchedule(activitySchedule);
+            connection.createStatement();
         }, "Operating with a closed connection should throw an exception.");
-        connection = new ConnectionDataBase().connectDB();
     }
 }

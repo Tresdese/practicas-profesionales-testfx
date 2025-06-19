@@ -15,13 +15,13 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="projectName" prefWidth="216.0" text="Nombre del Proyecto" />
-                        <TableColumn fx:id="projectStartDate" prefWidth="122.0" text="Fecha Inicio" />
-                        <TableColumn fx:id="projectEndDate" prefWidth="137.0" text="Fecha Fin" />
-                        <TableColumn fx:id="projectOrganization" prefWidth="134.0" text="Organización" />
-                        <TableColumn fx:id="projectAcademic" prefWidth="125.0" text="Académico" />
-                        <TableColumn fx:id="columnDetails" prefWidth="108.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="107.0" text="Gestionar" />
+                        <TableColumn fx:id="projectNameColumn" prefWidth="216.0" text="Nombre del Proyecto" />
+                        <TableColumn fx:id="projectStartDateColumn" prefWidth="122.0" text="Fecha Inicio" />
+                        <TableColumn fx:id="projectEndDateColumn" prefWidth="137.0" text="Fecha Fin" />
+                        <TableColumn fx:id="projectOrganizationColumn" prefWidth="134.0" text="Organización" />
+                        <TableColumn fx:id="projectAcademicColumn" prefWidth="125.0" text="Académico" />
+                        <TableColumn fx:id="detailsColumn" prefWidth="108.0" text="Ver Detalles" />
+                        <TableColumn fx:id="managementColumn" prefWidth="107.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
@@ -39,6 +39,6 @@
         </Label>
         <Button fx:id="buttonRegisterProject" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Proyecto" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelProjectCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="projectCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

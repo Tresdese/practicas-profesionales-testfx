@@ -10,13 +10,13 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnTuition" prefWidth="120.0" text="Matricula" />
-                        <TableColumn fx:id="columnNames" prefWidth="150.0" text="Nombres" />
-                        <TableColumn fx:id="columnSurnames" prefWidth="150.0" text="Apellidos" />
-                        <TableColumn fx:id="columnEmail" prefWidth="150.0" text="Correo" />
-                        <TableColumn fx:id="columnNRC" prefWidth="100.0" text="NRC" />
-                        <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
+                        <TableColumn fx:id="tuitionColumn" prefWidth="120.0" text="Matricula" />
+                        <TableColumn fx:id="namesColumn" prefWidth="150.0" text="Nombres" />
+                        <TableColumn fx:id="surnamesColumn" prefWidth="150.0" text="Apellidos" />
+                        <TableColumn fx:id="emailColumn" prefWidth="150.0" text="Correo" />
+                        <TableColumn fx:id="nrcColumn" prefWidth="100.0" text="NRC" />
+                        <TableColumn fx:id="detailsColumn" prefWidth="150.0" text="Ver Detalles" />
+                        <TableColumn fx:id="managementColumn" prefWidth="150.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
@@ -34,12 +34,12 @@
         </Label>
         <HBox layoutX="0.0" layoutY="600.0" prefWidth="1000.0" spacing="100.0" alignment="CENTER">
             <children>
-                <Button fx:id="buttonRegisterStudent" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
-                <Button fx:id="buttonAssignProject" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Asignar Proyecto" textFill="WHITE" />
-                <Button fx:id="buttonReassignProject" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Reasignar Proyecto" textFill="WHITE" />
+                <Button fx:id="registerStudentButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
+                <Button fx:id="assignProjectButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Asignar Proyecto" textFill="WHITE" />
+                <Button fx:id="reassignProjectButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Reasignar Proyecto" textFill="WHITE" />
             </children>
         </HBox>
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelStudentCounts" layoutX="35.0" layoutY="650.0" text="Totales: 0 | Activos: 0 | Inactivos: 0" />
+        <Label fx:id="studentCountsLabel" layoutX="35.0" layoutY="650.0" text="Totales: 0 | Activos: 0 | Inactivos: 0" />
     </children>
 </AnchorPane>

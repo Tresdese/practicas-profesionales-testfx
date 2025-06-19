@@ -19,20 +19,30 @@ public class GUI_RegisterStudentController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
 
+    private static final int MAX_NAMES = 50;
+    private static final int MAX_SURNAMES = 50;
+    private static final int MAX_PHONE = 30;
+    private static final int MAX_EMAIL = 100;
+    private static final int MAX_USER = 50;
+    private static final int MAX_PASSWORD = 64;
+
     @FXML
     private Label statusLabel;
 
     @FXML
-    private TextField fieldTuition, fieldNames, fieldSurnames, fieldPhone, fieldEmail, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible, fieldCreditAdvance;
+    private TextField tuitionField, namesField, surnamesField, phoneField, emailField, userField, passwordVisibleField, confirmPasswordVisibleField, creditAdvanceField;
 
     @FXML
-    private ChoiceBox<String> choiceBoxNRC;
+    private ChoiceBox<String> nrcChoiceBox;
 
     @FXML
-    private PasswordField fieldPassword, fieldConfirmPassword;
+    private PasswordField passwordField, confirmPasswordField;
 
     @FXML
     private Button togglePasswordVisibility;
+
+    @FXML
+    private Label namesCharCountLabel, surnamesCharCountLabel, phoneCharCountLabel, emailCharCountLabel, userCharCountLabel, passwordCharCountLabel;
 
     private boolean isPasswordVisible = false;
 
@@ -40,9 +50,46 @@ public class GUI_RegisterStudentController {
 
     @FXML
     public void initialize() {
+        configurePasswordVisibility();
+        configureTextFormatters();
+        configureCharCountLabels();
+        loadNRCs();
+    }
+
+    private void configurePasswordVisibility() {
         togglePasswordVisibility.setText("🙈");
         togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
-        loadNRCs();
+    }
+
+    private void configureTextFormatters() {
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+        phoneField.setTextFormatter(createTextFormatter(MAX_PHONE));
+        emailField.setTextFormatter(createTextFormatter(MAX_EMAIL));
+        userField.setTextFormatter(createTextFormatter(MAX_USER));
+        passwordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+        configureCharCount(phoneField, phoneCharCountLabel, MAX_PHONE);
+        configureCharCount(emailField, emailCharCountLabel, MAX_EMAIL);
+        configureCharCount(userField, userCharCountLabel, MAX_USER);
+        configureCharCount(passwordField, passwordCharCountLabel, MAX_PASSWORD);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
     }
 
     public void setParentController(GUI_CheckListOfStudentsController parentController) {
@@ -52,28 +99,28 @@ public class GUI_RegisterStudentController {
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            fieldPassword.setText(fieldPasswordVisible.getText());
-            fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
-            fieldPasswordVisible.setVisible(false);
-            fieldPasswordVisible.setManaged(false);
-            fieldConfirmPasswordVisible.setVisible(false);
-            fieldConfirmPasswordVisible.setManaged(false);
-            fieldPassword.setVisible(true);
-            fieldPassword.setManaged(true);
-            fieldConfirmPassword.setVisible(true);
-            fieldConfirmPassword.setManaged(true);
+            passwordField.setText(passwordVisibleField.getText());
+            confirmPasswordField.setText(confirmPasswordVisibleField.getText());
+            passwordVisibleField.setVisible(false);
+            passwordVisibleField.setManaged(false);
+            confirmPasswordVisibleField.setVisible(false);
+            confirmPasswordVisibleField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            confirmPasswordField.setVisible(true);
+            confirmPasswordField.setManaged(true);
             togglePasswordVisibility.setText("🙈");
         } else {
-            fieldPasswordVisible.setText(fieldPassword.getText());
-            fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
-            fieldPassword.setVisible(false);
-            fieldPassword.setManaged(false);
-            fieldConfirmPassword.setVisible(false);
-            fieldConfirmPassword.setManaged(false);
-            fieldPasswordVisible.setVisible(true);
-            fieldPasswordVisible.setManaged(true);
-            fieldConfirmPasswordVisible.setVisible(true);
-            fieldConfirmPasswordVisible.setManaged(true);
+            passwordVisibleField.setText(passwordField.getText());
+            confirmPasswordVisibleField.setText(confirmPasswordField.getText());
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            confirmPasswordField.setVisible(false);
+            confirmPasswordField.setManaged(false);
+            passwordVisibleField.setVisible(true);
+            passwordVisibleField.setManaged(true);
+            confirmPasswordVisibleField.setVisible(true);
+            confirmPasswordVisibleField.setManaged(true);
             togglePasswordVisibility.setText("👁");
         }
         isPasswordVisible = !isPasswordVisible;
@@ -81,53 +128,77 @@ public class GUI_RegisterStudentController {
 
     @FXML
     private void handleRegisterStudent() {
+        statusLabel.setText("");
+        statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+
+        if (!validateFields()) {
+            return;
+        }
+
+        StudentDTO student = buildStudentDTO();
+        if (student == null) {
+            return;
+        }
+
         try {
-            if (!areFieldsFilled()) {
-                statusLabel.setText("Todos los campos deben estar llenos.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                return;
+            registerStudent(student);
+            statusLabel.setText("¡Estudiante registrado exitosamente!");
+            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            if (parentController != null) {
+                parentController.loadStudentData();
             }
-            String tuiton = fieldTuition.getText();
-            String email = fieldEmail.getText();
-            String phone = fieldPhone.getText();
-            StudentValidator.validateStudentData(tuiton, email, phone);
-
-            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
-            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
-
-            if (!password.equals(confirmPassword)) {
-                throw new PasswordDoesNotMatch("Las contraseñas no coinciden.");
-            }
-
-            StudentDTO student = new StudentDTO(
-                    tuiton, 1, fieldNames.getText(), fieldSurnames.getText(), phone, email,
-                    fieldUser.getText(), PasswordHasher.hashPassword(password), choiceBoxNRC.getValue(), fieldCreditAdvance.getText(), 0.0
-            );
-
-            try {
-                StudentService studentService = new StudentService();
-                studentService.registerStudent(student);
-
-                statusLabel.setText("¡Estudiante registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-
-                if (parentController != null) {
-                    parentController.loadStudentData();
-                }
-            } catch (SQLException | RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
-                logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
-                statusLabel.setText(e.getMessage());
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            }
-        } catch (EmptyFields | InvalidData | PasswordDoesNotMatch e) {
-            logger.warn("Error de validación: {}", e.getMessage(), e);
+        } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        } catch (SQLException e) {
+            logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos. Intente más tarde.");
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
         }
+    }
+
+    private boolean validateFields() {
+        if (!areFieldsFilled()) {
+            statusLabel.setText("Todos los campos deben estar llenos.");
+            return false;
+        }
+        String tuition = tuitionField.getText();
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+        String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
+        try {
+            StudentValidator.validateStudentData(tuition, email, phone, password);
+        } catch (InvalidData e) {
+            statusLabel.setText(e.getMessage());
+            return false;
+        }
+        String confirmPassword = isPasswordVisible ? confirmPasswordVisibleField.getText() : confirmPasswordField.getText();
+        if (!password.equals(confirmPassword)) {
+            statusLabel.setText("Las contraseñas no coinciden.");
+            return false;
+        }
+        return true;
+    }
+
+    private StudentDTO buildStudentDTO() {
+        try {
+            String tuition = tuitionField.getText();
+            String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
+            return new StudentDTO(
+                    tuition, 1, namesField.getText(), surnamesField.getText(), phoneField.getText(), emailField.getText(),
+                    userField.getText(), PasswordHasher.hashPassword(password), nrcChoiceBox.getValue(), creditAdvanceField.getText(), 0.0
+            );
+        } catch (Exception e) {
+            statusLabel.setText("Error al construir los datos del estudiante.");
+            logger.error("Error al construir StudentDTO: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
+        StudentService studentService = new StudentService();
+        studentService.registerStudent(student);
     }
 
     private void loadNRCs() {
@@ -135,7 +206,7 @@ public class GUI_RegisterStudentController {
             GroupDAO groupDAO = new GroupDAO();
             List<GroupDTO> groups = groupDAO.getAllGroups();
             for (GroupDTO group : groups) {
-                choiceBoxNRC.getItems().add(group.getNRC());
+                nrcChoiceBox.getItems().add(group.getNRC());
             }
         } catch (SQLException e) {
             logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
@@ -145,15 +216,15 @@ public class GUI_RegisterStudentController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldTuition.getText().isEmpty() &&
-                !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                !fieldPhone.getText().isEmpty() &&
-                !fieldEmail.getText().isEmpty() &&
-                !fieldUser.getText().isEmpty() &&
-                (!fieldPassword.getText().isEmpty() || !fieldPasswordVisible.getText().isEmpty()) &&
-                (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty()) &&
-                choiceBoxNRC.getValue() != null &&
-                !fieldCreditAdvance.getText().isEmpty();
+        return !tuitionField.getText().isEmpty() &&
+                !namesField.getText().isEmpty() &&
+                !surnamesField.getText().isEmpty() &&
+                !phoneField.getText().isEmpty() &&
+                !emailField.getText().isEmpty() &&
+                !userField.getText().isEmpty() &&
+                (!passwordField.getText().isEmpty() || !passwordVisibleField.getText().isEmpty()) &&
+                (!confirmPasswordField.getText().isEmpty() || !confirmPasswordVisibleField.getText().isEmpty()) &&
+                nrcChoiceBox.getValue() != null &&
+                !creditAdvanceField.getText().isEmpty();
     }
 }

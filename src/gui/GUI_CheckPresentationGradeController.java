@@ -38,7 +38,7 @@ public class GUI_CheckPresentationGradeController {
     @FXML
     private Label statusLabel;
     @FXML
-    private Label labelEvaluationCounts;
+    private Label evaluationCountsLabel;
 
     private static final Logger logger = LogManager.getLogger(GUI_CheckPresentationGradeController.class);
 
@@ -142,6 +142,6 @@ public class GUI_CheckPresentationGradeController {
 
     private void updateEvaluationCounts(ObservableList<EvaluationPresentationDTO> list) {
         int total = list.size();
-        labelEvaluationCounts.setText("Totales: " + total);
+        evaluationCountsLabel.setText("Totales: " + total);
     }
 }

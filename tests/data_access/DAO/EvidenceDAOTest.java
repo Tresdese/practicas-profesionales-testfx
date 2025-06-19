@@ -175,7 +175,7 @@ class EvidenceDAOTest {
     }
 
     @Test
-    void testGetAllEvidences_EmptyTable() throws Exception {
+    void testGetAllEvidences_EmptyTable() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM evidencia");
         }

@@ -32,25 +32,25 @@ public class GUI_CheckProjectRequestListController {
     private TableView<ProjectRequestDTO> tableView;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnTuiton;
+    private TableColumn<ProjectRequestDTO, String> tuitonColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnProjectName;
+    private TableColumn<ProjectRequestDTO, String> projectNameColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnDescription;
+    private TableColumn<ProjectRequestDTO, String> descriptionColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnOrganizationId;
+    private TableColumn<ProjectRequestDTO, String> organizationIdColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnRepresentativeId;
+    private TableColumn<ProjectRequestDTO, String> representativeIdColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, String> columnStatus;
+    private TableColumn<ProjectRequestDTO, String> statusColumn;
 
     @FXML
-    private TableColumn<ProjectRequestDTO, Void> columnApprove;
+    private TableColumn<ProjectRequestDTO, Void> approveColumn;
 
     @FXML
     private TextField searchField;
@@ -65,10 +65,10 @@ public class GUI_CheckProjectRequestListController {
     private Button clearButton;
 
     @FXML
-    private Button buttonRegisterRequest;
+    private Button registerRequestButton;
 
     @FXML
-    private Button buttonRefreshList;
+    private Button refreshListButton;
 
     @FXML
     private Label statusLabel;
@@ -115,8 +115,8 @@ public class GUI_CheckProjectRequestListController {
             filterComboBox.setValue("Todos");
             loadRequestData();
         });
-        buttonRegisterRequest.setOnAction(event -> openRegisterRequestWindow());
-        buttonRefreshList.setOnAction(event -> loadRequestData());
+        registerRequestButton.setOnAction(event -> openRegisterRequestWindow());
+        refreshListButton.setOnAction(event -> loadRequestData());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedRequest = newValue;
@@ -131,11 +131,11 @@ public class GUI_CheckProjectRequestListController {
 
     private void applyRolRestrictions() {
         if (userRole == Role.COORDINADOR) {
-            buttonRegisterRequest.setVisible(true);
+            registerRequestButton.setVisible(true);
         } else if (userRole == Role.ACADEMICO) {
-            buttonRegisterRequest.setVisible(true);
+            registerRequestButton.setVisible(true);
         } else {
-            buttonRegisterRequest.setVisible(false);
+            registerRequestButton.setVisible(false);
         }
     }
 
@@ -178,20 +178,20 @@ public class GUI_CheckProjectRequestListController {
     }
 
     private void setAllCellValueFactories() {
-        columnProjectName.setCellValueFactory(cellData -> {
+        projectNameColumn.setCellValueFactory(cellData -> {
             String projectName = cellData.getValue().getProjectName();
             return new SimpleStringProperty(
                     (projectName != null && !projectName.isEmpty()) ? projectName : "N/A"
             );
         });
 
-        columnTuiton.setCellValueFactory(cellData ->
+        tuitonColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getTuition()));
 
-        columnDescription.setCellValueFactory(cellData ->
+        descriptionColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getDescription()));
 
-        columnOrganizationId.setCellValueFactory(cellData -> {
+        organizationIdColumn.setCellValueFactory(cellData -> {
             try {
                 String orgId = cellData.getValue().getOrganizationId();
                 if (orgId != null && !orgId.isEmpty()) {
@@ -206,7 +206,7 @@ public class GUI_CheckProjectRequestListController {
             }
         });
 
-        columnRepresentativeId.setCellValueFactory(cellData -> {
+        representativeIdColumn.setCellValueFactory(cellData -> {
             try {
                 String repId = cellData.getValue().getRepresentativeId();
                 if (repId != null && !repId.isEmpty()) {
@@ -221,7 +221,7 @@ public class GUI_CheckProjectRequestListController {
             }
         });
 
-        columnStatus.setCellValueFactory(cellData ->
+        statusColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getStatus().name()));
     }
 
@@ -282,7 +282,7 @@ public class GUI_CheckProjectRequestListController {
             }
         };
 
-        columnApprove.setCellFactory(cellFactory);
+        approveColumn.setCellFactory(cellFactory);
     }
 
     private void openManageProjectRequestWindow(ProjectRequestDTO request) {

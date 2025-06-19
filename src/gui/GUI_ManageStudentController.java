@@ -1,14 +1,13 @@
 package gui;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import logic.DAO.ProjectDAO;
-import logic.DAO.StudentProjectDAO;
+import logic.DAO.GroupDAO;
+import logic.DTO.GroupDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
@@ -19,16 +18,23 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class GUI_ManageStudentController {
 
     private static final Logger logger = LogManager.getLogger(GUI_ManageStudentController.class);
 
-    @FXML
-    private TextField fieldNames, fieldSurnames, fieldNRC, fieldCreditAdvance;
+    private static final int MAX_NAMES = 50;
+    private static final int MAX_SURNAMES = 50;
 
     @FXML
-    private Label statusLabel;
+    private TextField namesField, surnamesField, fieldCreditAdvance;
+
+    @FXML
+    private ChoiceBox<String> nrcChoiceBox;
+
+    @FXML
+    private Label statusLabel, namesCharCountLabel, surnamesCharCountLabel;
 
     private StudentDTO student;
     private ProjectDTO currentProject;
@@ -37,12 +43,56 @@ public class GUI_ManageStudentController {
 
     @FXML
     private void initialize() {
+        configureTextFormatters();
+        configureCharCountLabels();
+        loadNRCs();
+        initializeStudentService();
+    }
+
+    private void configureTextFormatters() {
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
+    private void initializeStudentService() {
         try {
             this.studentService = ServiceFactory.getStudentService();
         } catch (Exception e) {
             logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
             statusLabel.setText("Error al conectar con la base de datos.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        }
+    }
+
+    private void loadNRCs() {
+        try {
+            GroupDAO groupDAO = new GroupDAO();
+            List<GroupDTO> groups = groupDAO.getAllGroups();
+            for (GroupDTO group : groups) {
+                nrcChoiceBox.getItems().add(group.getNRC());
+            }
+        } catch (SQLException e) {
+            logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
         }
     }
 
@@ -55,9 +105,9 @@ public class GUI_ManageStudentController {
         this.student = student;
         this.currentProject = currentProject;
 
-        fieldNames.setText(student.getNames() != null ? student.getNames() : "");
-        fieldSurnames.setText(student.getSurnames() != null ? student.getSurnames() : "");
-        fieldNRC.setText(student.getNRC() != null ? student.getNRC() : "");
+        namesField.setText(student.getNames() != null ? student.getNames() : "");
+        surnamesField.setText(student.getSurnames() != null ? student.getSurnames() : "");
+        nrcChoiceBox.setValue(student.getNRC() != null ? student.getNRC() : "");
         fieldCreditAdvance.setText(student.getCreditAdvance() != null ? student.getCreditAdvance() : "");
     }
 
@@ -75,9 +125,9 @@ public class GUI_ManageStudentController {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String names = fieldNames.getText();
-            String surnames = fieldSurnames.getText();
-            String nrc = fieldNRC.getText();
+            String names = namesField.getText();
+            String surnames = surnamesField.getText();
+            String nrc = nrcChoiceBox.getValue();
             String creditAdvance = fieldCreditAdvance.getText();
 
             student.setNames(names);
@@ -101,9 +151,9 @@ public class GUI_ManageStudentController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                !fieldNRC.getText().isEmpty() &&
+        return !namesField.getText().isEmpty() &&
+                !surnamesField.getText().isEmpty() &&
+                nrcChoiceBox.getValue() != null &&
                 !fieldCreditAdvance.getText().isEmpty();
     }
 

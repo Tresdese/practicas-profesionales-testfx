@@ -61,7 +61,6 @@ class ScheduleOfActivitiesDAOTest {
     }
 
     private void createBaseRecords() throws SQLException {
-        // Insert base user
         String userSql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, 1001);
@@ -214,7 +213,7 @@ class ScheduleOfActivitiesDAOTest {
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule1);
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule2);
 
-            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities(connection);
+            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
             assertNotNull(schedules, "La lista no debería ser nula");
             assertTrue(schedules.size() >= 2, "Deberían existir al menos dos cronogramas en la lista");
         } catch (SQLException e) {
@@ -277,7 +276,7 @@ class ScheduleOfActivitiesDAOTest {
     void testGetAllSchedulesOfActivities_EmptyTable() {
         try {
             clearTablesAndResetAutoIncrement();
-            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities(connection);
+            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
             assertNotNull(schedules, "La lista no debe ser nula");
             assertEquals(0, schedules.size(), "La lista debe estar vacía si no hay cronogramas");
         } catch (SQLException e) {

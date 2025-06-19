@@ -12,19 +12,21 @@
             </font>
         </Label>
         <Label layoutX="90.0" layoutY="58.0" text="Nombres:" />
-        <TextField fx:id="fieldNames" layoutX="210.0" layoutY="58.0" />
+        <TextField fx:id="namesField" layoutX="210.0" layoutY="58.0" />
         <Label layoutX="90.0" layoutY="98.0" text="Apellidos:" />
-        <TextField fx:id="fieldSurnames" layoutX="210.0" layoutY="98.0" />
+        <TextField fx:id="surnamesField" layoutX="210.0" layoutY="98.0" />
         <Label layoutX="90.0" layoutY="138.0" text="NRC:" />
-        <TextField fx:id="fieldNRC" layoutX="210.0" layoutY="138.0" />
+        <ChoiceBox fx:id="nrcChoiceBox" layoutX="210.0" layoutY="138.0" prefHeight="26.0" prefWidth="150.0" />
         <Label layoutX="90.0" layoutY="178.0" text="Avance Crediticio:" />
         <TextField fx:id="fieldCreditAdvance" layoutX="210.0" layoutY="178.0" />
-        <HBox layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0" alignment="CENTER">
+        <HBox alignment="CENTER" layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0">
             <children>
                 <Button onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
                 <Button onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
             </children>
         </HBox>
         <Label fx:id="statusLabel" layoutX="20.0" layoutY="290.0" textFill="RED" />
+      <Label fx:id="namesCharCountLabel" layoutX="380.0" layoutY="62.0" text="0/50" />
+      <Label fx:id="surnamesCharCountLabel" layoutX="380.0" layoutY="102.0" text="0/50" />
     </children>
 </AnchorPane>

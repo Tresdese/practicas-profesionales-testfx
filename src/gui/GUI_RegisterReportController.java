@@ -20,11 +20,14 @@ import logic.DTO.ActivityReportDTO;
 import logic.DTO.ReportDTO;
 import logic.DTO.StudentDTO;
 import javafx.stage.FileChooser;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 import logic.DAO.EvidenceDAO;
 import logic.DTO.EvidenceDTO;
+
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
 import static logic.drive.GoogleDriveUploader.uploadFile;
 
@@ -103,6 +106,22 @@ public class GUI_RegisterReportController {
     @FXML
     private TextField evidenceFileTextField;
 
+    @FXML
+    private Label observationsCharCountLabel, generalObjectiveCharCountLabel, methodologyCharCountLabel,
+            obtainedResultCharCountLabel, generalObservationsCharCountLabel;
+
+    private static final int MAX_OBSERVATIONS = 200;
+
+    private static final int MAX_GENERAL_OBJECTIVES = 500;
+
+    private static final int MAX_METHODOLOGIES = 100;
+
+    private static final int MAX_OBTAINED_RESULT = 200;
+
+    private static final int MAX_GENERAL_OBSERVATIONS = 200;
+
+    private static final int MAX_DIGITS = 3;
+
     private File selectedEvidenceFile;
 
     private StudentDTO student;
@@ -113,14 +132,66 @@ public class GUI_RegisterReportController {
 
     @FXML
     private void initialize() {
+        configureTextFormatters();
+        configureCharCountLabels();
+        configureActivitiesTable();
+        loadActivitiesComboBox();
+    }
+
+    private void configureTextFormatters() {
+        progressPercentageField.setTextFormatter(createNumericTextFormatter(MAX_DIGITS));
+        totalHoursField.setTextFormatter(createNumericTextFormatter(MAX_DIGITS));
+        progressPercentageField.setPromptText("0-100");
+
+        configureTextAreaFormatter(observationsArea, MAX_OBSERVATIONS);
+        configureTextAreaFormatter(generalObjectiveArea, MAX_GENERAL_OBJECTIVES);
+        configureTextAreaFormatter(methodologyArea, MAX_METHODOLOGIES);
+        configureTextAreaFormatter(obtainedResultArea, MAX_OBTAINED_RESULT);
+        configureTextAreaFormatter(generalObservationsArea, MAX_GENERAL_OBSERVATIONS);
+    }
+
+    private TextFormatter<String> createNumericTextFormatter(int maxDigits) {
+        return new TextFormatter<>(change -> {
+            String filtered = change.getControlNewText().replaceAll("[^\\d]", "");
+            if (filtered.length() > maxDigits) {
+                filtered = filtered.substring(0, maxDigits);
+            }
+            change.setText(filtered);
+            change.setRange(0, change.getControlText().length());
+            return change;
+        });
+    }
+
+    private void configureTextAreaFormatter(TextArea textArea, int maxLength) {
+        textArea.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        ));
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(observationsArea, observationsCharCountLabel, MAX_OBSERVATIONS);
+        configureCharCount(generalObjectiveArea, generalObjectiveCharCountLabel, MAX_GENERAL_OBJECTIVES);
+        configureCharCount(methodologyArea, methodologyCharCountLabel, MAX_METHODOLOGIES);
+        configureCharCount(obtainedResultArea, obtainedResultCharCountLabel, MAX_OBTAINED_RESULT);
+        configureCharCount(generalObservationsArea, generalObservationsCharCountLabel, MAX_GENERAL_OBSERVATIONS);
+    }
+
+    private void configureCharCount(TextArea textArea, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textArea.textProperty().addListener((obs, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
+    private void configureActivitiesTable() {
         activityColumn.setCellValueFactory(cellData -> {
-            String id = cellData.getValue().getIdActivity();
-            String name = id;
+            String idActivity = cellData.getValue().getIdActivity();
+            String name = idActivity;
             try {
-                ActivityDAO dao = new ActivityDAO();
-                List<ActivityDTO> acts = dao.getAllActivities();
-                for (ActivityDTO act : acts) {
-                    if (act.getActivityId().equals(id)) {
+                ActivityDAO activityDAO = new ActivityDAO();
+                List<ActivityDTO> activities = activityDAO.getAllActivities();
+                for (ActivityDTO act : activities) {
+                    if (act.getActivityId().equals(idActivity)) {
                         name = act.getActivityName();
                         break;
                     }
@@ -149,7 +220,9 @@ public class GUI_RegisterReportController {
         observationColumn.setOnEditCommit(event -> {
             event.getRowValue().setObservations(event.getNewValue());
         });
+    }
 
+    private void loadActivitiesComboBox() {
         try {
             ActivityDAO activityDAO = new ActivityDAO();
             activityComboBox.setItems(FXCollections.observableArrayList(activityDAO.getAllActivities()));
@@ -181,20 +254,24 @@ public class GUI_RegisterReportController {
     @FXML
     public void handleRegisterActivity() {
         ActivityDTO selectedActivity = activityComboBox.getValue();
-        String progressStr = progressPercentageField.getText();
-        String obs = observationsArea.getText();
+        String progressString = progressPercentageField.getText();
+        String observations = observationsArea.getText();
 
-        if (selectedActivity == null || progressStr.isEmpty()) {
+        if (selectedActivity == null || progressString.isEmpty()) {
             showAlert("Selecciona una actividad y proporciona el porcentaje de avance.");
             return;
         }
         int progress;
         try {
-            progress = Integer.parseInt(progressStr);
-            if (progress < 0 || progress > 100) throw new NumberFormatException();
+            progress = Integer.parseInt(progressString);
+            if (progress < 0 || progress > 100) {
+                showAlert("El porcentaje de avance debe ser un número entre 0 y 100.");
+                LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressString);
+                return;
+            }
         } catch (NumberFormatException e) {
             showAlert("El porcentaje de avance debe ser un número entre 0 y 100.");
-            LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressStr, e);
+            LOGGER.log(Level.WARNING, "Porcentaje de avance inválido: " + progressString, e);
             return;
         }
 
@@ -205,7 +282,7 @@ public class GUI_RegisterReportController {
             }
         }
 
-        activityReports.add(new ActivityReportDTO("", selectedActivity.getActivityId(), progress, obs));
+        activityReports.add(new ActivityReportDTO("", selectedActivity.getActivityId(), progress, observations));
         activitiesTable.refresh();
 
         progressPercentageField.clear();
@@ -305,6 +382,23 @@ public class GUI_RegisterReportController {
             showAlert("Selecciona un archivo de evidencia.");
             return;
         }
+        int totalHours = Integer.parseInt(totalHoursField.getText());
+        ReportDAO reportDAO = new ReportDAO();
+        try {
+            int reportedHours = reportDAO.getTotalReportedHoursByStudent(student.getTuition());
+            if (reportedHours + totalHours > 420) {
+                showAlert("El alumno ya ha cumplido las 420 horas requeridas o las superaría con este informe.");
+                return;
+            }
+        } catch (SQLException e) {
+            showAlert("Error de base de datos al verificar horas reportadas.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
+            return;
+        } catch (Exception e) {
+            showAlert("Error inesperado al verificar horas reportadas.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al verificar horas reportadas", e);
+            return;
+        }
         int evidenceId = getNextEvidenceId();
         if (evidenceId == -1) return;
 
@@ -314,7 +408,7 @@ public class GUI_RegisterReportController {
         if (!insertEvidenceToDatabase(evidenceId, selectedEvidenceFile.getName(), driveUrl)) return;
 
         try {
-            int totalHours = Integer.parseInt(totalHoursField.getText());
+            totalHours = Integer.parseInt(totalHoursField.getText());
             ReportDTO report = new ReportDTO(
                     "0",
                     new Date(),
@@ -327,7 +421,7 @@ public class GUI_RegisterReportController {
                     generalObservationsArea.getText(),
                     String.valueOf(evidenceId)
             );
-            ReportDAO reportDAO = new ReportDAO();
+            reportDAO = new ReportDAO();
             boolean inserted = reportDAO.insertReport(report);
             if (inserted) {
                 String numReporte = report.getNumberReport();
@@ -370,7 +464,9 @@ public class GUI_RegisterReportController {
             Stage stage = new Stage();
             stage.setTitle("Gestión de Actividades");
             stage.setScene(new Scene(root));
-            stage.setOnHiding(event -> {reloadActivitiesComboBox();});
+            stage.setOnHiding(event -> {
+                reloadActivitiesComboBox();
+            });
             stage.show();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al abrir la ventana de actividades: {}", e);

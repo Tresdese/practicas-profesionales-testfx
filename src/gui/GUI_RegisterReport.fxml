@@ -1,87 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterReportController">
-    <HBox spacing="20" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10">
+<AnchorPane prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterReportController">
+    <HBox spacing="20" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10"
+          AnchorPane.topAnchor="10">
         <children>
             <VBox prefWidth="350" spacing="15">
                 <children>
-                    <Label style="-fx-font-size: 18px;" text="Registrar Actividad" />
-                    <Label text="Actividad programada:" />
-                    <ComboBox fx:id="activityComboBox" promptText="Selecciona actividad" />
-                    <Button fx:id="buttonRegisterActivity" onAction="#handleRegisterNewActivity" prefWidth="100.0" text="Registrar Actividad" />
-                    <Label text="Porcentaje de Avance:" />
-                    <TextField fx:id="progressPercentageField" />
-                    <Label text="Observaciones:" />
-                    <TextArea fx:id="observationsArea" prefHeight="50" />
-                    <Button fx:id="handleRegisterActivity" onAction="#handleRegisterActivity" prefWidth="100.0" text="Añadir actividad" />
-                    <Label text="Archivo de Evidencia:" />
+                    <Label style="-fx-font-size: 18px;" text="Registrar Actividad"/>
+                    <Label text="Actividad programada:"/>
+                    <ComboBox fx:id="activityComboBox" promptText="Selecciona actividad"/>
+                    <Button fx:id="buttonRegisterActivity" onAction="#handleRegisterNewActivity" prefWidth="100.0"
+                            text="Registrar Actividad"/>
+                    <Label text="Porcentaje de Avance:"/>
+                    <TextField fx:id="progressPercentageField"/>
+                    <Label text="Observaciones:"/>
+                    <VBox spacing="2">
+                        <TextArea fx:id="observationsArea" prefHeight="50"/>
+                        <Label fx:id="observationsCharCountLabel" text="0/200"
+                               style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                    </VBox>
+                    <Button fx:id="handleRegisterActivity" onAction="#handleRegisterActivity" prefWidth="100.0"
+                            text="Añadir actividad"/>
+                    <Label text="Archivo de Evidencia:"/>
                     <HBox spacing="8">
-                        <TextField fx:id="evidenceFileTextField" editable="false" prefWidth="180" />
-                        <Button onAction="#handleSelectEvidenceFile" text="Seleccionar Archivo" />
+                        <TextField fx:id="evidenceFileTextField" editable="false" prefWidth="180"/>
+                        <Button onAction="#handleSelectEvidenceFile" text="Seleccionar Archivo"/>
                     </HBox>
-                    <Button fx:id="handleRegisterReport" onAction="#handleRegisterReport" prefWidth="100.0" text="Registrar" />
+                    <Button fx:id="handleRegisterReport" onAction="#handleRegisterReport" prefWidth="100.0"
+                            text="Registrar"/>
                 </children>
             </VBox>
             <VBox prefWidth="700" spacing="10">
                 <children>
-                    <Label style="-fx-font-size: 18px;" text="Registrar Informe Completo" />
+                    <Label style="-fx-font-size: 18px;" text="Registrar Informe Completo"/>
                     <HBox spacing="10">
                         <children>
                             <VBox spacing="5">
                                 <children>
-                                    <Label text="Carrera:" />
-                                    <TextField fx:id="careerField" editable="false" />
-                                    <Label text="NRC:" />
-                                    <TextField fx:id="nrcField" editable="false" />
-                                    <Label text="Profesor:" />
-                                    <TextField fx:id="professorField" editable="false" />
-                                    <Label text="Periodo Escolar:" />
-                                    <TextField fx:id="schoolPeriodField" editable="false" />
-                                    <Label text="Estudiante:" />
-                                    <TextField fx:id="studentField" editable="false" />
-                                    <Label text="Organización:" />
-                                    <TextField fx:id="organizationField" editable="false" />
-                                    <Label text="Proyecto:" />
-                                    <TextField fx:id="projectField" editable="false" />
+                                    <Label text="Carrera:"/>
+                                    <TextField fx:id="careerField" editable="false"/>
+                                    <Label text="NRC:"/>
+                                    <TextField fx:id="nrcField" editable="false"/>
+                                    <Label text="Profesor:"/>
+                                    <TextField fx:id="professorField" editable="false"/>
+                                    <Label text="Periodo Escolar:"/>
+                                    <TextField fx:id="schoolPeriodField" editable="false"/>
+                                    <Label text="Estudiante:"/>
+                                    <TextField fx:id="studentField" editable="false"/>
+                                    <Label text="Organización:"/>
+                                    <TextField fx:id="organizationField" editable="false"/>
+                                    <Label text="Proyecto:"/>
+                                    <TextField fx:id="projectField" editable="false"/>
                                 </children>
                             </VBox>
                             <VBox spacing="5">
                                 <children>
-                                    <Label text="Horas Totales:" />
-                                    <TextField fx:id="totalHoursField" />
-                                    <Label text="Fecha de Informe:" />
-                                    <TextField fx:id="reportDateField" editable="false" />
-                                    <Label text="Objetivo General:" />
-                                    <TextArea fx:id="generalObjectiveArea" prefHeight="40" />
-                                    <Label text="Metodología:" />
-                                    <TextArea fx:id="methodologyArea" prefHeight="40" />
-                                    <Label text="Resultado Obtenido:" />
-                                    <TextArea fx:id="obtainedResultArea" prefHeight="40" />
+                                    <Label text="Horas Totales:"/>
+                                    <TextField fx:id="totalHoursField"/>
+                                    <Label text="Fecha de Informe:"/>
+                                    <TextField fx:id="reportDateField" editable="false"/>
+                                    <Label text="Objetivo General:"/>
+                                    <VBox>
+                                        <TextArea fx:id="generalObjectiveArea" prefHeight="40"/>
+                                        <Label fx:id="generalObjectiveCharCountLabel" text="0/200"
+                                               style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                    </VBox>
+                                    <Label text="Metodología:"/>
+                                    <VBox>
+                                        <TextArea fx:id="methodologyArea" prefHeight="40"/>
+                                        <Label fx:id="methodologyCharCountLabel" text="0/200"
+                                               style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                    </VBox>
+                                    <Label text="Resultado Obtenido:"/>
+                                    <VBox>
+                                        <TextArea fx:id="obtainedResultArea" prefHeight="40"/>
+                                        <Label fx:id="obtainedResultCharCountLabel" text="0/200"
+                                               style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                    </VBox>
                                 </children>
                             </VBox>
                         </children>
                     </HBox>
-                    <Label text="Actividades del Informe:" />
+                    <Label text="Actividades del Informe:"/>
                     <TableView fx:id="activitiesTable" prefHeight="120">
                         <columns>
-                            <TableColumn fx:id="activityColumn" prefWidth="120" text="Actividad" />
-                            <TableColumn fx:id="progressColumn" prefWidth="80" text="Avance (%)" />
-                            <TableColumn fx:id="observationColumn" prefWidth="200" text="Observaciones" />
+                            <TableColumn fx:id="activityColumn" prefWidth="120" text="Actividad"/>
+                            <TableColumn fx:id="progressColumn" prefWidth="80" text="Avance (%)"/>
+                            <TableColumn fx:id="observationColumn" prefWidth="200" text="Observaciones"/>
                         </columns>
                     </TableView>
-                    <Label text="Observaciones Generales:" />
-                    <TextArea fx:id="generalObservationsArea" prefHeight="40" />
+                    <Label text="Observaciones Generales:"/>
+                    <VBox>
+                        <TextArea fx:id="generalObservationsArea" prefHeight="40"/>
+                        <Label fx:id="generalObservationsCharCountLabel" text="0/200"
+                               style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                    </VBox>
                 </children>
             </VBox>
         </children>

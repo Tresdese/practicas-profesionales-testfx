@@ -33,25 +33,25 @@ public class GUI_CheckListOfStudentsController {
     private TableView<StudentDTO> tableView;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnTuition;
+    private TableColumn<StudentDTO, String> tuitionColumn;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnNames;
+    private TableColumn<StudentDTO, String> namesColumn;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnSurnames;
+    private TableColumn<StudentDTO, String> surnamesColumn;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnEmail;
+    private TableColumn<StudentDTO, String> emailColumn;
 
     @FXML
-    private TableColumn<StudentDTO, String> columnNRC;
+    private TableColumn<StudentDTO, String> nrcColumn;
 
     @FXML
-    private TableColumn<StudentDTO, Void> columnDetails;
+    private TableColumn<StudentDTO, Void> detailsColumn;
 
     @FXML
-    private TableColumn<StudentDTO, Void> columnManagement;
+    private TableColumn<StudentDTO, Void> managementColumn;
 
     @FXML
     private TextField searchField;
@@ -60,16 +60,16 @@ public class GUI_CheckListOfStudentsController {
     private Button searchButton;
 
     @FXML
-    private Button buttonRegisterStudent;
+    private Button registerStudentButton;
 
     @FXML
-    private Button buttonAssignProject;
+    private Button assignProjectButton;
 
     @FXML
-    private Button buttonReassignProject;
+    private Button reassignProjectButton;
 
     @FXML
-    private Label statusLabel, labelStudentCounts;
+    private Label statusLabel, studentCountsLabel;
 
     private StudentDTO selectedStudent;
     private StudentService studentService;
@@ -95,16 +95,16 @@ public class GUI_CheckListOfStudentsController {
         updateStudentCounts();
 
         searchButton.setOnAction(event -> searchStudent());
-        buttonRegisterStudent.setOnAction(event -> openRegisterStudentWindow());
-        buttonAssignProject.setOnAction(event -> openAssignProjectWindow());
-        buttonReassignProject.setOnAction(event -> openReassignProjectWindow());
+        registerStudentButton.setOnAction(event -> openRegisterStudentWindow());
+        assignProjectButton.setOnAction(event -> openAssignProjectWindow());
+        reassignProjectButton.setOnAction(event -> openReassignProjectWindow());
 
-        buttonAssignProject.setDisable(true);
+        assignProjectButton.setDisable(true);
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedStudent = newValue;
-            buttonAssignProject.setDisable(selectedStudent == null);
-            buttonReassignProject.setDisable(selectedStudent == null);
+            assignProjectButton.setDisable(selectedStudent == null);
+            reassignProjectButton.setDisable(selectedStudent == null);
             tableView.refresh();
         });
     }
@@ -115,11 +115,11 @@ public class GUI_CheckListOfStudentsController {
     }
 
     public void setColumns () {
-        columnTuition.setCellValueFactory(new PropertyValueFactory<>("tuition"));
-        columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
-        columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
-        columnEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        columnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
+        tuitionColumn.setCellValueFactory(new PropertyValueFactory<>("tuition"));
+        namesColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
+        surnamesColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        nrcColumn.setCellValueFactory(new PropertyValueFactory<>("NRC"));
     }
 
     public void setButtonVisibility(Button btn, boolean visible) {
@@ -131,20 +131,20 @@ public class GUI_CheckListOfStudentsController {
 
     public void applyRoleRestrictions() {
         if (userRole == Role.ACADEMICO_EVALUADOR) {
-            setButtonVisibility(buttonRegisterStudent, false);
-            setButtonVisibility(buttonAssignProject, false);
-            setButtonVisibility(buttonReassignProject, false);
-            columnManagement.setVisible(false);
+            setButtonVisibility(registerStudentButton, false);
+            setButtonVisibility(assignProjectButton, false);
+            setButtonVisibility(reassignProjectButton, false);
+            managementColumn.setVisible(false);
         } else if (userRole == Role.ACADEMICO) {
-            setButtonVisibility(buttonRegisterStudent, true);
-            setButtonVisibility(buttonAssignProject, false);
-            setButtonVisibility(buttonReassignProject, false);
-            columnManagement.setVisible(true);
+            setButtonVisibility(registerStudentButton, true);
+            setButtonVisibility(assignProjectButton, false);
+            setButtonVisibility(reassignProjectButton, false);
+            managementColumn.setVisible(true);
         } else if (userRole == Role.COORDINADOR) {
-            setButtonVisibility(buttonRegisterStudent, false);
-            setButtonVisibility(buttonAssignProject, true);
-            setButtonVisibility(buttonReassignProject, true);
-            columnManagement.setVisible(false);
+            setButtonVisibility(registerStudentButton, false);
+            setButtonVisibility(assignProjectButton, true);
+            setButtonVisibility(reassignProjectButton, true);
+            managementColumn.setVisible(false);
         }
     }
 
@@ -274,9 +274,9 @@ public class GUI_CheckListOfStudentsController {
                     inactivos++;
                 }
             }
-            labelStudentCounts.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+            studentCountsLabel.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
         } catch (SQLException e) {
-            labelStudentCounts.setText("Error al contar estudiantes");
+            studentCountsLabel.setText("Error al contar estudiantes");
             logger.error("Error al contar estudiantes: {}", e.getMessage(), e);
         }
     }
@@ -303,15 +303,15 @@ public class GUI_CheckListOfStudentsController {
             }
         };
 
-        columnDetails.setCellFactory(cellFactory);
+        detailsColumn.setCellFactory(cellFactory);
     }
 
     public void openDetailsStudentWindow(StudentDTO student) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckStudentDetails.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DetailsStudent.fxml"));
             Parent root = loader.load();
-            GUI_CheckStudentDetailsController controller = loader.getController();
-            controller.setStudentData(selectedStudent);
+            GUI_DetailsStudentController controller = loader.getController();
+            controller.setStudent(student);
             Stage stage = new Stage();
             stage.setTitle("Detalles del Estudiante");
             stage.setScene(new Scene(root));
@@ -343,7 +343,7 @@ public class GUI_CheckListOfStudentsController {
             }
         };
 
-        columnManagement.setCellFactory(cellFactory);
+        managementColumn.setCellFactory(cellFactory);
     }
 
     public void openManageStudentWindow(StudentDTO student) {

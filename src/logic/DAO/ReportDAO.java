@@ -122,4 +122,19 @@ public class ReportDAO implements IReportDAO {
         }
         return reports;
     }
+
+    public int getTotalReportedHoursByStudent(String tuition) throws SQLException {
+        String sql = "SELECT SUM(total_horas) FROM reporte WHERE matricula = ?";
+        try (ConnectionDataBase db = new ConnectionDataBase();
+             Connection conn = db.connectDB();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, tuition);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }
