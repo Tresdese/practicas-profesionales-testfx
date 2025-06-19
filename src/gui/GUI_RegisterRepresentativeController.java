@@ -7,7 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
+import javafx.util.StringConverter;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
 import logic.exceptions.InvalidData;
@@ -16,6 +17,7 @@ import logic.services.LinkedOrganizationService;
 import logic.services.RepresentativeService;
 import logic.services.ServiceConfig;
 import logic.exceptions.EmptyFields;
+import logic.DAO.DepartmentDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +41,10 @@ public class GUI_RegisterRepresentativeController {
     private TextField nameField;
 
     @FXML
-    private ChoiceBox<String> organizationBox;
+    private ChoiceBox<LinkedOrganizationDTO> organizationBox;
+
+    @FXML
+    private ChoiceBox<DepartmentDTO> departmentBox;
 
     @FXML
     private Label statusLabel;
@@ -51,6 +56,7 @@ public class GUI_RegisterRepresentativeController {
 
     private LinkedOrganizationService linkedOrganizationService;
     private RepresentativeService representativeService;
+    private DepartmentDAO departmentDAO = new DepartmentDAO();
 
     public void setParentController(GUI_CheckRepresentativeListController parentController) {
         this.parentController = parentController;
@@ -63,11 +69,47 @@ public class GUI_RegisterRepresentativeController {
             representativeService = serviceConfig.getRepresentativeService();
             linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
 
-            for (String organizationName : getOrganizationNames()) {
-                organizationBox.getItems().add(organizationName);
-            }
+            organizationBox.setItems(FXCollections.observableArrayList(getOrganizations()));
+            organizationBox.setConverter(new StringConverter<LinkedOrganizationDTO>() {
+                @Override
+                public String toString(LinkedOrganizationDTO org) {
+                    return org != null ? org.getName() : "";
+                }
+                @Override
+                public LinkedOrganizationDTO fromString(String string) {
+                    return null;
+                }
+            });
+
+            organizationBox.setOnAction(event -> loadDepartmentsForSelectedOrganization());
+
+            departmentBox.setConverter(new StringConverter<DepartmentDTO>() {
+                @Override
+                public String toString(DepartmentDTO dept) {
+                    return dept != null ? dept.getName() : "";
+                }
+                @Override
+                public DepartmentDTO fromString(String string) {
+                    return null;
+                }
+            });
+
         } catch (SQLException e) {
             logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
+        }
+    }
+
+    private void loadDepartmentsForSelectedOrganization() {
+        departmentBox.getItems().clear();
+        LinkedOrganizationDTO org = organizationBox.getValue();
+        if (org == null) return;
+        try {
+            int orgId = Integer.parseInt(org.getIdOrganization());
+            List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(orgId);
+            departmentBox.setItems(FXCollections.observableArrayList(departments));
+        } catch (SQLException e) {
+            statusLabel.setText("Error al cargar departamentos.");
+            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
         }
     }
 
@@ -81,16 +123,22 @@ public class GUI_RegisterRepresentativeController {
             String names = nameField.getText();
             String surname = surnameField.getText();
             String email = emailField.getText();
-            String organization = organizationBox.getValue();
+            DepartmentDTO selectedDept = departmentBox.getValue();
+            LinkedOrganizationDTO selectedOrg = organizationBox.getValue();
 
-            LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organization);
-            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
-                throw new InvalidData("La organización seleccionada no es válida.");
+            if (selectedDept == null) {
+                throw new InvalidData("Debe seleccionar un departamento válido.");
+            }
+            if (selectedOrg == null) {
+                throw new InvalidData("Debe seleccionar una organización válida.");
             }
 
-            String organizationId = linkedOrganization.getIdOrganization();
+            String departmentId = String.valueOf(selectedDept.getDepartmentId());
+            String organizationId = selectedOrg.getIdOrganization();
 
-            RepresentativeDTO representative = new RepresentativeDTO("0", names, surname, email, organizationId);
+            RepresentativeDTO representative = new RepresentativeDTO(
+                    "0", names, surname, email, organizationId, departmentId
+            );
 
             try {
                 boolean success = representativeService.registerRepresentative(representative);
@@ -99,8 +147,8 @@ public class GUI_RegisterRepresentativeController {
                     statusLabel.setText("¡Representante registrado exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
-                    organizationBox.getItems().clear();
-                    organizationBox.getItems().addAll(getOrganizationNames());
+                    organizationBox.setItems(FXCollections.observableArrayList(getOrganizations()));
+                    departmentBox.getItems().clear();
                 } else {
                     statusLabel.setText("El representante ya existe.");
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
@@ -118,29 +166,24 @@ public class GUI_RegisterRepresentativeController {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
-    public List<String> getOrganizationNames() {
-        ObservableList<LinkedOrganizationDTO> organizationList = FXCollections.observableArrayList();
+    public List<LinkedOrganizationDTO> getOrganizations() {
         try {
-            List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
-            organizationList.addAll(organizations);
+            return linkedOrganizationService.getAllLinkedOrganizations();
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de las organizaciones.");
             logger.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
+            return List.of();
         }
-        return organizationList.stream()
-                .map(LinkedOrganizationDTO::getName)
-                .toList();
     }
 
     public boolean areFieldsFilled() {
         return !nameField.getText().isEmpty() &&
                 !surnameField.getText().isEmpty() &&
                 !emailField.getText().isEmpty() &&
-                organizationBox.getValue() != null;
+                organizationBox.getValue() != null &&
+                departmentBox.getValue() != null;
     }
 }

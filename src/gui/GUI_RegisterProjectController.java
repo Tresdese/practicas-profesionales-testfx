@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import logic.DAO.DepartmentDAO;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.Role;
@@ -29,182 +31,152 @@ public class GUI_RegisterProjectController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectController.class);
 
-//    @FXML
-//    private Button buttonRegisterProyect;
-
     @FXML
     private TextField nameField;
-
     @FXML
     private TextArea descriptionField;
-
     @FXML
-    private ChoiceBox<String> academicBox;
-
+    private ChoiceBox<UserDTO> academicBox;
     @FXML
-    private ChoiceBox<String> organizationBox;
-
+    private ChoiceBox<LinkedOrganizationDTO> organizationBox;
     @FXML
     private DatePicker startDatePicker;
-
     @FXML
     private DatePicker endDatePicker;
-
+    @FXML
+    private ChoiceBox<DepartmentDTO> departmentBox;
+    @FXML
+    private Button buttonRegisterProyect;
     @FXML
     private Label statusLabel;
 
-    @FXML
-    private Label label;
-
-    private LinkedOrganizationService linkedOrganizationService;
-    private UserService userService;
+    private ServiceConfig serviceConfig;
     private ProjectService projectService;
+    private LinkedOrganizationService organizationService;
+    private UserService userService;
+    private DepartmentDAO departmentDAO;
 
     @FXML
     public void initialize() {
         try {
-            ServiceConfig serviceConfig = new ServiceConfig();
-            linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
+            serviceConfig = new ServiceConfig();
             projectService = serviceConfig.getProjectService();
+            organizationService = serviceConfig.getLinkedOrganizationService();
             userService = serviceConfig.getUserService();
+            departmentDAO = new DepartmentDAO();
 
-            for (String organizationName : getOrganizationNames()) {
-                organizationBox.getItems().add(organizationName);
-            }
+            loadAcademics();
+            loadOrganizations();
+            loadDepartments();
 
-            for (String academicName : getAcademicNames()) {
-                academicBox.getItems().add(academicName);
-            }
         } catch (SQLException e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
+            logger.error("Error al inicializar servicios: {}", e.getMessage(), e);
+            statusLabel.setText("Error al inicializar servicios.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
+        }
+    }
+
+    private void loadAcademics() {
+        try {
+            List<UserDTO> academics = userService.getAllUsers();
+            academicBox.setItems(FXCollections.observableArrayList(academics));
+        } catch (SQLException e) {
+            logger.error("Error al cargar académicos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar académicos.");
+            statusLabel.setTextFill(Color.RED);
+        }
+    }
+
+    private void loadOrganizations() {
+        try {
+            List<LinkedOrganizationDTO> organizations = organizationService.getAllLinkedOrganizations();
+            organizationBox.setItems(FXCollections.observableArrayList(organizations));
+        } catch (SQLException e) {
+            logger.error("Error al cargar organizaciones: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar organizaciones.");
+            statusLabel.setTextFill(Color.RED);
+        }
+    }
+
+    private void loadDepartments() {
+        try {
+            List<DepartmentDTO> departments = departmentDAO.getAllDepartments();
+            departmentBox.setItems(FXCollections.observableArrayList(departments));
+        } catch (SQLException e) {
+            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar departamentos.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
     @FXML
-    void handleRegisterProject(ActionEvent event) {
+    private void handleRegisterProject(ActionEvent event) {
         try {
-            if (!areFieldsFilled()) {
-                throw new EmptyFields("Todos los campos deben estar llenos.");
+            if (!validateFields()) {
+                throw new EmptyFields("Todos los campos son obligatorios.");
             }
 
-            String name = nameField.getText();
-            String description = descriptionField.getText();
-            String academic = academicBox.getValue();
-            String organization = organizationBox.getValue();
+            String name = nameField.getText().trim();
+            String description = descriptionField.getText().trim();
+            UserDTO academic = academicBox.getValue();
+            LinkedOrganizationDTO organization = organizationBox.getValue();
+            DepartmentDTO department = departmentBox.getValue();
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
 
-            LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organization);
-            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
-                throw new InvalidData("La organización seleccionada no es válida.");
-            }
-
-            String organizationId = linkedOrganization.getIdOrganization();
-            String academicId = getAcademicIdByName(academic);
-
             ProjectDTO project = new ProjectDTO(
-                    "0",
+                    null,
                     name,
                     description,
                     endDate != null ? Timestamp.valueOf(endDate.atStartOfDay()) : null,
                     startDate != null ? Timestamp.valueOf(startDate.atStartOfDay()) : null,
-                    academicId,
-                    Integer.parseInt(organizationId)
+                    academic != null ? academic.getIdUser() : null,
+                    organization != null ? Integer.parseInt(organization.getIdOrganization()) : 0,
+                    department != null ? department.getDepartmentId() : 0
             );
 
             boolean success = projectService.registerProject(project);
 
             if (success) {
-                clearFields();
-                statusLabel.setText("¡Proyecto registrado exitosamente!");
+                statusLabel.setText("Proyecto registrado correctamente.");
                 statusLabel.setTextFill(Color.GREEN);
-
-                organizationBox.getItems().clear();
-                academicBox.getItems().clear();
-
-                for (String organizationName : getOrganizationNames()) {
-                    organizationBox.getItems().add(organizationName);
-                }
-
-                for (String academicName : getAcademicNames()) {
-                    academicBox.getItems().add(academicName);
-                }
+                clearFields();
             } else {
-                statusLabel.setText("El proyecto ya existe.");
+                statusLabel.setText("No se pudo registrar el proyecto.");
                 statusLabel.setTextFill(Color.RED);
             }
         } catch (EmptyFields | InvalidData | RepeatedId e) {
+            logger.error("Error de validación al registrar proyecto: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
         } catch (SQLException e) {
-            statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
+            logger.error("Error de base de datos al registrar proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error de base de datos.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error de SQL al registrar el proyecto: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al registrar proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado.");
+            statusLabel.setTextFill(Color.RED);
         }
+    }
+
+    private boolean validateFields() {
+        return !nameField.getText().trim().isEmpty()
+                && !descriptionField.getText().trim().isEmpty()
+                && academicBox.getValue() != null
+                && organizationBox.getValue() != null
+                && departmentBox.getValue() != null
+                && startDatePicker.getValue() != null
+                && endDatePicker.getValue() != null;
     }
 
     private void clearFields() {
         nameField.clear();
         descriptionField.clear();
+        academicBox.getSelectionModel().clearSelection();
+        organizationBox.getSelectionModel().clearSelection();
+        departmentBox.getSelectionModel().clearSelection();
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
-    }
-
-    public List<String> getOrganizationNames() {
-        ObservableList<LinkedOrganizationDTO> organizationList = FXCollections.observableArrayList();
-        try {
-            List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
-            organizationList.addAll(organizations);
-        } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los datos de las organizaciones.");
-            logger.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
-        }
-        return organizationList.stream()
-                .map(LinkedOrganizationDTO::getName)
-                .toList();
-    }
-
-    public List<String> getAcademicNames() {
-        ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
-        try {
-            List<UserDTO> academics = userService.getAllUsers();
-            academics = academics.stream()
-                    .filter(user -> user.getRole() == Role.ACADEMICO)
-                    .toList();
-            academicList.addAll(academics);
-        } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los académicos.");
-            logger.error("Error al cargar los académicos: {}", e.getMessage(), e);
-        }
-        return academicList.stream()
-                .map(UserDTO::getNames)
-                .toList();
-    }
-
-    private String getAcademicIdByName(String name) {
-        try {
-            List<UserDTO> academics = userService.getAllUsers();
-            for (UserDTO academic : academics) {
-                if (academic.getNames().equals(name)) {
-                    return academic.getIdUser();
-                }
-            }
-            throw new InvalidData("No se encontró el académico seleccionado");
-        } catch (SQLException e) {
-            logger.error("Error al buscar el ID del académico: {}", e.getMessage(), e);
-            throw new RuntimeException("Error al buscar el académico: " + e.getMessage());
-        }
-    }
-
-    public boolean areFieldsFilled() {
-        return !nameField.getText().isEmpty() &&
-                !descriptionField.getText().isEmpty() &&
-                academicBox.getValue() != null &&
-                organizationBox.getValue() != null &&
-                startDatePicker.getValue() != null &&
-                endDatePicker.getValue() != null;
     }
 }

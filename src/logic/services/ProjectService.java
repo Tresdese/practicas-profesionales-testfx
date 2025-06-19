@@ -16,10 +16,6 @@ public class ProjectService {
     }
 
     public boolean registerProject(ProjectDTO project) throws SQLException, RepeatedId {
-        ProjectDTO existing = projectDAO.searchProjectById(project.getIdProject());
-        if (existing != null && !"-1".equals(existing.getIdProject())) {
-            throw new RepeatedId("El ID del proyecto ya está registrado.");
-        }
 
         boolean success = projectDAO.insertProject(project);
         if (!success) {

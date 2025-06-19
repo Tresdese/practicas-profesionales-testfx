@@ -10,13 +10,15 @@ import logic.interfaces.IRepresentativeDAO;
 
 public class RepresentativeDAO implements IRepresentativeDAO {
 
-    private final static String SQL_INSERT = "INSERT INTO representante (nombres, apellidos, correo, idDepartamento) VALUES (?, ?, ?, ?)";
-    private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idDepartamento = ? WHERE idRepresentante = ?";
+    private final static String SQL_INSERT = "INSERT INTO representante (nombres, apellidos, correo, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?)";
+    private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ?, idDepartamento = ? WHERE idRepresentante = ?";
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_BY_ID = "SELECT * FROM representante WHERE idRepresentante = ?";
-    private final static String SQL_SELECT_BY_EMAIL = "SELECT * FROM representante WHERE correo = ?";
     private final static String SQL_SELECT_BY_FULLNAME = "SELECT * FROM representante WHERE nombres = ? AND apellidos = ?";
-    private final static String SQL_SELECT_BY_DEPARTMENT = "SELECT * FROM representante WHERE idDepartamento = ?";
+    private final static String SQL_SELECT_DEPARTMENT_BY_ID = "SELECT * FROM representante WHERE idDepartamento = ?";
+    private final static String SQL_SELECT_ORGANIZATION_BY_ID = "SELECT * FROM representante WHERE idOrganizacion = ?";
+    private final static String SQL_SELECT_NAME_BY_ID = "SELECT nombres, apellidos FROM representante WHERE idRepresentante = ?";
+    private final static String SQL_SELECT_REGISTERED_ID = "SELECT 1 FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException {
@@ -26,10 +28,15 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             statement.setString(1, representative.getNames());
             statement.setString(2, representative.getSurnames());
             statement.setString(3, representative.getEmail());
-            if (representative.getIdDepartment() != null && !representative.getIdDepartment().isEmpty()) {
-                statement.setInt(4, Integer.parseInt(representative.getIdDepartment()));
+            if (representative.getIdOrganization() != null && !representative.getIdOrganization().isEmpty()) {
+                statement.setInt(4, Integer.parseInt(representative.getIdOrganization()));
             } else {
                 statement.setNull(4, Types.INTEGER);
+            }
+            if (representative.getIdDepartment() != null && !representative.getIdDepartment().isEmpty()) {
+                statement.setInt(5, Integer.parseInt(representative.getIdDepartment()));
+            } else {
+                statement.setNull(5, Types.INTEGER);
             }
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
@@ -51,12 +58,17 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             statement.setString(1, representative.getNames());
             statement.setString(2, representative.getSurnames());
             statement.setString(3, representative.getEmail());
-            if (representative.getIdDepartment() != null && !representative.getIdDepartment().isEmpty()) {
-                statement.setInt(4, Integer.parseInt(representative.getIdDepartment()));
+            if (representative.getIdOrganization() != null && !representative.getIdOrganization().isEmpty()) {
+                statement.setInt(4, Integer.parseInt(representative.getIdOrganization()));
             } else {
                 statement.setNull(4, Types.INTEGER);
             }
-            statement.setInt(5, Integer.parseInt(representative.getIdRepresentative()));
+            if (representative.getIdDepartment() != null && !representative.getIdDepartment().isEmpty()) {
+                statement.setInt(5, Integer.parseInt(representative.getIdDepartment()));
+            } else {
+                statement.setNull(5, Types.INTEGER);
+            }
+            statement.setInt(6, Integer.parseInt(representative.getIdRepresentative()));
             return statement.executeUpdate() > 0;
         }
     }
@@ -84,6 +96,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                         resultSet.getString("nombres"),
                         resultSet.getString("apellidos"),
                         resultSet.getString("correo"),
+                        resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
                         resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
                 );
             }
@@ -91,26 +104,31 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         return representative;
     }
 
+    @Override
     public boolean isRepresentativeRegistered(String idRepresentative) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM representante WHERE idRepresentante = ?")) {
             statement.setInt(1, Integer.parseInt(idRepresentative));
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
+    @Override
     public boolean isRepresentativeEmailRegistered(String email) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_EMAIL)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_REGISTERED_ID)) {
             statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
         }
     }
 
+    @Override
     public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException {
         RepresentativeDTO representative = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
@@ -118,18 +136,81 @@ public class RepresentativeDAO implements IRepresentativeDAO {
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_FULLNAME)) {
             statement.setString(1, names);
             statement.setString(2, surnames);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                representative = new RepresentativeDTO(
-                        String.valueOf(resultSet.getInt("idRepresentante")),
-                        resultSet.getString("nombres"),
-                        resultSet.getString("apellidos"),
-                        resultSet.getString("correo"),
-                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    representative = new RepresentativeDTO(
+                            String.valueOf(resultSet.getInt("idRepresentante")),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("correo"),
+                            resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                    );
+                }
             }
         }
         return representative;
+    }
+
+    @Override
+    public String getRepresentativeNameById(String idRepresentative) throws SQLException {
+        String name = "";
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_NAME_BY_ID)) {
+            statement.setInt(1, Integer.parseInt(idRepresentative));
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    name = rs.getString("nombres") + " " + rs.getString("apellidos");
+                }
+            }
+        }
+        return name;
+    }
+
+    @Override
+    public List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException {
+        List<RepresentativeDTO> representatives = new ArrayList<>();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_DEPARTMENT_BY_ID)) {
+            statement.setInt(1, Integer.parseInt(idDepartment));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    representatives.add(new RepresentativeDTO(
+                            String.valueOf(resultSet.getInt("idRepresentante")),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("correo"),
+                            resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                    ));
+                }
+            }
+        }
+        return representatives;
+    }
+
+    public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException {
+        List<RepresentativeDTO> representatives = new ArrayList<>();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORGANIZATION_BY_ID)) {
+            statement.setInt(1, Integer.parseInt(idOrganization));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    representatives.add(new RepresentativeDTO(
+                            String.valueOf(resultSet.getInt("idRepresentante")),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("correo"),
+                            resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                    ));
+                }
+            }
+        }
+        return representatives;
     }
 
     @Override
@@ -145,6 +226,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                         resultSet.getString("nombres"),
                         resultSet.getString("apellidos"),
                         resultSet.getString("correo"),
+                        resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
                         resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
                 );
                 representatives.add(representative);
@@ -153,45 +235,4 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         return representatives;
     }
 
-    public String getRepresentativeNameById(String idRepresentative) throws SQLException {
-        String representativeName = "";
-        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
-            statement.setInt(1, Integer.parseInt(idRepresentative));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    String nombres = resultSet.getString("nombres");
-                    String apellidos = resultSet.getString("apellidos");
-                    if (nombres != null && apellidos != null) {
-                        representativeName = nombres + " " + apellidos;
-                    } else {
-                        representativeName = "Sin nombre";
-                    }
-                }
-            }
-        }
-        return representativeName;
-    }
-
-    public List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException {
-        List<RepresentativeDTO> representatives = new ArrayList<>();
-        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_DEPARTMENT)) {
-            statement.setInt(1, Integer.parseInt(idDepartment));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    representatives.add(new RepresentativeDTO(
-                            String.valueOf(resultSet.getInt("idRepresentante")),
-                            resultSet.getString("nombres"),
-                            resultSet.getString("apellidos"),
-                            resultSet.getString("correo"),
-                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
-                    ));
-                }
-            }
-        }
-        return representatives;
-    }
 }

@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.DAO.*;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.RepresentativeDTO;
@@ -61,7 +62,7 @@ public class GUI_AssignedProjectController {
 
             resetLabelsStyle();
             fillProjectLabels(project);
-            fillOrganizationAndRepresentativeLabels(project.getIdOrganization());
+            fillOrganizationAndRepresentativeLabels(project);
 
             checkIfSelfAssessmentExists(student.getTuition(), Integer.parseInt(studentProject.getIdProject()));
 
@@ -83,7 +84,7 @@ public class GUI_AssignedProjectController {
             boolean exists = dao.existsSelfAssessment(matricula, idProyecto);
             registerSelfAssessmentButton.setDisable(exists);
         } catch (Exception e) {
-            registerSelfAssessmentButton.setDisable(false); // Por defecto, habilitado si hay error
+            registerSelfAssessmentButton.setDisable(false);
         }
     }
 
@@ -105,7 +106,7 @@ public class GUI_AssignedProjectController {
         ProjectDAO projectDAO = new ProjectDAO();
         ProjectDTO project = projectDAO.searchProjectById(idProject);
         if (project == null) {
-            return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
+            return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
         }
         return project;
     }
@@ -122,11 +123,10 @@ public class GUI_AssignedProjectController {
         userLabel.setText(project.getIdUser());
     }
 
-    private void fillOrganizationAndRepresentativeLabels(int idOrganization) {
+    private void fillOrganizationAndRepresentativeLabels(ProjectDTO project) {
         try {
-
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
-            LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));
+            LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
             if (isOrganizationNA(org)) {
                 organizationLabel.setText("N/A");
             } else {
@@ -134,7 +134,7 @@ public class GUI_AssignedProjectController {
             }
 
             RepresentativeDAO repDAO = new RepresentativeDAO();
-            RepresentativeDTO rep = getRepresentativeByOrganization(repDAO, org.getIdOrganization());
+            RepresentativeDTO rep = getRepresentativeByDepartment(repDAO, project.getIdDepartment());
             if (isRepresentativeNA(rep)) {
                 representativeLabel.setText("No asignado");
             } else {
@@ -155,13 +155,18 @@ public class GUI_AssignedProjectController {
         return org == null || "N/A".equals(org.getIdOrganization());
     }
 
-    private RepresentativeDTO getRepresentativeByOrganization(RepresentativeDAO repDAO, String idOrganization) throws Exception {
+    // Busca el representante asignado al departamento
+    private RepresentativeDTO getRepresentativeByDepartment(RepresentativeDAO repDAO, int idDepartment) throws Exception {
         for (RepresentativeDTO r : repDAO.getAllRepresentatives()) {
-            if (r.getIdOrganization().equals(idOrganization)) {
-                return r;
+            if (r.getIdDepartment() != null && !r.getIdDepartment().isEmpty()) {
+                try {
+                    if (Integer.parseInt(r.getIdDepartment()) == idDepartment) {
+                        return r;
+                    }
+                } catch (NumberFormatException ignored) {}
             }
         }
-        return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A");
+        return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");
     }
 
     private boolean isRepresentativeNA(RepresentativeDTO rep) {
@@ -300,7 +305,7 @@ public class GUI_AssignedProjectController {
             Parent root = loader.load();
             GUI_RegisterReportController controller = loader.getController();
             controller.setReportContext(
-                    professorName, // Aquí se pasa el nombre en vez del id
+                    professorName,
                     nrc, period, studentName, organization,
                     project.getName(), project.getIdProject(), student.getTuition()
             );

@@ -29,6 +29,9 @@
         <DatePicker fx:id="endDatePicker" layoutX="233.0" layoutY="288.0" />
         <Label layoutX="115.0" layoutY="248.0" text="Fecha de inicio" />
         <DatePicker fx:id="startDatePicker" layoutX="233.0" layoutY="244.0" />
+        <!-- Campo de departamento -->
+        <Label layoutX="117.0" layoutY="425.0" text="Departamento" />
+        <ChoiceBox fx:id="departmentBox" layoutX="234.0" layoutY="421.0" prefWidth="150.0" />
         <Button fx:id="buttonRegisterProyect" layoutX="238.0" layoutY="478.0" mnemonicParsing="false" onAction="#handleRegisterProject" style="-fx-background-color: #2772d3;" text="Registrar proyecto" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />

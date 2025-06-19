@@ -17,6 +17,7 @@ import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
+import logic.DTO.DepartmentDTO;
 
 import logic.services.ProjectService;
 import logic.services.ServiceConfig;
@@ -52,6 +53,9 @@ public class GUI_CheckProjectListController {
     private TableColumn<ProjectDTO, String> projectAcademicColumn;
 
     @FXML
+    private TableColumn<ProjectDTO, String> projectDepartmentColumn;
+
+    @FXML
     private TableColumn<ProjectDTO, Void> detailsColumn;
 
     @FXML
@@ -75,6 +79,7 @@ public class GUI_CheckProjectListController {
     private ProjectDTO selectedProject;
     private ProjectService projectService;
     private ServiceConfig serviceConfig;
+    private logic.DAO.DepartmentDAO departmentDAO = new logic.DAO.DepartmentDAO();
     private Role userRole;
 
     @FXML
@@ -153,6 +158,12 @@ public class GUI_CheckProjectListController {
             String academicName = getAcademicNameById(academicId);
             return new SimpleStringProperty(academicName);
         });
+
+        projectDepartmentColumn.setCellValueFactory(cellData -> {
+            int departmentId = cellData.getValue().getIdDepartment();
+            String departmentName = getDepartmentNameById(departmentId);
+            return new SimpleStringProperty(departmentName);
+        });
     }
 
     private String getOrganizationNameById(String organizationId) {
@@ -190,6 +201,25 @@ public class GUI_CheckProjectListController {
             return "ID inválido";
         } catch (Exception e) {
             logger.error("Error inesperado al obtener academico: {}", e.getMessage(), e);
+            return "Error de sistema";
+        }
+    }
+
+    private String getDepartmentNameById(int departmentId) {
+        try {
+            if (departmentId == 0) {
+                return "No asignado";
+            }
+            DepartmentDTO department = departmentDAO.searchDepartmentById(departmentId);
+            return (department != null) ? department.getName() : "Departamento no encontrado";
+        } catch (SQLException e) {
+            logger.error("Error de base de datos al obtener departamento: {}", e.getMessage(), e);
+            return "Error de conexión a BD";
+        } catch (IllegalArgumentException e) {
+            logger.error("ID de departamento inválido: {}", e.getMessage(), e);
+            return "ID inválido";
+        } catch (Exception e) {
+            logger.error("Error inesperado al obtener departamento: {}", e.getMessage(), e);
             return "Error de sistema";
         }
     }

@@ -131,9 +131,9 @@ public class GUI_CheckProjectRequestListController {
 
     private void applyRolRestrictions() {
         if (userRole == Role.COORDINADOR) {
-            registerRequestButton.setVisible(true);
+            registerRequestButton.setVisible(false);
         } else if (userRole == Role.ACADEMICO) {
-            registerRequestButton.setVisible(true);
+            registerRequestButton.setVisible(false);
         } else {
             registerRequestButton.setVisible(false);
         }
@@ -296,21 +296,6 @@ public class GUI_CheckProjectRequestListController {
         } catch (Exception e) {
             logger.error("Error al abrir ventana de aprobación: {}", e.getMessage(), e);
             statusLabel.setText("Error al abrir ventana de aprobación");
-        }
-    }
-
-    private void updateRequestStatus(ProjectRequestDTO request) {
-        try {
-            boolean result = projectRequestDAO.updateProjectRequest(request);
-            if (result) {
-                statusLabel.setText("Estado de la solicitud actualizado correctamente");
-                loadRequestData();
-            } else {
-                statusLabel.setText("No se pudo actualizar el estado de la solicitud");
-            }
-        } catch (SQLException e) {
-            logger.error("Error al actualizar estado en la base de datos: {}", e.getMessage(), e);
-            statusLabel.setText("Error al actualizar en la base de datos");
         }
     }
 

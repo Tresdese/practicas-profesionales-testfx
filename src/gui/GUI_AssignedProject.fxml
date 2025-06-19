@@ -32,6 +32,12 @@
             <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="ID Usuario:"/>
             <Label fx:id="userLabel" style="-fx-text-fill: #333;" text="-"/>
         </HBox>
+
+        <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Departamento:"/>
+            <Label fx:id="departmentLabel" style="-fx-text-fill: #333;" text="-"/>
+        </HBox>
+
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
             <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Organizacion:"/>
             <Label fx:id="organizationLabel" style="-fx-text-fill: #333;" text="-"/>

@@ -22,9 +22,9 @@ public interface IRepresentativeDAO {
 
     String getRepresentativeNameById(String idRepresentative) throws SQLException;
 
-
-
     List<RepresentativeDTO> getAllRepresentatives() throws SQLException;
 
     List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException;
+
+    List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException;
 }

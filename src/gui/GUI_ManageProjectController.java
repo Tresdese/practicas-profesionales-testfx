@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -8,9 +9,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.UserDTO;
+import logic.DAO.DepartmentDAO;
 import logic.services.LinkedOrganizationService;
 import logic.services.ProjectService;
 import logic.services.ServiceConfig;
@@ -40,6 +44,9 @@ public class GUI_ManageProjectController {
     private ChoiceBox<String> organizationBox, academicBox, statusBox;
 
     @FXML
+    private ChoiceBox<DepartmentDTO> departmentBox;
+
+    @FXML
     private Label statusLabel;
 
     private GUI_CheckProjectListController parentController;
@@ -48,6 +55,7 @@ public class GUI_ManageProjectController {
     private ProjectService projectService;
     private LinkedOrganizationService linkedOrganizationService;
     private UserService userService;
+    private DepartmentDAO departmentDAO = new DepartmentDAO();
 
     public void setParentController(GUI_CheckProjectListController parentController) {
         this.parentController = parentController;
@@ -64,6 +72,23 @@ public class GUI_ManageProjectController {
             loadOrganizations();
             loadAcademics();
             loadStatusOptions();
+
+            departmentBox.setConverter(new StringConverter<>() {
+                @Override
+                public String toString(DepartmentDTO dept) {
+                    return dept == null ? "" : dept.getName();
+                }
+                @Override
+                public DepartmentDTO fromString(String s) {
+                    return null;
+                }
+            });
+
+            organizationBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                loadDepartmentsForSelectedOrganization();
+                departmentBox.setValue(null);
+            });
+
         } catch (SQLException e) {
             logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
         }
@@ -81,6 +106,22 @@ public class GUI_ManageProjectController {
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar las organizaciones.");
             logger.error("Error al cargar las organizaciones: {}", e.getMessage(), e);
+        }
+    }
+
+    private void loadDepartmentsForSelectedOrganization() {
+        departmentBox.getItems().clear();
+        String orgName = organizationBox.getValue();
+        if (orgName == null) return;
+        try {
+            LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
+            if (org != null && org.getIdOrganization() != null) {
+                int orgId = Integer.parseInt(org.getIdOrganization());
+                List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(orgId);
+                departmentBox.setItems(FXCollections.observableArrayList(departments));
+            }
+        } catch (Exception e) {
+            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
         }
     }
 
@@ -131,10 +172,24 @@ public class GUI_ManageProjectController {
                 LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(String.valueOf(orgId));
                 if (organization != null) {
                     organizationBox.setValue(organization.getName());
+                    loadDepartmentsForSelectedOrganization();
                 }
             }
         } catch (SQLException e) {
             logger.error("Error al obtener la organización del proyecto: {}", e.getMessage(), e);
+        }
+
+        // Selecciona el departamento correspondiente
+        try {
+            int deptId = project.getIdDepartment();
+            if (deptId > 0) {
+                DepartmentDTO department = departmentDAO.searchDepartmentById(deptId);
+                if (department != null) {
+                    departmentBox.setValue(department);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error al obtener el departamento del proyecto: {}", e.getMessage(), e);
         }
 
         try {
@@ -199,6 +254,13 @@ public class GUI_ManageProjectController {
                 }
             }
 
+            DepartmentDTO selectedDepartment = departmentBox.getValue();
+            if (selectedDepartment != null) {
+                project.setIdDepartment(selectedDepartment.getDepartmentId());
+            } else {
+                throw new IllegalArgumentException("Debe seleccionar un departamento.");
+            }
+
             boolean success = projectService.updateProject(project);
 
             if (success) {
@@ -242,6 +304,7 @@ public class GUI_ManageProjectController {
                 !descriptionArea.getText().isEmpty() &&
                 startDatePicker.getValue() != null &&
                 organizationBox.getValue() != null &&
-                academicBox.getValue() != null;
+                academicBox.getValue() != null &&
+                departmentBox.getValue() != null;
     }
 }

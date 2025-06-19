@@ -11,10 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
-import logic.services.RepresentativeService;
+import logic.DAO.DepartmentDAO;
 import logic.services.ServiceConfig;
+import logic.services.RepresentativeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +35,9 @@ public class GUI_CheckRepresentativeListController {
 
     @FXML
     private TableColumn<RepresentativeDTO, ?> representativeName;
+
+    @FXML
+    private TableColumn<RepresentativeDTO, String> representativeDepartment;
 
     @FXML
     private TableColumn<RepresentativeDTO, String> representativeOrganization;
@@ -63,6 +68,7 @@ public class GUI_CheckRepresentativeListController {
 
     private RepresentativeDTO selectedRepresentative;
     private RepresentativeService representativeService;
+    private DepartmentDAO departmentDAO = new DepartmentDAO();
 
     public void initialize() {
         try {
@@ -76,9 +82,15 @@ public class GUI_CheckRepresentativeListController {
         representativeSurname.setCellValueFactory(new PropertyValueFactory<>("surnames"));
         representativeEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
+        representativeDepartment.setCellValueFactory(cellData -> {
+            String departmentId = cellData.getValue().getIdDepartment();
+            String departmentName = getDepartmentNameById(departmentId);
+            return new SimpleStringProperty(departmentName);
+        });
+
         representativeOrganization.setCellValueFactory(cellData -> {
-            String organizationId = cellData.getValue().getIdOrganization();
-            String organizationName = getOrganizationNameById(organizationId);
+            String departmentId = cellData.getValue().getIdDepartment();
+            String organizationName = getOrganizationNameByDepartmentId(departmentId);
             return new SimpleStringProperty(organizationName);
         });
 
@@ -96,15 +108,31 @@ public class GUI_CheckRepresentativeListController {
         });
     }
 
-    private String getOrganizationNameById(String organizationId) {
+    private String getDepartmentNameById(String departmentId) {
         try {
-            if (organizationId == null || organizationId.isEmpty()) {
+            if (departmentId == null || departmentId.isEmpty()) {
                 return "No asignado";
             }
+            DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(departmentId));
+            return (department != null) ? department.getName() : "Departamento no encontrado";
+        } catch (Exception e) {
+            logger.error("Error al obtener nombre de departamento: {}", e.getMessage(), e);
+            return "Error";
+        }
+    }
 
+    private String getOrganizationNameByDepartmentId(String departmentId) {
+        try {
+            if (departmentId == null || departmentId.isEmpty()) {
+                return "No asignado";
+            }
+            DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(departmentId));
+            if (department == null) {
+                return "Departamento no encontrado";
+            }
             ServiceConfig serviceConfig = new ServiceConfig();
-            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService().searchLinkedOrganizationById(organizationId);
-
+            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
+                    .searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
             return (organization != null) ? organization.getName() : "Organización no encontrada";
         } catch (Exception e) {
             logger.error("Error al obtener nombre de organización: {}", e.getMessage(), e);
@@ -141,7 +169,7 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(representativeList);
-        updateRepresentativeCounts(representativeList); // <-- AGREGADO
+        updateRepresentativeCounts(representativeList);
     }
 
     private void searchRepresentative() {
@@ -164,7 +192,7 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(filteredList);
-        updateRepresentativeCounts(filteredList); // <-- AGREGADO
+        updateRepresentativeCounts(filteredList);
     }
 
     private void addDetailsButtonToTable() {

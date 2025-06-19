@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import logic.DAO.DepartmentDAO;
+import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
 import logic.services.LinkedOrganizationService;
@@ -26,6 +29,9 @@ public class GUI_ManageRepresentativeController {
     private ChoiceBox<String> organizationBox;
 
     @FXML
+    private ChoiceBox<String> departmentBox;
+
+    @FXML
     private Label statusLabel;
 
     private GUI_CheckRepresentativeListController parentController;
@@ -33,6 +39,7 @@ public class GUI_ManageRepresentativeController {
     private RepresentativeDTO representative;
     private RepresentativeService representativeService;
     private LinkedOrganizationService linkedOrganizationService;
+    private DepartmentDAO departmentDAO = new DepartmentDAO();
 
     public void setParentController(GUI_CheckRepresentativeListController parentController) {
         this.parentController = parentController;
@@ -50,6 +57,10 @@ public class GUI_ManageRepresentativeController {
             linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
 
             loadOrganizations();
+
+            organizationBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                loadDepartmentsForSelectedOrganization();
+            });
         } catch (SQLException e) {
             logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
         }
@@ -70,6 +81,25 @@ public class GUI_ManageRepresentativeController {
         }
     }
 
+    private void loadDepartmentsForSelectedOrganization() {
+        departmentBox.getItems().clear();
+        String orgName = organizationBox.getValue();
+        if (orgName == null) return;
+        try {
+            LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
+            if (org != null && org.getIdOrganization() != null) {
+                int orgId = Integer.parseInt(org.getIdOrganization());
+                List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(orgId);
+                List<String> departmentNames = departments.stream()
+                        .map(DepartmentDTO::getName)
+                        .toList();
+                departmentBox.getItems().setAll(departmentNames);
+            }
+        } catch (Exception e) {
+            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
+        }
+    }
+
     public void setRepresentativeData(RepresentativeDTO representative) {
         if (representative == null) {
             logger.error("El objeto RepresentativeDTO es nulo.");
@@ -83,15 +113,21 @@ public class GUI_ManageRepresentativeController {
         emailField.setText(representative.getEmail() != null ? representative.getEmail() : "");
 
         try {
-            String orgId = representative.getIdOrganization();
-            if (orgId != null && !orgId.isEmpty()) {
-                LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(orgId);
-                if (organization != null) {
-                    organizationBox.setValue(organization.getName());
+            String deptId = representative.getIdDepartment();
+            if (deptId != null && !deptId.isEmpty()) {
+                DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(deptId));
+                if (department != null) {
+                    // Selecciona la organización y carga los departamentos
+                    LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
+                    if (org != null) {
+                        organizationBox.setValue(org.getName());
+                        loadDepartmentsForSelectedOrganization();
+                        departmentBox.setValue(department.getName());
+                    }
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error al obtener la organización del representante: {}", e.getMessage(), e);
+            logger.error("Error al obtener el departamento del representante: {}", e.getMessage(), e);
         }
     }
 
@@ -105,35 +141,46 @@ public class GUI_ManageRepresentativeController {
             String name = namesField.getText();
             String surname = surnamesField.getText();
             String email = emailField.getText();
-            String organizationName = organizationBox.getValue();
+            String departmentName = departmentBox.getValue();
 
             representative.setNames(name);
             representative.setSurnames(surname);
             representative.setEmail(email);
 
-            LinkedOrganizationDTO linkedOrganization = linkedOrganizationService.searchLinkedOrganizationByName(organizationName);
-            if (linkedOrganization == null || linkedOrganization.getIdOrganization() == null) {
+            // Buscar el departamento por nombre y organización seleccionada
+            String orgName = organizationBox.getValue();
+            LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
+            if (org == null) {
                 throw new IllegalArgumentException("La organización seleccionada no es válida.");
             }
+            int orgId = Integer.parseInt(org.getIdOrganization());
+            DepartmentDTO department = departmentDAO.getAllDepartmentsByOrganizationId(orgId).stream()
+                    .filter(d -> d.getName().equals(departmentName))
+                    .findFirst()
+                    .orElse(null);
 
-            representative.setIdOrganization(linkedOrganization.getIdOrganization());
+            if (department == null) {
+                throw new IllegalArgumentException("El departamento seleccionado no es válido.");
+            }
+
+            representative.setIdDepartment(String.valueOf(department.getDepartmentId()));
 
             boolean success = representativeService.updateRepresentative(representative);
 
             if (success) {
                 statusLabel.setText("¡Representante actualizado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                statusLabel.setTextFill(Color.GREEN);
 
                 if (parentController != null) {
                     parentController.loadOrganizationData();
                 }
             } else {
                 statusLabel.setText("No se pudo actualizar el representante.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
         }
     }
@@ -142,6 +189,7 @@ public class GUI_ManageRepresentativeController {
         return !namesField.getText().isEmpty() &&
                 !surnamesField.getText().isEmpty() &&
                 !emailField.getText().isEmpty() &&
-                organizationBox.getValue() != null;
+                organizationBox.getValue() != null &&
+                departmentBox.getValue() != null;
     }
 }

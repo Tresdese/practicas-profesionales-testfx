@@ -17,12 +17,15 @@ public class ProjectStudentViewDAO {
 
     private static final Logger logger = LogManager.getLogger(ProjectStudentViewDAO.class);
 
-    private static final String SQL_SELECT_PROJECT_BY_TUITION = "SELECT idProyecto, nombreProyecto, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion FROM vista_proyecto_estudiante WHERE matricula = ?";
+    private static final String SQL_SELECT_PROJECT_BY_TUITION = "SELECT idProyecto, nombreProyecto, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion, idDepartamento FROM vista_proyecto_estudiante WHERE matricula = ?";
     private static final String SQL_SELECT_STUDENT_BY_TUITION = "SELECT matricula, nombres, apellidos, telefono, correo, usuario FROM vista_proyecto_estudiante WHERE matricula = ?";
 
     public ProjectDTO getProjectByTuition(String tuition) throws SQLException {
-        logger.info("Obteniendo proyecto para matrícula: " + tuition);
-        ProjectDTO project = null;
+        if (tuition == null || tuition.isEmpty()) {
+            return new ProjectDTO();
+        }
+
+        ProjectDTO project = new ProjectDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITION)) {
@@ -37,14 +40,13 @@ public class ProjectStudentViewDAO {
                             resultSet.getTimestamp("fechaAproximada"),
                             resultSet.getTimestamp("fechaInicio"),
                             resultSet.getString("idUsuario"),
-                            resultSet.getInt("idOrganizacion")
+                            resultSet.getInt("idOrganizacion"),
+                            resultSet.getInt("idDepartamento")
                     );
                 }
             }
-        } catch (SQLException e) {
-            logger.error("Error al obtener el proyecto para la matrícula: " + tuition, e);
-            throw e;
         }
+
         return project;
     }
 }

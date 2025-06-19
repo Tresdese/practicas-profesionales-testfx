@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ProjectDAO implements IProjectDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ?, idDepartamento = ? WHERE idProyecto = ?";
     private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_PROJECT_NAME_BY_ID = "SELECT nombre FROM proyecto WHERE idProyecto = ?";
@@ -25,14 +25,13 @@ public class ProjectDAO implements IProjectDAO {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
-            statement.setString(1, project.getIdProject());
-            statement.setString(2, project.getName());
-            statement.setString(3, project.getDescription());
-            statement.setTimestamp(4, project.getApproximateDate());
-            statement.setTimestamp(5, project.getStartDate());
-            statement.setString(6, project.getIdUser());
-            statement.setInt(7, project.getIdOrganization());
-            statement.setInt(8, project.getIdDepartment());
+            statement.setString(1, project.getName());
+            statement.setString(2, project.getDescription());
+            statement.setTimestamp(3, project.getApproximateDate());
+            statement.setTimestamp(4, project.getStartDate());
+            statement.setString(5, project.getIdUser());
+            statement.setInt(6, project.getIdOrganization());
+            statement.setInt(7, project.getIdDepartment());
             return statement.executeUpdate() > 0;
         }
     }

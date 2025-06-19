@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageProjectController">
+<AnchorPane prefHeight="540.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ManageProjectController">
     <children>
         <Label layoutX="200.0" layoutY="25.0" text="Gestionar Proyecto">
             <font>
@@ -31,15 +31,18 @@
         <Label layoutX="80.0" layoutY="280.0" text="Organización" />
         <ChoiceBox fx:id="organizationBox" layoutX="169.0" layoutY="276.0" prefWidth="350.0" />
 
-        <Label layoutX="80.0" layoutY="330.0" text="Académico" />
-        <ChoiceBox fx:id="academicBox" layoutX="169.0" layoutY="326.0" prefWidth="350.0" />
+        <Label layoutX="80.0" layoutY="330.0" text="Departamento" />
+        <ChoiceBox fx:id="departmentBox" layoutX="169.0" layoutY="326.0" prefWidth="350.0" />
 
-        <Label layoutX="80.0" layoutY="380.0" text="Estado" />
-        <ChoiceBox fx:id="statusBox" layoutX="169.0" layoutY="376.0" prefWidth="150.0" />
+        <Label layoutX="80.0" layoutY="380.0" text="Académico" />
+        <ChoiceBox fx:id="academicBox" layoutX="169.0" layoutY="376.0" prefWidth="350.0" />
 
-        <Button layoutX="169.0" layoutY="435.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
-        <Button layoutX="310.0" layoutY="435.0" onAction="#handleCancel" style="-fx-background-color: #d32727;" text="Cancelar" textFill="WHITE" />
+        <Label layoutX="80.0" layoutY="430.0" text="Estado" />
+        <ChoiceBox fx:id="statusBox" layoutX="169.0" layoutY="426.0" prefWidth="150.0" />
 
-        <Label fx:id="statusLabel" layoutX="169.0" layoutY="470.0" prefHeight="17.0" prefWidth="350.0" textFill="RED" />
+        <Button layoutX="169.0" layoutY="480.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+        <Button layoutX="310.0" layoutY="480.0" onAction="#handleCancel" style="-fx-background-color: #d32727;" text="Cancelar" textFill="WHITE" />
+
+        <Label fx:id="statusLabel" layoutX="169.0" layoutY="515.0" prefHeight="17.0" prefWidth="350.0" textFill="RED" />
     </children>
 </AnchorPane>

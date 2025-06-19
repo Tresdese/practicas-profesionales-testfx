@@ -134,9 +134,21 @@ public class GUI_AssignProjectController {
             ProjectDTO project = projectDAO.searchProjectById(selectedProject.getIdProject());
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
             LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
-            RepresentativeDAO repDAO = new RepresentativeDAO();
-            List<RepresentativeDTO> reps = repDAO.getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()));
-            RepresentativeDTO rep = reps.isEmpty() ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A") : reps.get(0);
+            RepresentativeDAO representativeDAO = new RepresentativeDAO();
+            List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives()
+                    .stream()
+                    .filter(representative -> {
+                        if (representative.getIdDepartment() == null || representative.getIdDepartment().isEmpty()) return false;
+                        try {
+                            return Integer.parseInt(representative.getIdDepartment()) == project.getIdDepartment();
+                        } catch (NumberFormatException e) {
+                            return false;
+                        }
+                    })
+                    .toList();
+            RepresentativeDTO rep = representatives.isEmpty()
+                    ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A")
+                    : representatives.get(0);
 
             AssignmentData data = new AssignmentData();
             data.setRepresentativeFirstName(rep.getNames());
