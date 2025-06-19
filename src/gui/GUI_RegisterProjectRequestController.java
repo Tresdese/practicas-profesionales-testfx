@@ -3,8 +3,6 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.StringConverter;
-
 import logic.DAO.LinkedOrganizationDAO;
 import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectRequestDAO;
@@ -12,57 +10,106 @@ import logic.DAO.RepresentativeDAO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.ProjectRequestDTO;
-import logic.DTO.ProjectStatus;
 import logic.DTO.RepresentativeDTO;
 import logic.DTO.StudentDTO;
+import logic.DTO.ProjectStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class GUI_RegisterProjectRequestController {
-    private StudentDTO student;
+    private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequestController.class);
 
-    @FXML private ComboBox<LinkedOrganizationDTO> organizationCombo;
-    @FXML private ComboBox<RepresentativeDTO> representativeCombo;
-    @FXML private ComboBox<ProjectDTO> projectCombo;
-    @FXML private TextArea descriptionArea;
-    @FXML private TextArea generalObjectiveArea;
-    @FXML private TextArea immediateObjectivesArea;
-    @FXML private TextArea mediateObjectivesArea;
-    @FXML private TextArea methodologyArea;
-    @FXML private TextArea resourcesArea;
-    @FXML private TextArea activitiesArea;
-    @FXML private TextArea responsibilitiesArea;
-    @FXML private TextField durationField;
-    @FXML private CheckBox mondayCheck, tuesdayCheck, wednesdayCheck, thursdayCheck, fridayCheck, saturdayCheck, sundayCheck;
-    @FXML private TextField scheduleTimeField;
-    @FXML private TextField directUsersField;
-    @FXML private TextField indirectUsersField;
-    @FXML private Button registerButton;
-    @FXML private Label statusLabel,
-            descriptionCharCountLabel, generalObjectiveCharCountLabel, immediateObjectivesCharCountLabel,
-            mediateObjectivesCharCountLabel, methodologyCharCountLabel, resourcesAreaCharCountLabel,
-            activitiesCharCountLabel, responsibilitiesCharCountLabel;
+    @FXML
+    private ComboBox<LinkedOrganizationDTO> organizationCombo;
+    @FXML
+    private ComboBox<RepresentativeDTO> representativeCombo;
+    @FXML
+    private ComboBox<ProjectDTO> projectCombo;
+    @FXML
+    private TextArea descriptionArea;
+    @FXML
+    private TextArea generalObjectiveArea;
+    @FXML
+    private TextArea immediateObjectivesArea;
+    @FXML
+    private TextArea mediateObjectivesArea;
+    @FXML
+    private TextArea methodologyArea;
+    @FXML
+    private TextArea resourcesArea;
+    @FXML
+    private TextArea activitiesArea;
+    @FXML
+    private TextArea responsibilitiesArea;
+    @FXML
+    private TextField scheduleTimeField;
+    @FXML
+    private TextField directUsersField;
+    @FXML
+    private TextField indirectUsersField;
+    @FXML
+    private CheckBox mondayCheck;
+    @FXML
+    private CheckBox tuesdayCheck;
+    @FXML
+    private CheckBox wednesdayCheck;
+    @FXML
+    private CheckBox thursdayCheck;
+    @FXML
+    private CheckBox fridayCheck;
+    @FXML
+    private CheckBox saturdayCheck;
+    @FXML
+    private CheckBox sundayCheck;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Label descriptionCharCountLabel;
+    @FXML
+    private Label generalObjectiveCharCountLabel;
+    @FXML
+    private Label immediateObjectivesCharCountLabel;
+    @FXML
+    private Label mediateObjectivesCharCountLabel;
+    @FXML
+    private Label methodologyCharCountLabel;
+    @FXML
+    private Label resourcesAreaCharCountLabel;
+    @FXML
+    private Label activitiesCharCountLabel;
+    @FXML
+    private Label responsibilitiesCharCountLabel;
+    @FXML
+    private TextField durationField;
 
     private static final int MAX_CARACTER_LIMIT = 300;
-
     private static final String REGEX_SCHEDULE_TIME = "^([01]?\\d|2[0-3])?(:[0-5]?\\d)?(-([01]?\\d|2[0-3])?(:[0-5]?\\d)?)?$";
+    private StudentDTO student;
 
     public void setStudent(StudentDTO student) {
         this.student = student;
     }
 
     @FXML
-    private void initialize() {
-        loadOrganizations();
-        organizationCombo.setOnAction(e -> {
-            loadRepresentatives();
-            loadProjects();
-        });
-        configureTextFormatters();
-        configureCharCountLabels();
-        configureScheduleTimeField();
-        configureNumericFields();
+    public void initialize() {
+        try {
+            configureTextFormatters();
+            configureCharCountLabels();
+            configureScheduleTimeField();
+            configureNumericFields();
+            loadOrganizations();
+
+            organizationCombo.setOnAction(event -> {
+                loadRepresentatives();
+                loadProjects();
+            });
+        } catch (Exception e) {
+            logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
+            setStatus("Error al inicializar la interfaz.", true);
+        }
         durationField.setText("420");
         durationField.setDisable(true);
     }
@@ -118,7 +165,9 @@ public class GUI_RegisterProjectRequestController {
             LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO();
             List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
             organizationCombo.setItems(FXCollections.observableArrayList(orgs));
+            logger.info("Organizaciones cargadas correctamente.");
         } catch (SQLException e) {
+            logger.error("Error cargando organizaciones: {}", e.getMessage(), e);
             setStatus("Error cargando organizaciones.", true);
         }
     }
@@ -128,10 +177,18 @@ public class GUI_RegisterProjectRequestController {
         LinkedOrganizationDTO org = organizationCombo.getValue();
         if (org != null) {
             try {
+                logic.DAO.DepartmentDAO deptDao = new logic.DAO.DepartmentDAO();
+                List<logic.DTO.DepartmentDTO> departments = deptDao.getAllDepartmentsByOrganizationId(Integer.parseInt(org.getIdOrganization()));
                 RepresentativeDAO repDao = new RepresentativeDAO();
-                List<RepresentativeDTO> reps = repDao.getRepresentativesByOrganization(org.getIdOrganization());
-                representativeCombo.setItems(FXCollections.observableArrayList(reps));
+                List<RepresentativeDTO> allReps = new java.util.ArrayList<>();
+                for (logic.DTO.DepartmentDTO dept : departments) {
+                    List<RepresentativeDTO> reps = repDao.getRepresentativesByDepartment(String.valueOf(dept.getDepartmentId()));
+                    allReps.addAll(reps);
+                }
+                representativeCombo.setItems(FXCollections.observableArrayList(allReps));
+                logger.info("Representantes cargados para la organización {}", org.getName());
             } catch (SQLException e) {
+                logger.error("Error cargando representantes: {}", e.getMessage(), e);
                 setStatus("Error cargando representantes.", true);
             }
         }
@@ -168,7 +225,7 @@ public class GUI_RegisterProjectRequestController {
                 projects.removeIf(p -> p.getIdOrganization() != orgId);
                 projectCombo.setItems(FXCollections.observableArrayList(projects));
 
-                projectCombo.setConverter(new StringConverter<ProjectDTO>() {
+                projectCombo.setConverter(new javafx.util.StringConverter<ProjectDTO>() {
                     @Override
                     public String toString(ProjectDTO project) {
                         return project == null ? "" : project.getName();
@@ -179,7 +236,9 @@ public class GUI_RegisterProjectRequestController {
                         return null;
                     }
                 });
+                logger.info("Proyectos cargados para la organización {}", org.getName());
             } catch (Exception e) {
+                logger.error("Error cargando proyectos: {}", e.getMessage(), e);
                 setStatus("Error cargando proyectos.", true);
             }
         }
@@ -199,7 +258,7 @@ public class GUI_RegisterProjectRequestController {
                     student.getTuition(),
                     org.getIdOrganization(),
                     rep.getIdRepresentative(),
-                    project.getName(), // Corregido: se usa el nombre del proyecto
+                    project.getName(),
                     descriptionArea.getText(),
                     generalObjectiveArea.getText(),
                     immediateObjectivesArea.getText(),
@@ -220,13 +279,16 @@ public class GUI_RegisterProjectRequestController {
             boolean success = dao.insertProjectRequest(request);
 
             if (success) {
+                logger.info("Solicitud de proyecto registrada correctamente para el estudiante {}", student.getTuition());
                 statusLabel.setText("Solicitud registrada correctamente.");
                 clearFields();
             } else {
+                logger.warn("Error al registrar la solicitud de proyecto para el estudiante {}", student.getTuition());
                 statusLabel.setText("Error al registrar la solicitud.");
             }
         } catch (Exception e) {
-            statusLabel.setText("Error: " + e.getMessage());
+            logger.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
+            setStatus("Error al registrar la solicitud.", true);
         }
     }
 
@@ -239,8 +301,8 @@ public class GUI_RegisterProjectRequestController {
         if (fridayCheck.isSelected()) days.append("Vie ");
         if (saturdayCheck.isSelected()) days.append("Sáb ");
         if (sundayCheck.isSelected()) days.append("Dom ");
-        String horario = scheduleTimeField.getText().trim();
-        return days.toString().trim() + (horario.isEmpty() ? "" : " " + horario);
+        String schedule = scheduleTimeField.getText().trim();
+        return days.toString().trim() + (schedule.isEmpty() ? "" : " " + schedule);
     }
 
     private boolean validateFields() {
@@ -261,6 +323,7 @@ public class GUI_RegisterProjectRequestController {
                 directUsersField.getText().isEmpty() ||
                 indirectUsersField.getText().isEmpty()) {
             setStatus("Completa todos los campos obligatorios.", true);
+            logger.warn("Validación fallida: campos obligatorios incompletos.");
             return false;
         }
         return true;
@@ -293,5 +356,7 @@ public class GUI_RegisterProjectRequestController {
         organizationCombo.getSelectionModel().clearSelection();
         representativeCombo.getItems().clear();
         projectCombo.getItems().clear();
+        durationField.setText("420");
+        logger.info("Campos del formulario limpiados.");
     }
 }
