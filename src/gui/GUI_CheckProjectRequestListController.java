@@ -105,7 +105,6 @@ public class GUI_CheckProjectRequestListController {
         filterComboBox.setItems(statusOptions);
         filterComboBox.setValue("Todos");
 
-        // Listener para filtrar automáticamente al cambiar el valor
         filterComboBox.setOnAction(event -> loadRequestData());
 
         loadRequestData();
@@ -258,12 +257,12 @@ public class GUI_CheckProjectRequestListController {
 
     private void addApproveButtonToTable() {
         Callback<TableColumn<ProjectRequestDTO, Void>, TableCell<ProjectRequestDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Aprobar");
+            private final Button btnManage = new Button("Gestionar Solicitud");
 
             {
-                btn.setOnAction(event -> {
+                btnManage.setOnAction(event -> {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
-                    openApprovalWindow(request);
+                    openManageProjectRequestWindow(request);
                 });
             }
 
@@ -274,9 +273,8 @@ public class GUI_CheckProjectRequestListController {
                     setGraphic(null);
                 } else {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
-                    // Solo mostrar el botón si el estado es "pendiente"
                     if (request.getStatus().name().equalsIgnoreCase("pendiente")) {
-                        setGraphic(btn);
+                        setGraphic(btnManage);
                     } else {
                         setGraphic(null);
                     }
@@ -287,21 +285,11 @@ public class GUI_CheckProjectRequestListController {
         columnApprove.setCellFactory(cellFactory);
     }
 
-    private void openApprovalWindow(ProjectRequestDTO request) {
+    private void openManageProjectRequestWindow(ProjectRequestDTO request) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageRequest.fxml"));
-            Parent root = loader.load();
-
-            String orgName = organizationDAO.getOrganizationNameById(request.getOrganizationId());
-            String repName = representativeDAO.getRepresentativeNameById(request.getRepresentativeId());
-
-            GUI_ManageRequestController controller = loader.getController();
-            controller.setRequest(request, orgName, repName);
-
+            gui.GUI_ManageProjectRequest.setProjectRequest(request);
             Stage stage = new Stage();
-            stage.setTitle("Aprobar/Rechazar Solicitud");
-            stage.setScene(new Scene(root));
-            stage.show();
+            new gui.GUI_ManageProjectRequest().start(stage);
         } catch (RuntimeException e) {
             logger.error("Error en ventana de aprobación: {}", e.getMessage(), e);
             statusLabel.setText("Error en ventana de aprobación");

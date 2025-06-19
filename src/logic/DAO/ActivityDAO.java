@@ -11,7 +11,7 @@ import data_access.ConnectionDataBase;
 import logic.DTO.ActivityDTO;
 import logic.interfaces.IActivityDAO;
 
-public class ActivityDAO implements IActivityDAO { // TODO implementar la interfaz IActivityDAO
+public class ActivityDAO implements IActivityDAO {
 
     private final static String SQL_INSERT = "INSERT INTO actividad (idActividad, nombreActividad) VALUES (?, ?)";
     private final static String SQL_UPDATE = "UPDATE actividad SET nombreActividad = ? WHERE idActividad = ?";
