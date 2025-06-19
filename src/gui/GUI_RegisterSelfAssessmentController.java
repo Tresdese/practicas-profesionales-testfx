@@ -52,6 +52,7 @@ public class GUI_RegisterSelfAssessmentController {
     private StudentDTO student;
     private ProjectDTO assignedProject;
     private List<CriterionInput> criterionInputs = new ArrayList<>();
+    private static final int MAX_COMMENTS_LENGTH = 500;
     private static final Logger LOGGER = Logger.getLogger(GUI_RegisterSelfAssessmentController.class.getName());
 
     @FXML
@@ -64,7 +65,7 @@ public class GUI_RegisterSelfAssessmentController {
 
     private void configureTextFormatters() {
         generalCommentsTextArea.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().length() <= 500 ? change : null
+                change.getControlNewText().length() <= MAX_COMMENTS_LENGTH ? change : null
         ));
     }
 

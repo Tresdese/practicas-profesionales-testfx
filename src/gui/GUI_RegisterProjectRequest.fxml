@@ -18,11 +18,11 @@
                                         <VBox spacing="10" fillWidth="true">
                                             <children>
                                                 <Label text="Organización:"/>
-                                                <ComboBox fx:id="comboOrganization" prefWidth="300"/>
+                                                <ComboBox fx:id="organizationCombo" prefWidth="300"/>
                                                 <Label text="Representante:"/>
-                                                <ComboBox fx:id="comboRepresentative" prefWidth="300"/>
+                                                <ComboBox fx:id="representativeCombo" prefWidth="300"/>
                                                 <Label text="Proyecto:"/>
-                                                <ComboBox fx:id="comboProject" prefWidth="300"/>
+                                                <ComboBox fx:id="projectCombo" prefWidth="300"/>
                                             </children>
                                             <padding>
                                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -35,21 +35,45 @@
                                         <VBox spacing="8" fillWidth="true">
                                             <children>
                                                 <Label text="Descripción:"/>
-                                                <TextArea fx:id="fieldDescription" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="descriptionArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="descriptionCharCountLabel" text="0/500" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Objetivo General:"/>
-                                                <TextArea fx:id="fieldGeneralObjective" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="generalObjectiveArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="generalObjectiveCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Objetivos Inmediatos:"/>
-                                                <TextArea fx:id="fieldImmediateObjectives" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="immediateObjectivesArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="immediateObjectivesCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Objetivos Mediatos:"/>
-                                                <TextArea fx:id="fieldMediateObjectives" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="mediateObjectivesArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="mediateObjectivesCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Metodología:"/>
-                                                <TextArea fx:id="fieldMethodology" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="methodologyArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="methodologyCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Recursos:"/>
-                                                <TextArea fx:id="fieldResources" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="resourcesArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="resourcesAreaCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Actividades:"/>
-                                                <TextArea fx:id="fieldActivities" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="activitiesArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="activitiesCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                                 <Label text="Responsabilidades:"/>
-                                                <TextArea fx:id="fieldResponsibilities" prefRowCount="2" wrapText="true"/>
+                                                <VBox>
+                                                    <TextArea fx:id="responsibilitiesArea" prefRowCount="2" wrapText="true"/>
+                                                    <Label fx:id="responsibilitiesCharCountLabel" text="0/200" style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+                                                </VBox>
                                             </children>
                                             <padding>
                                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -62,7 +86,7 @@
                                         <VBox spacing="10" fillWidth="true">
                                             <children>
                                                 <Label text="Duración (horas):"/>
-                                                <TextField fx:id="fieldDuration" prefWidth="100"/>
+                                                <TextField fx:id="durationField" prefWidth="100"/>
                                                 <Label text="Días de la semana:"/>
                                                 <HBox spacing="5">
                                                     <children>
@@ -76,11 +100,11 @@
                                                     </children>
                                                 </HBox>
                                                 <Label text="Horario:"/>
-                                                <TextField fx:id="fieldScheduleTime" promptText="Ej: 8:00-12:00"/>
+                                                <TextField fx:id="scheduleTimeField" promptText="Ej: 8:00-12:00"/>
                                                 <Label text="Usuarios Directos:"/>
-                                                <TextField fx:id="fieldDirectUsers" prefWidth="100"/>
+                                                <TextField fx:id="directUsersField" prefWidth="100"/>
                                                 <Label text="Usuarios Indirectos:"/>
-                                                <TextField fx:id="fieldIndirectUsers" prefWidth="100"/>
+                                                <TextField fx:id="indirectUsersField" prefWidth="100"/>
                                             </children>
                                             <padding>
                                                 <Insets top="10" right="10" bottom="10" left="10"/>
@@ -94,7 +118,7 @@
                 </ScrollPane>
                 <HBox alignment="CENTER" spacing="20">
                     <children>
-                        <Button fx:id="btnRegister" text="Registrar Solicitud" onAction="#handleRegisterProjectRequest" style="-fx-font-size: 15px;"/>
+                        <Button fx:id="registerButton" text="Registrar Solicitud" onAction="#handleRegisterProjectRequest" style="-fx-font-size: 15px;"/>
                         <Label fx:id="statusLabel" text="" style="-fx-font-size: 14px;"/>
                     </children>
                 </HBox>
