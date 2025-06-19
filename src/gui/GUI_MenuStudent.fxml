@@ -16,17 +16,17 @@
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button text="Ver Proyecto Asignado" onAction="#handleViewAssignedProject"
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="btnRegisterProjectRequest" layoutX="200.0" layoutY="300.0"
+            <Button fx:id="registerProjectRequestButton" layoutX="200.0" layoutY="300.0"
                     text="Registrar Solicitud de Proyecto"
                     onAction="#handleRegisterProjectRequest"/>
-            <Button fx:id="buttonRegisterActivitySchedule" text="Registrar Cronograma de Actividades"
+            <Button fx:id="registerActivityScheduleButton" text="Registrar Cronograma de Actividades"
                     onAction="#handleRegisterActivitySchedule" style="-fx-background-color: #1E90FF; -fx-text-fill:
                      white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonLinkActivityToSchedule"
+            <Button fx:id="linkActivityToScheduleButton"
                     text="Vincular Actividad a Cronograma"
                     onAction="#handleLinkActivityToSchedule"
                     style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonLogout" text="Cerrar sesión" onAction="#handleLogout"
+            <Button fx:id="logoutButton" text="Cerrar sesión" onAction="#handleLogout"
                     style="-fx-background-color: #FF4C4C; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
         </VBox>
     </left>

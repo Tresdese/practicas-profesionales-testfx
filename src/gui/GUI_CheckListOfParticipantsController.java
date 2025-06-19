@@ -27,22 +27,22 @@ public class GUI_CheckListOfParticipantsController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckListOfParticipantsController.class);
 
     @FXML
-    private TableView<StudentProjectViewDTO> tableView;
+    private TableView<StudentProjectViewDTO> participantsTableView;
 
     @FXML
-    private TableColumn<StudentProjectViewDTO, String> columnStudentMatricula;
+    private TableColumn<StudentProjectViewDTO, String> studentTuitionColumn;
 
     @FXML
-    private TableColumn<StudentProjectViewDTO, String> columnStudentName;
+    private TableColumn<StudentProjectViewDTO, String> studentNameColumn;
 
     @FXML
-    private TableColumn<StudentProjectViewDTO, String> columnProjectName;
+    private TableColumn<StudentProjectViewDTO, String> projectNameColumn;
 
     @FXML
-    private TableColumn<StudentProjectViewDTO, Void> columnGradePresentation;
+    private TableColumn<StudentProjectViewDTO, Void> gradePresentationColumn;
 
     @FXML
-    private Label labelParticipantCounts;
+    private Label participantCountsLabel;
 
     private final StudentProjectViewDAO studentProjectViewDAO = new StudentProjectViewDAO();
     private int presentationId = -1;
@@ -55,9 +55,9 @@ public class GUI_CheckListOfParticipantsController {
 
     @FXML
     public void initialize() {
-        columnStudentMatricula.setCellValueFactory(new PropertyValueFactory<>("studentMatricula"));
-        columnStudentName.setCellValueFactory(new PropertyValueFactory<>("studentName"));
-        columnProjectName.setCellValueFactory(new PropertyValueFactory<>("projectName"));
+        studentTuitionColumn.setCellValueFactory(new PropertyValueFactory<>("studentMatricula"));
+        studentNameColumn.setCellValueFactory(new PropertyValueFactory<>("studentName"));
+        projectNameColumn.setCellValueFactory(new PropertyValueFactory<>("projectName"));
 
         addGradePresentationButtonToTable();
     }
@@ -65,7 +65,7 @@ public class GUI_CheckListOfParticipantsController {
     private void loadStudentProjectData() {
         if (presentationId <= 0) {
             logger.warn("El ID de la presentación no es válido: " + presentationId);
-            tableView.setItems(FXCollections.observableArrayList());
+            participantsTableView.setItems(FXCollections.observableArrayList());
             updateParticipantCounts(FXCollections.observableArrayList());
             return;
         }
@@ -75,7 +75,7 @@ public class GUI_CheckListOfParticipantsController {
         try {
             List<StudentProjectViewDTO> studentProjectData = studentProjectViewDAO.getStudentProjectViewByPresentationId(presentationId);
             ObservableList<StudentProjectViewDTO> data = FXCollections.observableArrayList(studentProjectData);
-            tableView.setItems(data);
+            participantsTableView.setItems(data);
             updateParticipantCounts(data);
             if (studentProjectData.isEmpty()) {
                 logger.warn("No se encontraron datos para la presentación con ID: " + presentationId);
@@ -84,18 +84,18 @@ public class GUI_CheckListOfParticipantsController {
             }
         } catch (SQLException e) {
             logger.error("Error al cargar los datos de estudiantes y proyectos.", e);
-            tableView.setItems(FXCollections.observableArrayList());
+            participantsTableView.setItems(FXCollections.observableArrayList());
             updateParticipantCounts(FXCollections.observableArrayList());
         }
     }
 
     private void updateParticipantCounts(ObservableList<StudentProjectViewDTO> list) {
         int total = list.size();
-        labelParticipantCounts.setText("Totales: " + total);
+        participantCountsLabel.setText("Totales: " + total);
     }
 
     private void addGradePresentationButtonToTable() {
-        columnGradePresentation.setCellFactory(param -> new TableCell<>() {
+        gradePresentationColumn.setCellFactory(param -> new TableCell<>() {
             private final Button gradeButton = new Button("Calificar Presentación");
 
             {

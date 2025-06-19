@@ -6,7 +6,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RecordFinalGradeController" prefHeight="200.0" prefWidth="400.0">
     <children>
         <Label layoutX="50.0" layoutY="50.0" text="Calificación Final:" />
-        <TextField fx:id="fieldFinalGrade" layoutX="150.0" layoutY="50.0" prefWidth="200.0" />
+        <TextField fx:id="finalGradeField" layoutX="150.0" layoutY="50.0" prefWidth="200.0" />
         <Button layoutX="150.0" layoutY="100.0" text="Guardar" onAction="#handleSaveFinalGrade" />
         <Label fx:id="statusLabel" layoutX="50.0" layoutY="150.0" textFill="RED" />
     </children>

@@ -24,28 +24,28 @@ public class GUI_CheckListOfPresentationsController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckListOfPresentationsController.class);
 
     @FXML
-    private TableView<ProjectPresentationDTO> tableView;
+    private TableView<ProjectPresentationDTO> presentationsTableView;
 
     @FXML
-    private TableColumn<ProjectPresentationDTO, Integer> columnIdPresentation;
+    private TableColumn<ProjectPresentationDTO, Integer> idPresentationColumn;
 
     @FXML
-    private TableColumn<ProjectPresentationDTO, String> columnIdProject;
+    private TableColumn<ProjectPresentationDTO, String> idProjectColumn;
 
     @FXML
-    private TableColumn<ProjectPresentationDTO, String> columnDate;
+    private TableColumn<ProjectPresentationDTO, String> dateColumn;
 
     @FXML
-    private TableColumn<ProjectPresentationDTO, String> columnType;
+    private TableColumn<ProjectPresentationDTO, String> typeColumn;
 
     @FXML
-    private TableColumn<ProjectPresentationDTO, Void> columnRegisterEvaluation;
+    private TableColumn<ProjectPresentationDTO, Void> registerEvaluationColumn;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private Label labelPresentationCounts;
+    private Label presentationCountsLabel;
 
     @FXML
     private TextField searchField;
@@ -61,23 +61,23 @@ public class GUI_CheckListOfPresentationsController {
 
     @FXML
     public void initialize() {
-        columnIdPresentation.setCellValueFactory(new PropertyValueFactory<>("idPresentation"));
-        columnIdProject.setCellValueFactory(new PropertyValueFactory<>("idProject"));
-        columnDate.setCellValueFactory(cellData -> {
+        idPresentationColumn.setCellValueFactory(new PropertyValueFactory<>("idPresentation"));
+        idProjectColumn.setCellValueFactory(new PropertyValueFactory<>("idProject"));
+        dateColumn.setCellValueFactory(cellData -> {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return new javafx.beans.property.SimpleStringProperty(
                     dateFormat.format(cellData.getValue().getDate())
             );
         });
-        columnType.setCellValueFactory(new PropertyValueFactory<>("tipe"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("tipe"));
 
         addRegisterEvaluationButtonToTable();
 
         loadUpcomingPresentations();
 
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        presentationsTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedPresentation = newValue;
-            tableView.refresh();
+            presentationsTableView.refresh();
         });
 
         searchButton.setOnAction(event -> searchPresentation());
@@ -90,7 +90,7 @@ public class GUI_CheckListOfPresentationsController {
             logger.info("Cantidad de presentaciones obtenidas: " + upcomingPresentations.size());
 
             ObservableList<ProjectPresentationDTO> data = FXCollections.observableArrayList(upcomingPresentations);
-            tableView.setItems(data);
+            presentationsTableView.setItems(data);
             updatePresentationCounts(data);
 
             if (upcomingPresentations.isEmpty()) {
@@ -106,7 +106,7 @@ public class GUI_CheckListOfPresentationsController {
             }
         } catch (SQLException e) {
             logger.error("Error al cargar las próximas presentaciones.", e);
-            tableView.setItems(FXCollections.observableArrayList());
+            presentationsTableView.setItems(FXCollections.observableArrayList());
             updatePresentationCounts(FXCollections.observableArrayList());
         }
     }
@@ -138,13 +138,13 @@ public class GUI_CheckListOfPresentationsController {
             logger.error("Error al buscar presentaciones: {}", e.getMessage(), e);
         }
 
-        tableView.setItems(filteredList);
+        presentationsTableView.setItems(filteredList);
         updatePresentationCounts(filteredList);
     }
 
     private void updatePresentationCounts(ObservableList<ProjectPresentationDTO> list) {
         int total = list.size();
-        labelPresentationCounts.setText("Totales: " + total);
+        presentationCountsLabel.setText("Totales: " + total);
     }
 
     private void addRegisterEvaluationButtonToTable() {
@@ -169,7 +169,7 @@ public class GUI_CheckListOfPresentationsController {
             }
         };
 
-        columnRegisterEvaluation.setCellFactory(cellFactory);
+        registerEvaluationColumn.setCellFactory(cellFactory);
     }
 
     private void openCheckListOfParticipantsWindow(ProjectPresentationDTO presentation) {

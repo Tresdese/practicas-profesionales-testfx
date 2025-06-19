@@ -8,13 +8,13 @@
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
-                <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="presentationsTableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnIdPresentation" prefWidth="120.0" text="ID Presentación" />
-                        <TableColumn fx:id="columnIdProject" prefWidth="150.0" text="ID Proyecto" />
-                        <TableColumn fx:id="columnDate" prefWidth="150.0" text="Fecha" />
-                        <TableColumn fx:id="columnType" prefWidth="150.0" text="Tipo" />
-                        <TableColumn fx:id="columnRegisterEvaluation" prefWidth="150.0" text="Registrar" />
+                        <TableColumn fx:id="idPresentationColumn" prefWidth="120.0" text="ID Presentación" />
+                        <TableColumn fx:id="idProjectColumn" prefWidth="150.0" text="ID Proyecto" />
+                        <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Fecha" />
+                        <TableColumn fx:id="typeColumn" prefWidth="150.0" text="Tipo" />
+                        <TableColumn fx:id="registerEvaluationColumn" prefWidth="150.0" text="Registrar" />
                     </columns>
                 </TableView>
             </center>
@@ -31,7 +31,7 @@
             </font>
         </Label>
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelPresentationCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="presentationCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
         <Button fx:id="registerPresentationButton" layoutX="850.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #7cb0f3;" text="Registrar Presentación">
             <font>
                 <Font name="System Bold Italic" size="12.0" />

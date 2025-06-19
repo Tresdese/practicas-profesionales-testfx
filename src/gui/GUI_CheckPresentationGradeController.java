@@ -24,17 +24,17 @@ import java.util.List;
 public class GUI_CheckPresentationGradeController {
 
     @FXML
-    private TableView<EvaluationPresentationDTO> tableView;
+    private TableView<EvaluationPresentationDTO> presentationGradeTableView;
     @FXML
-    private TableColumn<EvaluationPresentationDTO, Integer> colIdEvaluacion;
+    private TableColumn<EvaluationPresentationDTO, Integer> idEvaluationColumn;
     @FXML
-    private TableColumn<EvaluationPresentationDTO, Integer> colIdPresentacion;
+    private TableColumn<EvaluationPresentationDTO, Integer> idPresentationColumn;
     @FXML
-    private TableColumn<EvaluationPresentationDTO, String> colFecha;
+    private TableColumn<EvaluationPresentationDTO, String> dateColumn;
     @FXML
-    private TableColumn<EvaluationPresentationDTO, Double> colPromedio;
+    private TableColumn<EvaluationPresentationDTO, Double> averageColumn;
     @FXML
-    private TableColumn<EvaluationPresentationDTO, Void> colVerDetalles;
+    private TableColumn<EvaluationPresentationDTO, Void> seeDetailsColumn;
     @FXML
     private Label statusLabel;
     @FXML
@@ -51,13 +51,13 @@ public class GUI_CheckPresentationGradeController {
 
     @FXML
     public void initialize() {
-        colIdEvaluacion.setCellValueFactory(new PropertyValueFactory<>("idEvaluation"));
-        colIdPresentacion.setCellValueFactory(new PropertyValueFactory<>("idProject"));
-        colFecha.setCellValueFactory(cellData -> {
+        idEvaluationColumn.setCellValueFactory(new PropertyValueFactory<>("idEvaluation"));
+        idPresentationColumn.setCellValueFactory(new PropertyValueFactory<>("idProject"));
+        dateColumn.setCellValueFactory(cellData -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             return new SimpleStringProperty(cellData.getValue().getDate() != null ? sdf.format(cellData.getValue().getDate()) : "");
         });
-        colPromedio.setCellValueFactory(new PropertyValueFactory<>("average"));
+        averageColumn.setCellValueFactory(new PropertyValueFactory<>("average"));
 
         addViewDetailsButtonToTable();
     }
@@ -83,9 +83,9 @@ public class GUI_CheckPresentationGradeController {
                 }
             }
         };
-        colVerDetalles.setCellFactory(cellFactory);
+        seeDetailsColumn.setCellFactory(cellFactory);
 
-        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> tableView.refresh());
+        presentationGradeTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> presentationGradeTableView.refresh());
     }
 
     private void showDetailsDialog(EvaluationPresentationDTO evaluation) {
@@ -109,7 +109,7 @@ public class GUI_CheckPresentationGradeController {
 
     private void loadEvaluations() {
         try {
-            tableView.getItems().clear();
+            presentationGradeTableView.getItems().clear();
             statusLabel.setText("");
 
             if (student == null) {
@@ -126,7 +126,7 @@ public class GUI_CheckPresentationGradeController {
             if (studentEvaluations == null || studentEvaluations.isEmpty()) {
                 statusLabel.setText("No tienes evaluaciones de presentación registradas.");
             }
-            tableView.setItems(data);
+            presentationGradeTableView.setItems(data);
             updateEvaluationCounts(data);
 
         } catch (SQLException e) {

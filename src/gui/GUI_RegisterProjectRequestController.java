@@ -23,11 +23,11 @@ public class GUI_RegisterProjectRequestController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequestController.class);
 
     @FXML
-    private ComboBox<LinkedOrganizationDTO> organizationCombo;
+    private ComboBox<LinkedOrganizationDTO> organizationComboBox;
     @FXML
-    private ComboBox<RepresentativeDTO> representativeCombo;
+    private ComboBox<RepresentativeDTO> representativeComboBox;
     @FXML
-    private ComboBox<ProjectDTO> projectCombo;
+    private ComboBox<ProjectDTO> projectComboBox;
     @FXML
     private TextArea descriptionArea;
     @FXML
@@ -102,7 +102,7 @@ public class GUI_RegisterProjectRequestController {
             configureNumericFields();
             loadOrganizations();
 
-            organizationCombo.setOnAction(event -> {
+            organizationComboBox.setOnAction(event -> {
                 loadRepresentatives();
                 loadProjects();
             });
@@ -164,7 +164,7 @@ public class GUI_RegisterProjectRequestController {
         try {
             LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO();
             List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
-            organizationCombo.setItems(FXCollections.observableArrayList(orgs));
+            organizationComboBox.setItems(FXCollections.observableArrayList(orgs));
             logger.info("Organizaciones cargadas correctamente.");
         } catch (SQLException e) {
             logger.error("Error cargando organizaciones: {}", e.getMessage(), e);
@@ -173,8 +173,8 @@ public class GUI_RegisterProjectRequestController {
     }
 
     private void loadRepresentatives() {
-        representativeCombo.getItems().clear();
-        LinkedOrganizationDTO org = organizationCombo.getValue();
+        representativeComboBox.getItems().clear();
+        LinkedOrganizationDTO org = organizationComboBox.getValue();
         if (org != null) {
             try {
                 logic.DAO.DepartmentDAO deptDao = new logic.DAO.DepartmentDAO();
@@ -185,7 +185,7 @@ public class GUI_RegisterProjectRequestController {
                     List<RepresentativeDTO> reps = repDao.getRepresentativesByDepartment(String.valueOf(dept.getDepartmentId()));
                     allReps.addAll(reps);
                 }
-                representativeCombo.setItems(FXCollections.observableArrayList(allReps));
+                representativeComboBox.setItems(FXCollections.observableArrayList(allReps));
                 logger.info("Representantes cargados para la organización {}", org.getName());
             } catch (SQLException e) {
                 logger.error("Error cargando representantes: {}", e.getMessage(), e);
@@ -215,17 +215,17 @@ public class GUI_RegisterProjectRequestController {
     }
 
     private void loadProjects() {
-        projectCombo.getItems().clear();
-        LinkedOrganizationDTO org = organizationCombo.getValue();
+        projectComboBox.getItems().clear();
+        LinkedOrganizationDTO org = organizationComboBox.getValue();
         if (org != null) {
             try {
                 ProjectDAO projectDao = new ProjectDAO();
                 List<ProjectDTO> projects = projectDao.getAllProjects();
                 int orgId = Integer.parseInt(org.getIdOrganization());
                 projects.removeIf(p -> p.getIdOrganization() != orgId);
-                projectCombo.setItems(FXCollections.observableArrayList(projects));
+                projectComboBox.setItems(FXCollections.observableArrayList(projects));
 
-                projectCombo.setConverter(new javafx.util.StringConverter<ProjectDTO>() {
+                projectComboBox.setConverter(new javafx.util.StringConverter<ProjectDTO>() {
                     @Override
                     public String toString(ProjectDTO project) {
                         return project == null ? "" : project.getName();
@@ -249,9 +249,9 @@ public class GUI_RegisterProjectRequestController {
         if (!validateFields()) return;
 
         try {
-            LinkedOrganizationDTO org = organizationCombo.getValue();
-            RepresentativeDTO rep = representativeCombo.getValue();
-            ProjectDTO project = projectCombo.getValue();
+            LinkedOrganizationDTO org = organizationComboBox.getValue();
+            RepresentativeDTO rep = representativeComboBox.getValue();
+            ProjectDTO project = projectComboBox.getValue();
 
             ProjectRequestDTO request = new ProjectRequestDTO(
                     0,
@@ -306,9 +306,9 @@ public class GUI_RegisterProjectRequestController {
     }
 
     private boolean validateFields() {
-        if (organizationCombo.getValue() == null ||
-                representativeCombo.getValue() == null ||
-                projectCombo.getValue() == null ||
+        if (organizationComboBox.getValue() == null ||
+                representativeComboBox.getValue() == null ||
+                projectComboBox.getValue() == null ||
                 generalObjectiveArea.getText().isEmpty() ||
                 immediateObjectivesArea.getText().isEmpty() ||
                 mediateObjectivesArea.getText().isEmpty() ||
@@ -353,9 +353,9 @@ public class GUI_RegisterProjectRequestController {
         scheduleTimeField.clear();
         directUsersField.clear();
         indirectUsersField.clear();
-        organizationCombo.getSelectionModel().clearSelection();
-        representativeCombo.getItems().clear();
-        projectCombo.getItems().clear();
+        organizationComboBox.getSelectionModel().clearSelection();
+        representativeComboBox.getItems().clear();
+        projectComboBox.getItems().clear();
         durationField.setText("420");
         logger.info("Campos del formulario limpiados.");
     }

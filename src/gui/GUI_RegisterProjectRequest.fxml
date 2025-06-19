@@ -18,11 +18,11 @@
                                         <VBox spacing="10" fillWidth="true">
                                             <children>
                                                 <Label text="Organización:"/>
-                                                <ComboBox fx:id="organizationCombo" prefWidth="300"/>
+                                                <ComboBox fx:id="organizationComboBox" prefWidth="300"/>
                                                 <Label text="Representante:"/>
-                                                <ComboBox fx:id="representativeCombo" prefWidth="300"/>
+                                                <ComboBox fx:id="representativeComboBox" prefWidth="300"/>
                                                 <Label text="Proyecto:"/>
-                                                <ComboBox fx:id="projectCombo" prefWidth="300"/>
+                                                <ComboBox fx:id="projectComboBox" prefWidth="300"/>
                                             </children>
                                             <padding>
                                                 <Insets top="10" right="10" bottom="10" left="10"/>

@@ -16,7 +16,7 @@ public class GUI_RecordFinalGradeController {
     private static final Logger logger = LogManager.getLogger(GUI_RecordFinalGradeController.class);
 
     @FXML
-    private TextField fieldFinalGrade;
+    private TextField finalGradeField;
 
     @FXML
     private Label statusLabel;
@@ -37,7 +37,7 @@ public class GUI_RecordFinalGradeController {
     public void setStudent(StudentDTO student) {
         this.student = student;
         if (student != null) {
-            fieldFinalGrade.setText(String.valueOf(student.getFinalGrade()));
+            finalGradeField.setText(String.valueOf(student.getFinalGrade()));
         }
     }
 
@@ -48,7 +48,7 @@ public class GUI_RecordFinalGradeController {
             return;
         }
 
-        String finalGradeText = fieldFinalGrade.getText().trim();
+        String finalGradeText = finalGradeField.getText().trim();
         if (finalGradeText.isEmpty()) {
             statusLabel.setText("El campo de calificación no puede estar vacío.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);

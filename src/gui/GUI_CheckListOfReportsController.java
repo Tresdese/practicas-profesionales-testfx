@@ -28,38 +28,38 @@ public class GUI_CheckListOfReportsController implements Initializable {
     private static final Logger LOGGER = LogManager.getLogger(GUI_CheckListOfReportsController.class);
 
     @FXML
-    private TableView<ReportDTO> tableReports;
+    private TableView<ReportDTO> reportsTableView;
     @FXML
-    private TableColumn<ReportDTO, String> columnNumber;
+    private TableColumn<ReportDTO, String> numberColumn;
     @FXML
-    private TableColumn<ReportDTO, java.util.Date> columnDate;
+    private TableColumn<ReportDTO, java.util.Date> dateColumn;
     @FXML
-    private TableColumn<ReportDTO, Integer> columnHours;
+    private TableColumn<ReportDTO, Integer> hoursColumn;
     @FXML
-    private TableColumn<ReportDTO, String> columnObjective;
+    private TableColumn<ReportDTO, String> objectiveColumn;
     @FXML
-    private TableColumn<ReportDTO, String> columnResult;
+    private TableColumn<ReportDTO, String> resultColumn;
     @FXML
-    private TableColumn<ReportDTO, Void> columnEvidence;
+    private TableColumn<ReportDTO, Void> evidenceColumn;
 
     private String studentTuition;
 
     public void setStudentTuition(String tuition) {
         this.studentTuition = (tuition != null) ? tuition.trim() : null;
-        if (tableReports != null) {
+        if (reportsTableView != null) {
             javafx.application.Platform.runLater(this::loadReports);
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        columnNumber.setCellValueFactory(new PropertyValueFactory<>("numberReport"));
-        columnDate.setCellValueFactory(new PropertyValueFactory<>("reportDate"));
-        columnHours.setCellValueFactory(new PropertyValueFactory<>("totalHours"));
-        columnObjective.setCellValueFactory(new PropertyValueFactory<>("generalObjective"));
-        columnResult.setCellValueFactory(new PropertyValueFactory<>("obtainedResult"));
+        numberColumn.setCellValueFactory(new PropertyValueFactory<>("numberReport"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("reportDate"));
+        hoursColumn.setCellValueFactory(new PropertyValueFactory<>("totalHours"));
+        objectiveColumn.setCellValueFactory(new PropertyValueFactory<>("generalObjective"));
+        resultColumn.setCellValueFactory(new PropertyValueFactory<>("obtainedResult"));
 
-        columnEvidence.setCellFactory(col -> new TableCell<>() {
+        evidenceColumn.setCellFactory(col -> new TableCell<>() {
             private final Button btn = new Button("Ver Evidencia");
             {
                 btn.setOnAction(event -> {
@@ -87,7 +87,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
     private void loadReports() {
         if (studentTuition == null) {
             LOGGER.warn("No se ha asignado matrícula para filtrar reportes.");
-            tableReports.getItems().clear();
+            reportsTableView.getItems().clear();
             return;
         }
         try {
@@ -99,7 +99,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
                         return reportTuition.equalsIgnoreCase(studentTuition);
                     })
                     .collect(Collectors.toList());
-            tableReports.getItems().setAll(studentReports);
+            reportsTableView.getItems().setAll(studentReports);
         } catch (SQLException e) {
             LOGGER.error("Error de base de datos al cargar reportes: {}", e.getMessage(), e);
         } catch (NullPointerException e) {

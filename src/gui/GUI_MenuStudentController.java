@@ -30,13 +30,13 @@ public class GUI_MenuStudentController {
     private ImageView profileImageView;
 
     @FXML
-    private Button buttonLogout;
+    private Button logoutButton;
 
     @FXML
-    private Button buttonRegisterActivitySchedule;
+    private Button registerActivityScheduleButton;
 
     @FXML
-    private Button buttonLinkActivityToSchedule;
+    private Button linkActivityToScheduleButton;
 
     public void setStudentName(String studentName) {
         welcomeLabel.setText("Hola, " + studentName);
@@ -158,7 +158,7 @@ public class GUI_MenuStudentController {
     private void handleLogout() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Login.fxml"));
-            Stage stage = (Stage) buttonLogout.getScene().getWindow();
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Inicio de Sesión");
             stage.show();
