@@ -33,7 +33,7 @@ public class ActivityDTO {
     @Override
     public String toString() {
         return
-                "Actividad" + activityName;
+                "Actividad: " + activityName;
     }
 
     @Override

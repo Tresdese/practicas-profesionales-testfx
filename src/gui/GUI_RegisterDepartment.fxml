@@ -3,18 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gui.GUI_RegisterDepartmentController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterDepartmentController">
     <children>
-        <Label layoutX="50" layoutY="40" text="Nombre del Departamento:"/>
-        <TextField fx:id="nameField" layoutX="220" layoutY="35" prefWidth="300"/>
+        <Label layoutX="50" layoutY="40" text="Nombre del Departamento:" />
+        <TextField fx:id="nameField" layoutX="220" layoutY="35" prefWidth="300" />
 
-        <Label layoutX="50" layoutY="90" text="Descripción:"/>
-        <TextArea fx:id="descriptionArea" layoutX="220" layoutY="85" prefWidth="300" prefHeight="80"/>
+        <Label layoutX="50" layoutY="90" text="Descripción:" />
+        <TextArea fx:id="descriptionArea" layoutX="220" layoutY="85" prefHeight="80" prefWidth="300" />
 
-        <Button fx:id="registerButton" layoutX="220" layoutY="200" text="Registrar" onAction="#handleRegister"/>
-        <Label fx:id="messageLabel" layoutX="220" layoutY="250" textFill="red"/>
+        <Button fx:id="registerButton" layoutX="220" layoutY="200" onAction="#handleRegister" text="Registrar" />
+        <Label fx:id="messageLabel" layoutX="220" layoutY="250" textFill="red" />
+      <Label fx:id="nameCharCountLabel" layoutX="528.0" layoutY="39.0" text="0/100" />
+      <Label fx:id="descriptionCharCountLabel" layoutX="530.0" layoutY="90.0" text="0/200" />
     </children>
 </AnchorPane>
