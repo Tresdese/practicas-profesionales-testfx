@@ -13,8 +13,8 @@ import java.util.List;
 
 public class ProjectDAO implements IProjectDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ? WHERE idProyecto = ?";
+    private static final String SQL_INSERT = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE proyecto SET nombre = ?, descripcion = ?, fechaAproximada = ?, fechaInicio = ?, idUsuario = ?, idOrganizacion = ?, idDepartamento = ? WHERE idProyecto = ?";
     private static final String SQL_DELETE = "DELETE FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_PROJECT_NAME_BY_ID = "SELECT nombre FROM proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM proyecto WHERE idProyecto = ?";
@@ -32,6 +32,7 @@ public class ProjectDAO implements IProjectDAO {
             statement.setTimestamp(5, project.getStartDate());
             statement.setString(6, project.getIdUser());
             statement.setInt(7, project.getIdOrganization());
+            statement.setInt(8, project.getIdDepartment());
             return statement.executeUpdate() > 0;
         }
     }
@@ -46,7 +47,8 @@ public class ProjectDAO implements IProjectDAO {
             statement.setTimestamp(4, project.getStartDate());
             statement.setString(5, project.getIdUser());
             statement.setInt(6, project.getIdOrganization());
-            statement.setString(7, project.getIdProject());
+            statement.setInt(7, project.getIdDepartment());
+            statement.setString(8, project.getIdProject());
             return statement.executeUpdate() > 0;
         }
     }
@@ -61,7 +63,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     public ProjectDTO searchProjectById(String idProject) throws SQLException {
-        ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
+        ProjectDTO project = new ProjectDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -75,7 +77,8 @@ public class ProjectDAO implements IProjectDAO {
                             resultSet.getTimestamp("fechaAproximada"),
                             resultSet.getTimestamp("fechaInicio"),
                             resultSet.getString("idUsuario"),
-                            resultSet.getInt("idOrganizacion")
+                            resultSet.getInt("idOrganizacion"),
+                            resultSet.getInt("idDepartamento")
                     );
                 }
             }
@@ -84,7 +87,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     public ProjectDTO searchProjectByName(String name) throws SQLException {
-        ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0);
+        ProjectDTO project = new ProjectDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
@@ -98,7 +101,8 @@ public class ProjectDAO implements IProjectDAO {
                             resultSet.getTimestamp("fechaAproximada"),
                             resultSet.getTimestamp("fechaInicio"),
                             resultSet.getString("idUsuario"),
-                            resultSet.getInt("idOrganizacion")
+                            resultSet.getInt("idOrganizacion"),
+                            resultSet.getInt("idDepartamento")
                     );
                 }
             }
@@ -106,12 +110,12 @@ public class ProjectDAO implements IProjectDAO {
         return project;
     }
 
-    public String getProyectNameById(String idProject) throws SQLException {
+    public String getProyectNameById(int idProject) throws SQLException {
         String projectName = "";
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_NAME_BY_ID)) {
-            statement.setString(1, idProject);
+            statement.setInt(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     projectName = resultSet.getString("nombre");
@@ -135,7 +139,8 @@ public class ProjectDAO implements IProjectDAO {
                         resultSet.getTimestamp("fechaAproximada"),
                         resultSet.getTimestamp("fechaInicio"),
                         resultSet.getString("idUsuario"),
-                        resultSet.getInt("idOrganizacion")
+                        resultSet.getInt("idOrganizacion"),
+                        resultSet.getInt("idDepartamento")
                 ));
             }
         }

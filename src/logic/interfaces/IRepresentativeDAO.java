@@ -14,7 +14,17 @@ public interface IRepresentativeDAO {
 
     RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException;
 
+    boolean isRepresentativeRegistered(String idRepresentative) throws SQLException;
+
+    boolean isRepresentativeEmailRegistered(String email) throws SQLException;
+
+    RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException;
+
+    String getRepresentativeNameById(String idRepresentative) throws SQLException;
+
+
+
     List<RepresentativeDTO> getAllRepresentatives() throws SQLException;
 
-    public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException;
+    List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException;
 }

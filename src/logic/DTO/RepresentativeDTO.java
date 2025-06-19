@@ -5,22 +5,22 @@ public class RepresentativeDTO {
     private String names;
     private String surnames;
     private String email;
-    private String idOrganization;
+    private String idDepartment;
 
     public RepresentativeDTO() {
         this.idRepresentative = "";
         this.names = "";
         this.surnames = "";
         this.email = "";
-        this.idOrganization = "";
+        this.idDepartment = "";
     }
 
-    public RepresentativeDTO(String idRepresentative, String names, String surnames, String email, String idOrganization) {
+    public RepresentativeDTO(String idRepresentative, String names, String surnames, String email, String idDepartment) {
         this.idRepresentative = idRepresentative;
         this.names = names;
         this.surnames = surnames;
         this.email = email;
-        this.idOrganization = idOrganization;
+        this.idDepartment = idDepartment;
     }
 
     public String getIdRepresentative() {
@@ -55,19 +55,19 @@ public class RepresentativeDTO {
         this.email = email;
     }
 
-    public String getIdOrganization() {
-        return idOrganization;
+    public String getIdDepartment() {
+        return idDepartment;
     }
 
-    public void setIdOrganization(String idOrganization) {
-        this.idOrganization = idOrganization;
+    public void setIdDepartment(String idDepartment) {
+        this.idDepartment = idDepartment;
     }
 
     @Override
     public String toString() {
         return names + " " + surnames;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

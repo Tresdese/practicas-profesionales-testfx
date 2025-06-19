@@ -10,6 +10,7 @@ public class ProjectDTO {
     private Timestamp startDate;
     private String idUser;
     private int idOrganization;
+    private int idDepartment;
 
     public ProjectDTO() {
         this.idProject = "";
@@ -19,9 +20,10 @@ public class ProjectDTO {
         this.startDate = null;
         this.idUser = "";
         this.idOrganization = 0;
+        this.idDepartment = 0;
     }
 
-    public ProjectDTO(String idProject, String name, String description, Timestamp approximateDate, Timestamp startDate, String idUser, int idOrganization) {
+    public ProjectDTO(String idProject, String name, String description, Timestamp approximateDate, Timestamp startDate, String idUser, int idOrganization, int idDepartment) {
         this.idProject = idProject;
         this.name = name;
         this.description = description;
@@ -29,67 +31,36 @@ public class ProjectDTO {
         this.startDate = startDate;
         this.idUser = idUser;
         this.idOrganization = idOrganization;
+        this.idDepartment = idDepartment;
     }
 
-    public String getIdProject() {
-        return idProject;
-    }
+    public String getIdProject() { return idProject; }
+    public void setIdProject(String idProject) { this.idProject = idProject; }
 
-    public void setIdProject(String idProject) {
-        this.idProject = idProject;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Timestamp getApproximateDate() { return approximateDate; }
+    public void setApproximateDate(Timestamp approximateDate) { this.approximateDate = approximateDate; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Timestamp getStartDate() { return startDate; }
+    public void setStartDate(Timestamp startDate) { this.startDate = startDate; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getIdUser() { return idUser; }
+    public void setIdUser(String idUser) { this.idUser = idUser; }
 
-    public Timestamp getApproximateDate() {
-        return approximateDate;
-    }
+    public int getIdOrganization() { return idOrganization; }
+    public void setIdOrganization(int idOrganization) { this.idOrganization = idOrganization; }
 
-    public void setApproximateDate(Timestamp approximateDate) {
-        this.approximateDate = approximateDate;
-    }
-
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(String idUser) {
-        this.idUser = idUser;
-    }
-
-    public int getIdOrganization() {
-        return idOrganization;
-    }
-
-    public void setIdOrganization(int idOrganization) {
-        this.idOrganization = idOrganization;
-    }
+    public int getIdDepartment() { return idDepartment; }
+    public void setIdDepartment(int idDepartment) { this.idDepartment = idDepartment; }
 
     @Override
     public String toString() {
-        return name; // Solo muestra el nombre en el ComboBox
+        return name;
     }
 
     @Override
@@ -105,6 +76,7 @@ public class ProjectDTO {
         if (!description.equals(that.description)) return false;
         if (!approximateDate.equals(that.approximateDate)) return false;
         if (!startDate.equals(that.startDate)) return false;
+        if (idDepartment != that.idDepartment) return false;
         return idUser.equals(that.idUser);
     }
 }

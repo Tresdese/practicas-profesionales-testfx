@@ -14,5 +14,9 @@ public interface IProjectDAO {
 
     ProjectDTO searchProjectById(String idProject) throws SQLException;
 
+    ProjectDTO searchProjectByName(String name) throws SQLException;
+
+    String getProyectNameById(int idProject) throws SQLException;
+
     List<ProjectDTO> getAllProjects() throws SQLException;
 }
