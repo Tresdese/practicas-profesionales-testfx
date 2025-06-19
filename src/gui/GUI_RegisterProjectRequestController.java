@@ -25,7 +25,6 @@ public class GUI_RegisterProjectRequestController {
     @FXML private ComboBox<LinkedOrganizationDTO> organizationCombo;
     @FXML private ComboBox<RepresentativeDTO> representativeCombo;
     @FXML private ComboBox<ProjectDTO> projectCombo;
-
     @FXML private TextArea descriptionArea;
     @FXML private TextArea generalObjectiveArea;
     @FXML private TextArea immediateObjectivesArea;
@@ -177,7 +176,7 @@ public class GUI_RegisterProjectRequestController {
 
                     @Override
                     public ProjectDTO fromString(String string) {
-                        return null; // No es necesario para este caso
+                        return null;
                     }
                 });
             } catch (Exception e) {
@@ -281,7 +280,6 @@ public class GUI_RegisterProjectRequestController {
         resourcesArea.clear();
         activitiesArea.clear();
         responsibilitiesArea.clear();
-        // fieldDuration no se limpia porque es fijo
         mondayCheck.setSelected(false);
         tuesdayCheck.setSelected(false);
         wednesdayCheck.setSelected(false);
