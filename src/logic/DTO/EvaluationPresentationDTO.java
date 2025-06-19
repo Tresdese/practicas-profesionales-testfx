@@ -7,6 +7,7 @@ public class EvaluationPresentationDTO {
     private int idProject;
     private String tuition;
     private Date date;
+    private String comment;
     private double average;
 
     public EvaluationPresentationDTO() {
@@ -14,22 +15,25 @@ public class EvaluationPresentationDTO {
         this.idProject = 0;
         this.tuition = "";
         this.date = null;
+        this.comment = "";
         this.average = 0.0;
     }
 
-    public EvaluationPresentationDTO(int idEvaluation, int idProject, String tuition, Date date, double average) {
+    public EvaluationPresentationDTO(int idEvaluation, int idProject, String tuition, Date date, String comment, double average) {
         this.idEvaluation = idEvaluation;
         this.idProject = idProject;
         this.tuition = tuition;
         this.date = date;
+        this.comment = comment;
         this.average = average;
     }
 
-    public EvaluationPresentationDTO(int idProject, String tuition, Date date, double average) {
+    public EvaluationPresentationDTO(int idProject, String tuition, Date date, String comment, double average) {
         this.idEvaluation = 0;
         this.idProject = idProject;
         this.tuition = tuition;
         this.date = date;
+        this.comment = comment;
         this.average = average;
     }
 
@@ -65,6 +69,14 @@ public class EvaluationPresentationDTO {
         this.date = date;
     }
 
+    public String getComment() {
+        return comment; // Getter para comentario
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment; // Setter para comentario
+    }
+
     public double getAverage() {
         return average;
     }
@@ -78,8 +90,9 @@ public class EvaluationPresentationDTO {
         return "EvaluationPresentation{" +
                 "idEvaluation=" + idEvaluation +
                 ", idProject=" + idProject +
-                ", tuiton='" + tuition + '\'' +
+                ", tuition='" + tuition + '\'' +
                 ", date=" + date +
+                ", comment='" + comment + '\'' +
                 ", average=" + average +
                 '}';
     }
@@ -95,6 +108,7 @@ public class EvaluationPresentationDTO {
         if (idProject != that.idProject) return false;
         if (Double.compare(that.average, average) != 0) return false;
         if (!tuition.equals(that.tuition)) return false;
-        return date.equals(that.date);
+        if (!date.equals(that.date)) return false;
+        return comment.equals(that.comment);
     }
 }

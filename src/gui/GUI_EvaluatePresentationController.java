@@ -30,6 +30,14 @@ public class GUI_EvaluatePresentationController {
     @FXML
     private TextField averageField;
 
+    @FXML
+    private TextArea commentArea;
+
+    @FXML
+    private Label commentCharCountLabel;
+
+    private static final int MAX_COMMENT_LENGTH = 500;
+
     private final AssessmentCriterionDAO assessmentCriterionDAO = new AssessmentCriterionDAO();
     private final EvaluationDetailDAO evaluationDetailDAO = new EvaluationDetailDAO();
     private final EvaluationPresentationDAO evaluationPresentationDAO = new EvaluationPresentationDAO();
@@ -43,7 +51,8 @@ public class GUI_EvaluatePresentationController {
     public void initialize() {
 
         saveButton.setOnAction(event -> saveScores());
-
+        configureCharCountLabels();
+        configureTextFormatters();
         loadCriteria();
     }
 
@@ -63,6 +72,7 @@ public class GUI_EvaluatePresentationController {
 
                 TextField scoreField = new TextField();
                 scoreField.setPrefWidth(50);
+                configureScoreField(scoreField);
 
                 Label competentLabel = new Label("Competente");
                 Label independentLabel = new Label("Independiente");
@@ -88,12 +98,63 @@ public class GUI_EvaluatePresentationController {
         }
     }
 
+    private void configureScoreField(TextField scoreField) {
+        scoreField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d{1,2}(\\.\\d{0,1})?")) {
+                try {
+                    double value = Double.parseDouble(newText);
+                    if (value >= 1 && value <= 10) {
+                        return change;
+                    }
+                } catch (NumberFormatException e) {
+                    logger.error("Formato de calificación inválido", e);
+                }
+            }
+            change.setText("");
+            return change;
+        }));
+
+        scoreField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty() && newValue.matches("\\d{1,2}(\\.\\d{0,1})?")) {
+                try {
+                    double score = Double.parseDouble(newValue);
+                } catch (NumberFormatException e) {
+                    logger.error("Formato incorrecto de los valores: " + newValue, e);
+                }
+            } else {
+                logger.warn("El valor ingresado no cumple con el formato esperado: " + newValue);
+            }
+        });
+    }
+
+    private void configureCharCount(TextArea textArea, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textArea.textProperty().addListener((obs, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(commentArea, commentCharCountLabel, MAX_COMMENT_LENGTH);
+    }
+
+    private void configureTextAreaFormatter(TextArea textArea, int maxLength) {
+        textArea.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        ));
+    }
+
+    private void configureTextFormatters() {
+        configureTextAreaFormatter(commentArea, MAX_COMMENT_LENGTH);
+    }
+
     private void highlightLevel(Label competentLabel, Label independentLabel, Label basicLabel, Label notCompetentLabel, String scoreText) {
-        // Limpiar estilos previos
         competentLabel.getStyleClass().remove("highlighted");
         independentLabel.getStyleClass().remove("highlighted");
         basicLabel.getStyleClass().remove("highlighted");
         notCompetentLabel.getStyleClass().remove("highlighted");
+
 
         try {
             double score = Double.parseDouble(scoreText);
@@ -103,7 +164,7 @@ public class GUI_EvaluatePresentationController {
                 independentLabel.getStyleClass().add("highlighted");
             } else if (score >= 7.1) {
                 basicLabel.getStyleClass().add("highlighted");
-            } else if (score >= 5.0) {
+            } else if (score >= 0.0 && score <= 7.0) {
                 notCompetentLabel.getStyleClass().add("highlighted");
             }
         } catch (NumberFormatException e) {
@@ -163,6 +224,7 @@ public class GUI_EvaluatePresentationController {
                     presentationId,
                     tuition,
                     new java.util.Date(),
+                    commentArea.getText(), // Obtiene el comentario del área de texto
                     averageScore
             );
             int evaluationId = evaluationPresentationDAO.insertEvaluationPresentation(evaluation);

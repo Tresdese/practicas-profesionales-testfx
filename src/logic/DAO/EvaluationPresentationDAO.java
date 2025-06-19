@@ -12,12 +12,13 @@ import java.util.List;
 
 public class EvaluationPresentationDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO evaluacion_presentacion (idPresentacion, matricula, fecha, promedio) VALUES (?, ?, ?, ?)";
-    private static final String SQL_UPDATE = "UPDATE evaluacion_presentacion SET idPresentacion = ?, matricula = ?, fecha = ?, promedio = ? WHERE idEvaluacion = ?";
+    private static final String SQL_INSERT = "INSERT INTO evaluacion_presentacion (idPresentacion, matricula, fecha, comentario, promedio) VALUES (?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE evaluacion_presentacion SET idPresentacion = ?, matricula = ?, fecha = ?, comentario = ?, promedio = ? WHERE idEvaluacion = ?";
     private static final String SQL_DELETE = "DELETE FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM evaluacion_presentacion WHERE idEvaluacion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM evaluacion_presentacion";
     private static final String SQL_SELECT_BY_TUITON = "SELECT * FROM evaluacion_presentacion WHERE matricula = ?";
+    private static final String SQL_SELECT_BY_DATE = "SELECT * FROM evaluacion_presentacion WHERE fecha = ?";
 
     public int insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
@@ -26,7 +27,8 @@ public class EvaluationPresentationDAO {
             statement.setInt(1, evaluation.getIdProject());
             statement.setString(2, evaluation.getTuition());
             statement.setDate(3, new java.sql.Date(evaluation.getDate().getTime()));
-            statement.setDouble(4, evaluation.getAverage());
+            statement.setString(4, evaluation.getComment());
+            statement.setDouble(5, evaluation.getAverage());
             statement.executeUpdate();
 
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -46,8 +48,9 @@ public class EvaluationPresentationDAO {
             statement.setInt(1, evaluation.getIdProject());
             statement.setString(2, evaluation.getTuition());
             statement.setDate(3, new java.sql.Date(evaluation.getDate().getTime()));
-            statement.setDouble(4, evaluation.getAverage());
-            statement.setInt(5, evaluation.getIdEvaluation());
+            statement.setString(4, evaluation.getComment());
+            statement.setDouble(5, evaluation.getAverage());
+            statement.setInt(6, evaluation.getIdEvaluation());
             return statement.executeUpdate() > 0;
         }
     }
@@ -74,6 +77,7 @@ public class EvaluationPresentationDAO {
                             resultSet.getInt("idPresentacion"),
                             resultSet.getString("matricula"),
                             resultSet.getDate("fecha"),
+                            resultSet.getString("comentario"),
                             resultSet.getDouble("promedio")
                     );
                 }
@@ -94,6 +98,7 @@ public class EvaluationPresentationDAO {
                         resultSet.getInt("idPresentacion"),
                         resultSet.getString("matricula"),
                         resultSet.getDate("fecha"),
+                        resultSet.getString("comentario"),
                         resultSet.getDouble("promedio")
                 ));
             }
@@ -111,7 +116,7 @@ public class EvaluationPresentationDAO {
                 return resultSet.getInt(1);
             }
         }
-        throw new SQLException("No se pudo obtener el último ID insertado."); //TODO Antipatron
+        throw new SQLException("No se pudo obtener el último ID insertado.");
     }
 
     public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException {
@@ -124,9 +129,32 @@ public class EvaluationPresentationDAO {
                 while (resultSet.next()) {
                     evaluations.add(new EvaluationPresentationDTO(
                             resultSet.getInt("idEvaluacion"),
-                            resultSet.getInt("idPresentacion"), // Este es el id de la presentación
+                            resultSet.getInt("idPresentacion"),
                             resultSet.getString("matricula"),
                             resultSet.getDate("fecha"),
+                            resultSet.getString("comentario"),
+                            resultSet.getDouble("promedio")
+                    ));
+                }
+            }
+        }
+        return evaluations;
+    }
+
+    public List<EvaluationPresentationDTO> getEvaluationPresentationsByDate(java.sql.Date date) throws SQLException {
+        List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_DATE)) {
+            statement.setDate(1, date);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    evaluations.add(new EvaluationPresentationDTO(
+                            resultSet.getInt("idEvaluacion"),
+                            resultSet.getInt("idPresentacion"),
+                            resultSet.getString("matricula"),
+                            resultSet.getDate("fecha"),
+                            resultSet.getString("comentario"),
                             resultSet.getDouble("promedio")
                     ));
                 }
