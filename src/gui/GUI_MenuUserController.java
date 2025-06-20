@@ -12,6 +12,9 @@ import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 public class GUI_MenuUserController {
 
     private static final Logger logger = LogManager.getLogger(GUI_MenuUserController.class);
@@ -140,7 +143,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Consultar Calificaciones de Presentación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de calificaciones: {}", e.getMessage(), e);
         }
     }
@@ -154,7 +157,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Calificar Presentación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de evaluación: {}", e.getMessage(), e);
         }
     }
@@ -173,7 +176,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Estudiantes");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
         }
     }
@@ -187,7 +190,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Académicos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
         }
     }
@@ -201,7 +204,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Organizaciones");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
         }
     }
@@ -215,7 +218,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Representantes");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
         }
     }
@@ -232,7 +235,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Proyectos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
         }
     }
@@ -249,7 +252,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Solicitudes de Prácticas");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
         }
     }
@@ -267,7 +270,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Períodos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de períodos: {}", e.getMessage(), e);
         }
     }
@@ -285,7 +288,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Grupos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de lista de grupos: {}", e.getMessage(), e);
         }
     }
@@ -299,7 +302,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Gestión de Criterios de Evaluación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de criterios de evaluación: {}", e.getMessage(), e);
         }
     }
@@ -313,7 +316,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Gestión de Criterios de Autoevaluación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de criterios de autoevaluación: {}", e.getMessage(), e);
         }
     }
@@ -327,7 +330,7 @@ public class GUI_MenuUserController {
             stage.setTitle("Gestión de Actividades");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de actividades: {}", e.getMessage(), e);
         }
     }
@@ -335,6 +338,7 @@ public class GUI_MenuUserController {
     @FXML
     private void handleAbleRegisterEvaluationButton(ActionEvent event) {
         enabledEvaluation = !enabledEvaluation;
+        logger.info("Habilitación de evaluación: {}", enabledEvaluation ? "Activada" : "Desactivada");
     }
 
     @FXML
@@ -345,7 +349,7 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Inicio de Sesión");
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
         }
     }

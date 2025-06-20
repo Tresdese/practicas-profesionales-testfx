@@ -20,7 +20,6 @@
                         <TableColumn fx:id="representativeEmail" prefWidth="185.0" text="Correo" />
                         <TableColumn fx:id="representativeOrganization" prefWidth="176.0" text="Organizacion que representa" />
                         <TableColumn fx:id="representativeDepartment" text="Departamento" />
-                        <TableColumn fx:id="columnDetails" maxWidth="312.0" prefWidth="170.0" text="Ver Detalles" />
                         <TableColumn fx:id="columnManagement" minWidth="0.0" prefWidth="158.0" text="Gestionar" />
                     </columns>
                 </TableView>

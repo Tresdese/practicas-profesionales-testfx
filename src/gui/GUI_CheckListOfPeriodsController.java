@@ -36,12 +36,6 @@ public class GUI_CheckListOfPeriodsController {
     private TableColumn<PeriodDTO, java.sql.Timestamp> columnEndDate;
 
     @FXML
-    private TableColumn<PeriodDTO, Void> columnDetails;
-
-    @FXML
-    private TableColumn<PeriodDTO, Void> columnManagement;
-
-    @FXML
     private TextField searchField;
 
     @FXML
@@ -67,8 +61,6 @@ public class GUI_CheckListOfPeriodsController {
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
         columnStartDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         columnEndDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
-
-        addDetailsButtonToTable();
 
         loadPeriodData();
 
@@ -139,7 +131,6 @@ public class GUI_CheckListOfPeriodsController {
 
     public void setUserRole(Role userRole) {
         this.userRole = userRole;
-        applyRoleRestrictions();
     }
 
     public void setButtonVisibility(Button btn, boolean visible) {
@@ -147,44 +138,6 @@ public class GUI_CheckListOfPeriodsController {
             btn.setVisible(visible);
             btn.setManaged(visible);
         }
-    }
-
-    public void applyRoleRestrictions() {
-        if (userRole == Role.ACADEMICO_EVALUADOR) {
-            setButtonVisibility(buttonRegisterPeriod, false);
-            columnManagement.setVisible(false);
-        } else if (userRole == Role.ACADEMICO) {
-            setButtonVisibility(buttonRegisterPeriod, false);
-            columnManagement.setVisible(true);
-        } else if (userRole == Role.COORDINADOR) {
-            setButtonVisibility(buttonRegisterPeriod, true);
-            columnManagement.setVisible(false);
-        }
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<PeriodDTO, Void>, TableCell<PeriodDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    PeriodDTO period = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + period.getIdPeriod());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedPeriod == null || getTableView().getItems().get(getIndex()) != selectedPeriod) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        columnDetails.setCellFactory(cellFactory);
     }
 
 }

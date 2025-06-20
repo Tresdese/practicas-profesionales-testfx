@@ -56,9 +56,6 @@ public class GUI_CheckProjectListController {
     private TableColumn<ProjectDTO, String> projectDepartmentColumn;
 
     @FXML
-    private TableColumn<ProjectDTO, Void> detailsColumn;
-
-    @FXML
     private TableColumn<ProjectDTO, Void> managementColumn;
 
     @FXML
@@ -93,7 +90,6 @@ public class GUI_CheckProjectListController {
 
         setAllCellValueFactories();
 
-        addDetailsButtonToTable();
         addManagementButtonToTable();
 
         loadProjectData();
@@ -294,34 +290,6 @@ public class GUI_CheckProjectListController {
     private void updateProjectCounts(ObservableList<ProjectDTO> list) {
         int total = list.size();
         projectCountsLabel.setText("Totales: " + total);
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<ProjectDTO, Void>, TableCell<ProjectDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    if (getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
-                        return;
-                    }
-                    ProjectDTO project = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + project.getName());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedProject == null || getIndex() < 0 || getIndex() >= getTableView().getItems().size() || !getTableView().getItems().get(getIndex()).equals(selectedProject)) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {

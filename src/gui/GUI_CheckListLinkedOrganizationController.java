@@ -33,9 +33,6 @@ public class GUI_CheckListLinkedOrganizationController {
     private TableColumn<LinkedOrganizationDTO, String> organizationAddressColumn;
 
     @FXML
-    private TableColumn<LinkedOrganizationDTO, Void> detailsColumn;
-
-    @FXML
     private TableColumn<LinkedOrganizationDTO, Void> managementColumn;
 
     @FXML
@@ -71,7 +68,6 @@ public class GUI_CheckListLinkedOrganizationController {
         organizationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         organizationAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-        addDetailsButtonToTable();
         addManagementButtonToTable();
 
         loadOrganizationData();
@@ -138,32 +134,6 @@ public class GUI_CheckListLinkedOrganizationController {
 
         tableView.setItems(filteredList);
         updateOrganizationCounts(filteredList);
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<LinkedOrganizationDTO, Void>, TableCell<LinkedOrganizationDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    LinkedOrganizationDTO organization = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + organization.getName());
-                    // TODO Lógica para mostrar detalles de la organización
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedLinkedOrganization == null || getTableView().getItems().get(getIndex()) != selectedLinkedOrganization) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {

@@ -15,10 +15,9 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="organizationNameColumn" prefWidth="237.0" text="Nombre de la organizacion" />
-                        <TableColumn fx:id="organizationAddressColumn" prefWidth="240.0" text="Direccion de la organizacion" />
-                        <TableColumn fx:id="detailsColumn" prefWidth="264.0" text="Ver Detalles" />
-                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="208.0" text="Gestionar" />
+                        <TableColumn fx:id="organizationNameColumn" prefWidth="314.0" text="Nombre de la organizacion" />
+                        <TableColumn fx:id="organizationAddressColumn" prefWidth="339.0" text="Direccion de la organizacion" />
+                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="296.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>

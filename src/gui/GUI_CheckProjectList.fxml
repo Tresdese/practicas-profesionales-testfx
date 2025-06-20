@@ -16,13 +16,12 @@
                 <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="projectNameColumn" prefWidth="129.0" text="Nombre del Proyecto" />
-                        <TableColumn fx:id="projectStartDateColumn" prefWidth="162.0" text="Fecha Inicio" />
+                        <TableColumn fx:id="projectStartDateColumn" prefWidth="142.0" text="Fecha Inicio" />
                         <TableColumn fx:id="projectEndDateColumn" prefWidth="134.0" text="Fecha Fin" />
-                        <TableColumn fx:id="projectOrganizationColumn" prefWidth="121.0" text="Organización" />
+                        <TableColumn fx:id="projectOrganizationColumn" prefWidth="141.0" text="Organización" />
                         <TableColumn fx:id="projectDepartmentColumn" prefWidth="114.0" text="Departamento" />
-                        <TableColumn fx:id="projectAcademicColumn" prefWidth="120.0" text="Académico" />
-                        <TableColumn fx:id="detailsColumn" prefWidth="92.0" text="Ver Detalles" />
-                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="77.0" text="Gestionar" />
+                        <TableColumn fx:id="projectAcademicColumn" prefWidth="146.0" text="Académico" />
+                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="143.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>

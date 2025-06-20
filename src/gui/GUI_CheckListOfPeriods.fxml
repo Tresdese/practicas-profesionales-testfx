@@ -17,10 +17,8 @@
                     <columns>
                         <TableColumn fx:id="columnIdPeriod" prefWidth="120.0" text="ID Periodo" />
                         <TableColumn fx:id="columnName" prefWidth="200.0" text="Nombre" />
-                        <TableColumn fx:id="columnStartDate" prefWidth="200.0" text="Fecha de Inicio" />
-                        <TableColumn fx:id="columnEndDate" prefWidth="200.0" text="Fecha de Fin" />
-                        <TableColumn fx:id="columnDetails" prefWidth="110.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="120.0" text="Gestionar" />
+                        <TableColumn fx:id="columnStartDate" prefWidth="318.0" text="Fecha de Inicio" />
+                        <TableColumn fx:id="columnEndDate" prefWidth="311.0" text="Fecha de Fin" />
                     </columns>
                 </TableView>
             </center>

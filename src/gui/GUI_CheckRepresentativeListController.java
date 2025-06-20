@@ -46,9 +46,6 @@ public class GUI_CheckRepresentativeListController {
     private TableColumn<RepresentativeDTO, ?> representativeSurname;
 
     @FXML
-    private TableColumn<RepresentativeDTO, Void> columnDetails;
-
-    @FXML
     private TableColumn<RepresentativeDTO, Void> columnManagement;
 
     @FXML
@@ -94,7 +91,6 @@ public class GUI_CheckRepresentativeListController {
             return new SimpleStringProperty(organizationName);
         });
 
-        addDetailsButtonToTable();
         addManagementButtonToTable();
 
         loadOrganizationData();
@@ -193,34 +189,6 @@ public class GUI_CheckRepresentativeListController {
 
         tableView.setItems(filteredList);
         updateRepresentativeCounts(filteredList);
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<RepresentativeDTO, Void>, TableCell<RepresentativeDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    if (getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
-                        return;
-                    }
-                    RepresentativeDTO representative = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + representative.getNames() + " " + representative.getSurnames());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedRepresentative == null || getIndex() < 0 || getIndex() >= getTableView().getItems().size() || !getTableView().getItems().get(getIndex()).equals(selectedRepresentative)) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        columnDetails.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {

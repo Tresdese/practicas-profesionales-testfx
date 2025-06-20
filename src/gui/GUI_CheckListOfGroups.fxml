@@ -16,10 +16,9 @@
                 <TableView fx:id="tableViewGroups" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="columnNRC" prefWidth="120.0" text="NRC" />
-                        <TableColumn fx:id="columnName" prefWidth="200.0" text="Nombre" />
-                        <TableColumn fx:id="columnIdUser" prefWidth="200.0" text="ID Usuario" />
-                        <TableColumn fx:id="columnIdPeriod" prefWidth="200.0" text="ID Periodo" />
-                        <TableColumn fx:id="columnDetails" prefWidth="110.0" text="Ver Detalles" />
+                        <TableColumn fx:id="columnName" prefWidth="260.0" text="Nombre" />
+                        <TableColumn fx:id="columnIdUser" prefWidth="276.0" text="ID Usuario" />
+                        <TableColumn fx:id="columnIdPeriod" prefWidth="293.0" text="ID Periodo" />
                     </columns>
                 </TableView>
             </center>

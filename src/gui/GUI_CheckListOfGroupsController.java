@@ -36,9 +36,6 @@ public class GUI_CheckListOfGroupsController {
     private TableColumn<GroupDTO, String> columnIdPeriod;
 
     @FXML
-    private TableColumn<GroupDTO, Void> columnDetails;
-
-    @FXML
     private TextField searchField;
 
     @FXML
@@ -64,8 +61,6 @@ public class GUI_CheckListOfGroupsController {
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
         columnIdUser.setCellValueFactory(new PropertyValueFactory<>("idUser"));
         columnIdPeriod.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
-
-        addDetailsButtonToTable();
 
         loadGroupData();
 
@@ -154,30 +149,5 @@ public class GUI_CheckListOfGroupsController {
         } else if (userRole == Role.COORDINADOR) {
             setButtonVisibility(buttonRegisterGroup, true);
         }
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<GroupDTO, Void>, TableCell<GroupDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    GroupDTO group = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + group.getNRC());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedGroup == null || getTableView().getItems().get(getIndex()) != selectedGroup) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        columnDetails.setCellFactory(cellFactory);
     }
 }

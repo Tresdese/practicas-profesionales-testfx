@@ -18,10 +18,9 @@
                         <TableColumn fx:id="staffNumberColumn" prefWidth="120.0" text="Numero de personal" />
                         <TableColumn fx:id="namesColumn" prefWidth="150.0" text="Nombres" />
                         <TableColumn fx:id="surnamesColumn" prefWidth="150.0" text="Apellidos" />
-                        <TableColumn fx:id="userNamesColumn" prefWidth="150.0" text="Nombre de usuario" />
-                        <TableColumn fx:id="roleColumn" prefWidth="100.0" text="Rol" />
-                        <TableColumn fx:id="detailsColumn" prefWidth="150.0" text="Ver Detalles" />
-                        <TableColumn fx:id="managementColumn" prefWidth="150.0" text="Gestionar" />
+                        <TableColumn fx:id="userNamesColumn" prefWidth="187.0" text="Nombre de usuario" />
+                        <TableColumn fx:id="roleColumn" prefWidth="170.0" text="Rol" />
+                        <TableColumn fx:id="managementColumn" prefWidth="172.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>

@@ -40,9 +40,6 @@ public class GUI_CheckAcademicListController {
     private TableColumn<UserDTO, Role> roleColumn;
 
     @FXML
-    private TableColumn<UserDTO, Void> detailsColumn;
-
-    @FXML
     private TableColumn<UserDTO, Void> managementColumn;
 
     @FXML
@@ -78,7 +75,6 @@ public class GUI_CheckAcademicListController {
         userNamesColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-        addDetailsButtonToTable();
         addManagementButtonToTable();
 
         loadAcademicData();
@@ -137,31 +133,6 @@ public class GUI_CheckAcademicListController {
 
         tableView.setItems(filteredList);
         updateAcademicCounts(filteredList);
-    }
-
-    private void addDetailsButtonToTable() {
-        Callback<TableColumn<UserDTO, Void>, TableCell<UserDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button detailsButton = new Button("Ver detalles");
-
-            {
-                detailsButton.setOnAction(event -> {
-                    UserDTO academic = getTableView().getItems().get(getIndex());
-                    System.out.println("Detalles de: " + academic.getIdUser());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || selectedAcademic == null || getTableView().getItems().get(getIndex()) != selectedAcademic) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(detailsButton);
-                }
-            }
-        };
-
-        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {

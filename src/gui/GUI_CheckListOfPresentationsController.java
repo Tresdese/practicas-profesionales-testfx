@@ -121,7 +121,6 @@ public class GUI_CheckListOfPresentationsController {
         ObservableList<ProjectPresentationDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            // Buscar por ID de presentación (numérico)
             try {
                 int id = Integer.parseInt(searchQuery);
                 ProjectPresentationDTO presentation = projectPresentationDAO.searchProjectPresentationById(id);
@@ -129,7 +128,6 @@ public class GUI_CheckListOfPresentationsController {
                     filteredList.add(presentation);
                 }
             } catch (NumberFormatException e) {
-                // Si no es numérico, buscar por ID de proyecto (string)
                 List<ProjectPresentationDTO> presentations = projectPresentationDAO.searchProjectPresentationsByProjectId(searchQuery);
                 filteredList.addAll(presentations);
             }
