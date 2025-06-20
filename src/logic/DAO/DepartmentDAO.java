@@ -54,7 +54,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     }
 
     public DepartmentDTO searchDepartmentById(int departmentId) throws SQLException {
-        DepartmentDTO department = null;
+        DepartmentDTO department = new DepartmentDTO(-1, "N/A", "N/A", -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {

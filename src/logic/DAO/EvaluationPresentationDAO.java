@@ -65,7 +65,7 @@ public class EvaluationPresentationDAO {
     }
 
     public EvaluationPresentationDTO searchEvaluationPresentationById(int idEvaluation) throws SQLException {
-        EvaluationPresentationDTO evaluation = null;
+        EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(-1, "-1", null, null, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {

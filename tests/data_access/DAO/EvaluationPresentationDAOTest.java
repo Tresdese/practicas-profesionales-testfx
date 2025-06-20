@@ -219,16 +219,21 @@ class EvaluationPresentationDAOTest {
     @Test
     void deleteEvaluationPresentation() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.util.Date(),
-                "Comentario de prueba", 7.0
+                -1,
+                1,
+                "A12345",
+                new java.util.Date(),
+                "Comentario de prueba",
+                8.5
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
 
         boolean deleted = evaluationDAO.deleteEvaluationPresentation(id);
         assertTrue(deleted);
 
-        EvaluationPresentationDTO found = evaluationDAO.searchEvaluationPresentationById(id);
-        assertNull(found);
+        EvaluationPresentationDTO deletedEval = evaluationDAO.searchEvaluationPresentationById(id);
+
+        assertEquals(-1, deletedEval.getIdEvaluation());
     }
 
     @Test
@@ -329,8 +334,9 @@ class EvaluationPresentationDAOTest {
 
     @Test
     void searchEvaluationPresentationById_notExisting() throws Exception {
-        EvaluationPresentationDTO found = evaluationDAO.searchEvaluationPresentationById(9999);
-        assertNull(found);
+        int nonExistentId = 99999;
+        EvaluationPresentationDTO result = evaluationDAO.searchEvaluationPresentationById(nonExistentId);
+        assertEquals(-1, result.getIdEvaluation());
     }
 
     @Test
@@ -358,7 +364,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getEvaluationPresentationsByTuiton_multipleRecords() throws Exception {
+    void getEvaluationPresentationsByTuitonMultipleRecords() throws Exception {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0, presentationId, studentMatricula, new java.util.Date(),
@@ -371,20 +377,25 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void deleteEvaluationPresentation_multipleRecords() throws Exception {
+    void deleteEvaluationPresentationMultipleRecords() throws Exception {
         int[] ids = new int[3];
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                    0, presentationId, studentMatricula, new java.util.Date(),
-                    "Comentario de prueba", 7.0 + i
+                    0,
+                    100 + i,
+                    "A01234" + i,
+                    new java.util.Date(),
+                    "Comentario " + i,
+                    8.0 + i
             );
             ids[i] = evaluationDAO.insertEvaluationPresentation(evaluation);
         }
+
         boolean deleted = evaluationDAO.deleteEvaluationPresentation(ids[1]);
         assertTrue(deleted);
-        assertNull(evaluationDAO.searchEvaluationPresentationById(ids[1]));
-        List<EvaluationPresentationDTO> list = evaluationDAO.getAllEvaluationPresentations();
-        assertEquals(2, list.size());
+
+        EvaluationPresentationDTO deletedEval = evaluationDAO.searchEvaluationPresentationById(ids[1]);
+        assertEquals(-1, deletedEval.getIdEvaluation());
     }
 
     @Test

@@ -204,7 +204,9 @@ class ActivityScheduleDAOTest {
     void testSearchNonExistentActivitySchedule() throws SQLException {
         ActivityScheduleDTO nonExistent = new ActivityScheduleDTO(999, 999);
         ActivityScheduleDTO result = activityScheduleDAO.searchActivityScheduleByIdScheduleAndIdActivity(nonExistent);
-        assertNull(result, "Searching for a non-existent record should return null.");
+        assertNotNull(result, "El resultado no debe ser null.");
+        assertEquals(-1, result.getIdSchedule(), "El idSchedule debe ser -1 para un registro inexistente.");
+        assertEquals(-1, result.getIdActivity(), "El idActivity debe ser -1 para un registro inexistente.");
     }
 
     @Test

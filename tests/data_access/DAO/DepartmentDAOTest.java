@@ -87,12 +87,22 @@ class DepartmentDAOTest {
         int id = departments.get(0).getDepartmentId();
         boolean deleted = departmentDAO.deleteDepartment(id);
         assertTrue(deleted);
-        assertNull(departmentDAO.searchDepartmentById(id));
+        DepartmentDTO result = departmentDAO.searchDepartmentById(id);
+        assertEquals(-1, result.getDepartmentId());
+        assertEquals("N/A", result.getName());
+        assertEquals("N/A", result.getDescription());
+        assertEquals(-1, result.getOrganizationId());
     }
 
     @Test
     void searchDepartmentByIdReturnsNullWhenNotExists() throws SQLException {
-        assertNull(departmentDAO.searchDepartmentById(9999));
+        DepartmentDAO dao = new DepartmentDAO();
+        DepartmentDTO result = dao.searchDepartmentById(-999);
+        assertNotNull(result);
+        assertEquals(-1, result.getDepartmentId());
+        assertEquals("N/A", result.getName());
+        assertEquals("N/A", result.getDescription());
+        assertEquals(-1, result.getOrganizationId());
     }
 
     @Test

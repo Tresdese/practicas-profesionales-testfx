@@ -75,13 +75,14 @@ public class ReportDAO implements IReportDAO {
 
     @Override
     public ReportDTO searchReportById(String numberReport) throws SQLException {
+        ReportDTO reportDTO = new ReportDTO("N/A", null, 0, "N/A", "N/A", "N/A", 0, "N/A", "N/A", "0");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, Integer.parseInt(numberReport));
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    return new ReportDTO(
+                    reportDTO = new ReportDTO(
                             String.valueOf(rs.getInt("numReporte")),
                             rs.getDate("fecha_reporte"),
                             rs.getInt("total_horas"),
@@ -96,7 +97,7 @@ public class ReportDAO implements IReportDAO {
                 }
             }
         }
-        return null;
+        return reportDTO;
     }
 
     @Override

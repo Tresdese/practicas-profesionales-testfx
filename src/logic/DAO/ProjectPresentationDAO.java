@@ -56,7 +56,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
     }
 
     public ProjectPresentationDTO searchProjectPresentationById(int idPresentation) throws SQLException {
-        ProjectPresentationDTO projectPresentation = null;
+        ProjectPresentationDTO projectPresentation = new ProjectPresentationDTO(-1, "N/A", null, null);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
