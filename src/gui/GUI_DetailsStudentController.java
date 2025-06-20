@@ -26,33 +26,33 @@ public class GUI_DetailsStudentController {
     private static final Logger LOGGER = LogManager.getLogger(GUI_DetailsStudentController.class);
 
     @FXML
-    private Label labelTuition;
+    private Label tuitionLabel;
     @FXML
-    private Label labelNames;
+    private Label namesLabel;
     @FXML
-    private Label labelSurnames;
+    private Label surnamesLabel;
     @FXML
-    private Label labelEmail;
+    private Label emailLabel;
     @FXML
-    private Label labelNRC;
+    private Label NRCLabel;
     @FXML
-    private Label labelProjectName;
+    private Label projectNameLabel;
     @FXML
-    private Label labelProjectDescription;
+    private Label projectDescriptionLabel;
     @FXML
-    private Label labelProjectOrganization;
+    private Label projectOrganizationLabel;
     @FXML
-    private Button buttonCheckSelfAssessment;
+    private Button checkSelfAssessmentButton;
 
     private HostServices hostServices;
 
     public void setStudent(StudentDTO student) {
         if (student != null) {
-            labelTuition.setText(student.getTuition());
-            labelNames.setText(student.getNames());
-            labelSurnames.setText(student.getSurnames());
-            labelEmail.setText(student.getEmail());
-            labelNRC.setText(student.getNRC());
+            tuitionLabel.setText(student.getTuition());
+            namesLabel.setText(student.getNames());
+            surnamesLabel.setText(student.getSurnames());
+            emailLabel.setText(student.getEmail());
+            NRCLabel.setText(student.getNRC());
 
             showAssignedProject(student);
         }
@@ -66,37 +66,37 @@ public class GUI_DetailsStudentController {
                 ProjectDAO projectDAO = new ProjectDAO();
                 ProjectDTO project = projectDAO.searchProjectById(studentProject.getIdProject());
                 if (project != null) {
-                    labelProjectName.setText(project.getName());
-                    labelProjectDescription.setText(project.getDescription());
+                    projectNameLabel.setText(project.getName());
+                    projectDescriptionLabel.setText(project.getDescription());
 
                     LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
                     LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
-                    labelProjectOrganization.setText(org != null ? org.getName() : "N/A");
+                    projectOrganizationLabel.setText(org != null ? org.getName() : "N/A");
                 } else {
-                    labelProjectName.setText("No asignado");
-                    labelProjectDescription.setText("-");
-                    labelProjectOrganization.setText("-");
+                    projectNameLabel.setText("No asignado");
+                    projectDescriptionLabel.setText("-");
+                    projectOrganizationLabel.setText("-");
                 }
             } else {
-                labelProjectName.setText("No asignado");
-                labelProjectDescription.setText("-");
-                labelProjectOrganization.setText("-");
+                projectNameLabel.setText("No asignado");
+                projectDescriptionLabel.setText("-");
+                projectOrganizationLabel.setText("-");
             }
         } catch (SQLException e) {
             LOGGER.error("Error de base de datos al obtener el proyecto asignado: {}", e.getMessage(), e);
-            labelProjectName.setText("Error BD");
-            labelProjectDescription.setText("Error BD");
-            labelProjectOrganization.setText("Error BD");
+            projectNameLabel.setText("Error BD");
+            projectDescriptionLabel.setText("Error BD");
+            projectOrganizationLabel.setText("Error BD");
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al obtener el proyecto asignado: {}", e.getMessage(), e);
-            labelProjectName.setText("Error");
-            labelProjectDescription.setText("Error");
-            labelProjectOrganization.setText("Error");
+            projectNameLabel.setText("Error");
+            projectDescriptionLabel.setText("Error");
+            projectOrganizationLabel.setText("Error");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener el proyecto asignado: {}", e.getMessage(), e);
-            labelProjectName.setText("Error");
-            labelProjectDescription.setText("Error");
-            labelProjectOrganization.setText("Error");
+            projectNameLabel.setText("Error");
+            projectDescriptionLabel.setText("Error");
+            projectOrganizationLabel.setText("Error");
         }
     }
 
@@ -108,7 +108,7 @@ public class GUI_DetailsStudentController {
 
             GUI_CheckListOfReportsController controller = loader.getController();
 
-            controller.setStudentTuition(labelTuition.getText()); // Luego matrícula
+            controller.setStudentTuition(tuitionLabel.getText()); // Luego matrícula
 
             Stage stage = new Stage();
             stage.setTitle("Lista de Reportes");
@@ -131,7 +131,7 @@ public class GUI_DetailsStudentController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckSelfAssessment.fxml"));
             Parent root = loader.load();
             GUI_CheckSelfAssessmentController controller = loader.getController();
-            controller.setStudentTuition(labelTuition.getText());
+            controller.setStudentTuition(tuitionLabel.getText());
 
             Stage stage = new Stage();
             stage.setTitle("Autoevaluación");
@@ -153,11 +153,11 @@ public class GUI_DetailsStudentController {
             GUI_CheckPresentationGradeController controller = loader.getController();
             // Crea el StudentDTO a partir de los datos actuales o guarda el StudentDTO en una variable de instancia
             StudentDTO student = new StudentDTO();
-            student.setTuition(labelTuition.getText());
-            student.setNames(labelNames.getText());
-            student.setSurnames(labelSurnames.getText());
-            student.setEmail(labelEmail.getText());
-            student.setNRC(labelNRC.getText());
+            student.setTuition(tuitionLabel.getText());
+            student.setNames(namesLabel.getText());
+            student.setSurnames(surnamesLabel.getText());
+            student.setEmail(emailLabel.getText());
+            student.setNRC(NRCLabel.getText());
             controller.setStudent(student);
 
             Stage stage = new Stage();

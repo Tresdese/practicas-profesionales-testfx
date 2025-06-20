@@ -29,9 +29,9 @@ public class GUI_RegisterActivityScheduleController {
     @FXML
     private Button selectFileButton;
     @FXML
-    private TextField fieldMilestone;
+    private TextField milestoneField;
     @FXML
-    private DatePicker fieldEstimatedDate;
+    private DatePicker estimatedDateField;
     @FXML
     private TextField fieldTuition;
     @FXML
@@ -89,8 +89,8 @@ public class GUI_RegisterActivityScheduleController {
 
     private boolean validateInputs() {
         String filePath = evidenceFileTextField.getText();
-        String milestone = fieldMilestone.getText();
-        LocalDate estimatedDate = fieldEstimatedDate.getValue();
+        String milestone = milestoneField.getText();
+        LocalDate estimatedDate = estimatedDateField.getValue();
         String tuition = fieldTuition.getText();
 
         if (filePath.isEmpty() || milestone.isEmpty() || estimatedDate == null || tuition.isEmpty() || selectedEvidenceFile == null) {
@@ -161,8 +161,8 @@ public class GUI_RegisterActivityScheduleController {
     }
 
     private boolean saveActivitySchedule(int evidenceId) {
-        String milestone = fieldMilestone.getText();
-        LocalDate localDate = fieldEstimatedDate.getValue();
+        String milestone = milestoneField.getText();
+        LocalDate localDate = estimatedDateField.getValue();
         String tuition = fieldTuition.getText();
         Timestamp estimatedDate = Timestamp.valueOf(localDate.atStartOfDay());
 
@@ -202,8 +202,8 @@ public class GUI_RegisterActivityScheduleController {
     private void clearForm() {
         evidenceFileTextField.clear();
         selectedEvidenceFile = null;
-        fieldMilestone.clear();
-        fieldEstimatedDate.setValue(null);
+        milestoneField.clear();
+        estimatedDateField.setValue(null);
         fieldTuition.clear();
     }
 }

@@ -16,9 +16,9 @@
         <Separator />
         <VBox spacing="10">
             <Label text="Hito:" />
-            <TextField fx:id="fieldMilestone" promptText="Hito" />
+            <TextField fx:id="milestoneField" promptText="Hito" />
             <Label text="Fecha Estimada:" />
-            <DatePicker fx:id="fieldEstimatedDate" />
+            <DatePicker fx:id="estimatedDateField"/>
             <Label text="Matrícula:" />
             <TextField fx:id="fieldTuition" promptText="Matrícula" editable="false"/>
         </VBox>

@@ -28,7 +28,7 @@ public class GUI_EvaluatePresentationController {
     private Button saveButton;
 
     @FXML
-    private TextField averageField;
+    private TextField averageGradeField;
 
     @FXML
     private TextArea commentArea;
@@ -217,7 +217,7 @@ public class GUI_EvaluatePresentationController {
             }
 
             double averageScore = totalScore / evaluationDetails.size();
-            averageField.setText(String.format("%.2f", averageScore));
+            averageGradeField.setText(String.format("%.2f", averageScore));
 
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0,

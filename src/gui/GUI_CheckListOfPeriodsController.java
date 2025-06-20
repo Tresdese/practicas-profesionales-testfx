@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import logic.DTO.PeriodDTO;
 import logic.DAO.PeriodDAO;
 import logic.DTO.Role;
@@ -21,19 +20,19 @@ public class GUI_CheckListOfPeriodsController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckListOfPeriodsController.class);
 
     @FXML
-    private TableView<PeriodDTO> tableViewPeriods;
+    private TableView<PeriodDTO> periodsTableView;
 
     @FXML
-    private TableColumn<PeriodDTO, String> columnIdPeriod;
+    private TableColumn<PeriodDTO, String> idPeriodColumn;
 
     @FXML
-    private TableColumn<PeriodDTO, String> columnName;
+    private TableColumn<PeriodDTO, String> nameColumn;
 
     @FXML
-    private TableColumn<PeriodDTO, java.sql.Timestamp> columnStartDate;
+    private TableColumn<PeriodDTO, java.sql.Timestamp> startDateColumn;
 
     @FXML
-    private TableColumn<PeriodDTO, java.sql.Timestamp> columnEndDate;
+    private TableColumn<PeriodDTO, java.sql.Timestamp> endDateColumn;
 
     @FXML
     private TextField searchField;
@@ -42,13 +41,13 @@ public class GUI_CheckListOfPeriodsController {
     private Button searchButton;
 
     @FXML
-    private Button buttonRegisterPeriod;
+    private Button registerPeriodButton;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private Label labelPeriodCounts;
+    private Label periodCountsLabel;
 
     private PeriodDTO selectedPeriod;
     private PeriodDAO periodDAO;
@@ -57,19 +56,19 @@ public class GUI_CheckListOfPeriodsController {
     public void initialize() {
         this.periodDAO = new PeriodDAO();
 
-        columnIdPeriod.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
-        columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        columnStartDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-        columnEndDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        idPeriodColumn.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
 
         loadPeriodData();
 
         searchButton.setOnAction(event -> searchPeriod());
-        buttonRegisterPeriod.setOnAction(event -> openRegisterPeriodWindow());
+        registerPeriodButton.setOnAction(event -> openRegisterPeriodWindow());
 
-        tableViewPeriods.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        periodsTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             selectedPeriod = newVal;
-            tableViewPeriods.refresh();
+            periodsTableView.refresh();
         });
     }
 
@@ -97,7 +96,7 @@ public class GUI_CheckListOfPeriodsController {
             statusLabel.setText("Error al conectar a la base de datos.");
             logger.error("Error al cargar los periodos: {}", e.getMessage(), e);
         }
-        tableViewPeriods.setItems(periodList);
+        periodsTableView.setItems(periodList);
         updatePeriodCounts(periodList);
     }
 
@@ -120,13 +119,13 @@ public class GUI_CheckListOfPeriodsController {
             logger.error("Error al buscar periodos: {}", e.getMessage(), e);
         }
 
-        tableViewPeriods.setItems(filteredList);
+        periodsTableView.setItems(filteredList);
         updatePeriodCounts(filteredList);
     }
 
     private void updatePeriodCounts(ObservableList<PeriodDTO> list) {
         int total = list.size();
-        labelPeriodCounts.setText("Totales: " + total);
+        periodCountsLabel.setText("Totales: " + total);
     }
 
     public void setUserRole(Role userRole) {

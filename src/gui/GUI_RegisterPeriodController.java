@@ -18,10 +18,10 @@ public class GUI_RegisterPeriodController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldIdPeriod, fieldName;
+    private TextField periodLabel, nameField;
 
     @FXML
-    private DatePicker fieldStartDate, fieldEndDate;
+    private DatePicker startDateLabel, endDateField;
 
     @FXML
     private Button registerButton;
@@ -40,15 +40,15 @@ public class GUI_RegisterPeriodController {
                 return;
             }
 
-            LocalDate startLocalDate = fieldStartDate.getValue();
-            LocalDate endLocalDate = fieldEndDate.getValue();
+            LocalDate startLocalDate = startDateLabel.getValue();
+            LocalDate endLocalDate = endDateField.getValue();
 
             Timestamp startDate = Timestamp.valueOf(startLocalDate.atStartOfDay());
             Timestamp endDate = Timestamp.valueOf(endLocalDate.atStartOfDay());
 
             PeriodDTO period = new PeriodDTO(
-                    fieldIdPeriod.getText(),
-                    fieldName.getText(),
+                    periodLabel.getText(),
+                    nameField.getText(),
                     startDate,
                     endDate
             );
@@ -79,9 +79,9 @@ public class GUI_RegisterPeriodController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldIdPeriod.getText().isEmpty() &&
-                !fieldName.getText().isEmpty() &&
-                fieldStartDate.getValue() != null &&
-                fieldEndDate.getValue() != null;
+        return !periodLabel.getText().isEmpty() &&
+                !nameField.getText().isEmpty() &&
+                startDateLabel.getValue() != null &&
+                endDateField.getValue() != null;
     }
 }

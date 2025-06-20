@@ -13,12 +13,12 @@
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
-                <TableView fx:id="tableViewPeriods" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="periodsTableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnIdPeriod" prefWidth="120.0" text="ID Periodo" />
-                        <TableColumn fx:id="columnName" prefWidth="200.0" text="Nombre" />
-                        <TableColumn fx:id="columnStartDate" prefWidth="318.0" text="Fecha de Inicio" />
-                        <TableColumn fx:id="columnEndDate" prefWidth="311.0" text="Fecha de Fin" />
+                        <TableColumn fx:id="idPeriodColumn" prefWidth="120.0" text="ID Periodo" />
+                        <TableColumn fx:id="nameColumn" prefWidth="200.0" text="Nombre" />
+                        <TableColumn fx:id="startDateColumn" prefWidth="318.0" text="Fecha de Inicio" />
+                        <TableColumn fx:id="endDateColumn" prefWidth="311.0" text="Fecha de Fin" />
                     </columns>
                 </TableView>
             </center>
@@ -34,8 +34,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterPeriod" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Periodo" textFill="WHITE" />
+        <Button fx:id="registerPeriodButton" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Periodo" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelPeriodCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="periodCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

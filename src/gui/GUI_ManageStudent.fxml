@@ -18,7 +18,7 @@
         <Label layoutX="90.0" layoutY="138.0" text="NRC:" />
         <ChoiceBox fx:id="nrcChoiceBox" layoutX="210.0" layoutY="138.0" prefHeight="26.0" prefWidth="150.0" />
         <Label layoutX="90.0" layoutY="178.0" text="Avance Crediticio:" />
-        <TextField fx:id="fieldCreditAdvance" layoutX="210.0" layoutY="178.0" />
+        <TextField fx:id="creditAdvanceField" layoutX="210.0" layoutY="178.0" />
         <HBox alignment="CENTER" layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0">
             <children>
                 <Button onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />

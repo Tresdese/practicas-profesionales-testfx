@@ -37,7 +37,7 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterProject" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Proyecto" textFill="WHITE" />
+        <Button fx:id="registerProjectButton" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Proyecto" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
         <Label fx:id="projectCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>

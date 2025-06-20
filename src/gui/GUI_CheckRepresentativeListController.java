@@ -28,25 +28,25 @@ public class GUI_CheckRepresentativeListController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckRepresentativeListController.class);
 
     @FXML
-    private Button buttonRegisterRepresentative;
+    private Button registerRepresentativeButton;
 
     @FXML
-    private TableColumn<RepresentativeDTO, ?> representativeEmail;
+    private TableColumn<RepresentativeDTO, ?> representativeEmailColumn;
 
     @FXML
-    private TableColumn<RepresentativeDTO, ?> representativeName;
+    private TableColumn<RepresentativeDTO, ?> representativeNameColumn;
 
     @FXML
-    private TableColumn<RepresentativeDTO, String> representativeDepartment;
+    private TableColumn<RepresentativeDTO, String> representativeDepartmentColumn;
 
     @FXML
-    private TableColumn<RepresentativeDTO, String> representativeOrganization;
+    private TableColumn<RepresentativeDTO, String> representativeOrganizationColumn;
 
     @FXML
-    private TableColumn<RepresentativeDTO, ?> representativeSurname;
+    private TableColumn<RepresentativeDTO, ?> representativeSurnameColumn;
 
     @FXML
-    private TableColumn<RepresentativeDTO, Void> columnManagement;
+    private TableColumn<RepresentativeDTO, Void> managementColumn;
 
     @FXML
     private Button searchButton;
@@ -58,7 +58,7 @@ public class GUI_CheckRepresentativeListController {
     private Label statusLabel;
 
     @FXML
-    private Label labelRepresentativeCounts;
+    private Label representativeCountsLabel;
 
     @FXML
     private TableView<RepresentativeDTO> tableView;
@@ -75,17 +75,17 @@ public class GUI_CheckRepresentativeListController {
             logger.error("Error al inicializar el servicio del representante: {}", e.getMessage(), e);
         }
 
-        representativeName.setCellValueFactory(new PropertyValueFactory<>("names"));
-        representativeSurname.setCellValueFactory(new PropertyValueFactory<>("surnames"));
-        representativeEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        representativeNameColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
+        representativeSurnameColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
+        representativeEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
-        representativeDepartment.setCellValueFactory(cellData -> {
+        representativeDepartmentColumn.setCellValueFactory(cellData -> {
             String departmentId = cellData.getValue().getIdDepartment();
             String departmentName = getDepartmentNameById(departmentId);
             return new SimpleStringProperty(departmentName);
         });
 
-        representativeOrganization.setCellValueFactory(cellData -> {
+        representativeOrganizationColumn.setCellValueFactory(cellData -> {
             String departmentId = cellData.getValue().getIdDepartment();
             String organizationName = getOrganizationNameByDepartmentId(departmentId);
             return new SimpleStringProperty(organizationName);
@@ -96,7 +96,7 @@ public class GUI_CheckRepresentativeListController {
         loadOrganizationData();
 
         searchButton.setOnAction(event -> searchRepresentative());
-        buttonRegisterRepresentative.setOnAction(event -> openRegisterRepresentativeWindow());
+        registerRepresentativeButton.setOnAction(event -> openRegisterRepresentativeWindow());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedRepresentative = (RepresentativeDTO) newValue;
@@ -218,7 +218,7 @@ public class GUI_CheckRepresentativeListController {
             }
         };
 
-        columnManagement.setCellFactory(cellFactory);
+        managementColumn.setCellFactory(cellFactory);
     }
 
     private void openManageRepresentativeWindow(RepresentativeDTO representative) {
@@ -234,6 +234,6 @@ public class GUI_CheckRepresentativeListController {
 
     private void updateRepresentativeCounts(ObservableList<RepresentativeDTO> list) {
         int total = list.size();
-        labelRepresentativeCounts.setText("Totales: " + total);
+        representativeCountsLabel.setText("Totales: " + total);
     }
 }

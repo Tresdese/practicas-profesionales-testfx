@@ -50,7 +50,7 @@ public class GUI_RegisterProjectController {
     @FXML
     private ChoiceBox<DepartmentDTO> departmentBox;
     @FXML
-    private Button buttonRegisterProyect;
+    private Button registerProyectButton;
     @FXML
     private Label statusLabel;
     @FXML

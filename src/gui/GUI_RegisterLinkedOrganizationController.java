@@ -23,7 +23,7 @@ public class GUI_RegisterLinkedOrganizationController {
     private Label statusLabel;
 
     @FXML
-    private TextField nameField, fieldAddress;
+    private TextField nameField, addressField;
 
     @FXML
     private Label nameCharCountLabel, addressCharCountLabel;
@@ -51,9 +51,9 @@ public class GUI_RegisterLinkedOrganizationController {
 
         // Limitar caracteres y mostrar contador
         nameField.setTextFormatter(createTextFormatter(MAX_NAME));
-        fieldAddress.setTextFormatter(createTextFormatter(MAX_ADDRESS));
+        addressField.setTextFormatter(createTextFormatter(MAX_ADDRESS));
         configureCharCount(nameField, nameCharCountLabel, MAX_NAME);
-        configureCharCount(fieldAddress, addressCharCountLabel, MAX_ADDRESS);
+        configureCharCount(addressField, addressCharCountLabel, MAX_ADDRESS);
     }
 
     private TextFormatter<String> createTextFormatter(int maxLength) {
@@ -78,7 +78,7 @@ public class GUI_RegisterLinkedOrganizationController {
             }
 
             String name = nameField.getText();
-            String address = fieldAddress.getText();
+            String address = addressField.getText();
 
             LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
             String generatedId = organizationService.registerOrganization(organization);
@@ -108,6 +108,6 @@ public class GUI_RegisterLinkedOrganizationController {
 
     public boolean areFieldsFilled() {
         return !nameField.getText().isEmpty() &&
-                !fieldAddress.getText().isEmpty();
+                !addressField.getText().isEmpty();
     }
 }

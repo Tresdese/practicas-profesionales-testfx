@@ -15,10 +15,10 @@
             <center>
                 <TableView fx:id="tableView" editable="false" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnMilestone" prefWidth="149.0" text="Hito" />
-                        <TableColumn fx:id="columnEstimatedDate" prefWidth="267.0" text="Fecha Estimada" />
-                        <TableColumn fx:id="columnTuition" prefWidth="207.0" text="Matrícula" />
-                        <TableColumn fx:id="columnEvidence" prefWidth="326.0" text="Evidencia" />
+                        <TableColumn fx:id="milestoneColumn" prefWidth="149.0" text="Hito" />
+                        <TableColumn fx:id="estimatedDateColumn" prefWidth="267.0" text="Fecha Estimada" />
+                        <TableColumn fx:id="tuitionColumn" prefWidth="207.0" text="Matrícula" />
+                        <TableColumn fx:id="evidenceColumn" prefWidth="326.0" text="Evidencia" />
                     </columns>
                 </TableView>
             </center>
@@ -34,8 +34,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterSchedule" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Cronograma" textFill="WHITE" />
+        <Button fx:id="registerScheduleButton" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Cronograma" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelScheduleCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="scheduleCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

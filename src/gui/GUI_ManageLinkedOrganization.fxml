@@ -11,9 +11,9 @@
                 <Font size="20.0" />
             </font></Label>
         <Label layoutX="69.0" layoutY="92.0" text="Nombre:" />
-        <TextField fx:id="fieldName" layoutX="169.0" layoutY="88.0" />
+        <TextField fx:id="nameField" layoutX="169.0" layoutY="88.0" />
         <Label layoutX="69.0" layoutY="149.0" text="Direccion" />
-        <TextField fx:id="fieldAddress" layoutX="169.0" layoutY="145.0" />
+        <TextField fx:id="addressField" layoutX="169.0" layoutY="145.0" />
         <Button layoutX="62.0" layoutY="228.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="14.0" layoutY="202.0" prefHeight="17.0" prefWidth="0.0" textFill="RED" />
       <Button fx:id="registerDepartamentButton" onAction="#handleRegisterDepartament" layoutX="207.0" layoutY="228.0" mnemonicParsing="false" style="-fx-background-color: #2772d3;" text="Registrar Departamento" textFill="WHITE" />

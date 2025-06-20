@@ -12,7 +12,7 @@
 
 <AnchorPane prefHeight="531.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterProjectController">
     <children>
-        <Label fx:id="label" layoutX="227.0" layoutY="27.0" text="Registrar Proyecto" textAlignment="CENTER">
+        <Label fx:id="registerProjectLabel" layoutX="227.0" layoutY="27.0" text="Registrar Proyecto" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
@@ -33,7 +33,7 @@
         <DatePicker fx:id="startDatePicker" layoutX="233.0" layoutY="244.0" />
         <Label layoutX="117.0" layoutY="425.0" text="Departamento" />
         <ChoiceBox fx:id="departmentBox" layoutX="234.0" layoutY="421.0" prefWidth="150.0" />
-        <Button fx:id="buttonRegisterProyect" layoutX="238.0" layoutY="478.0" mnemonicParsing="false" onAction="#handleRegisterProject" style="-fx-background-color: #2772d3;" text="Registrar proyecto" textFill="WHITE">
+        <Button fx:id="registerProyectButton" layoutX="238.0" layoutY="478.0" mnemonicParsing="false" onAction="#handleRegisterProject" style="-fx-background-color: #2772d3;" text="Registrar proyecto" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
             </opaqueInsets>
