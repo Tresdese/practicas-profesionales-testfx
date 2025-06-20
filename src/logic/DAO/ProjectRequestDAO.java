@@ -136,7 +136,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         return requests;
     }
 
-    private ProjectRequestDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+    public ProjectRequestDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         return new ProjectRequestDTO(
                 rs.getInt("idSolicitud"),
                 rs.getString("matricula"),

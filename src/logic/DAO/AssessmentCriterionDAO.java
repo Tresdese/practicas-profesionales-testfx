@@ -2,6 +2,7 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.AssessmentCriterionDTO;
+import logic.interfaces.IAssessmentCriterionDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AssessmentCriterionDAO {
+public class AssessmentCriterionDAO implements IAssessmentCriterionDAO {
 
     private static final String SQL_INSERT = "INSERT INTO criterio_de_evaluacion (idCriterio, nombreCriterio) VALUES (?, ?)";
     private static final String SQL_UPDATE = "UPDATE criterio_de_evaluacion SET nombreCriterio = ? WHERE idCriterio = ?";

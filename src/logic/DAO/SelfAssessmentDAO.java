@@ -14,12 +14,13 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_DELETE = "DELETE FROM autoevaluacion WHERE idAutoevaluacion = ?";
     private final static String SQL_SELECT = "SELECT * FROM autoevaluacion WHERE idAutoevaluacion = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM autoevaluacion";
+    private final static String SQL_GET_LAST_ID = "SELECT MAX(idAutoevaluacion) FROM autoevaluacion";
     private final static String SQL_EXISTS = "SELECT COUNT(*) FROM autoevaluacion WHERE matricula = ? AND idProyecto = ?";
 
     @Override
     public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, selfAssessment.getComments());
             statement.setFloat(2, selfAssessment.getGrade());
@@ -39,8 +40,8 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
 
     @Override
     public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, selfAssessment.getComments());
             statement.setFloat(2, selfAssessment.getGrade());
@@ -61,8 +62,8 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
 
     @Override
     public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, selfAssessment.getSelfAssessmentId());
             return statement.executeUpdate() > 0;
@@ -82,8 +83,8 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
                 SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA,
                 "N/A"
         );
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, Integer.parseInt(selfAssessmentId));
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -98,8 +99,8 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     @Override
     public List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException {
         List<SelfAssessmentDTO> selfAssessments = new ArrayList<>();
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -111,10 +112,10 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
 
     public int getLastSelfAssessmentId() throws Exception {
         int lastId = -1;
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT MAX(idAutoevaluacion) FROM autoevaluacion")) {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(SQL_GET_LAST_ID)) {
             if (rs.next()) {
                 lastId = rs.getInt(1);
             }
@@ -125,7 +126,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         return lastId;
     }
 
-    private SelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+    public SelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         int id = rs.getInt("idAutoevaluacion");
         String comments = rs.getString("comentarios");
         float grade = rs.getFloat("calificacion");
@@ -149,8 +150,8 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     }
 
     public boolean existsSelfAssessment(String matricula, int idProyecto) throws SQLException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection connection = db.connectDB();
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_EXISTS)) {
             statement.setString(1, matricula);
             statement.setInt(2, idProyecto);

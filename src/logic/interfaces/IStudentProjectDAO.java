@@ -13,5 +13,7 @@ public interface IStudentProjectDAO {
 
     StudentProjectDTO searchStudentProjectByIdProject(String idProject) throws SQLException;
 
+    StudentProjectDTO searchStudentProjectByIdTuiton(String tuiton) throws SQLException;
+
     List<StudentProjectDTO> getAllStudentProjects() throws SQLException;
 }

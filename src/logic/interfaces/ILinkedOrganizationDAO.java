@@ -14,4 +14,15 @@ public interface ILinkedOrganizationDAO {
     LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException;
 
     List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException;
+
+    LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException;
+
+    boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException;
+
+    boolean isNameRegistered(String name) throws SQLException;
+
+    boolean isAddressRegistered(String address) throws SQLException;
+
+    String getOrganizationNameById(String idOrganization) throws SQLException;
+
 }

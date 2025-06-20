@@ -9,8 +9,9 @@ import java.util.List;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.DepartmentDTO;
+import logic.interfaces.IDeparmentDAO;
 
-public class DepartmentDAO {
+public class DepartmentDAO implements IDeparmentDAO {
 
     private static final String SQL_INSERT = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE departamento SET nombre = ?, descripcion = ?, idOrganizacion = ? WHERE idDepartamento = ?";

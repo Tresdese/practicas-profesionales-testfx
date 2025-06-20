@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface IAssessmentCriterionDAO {
 
-    boolean insertAssessmentCriterion(AssessmentCriterionDTO criterion, Connection connection) throws SQLException;
+    boolean insertAssessmentCriterion(AssessmentCriterionDTO criterion) throws SQLException;
 
-    boolean updateAssessmentCriterion(AssessmentCriterionDTO criterion, Connection connection) throws SQLException;
+    boolean updateAssessmentCriterion(AssessmentCriterionDTO criterion) throws SQLException;
 
-    boolean deleteAssessmentCriterion(String idCriterion, Connection connection) throws SQLException;
+    boolean deleteAssessmentCriterion(String idCriterion) throws SQLException;
 
-    AssessmentCriterionDTO searchAssessmentCriterionById(String idCriterion, Connection connection) throws SQLException;
+    AssessmentCriterionDTO searchAssessmentCriterionById(String idCriterion) throws SQLException;
 
-    List<AssessmentCriterionDTO> getAllAssessmentCriteria(Connection connection) throws SQLException;
+    List<AssessmentCriterionDTO> getAllAssessmentCriteria() throws SQLException;
 }

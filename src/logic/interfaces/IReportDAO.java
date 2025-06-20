@@ -15,4 +15,6 @@ public interface IReportDAO {
     ReportDTO searchReportById(String numberReport) throws SQLException;
 
     List<ReportDTO> getAllReports() throws SQLException;
+
+    int getTotalReportedHoursByStudent(String tuition) throws SQLException;
 }
