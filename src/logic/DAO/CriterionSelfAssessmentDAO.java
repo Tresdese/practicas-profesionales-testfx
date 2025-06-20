@@ -82,7 +82,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
         return criterionSelfAssessments;
     }
 
-    private CriterionSelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+    public CriterionSelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         int idSelfAssessment = rs.getInt("idAutoevaluacion");
         int idCriteria = rs.getInt("idCriterios");
         float grade = rs.getFloat("calificacion");

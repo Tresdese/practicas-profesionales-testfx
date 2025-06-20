@@ -69,6 +69,9 @@ public class GUI_RegisterStudentController {
         emailField.setTextFormatter(createTextFormatter(MAX_EMAIL));
         userField.setTextFormatter(createTextFormatter(MAX_USER));
         passwordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+        creditAdvanceField.setTextFormatter(new TextFormatter<>(change ->
+                change.getControlNewText().matches("\\d*") ? change : null
+        ));
     }
 
     private TextFormatter<String> createTextFormatter(int maxLength) {

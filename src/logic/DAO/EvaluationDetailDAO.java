@@ -2,6 +2,7 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.EvaluationDetailDTO;
+import logic.interfaces.IEvaluationDetailDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvaluationDetailDAO {
+public class EvaluationDetailDAO implements IEvaluationDetailDAO {
 
     private static final String SQL_INSERT = "INSERT INTO detalle_evaluacion (idEvaluacion, idCriterio, calificacion) VALUES (?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE detalle_evaluacion SET idEvaluacion = ?, idCriterio = ?, calificacion = ? WHERE idDetalle = ?";

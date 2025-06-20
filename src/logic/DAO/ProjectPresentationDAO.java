@@ -3,6 +3,7 @@ package logic.DAO;
 import data_access.ConnectionDataBase;
 import logic.DTO.ProjectPresentationDTO;
 import logic.DTO.Tipe;
+import logic.interfaces.IProjectPresentationDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectPresentationDAO {
+public class ProjectPresentationDAO implements IProjectPresentationDAO {
 
     private static final String SQL_INSERT = "INSERT INTO presentacion_proyecto (idPresentacion, idProyecto, fecha, tipo) VALUES (?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE presentacion_proyecto SET idProyecto = ?, fecha = ?, tipo = ? WHERE idPresentacion = ?";
@@ -19,6 +20,7 @@ public class ProjectPresentationDAO {
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM presentacion_proyecto WHERE idPresentacion = ?";
     private static final String SQL_SELECT_BY_PROJECT_ID = "SELECT * FROM presentacion_proyecto WHERE idProyecto = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM presentacion_proyecto";
+    private static final String SQL_SELECT_UPCOMING = "SELECT * FROM presentacion_proyecto WHERE fecha > NOW() ORDER BY fecha ASC";
 
     public boolean insertProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
@@ -113,7 +115,6 @@ public class ProjectPresentationDAO {
 
     public List<ProjectPresentationDTO> getUpcomingPresentations() throws SQLException {
         List<ProjectPresentationDTO> upcomingPresentations = new ArrayList<>();
-        String SQL_SELECT_UPCOMING = "SELECT * FROM presentacion_proyecto WHERE fecha > NOW() ORDER BY fecha ASC";
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

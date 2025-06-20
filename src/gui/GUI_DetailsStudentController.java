@@ -143,4 +143,31 @@ public class GUI_DetailsStudentController {
             LOGGER.error("Error inesperado al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
         }
     }
+
+    @FXML
+    private void handleCheckPresentationGrade() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckPresentationGrade.fxml"));
+            Parent root = loader.load();
+
+            GUI_CheckPresentationGradeController controller = loader.getController();
+            // Crea el StudentDTO a partir de los datos actuales o guarda el StudentDTO en una variable de instancia
+            StudentDTO student = new StudentDTO();
+            student.setTuition(labelTuition.getText());
+            student.setNames(labelNames.getText());
+            student.setSurnames(labelSurnames.getText());
+            student.setEmail(labelEmail.getText());
+            student.setNRC(labelNRC.getText());
+            controller.setStudent(student);
+
+            Stage stage = new Stage();
+            stage.setTitle("Calificaciones de Presentación");
+            stage.setScene(new Scene(root));
+            stage.show();
+        }catch (IOException e) {
+            LOGGER.error("No se pudo abrir la ventana de Calificaciones de Presentacion: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de Calificaciones de Presentacion: {}", e.getMessage(), e);
+        }
+    }
 }

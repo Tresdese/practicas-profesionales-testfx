@@ -15,4 +15,6 @@ public interface IEvidenceDAO {
     EvidenceDTO searchEvidenceById(int idEvidence) throws SQLException;
 
     List<EvidenceDTO> getAllEvidences() throws SQLException;
+
+    int getNextEvidenceId() throws SQLException;
 }

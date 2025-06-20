@@ -15,4 +15,12 @@ public interface IStudentDAO {
     StudentDTO searchStudentByTuition(String tuiton) throws SQLException;
 
     List<StudentDTO> getAllStudents() throws SQLException;
+
+    StudentDTO searchStudentByUserAndPassword(String username, String password) throws SQLException;
+
+    boolean isTuitonRegistered(String tuiton) throws SQLException;
+
+    boolean isPhoneRegistered(String phone) throws SQLException;
+
+    boolean isEmailRegistered(String email) throws SQLException;
 }

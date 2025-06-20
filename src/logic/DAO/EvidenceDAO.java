@@ -14,6 +14,7 @@ public class EvidenceDAO implements IEvidenceDAO {
     private final static String SQL_DELETE = "DELETE FROM evidencia WHERE idEvidencia = ?";
     private final static String SQL_SELECT = "SELECT * FROM evidencia WHERE idEvidencia = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM evidencia";
+    private final static String SQL_NEXT_ID = "SELECT MAX(idEvidencia) FROM evidencia";
 
     public boolean insertEvidence(EvidenceDTO evidence) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
@@ -82,7 +83,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              Statement statement = connection.createStatement();
-             ResultSet rs = statement.executeQuery("SELECT MAX(idEvidencia) FROM evidencia")) {
+             ResultSet rs = statement.executeQuery(SQL_NEXT_ID)) {
             if (rs.next()) {
                 nextId = rs.getInt(1) + 1;
             }

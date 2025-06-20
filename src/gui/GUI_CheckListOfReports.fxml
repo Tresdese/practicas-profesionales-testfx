@@ -3,20 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gui.GUI_CheckListOfReportsController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="769.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckListOfReportsController">
     <children>
-        <Label layoutX="200.0" layoutY="20.0" text="Reportes del Estudiante" style="-fx-font-size: 18px;"/>
-        <TableView fx:id="reportsTableView" layoutX="30.0" layoutY="60.0" prefWidth="540.0" prefHeight="300.0">
+        <Label layoutX="302.0" layoutY="14.0" style="-fx-font-size: 18px;" text="Reportes del Estudiante" />
+        <TableView fx:id="reportsTableView" layoutX="61.0" layoutY="60.0" prefHeight="300.0" prefWidth="670.0">
             <columns>
-                <TableColumn fx:id="numberColumn" text="No. Reporte" prefWidth="80.0"/>
-                <TableColumn fx:id="dateColumn" text="Fecha" prefWidth="100.0"/>
-                <TableColumn fx:id="hoursColumn" text="Horas" prefWidth="60.0"/>
-                <TableColumn fx:id="objectiveColumn" text="Objetivo General" prefWidth="150.0"/>
-                <TableColumn fx:id="resultColumn" text="Resultado" prefWidth="100.0"/>
-                <TableColumn fx:id="evidenceColumn" text="Acción" prefWidth="80.0"/>
+                <TableColumn fx:id="numberColumn" prefWidth="80.0" text="No. Reporte" />
+                <TableColumn fx:id="dateColumn" prefWidth="100.0" text="Fecha" />
+                <TableColumn fx:id="hoursColumn" prefWidth="93.0" text="Horas" />
+                <TableColumn fx:id="objectiveColumn" prefWidth="117.39996337890625" text="Objetivo General" />
+                <TableColumn fx:id="resultColumn" prefWidth="138.00003051757812" text="Resultado" />
+                <TableColumn fx:id="evidenceColumn" prefWidth="140.60003662109375" text="Acción" />
             </columns>
         </TableView>
     </children>

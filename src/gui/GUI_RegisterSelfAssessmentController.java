@@ -263,9 +263,13 @@ public class GUI_RegisterSelfAssessmentController {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             return uploadFile(file.getAbsolutePath(), parentId);
-        } catch (IOException | GeneralSecurityException e) {
-            showError("Error al subir archivo a Google Drive.");
-            LOGGER.log(Level.SEVERE, "Error al subir archivo a Drive", e);
+        } catch (IOException e) {
+            showError("Error de acceso al archivo al subir a Google Drive.");
+            LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
+            return null;
+        } catch (GeneralSecurityException e) {
+            showError("Error al conectar con Google Drive.");
+            LOGGER.log(Level.SEVERE, "GeneralSecurityException al subir archivo a Drive", e);
             return null;
         }
     }
@@ -278,9 +282,13 @@ public class GUI_RegisterSelfAssessmentController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Autoevaluacion", parentId);
             return parentId;
-        } catch (IOException | GeneralSecurityException e) {
-            showError("Error al crear carpetas en Google Drive.");
-            LOGGER.log(Level.SEVERE, "Error al crear carpetas en Drive", e);
+        } catch (IOException e) {
+            showError("Error de acceso a las carpetas de Google Drive.");
+            LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
+            return null;
+        } catch (GeneralSecurityException e) {
+            showError("Error al conectar con Google Drive.");
+            LOGGER.log(Level.SEVERE, "GeneralSecurityException al crear carpeta en Drive", e);
             return null;
         }
     }
