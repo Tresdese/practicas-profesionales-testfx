@@ -228,9 +228,10 @@ public class GUI_CheckProjectListController {
             GUI_RegisterProjectController registerController = loader.getController();
 
             Stage stage = new Stage();
+            stage.setTitle("Registrar Proyecto");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de registro de proyectos: {}", e.getMessage(), e);
         }
     }

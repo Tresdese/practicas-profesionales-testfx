@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="185.0" prefWidth="608.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterLinkedOrganizationController">
+<AnchorPane prefHeight="370.0" prefWidth="608.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterLinkedOrganizationController">
     <children>
         <Label fx:id="label" layoutX="173.0" layoutY="54.0" text="Registrar Organización Vinculada" textAlignment="CENTER">
             <font>
@@ -16,15 +16,19 @@
         </Label>
         <Label fx:id="labelName" layoutX="147.0" layoutY="150.0" text="Nombre" />
         <TextField fx:id="nameField" layoutX="281.0" layoutY="146.0" />
+        <Label fx:id="nameCharCountLabel" layoutX="470.0" layoutY="150.0" text="0/100" />
         <Label fx:id="labelAddress" layoutX="144.0" layoutY="214.0" text="Dirección" />
         <TextField fx:id="fieldAddress" layoutX="281.0" layoutY="210.0" />
+        <Label fx:id="addressCharCountLabel" layoutX="470.0" layoutY="214.0" text="0/150" />
         <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="54.0" layoutY="333.0" prefWidth="500.0" textFill="red" wrapText="true">
             <font>
                 <Font size="18.0" />
-            </font></Label>
+            </font>
+        </Label>
         <Button fx:id="registerStudentButton" layoutX="236.0" layoutY="308.0" mnemonicParsing="false" onAction="#handleRegisterLinkedOrganization" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
-            </opaqueInsets></Button>
+            </opaqueInsets>
+        </Button>
     </children>
 </AnchorPane>
