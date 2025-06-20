@@ -291,7 +291,7 @@ public class GUI_AssignedProjectController {
             logic.DAO.LinkedOrganizationDAO orgDAO = new logic.DAO.LinkedOrganizationDAO();
             logic.DTO.LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));
             return org != null ? org.getName() : "N/A";
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.warn("No se pudo obtener la organización: {}", e.getMessage());
             return "N/A";
         }
@@ -304,7 +304,7 @@ public class GUI_AssignedProjectController {
             if (user != null) {
                 return user.getNames() + " " + user.getSurnames();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.warn("No se pudo obtener el nombre del profesor: {}", e.getMessage());
         }
         return "N/A";
@@ -344,8 +344,10 @@ public class GUI_AssignedProjectController {
             String organization = getOrganizationName(project.getIdOrganization());
             String studentName = student.getNames() + " " + student.getSurnames();
             showRegisterReportWindow(project, profAndPeriod[0], nrc, profAndPeriod[1], studentName, organization);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error("Error al abrir la ventana de informe: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al abrir la ventana de informe: {}", e.getMessage(), e);
         }
     }
 }

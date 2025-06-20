@@ -16,6 +16,7 @@ import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class GUI_CheckListLinkedOrganizationController {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de registro de organización: {}", e.getMessage(), e);
         }
     }
@@ -167,7 +168,7 @@ public class GUI_CheckListLinkedOrganizationController {
             GUI_ManageLinkedOrganization manageOrganizationApp = new GUI_ManageLinkedOrganization();
             Stage stage = new Stage();
             manageOrganizationApp.start(stage);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Error al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
         }
     }

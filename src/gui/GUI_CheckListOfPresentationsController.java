@@ -15,6 +15,7 @@ import logic.DTO.ProjectPresentationDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -186,8 +187,10 @@ public class GUI_CheckListOfPresentationsController {
             stage.show();
 
             logger.info("Ventana de Lista de Participantes abierta correctamente.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de Lista de Participantes.", e);
+        } catch (Exception e) {
+            logger.error("Error inesperado al abrir la ventana de Lista de Participantes.", e);
         }
     }
 
@@ -197,7 +200,7 @@ public class GUI_CheckListOfPresentationsController {
             Parent root = loader.load();
 
             GUI_RegisterPresentationController controller = loader.getController();
-            controller.setParentController(this); // Pasa la referencia
+            controller.setParentController(this);
 
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
@@ -205,7 +208,7 @@ public class GUI_CheckListOfPresentationsController {
             stage.show();
 
             logger.info("Ventana de Registrar Presentación abierta correctamente.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al abrir la ventana de Registrar Presentación.", e);
         }
     }

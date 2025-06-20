@@ -92,9 +92,9 @@ public class GUI_CheckAcademicListController {
         try {
             GUI_RegisterAcademic registerAcademicApp = new GUI_RegisterAcademic();
             registerAcademicApp.start(new Stage());
-        } catch (Exception e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
-            logger.error("Error al cargar la interfaz GUI_RegisterAcademic.fxml: {}", e.getMessage(), e);
+        } catch (RuntimeException e) {
+            statusLabel.setText("Error inesperado.");
+            logger.error("Error inesperado al abrir la ventana de registro: {}", e.getMessage(), e);
         }
     }
 
@@ -166,8 +166,8 @@ public class GUI_CheckAcademicListController {
             GUI_ManageAcademic manageAcademicApp = new GUI_ManageAcademic();
             Stage stage = new Stage();
             manageAcademicApp.start(stage);
-        } catch (Exception e) {
-            logger.error("Error al abrir la ventana de gestión de académico: {}", e.getMessage(), e);
+        } catch (RuntimeException e) {
+            logger.error("Error inesperado al abrir la ventana de gestión de académico: {}", e.getMessage(), e);
         }
     }
 
@@ -175,8 +175,6 @@ public class GUI_CheckAcademicListController {
         try {
             List<UserDTO> users = userService.getAllUsers();
             int total = users.size();
-            int activos = 0;
-            int inactivos = 0;
             academicCountsLabel.setText("Totales: " + total);
         } catch (SQLException e) {
             academicCountsLabel.setText("Error al contar académicos");
@@ -186,8 +184,6 @@ public class GUI_CheckAcademicListController {
 
     private void updateAcademicCounts(ObservableList<UserDTO> list) {
         int total = list.size();
-        int activos = 0;
-        int inactivos = 0;
         academicCountsLabel.setText("Totales: " + total);
     }
 }

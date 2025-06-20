@@ -8,13 +8,11 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 public class GUI_CheckListOfPresentations extends Application {
 
     private static final Logger logger = LogManager.getLogger(GUI_CheckListOfPresentations.class);
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -25,7 +23,7 @@ public class GUI_CheckListOfPresentations extends Application {
             primaryStage.setScene(new Scene(root));
             primaryStage.show();
             logger.info("Ventana de Lista de Presentaciones iniciada correctamente.");
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("Error al iniciar la ventana de Lista de Presentaciones.", e);
         }
     }

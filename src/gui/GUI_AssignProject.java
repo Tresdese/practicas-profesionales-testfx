@@ -38,8 +38,4 @@ public class GUI_AssignProject extends Application {
             logger.error("Error al cargar la interfaz GUI_AssignProject.fxml: {}", e.getMessage(), e);
         }
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
