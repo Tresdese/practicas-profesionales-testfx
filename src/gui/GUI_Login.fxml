@@ -2,18 +2,36 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="gui.GUI_LoginController"
-            prefHeight="400.0" prefWidth="600.0">
+            prefHeight="400.0" prefWidth="600.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #e0eafc, #cfdef3);">
     <children>
-        <VBox alignment="CENTER" spacing="10.0" layoutX="150.0" layoutY="100.0">
-            <Label text="Inicio de Sesión" style="-fx-font-size: 18px;"/>
-            <TextField fx:id="usernameField" promptText="Nombre de usuario"/>
-            <PasswordField fx:id="passwordField" promptText="Contraseña"/>
-            <Button fx:id="loginButton" text="Iniciar Sesión" onAction="#handleLogin"/>
-            <Label fx:id="statusLabel" text="" style="-fx-text-fill: red;"/>
+        <VBox alignment="CENTER" spacing="18.0" layoutX="150.0" layoutY="80.0"
+              style="-fx-background-color: white; -fx-background-radius: 18; -fx-padding: 36 44 36 44; -fx-effect: dropshadow(gaussian, #b0b0b0, 16, 0.2, 0, 4);">
+            <Label text="Inicio de Sesión"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2d3a4b;"/>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label text="👤" style="-fx-font-size: 18px;"/>
+                <TextField fx:id="usernameField" promptText="Nombre de usuario"
+                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label text="🔒" style="-fx-font-size: 18px;"/>
+                <PasswordField fx:id="passwordField" promptText="Contraseña"
+                               style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;"/>
+                <TextField fx:id="passwordVisibleField" promptText="Contraseña"
+                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" visible="false" managed="false"/>
+                <Button fx:id="togglePasswordVisibilityButton" text="🙈" focusTraversable="false"
+                        style="-fx-background-radius: 8; -fx-padding: 4 8 4 8;"/>
+            </HBox>
+            <Button fx:id="loginButton" text="Iniciar Sesión" onAction="#handleLogin"
+                    style="-fx-background-color: #4f8cff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 8 0 8 0;"/>
+            <Label fx:id="statusLabel" text=""
+                   style="-fx-text-fill: red; -fx-font-size: 13px;"/>
         </VBox>
     </children>
 </AnchorPane>

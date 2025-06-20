@@ -24,6 +24,12 @@ public class GUI_LoginController {
     private TextField usernameField;
 
     @FXML
+    private TextField passwordVisibleField;
+
+    @FXML
+    private Button togglePasswordVisibilityButton;
+
+    @FXML
     private PasswordField passwordField;
 
     @FXML
@@ -31,6 +37,8 @@ public class GUI_LoginController {
 
     @FXML
     private Label statusLabel;
+
+    private boolean isPasswordVisible = false;
 
     private LoginService loginService;
 
@@ -43,6 +51,32 @@ public class GUI_LoginController {
             statusLabel.setText("Error al conectar con la base de datos.");
             statusLabel.setStyle("-fx-text-fill: red;");
         }
+        configurePasswordVisibility();
+    }
+
+    private void configurePasswordVisibility() {
+        togglePasswordVisibilityButton.setText("🙈");
+        togglePasswordVisibilityButton.setOnAction(event -> togglePasswordVisibility());
+    }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordVisibleField.setVisible(false);
+            passwordVisibleField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            togglePasswordVisibilityButton.setText("🙈");
+        } else {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            passwordVisibleField.setVisible(true);
+            passwordVisibleField.setManaged(true);
+            togglePasswordVisibilityButton.setText("👁");
+        }
+        isPasswordVisible = !isPasswordVisible;
     }
 
     @FXML
@@ -55,7 +89,7 @@ public class GUI_LoginController {
         }
 
         String username = usernameField.getText();
-        String password = passwordField.getText();
+        String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
             statusLabel.setText("Por favor, completa todos los campos.");
