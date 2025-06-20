@@ -35,10 +35,10 @@ public class GUI_RegisterAcademicController {
     private TextField numberOfStaffField, namesField, surnamesField, userField, passwordVisibleField, confirmPasswordVisibleField;
 
     @FXML
-    private PasswordField passwordField, fieldConfirmPassword;
+    private PasswordField passwordField, confirmPasswordField;
 
     @FXML
-    private Button togglePasswordVisibility;
+    private Button togglePasswordVisibilityButton;
 
     @FXML
     private Label numberOffStaffCharCountLabel, namesCharCountLabel, surnamesCharCountLabel, userCharCountLabel, passwordCharCountLabel;
@@ -54,8 +54,8 @@ public class GUI_RegisterAcademicController {
 
     @FXML
     public void initialize() {
-        togglePasswordVisibility.setText("🙈");
-        togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
+        togglePasswordVisibilityButton.setText("🙈");
+        togglePasswordVisibilityButton.setOnAction(event -> togglePasswordVisibility());
 
         roleBox.getItems().addAll("Académico", "Académico Evaluador", "Coordinador");
 
@@ -79,7 +79,7 @@ public class GUI_RegisterAcademicController {
         userField.setTextFormatter(createTextFormatter(MAX_USER));
         passwordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
         passwordVisibleField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
-        fieldConfirmPassword.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+        confirmPasswordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
         confirmPasswordVisibleField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
     }
 
@@ -109,7 +109,7 @@ public class GUI_RegisterAcademicController {
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
             passwordField.setText(passwordVisibleField.getText());
-            fieldConfirmPassword.setText(confirmPasswordVisibleField.getText());
+            confirmPasswordField.setText(confirmPasswordVisibleField.getText());
 
             passwordVisibleField.setVisible(false);
             passwordVisibleField.setManaged(false);
@@ -118,25 +118,25 @@ public class GUI_RegisterAcademicController {
 
             passwordField.setVisible(true);
             passwordField.setManaged(true);
-            fieldConfirmPassword.setVisible(true);
-            fieldConfirmPassword.setManaged(true);
+            confirmPasswordField.setVisible(true);
+            confirmPasswordField.setManaged(true);
 
-            togglePasswordVisibility.setText("🙈");
+            togglePasswordVisibilityButton.setText("🙈");
         } else {
             passwordVisibleField.setText(passwordField.getText());
-            confirmPasswordVisibleField.setText(fieldConfirmPassword.getText());
+            confirmPasswordVisibleField.setText(confirmPasswordField.getText());
 
             passwordField.setVisible(false);
             passwordField.setManaged(false);
-            fieldConfirmPassword.setVisible(false);
-            fieldConfirmPassword.setManaged(false);
+            confirmPasswordField.setVisible(false);
+            confirmPasswordField.setManaged(false);
 
             passwordVisibleField.setVisible(true);
             passwordVisibleField.setManaged(true);
             confirmPasswordVisibleField.setVisible(true);
             confirmPasswordVisibleField.setManaged(true);
 
-            togglePasswordVisibility.setText("👁");
+            togglePasswordVisibilityButton.setText("👁");
         }
         isPasswordVisible = !isPasswordVisible;
     }
@@ -151,7 +151,7 @@ public class GUI_RegisterAcademicController {
             StaffNumberValidator.validate(numberOffStaff);
 
             String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
-            String confirmPassword = isPasswordVisible ? confirmPasswordVisibleField.getText() : fieldConfirmPassword.getText();
+            String confirmPassword = isPasswordVisible ? confirmPasswordVisibleField.getText() : confirmPasswordField.getText();
 
             if (!password.equals(confirmPassword)) {
                 statusLabel.setText("Las contraseñas no coinciden.");
@@ -206,7 +206,7 @@ public class GUI_RegisterAcademicController {
         surnamesField.clear();
         userField.clear();
         passwordField.clear();
-        fieldConfirmPassword.clear();
+        confirmPasswordField.clear();
         passwordVisibleField.clear();
         confirmPasswordVisibleField.clear();
         roleBox.setValue(null);
@@ -218,7 +218,7 @@ public class GUI_RegisterAcademicController {
                 !surnamesField.getText().isEmpty() &&
                 !userField.getText().isEmpty() &&
                 (!passwordField.getText().isEmpty() || !passwordVisibleField.getText().isEmpty()) &&
-                (!fieldConfirmPassword.getText().isEmpty() || !confirmPasswordVisibleField.getText().isEmpty()) &&
+                (!confirmPasswordField.getText().isEmpty() || !confirmPasswordVisibleField.getText().isEmpty()) &&
                 roleBox.getValue() != null;
     }
 

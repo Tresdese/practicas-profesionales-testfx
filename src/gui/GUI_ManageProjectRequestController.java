@@ -20,16 +20,16 @@ public class GUI_ManageProjectRequestController {
     private static final Logger logger = LogManager.getLogger(GUI_ManageProjectRequestController.class);
 
     @FXML
-    private TextField fieldTuition, fieldOrganizationId, fieldProjectId, fieldRepresentativeId;
+    private TextField fieldTuition, organizationIdField, projectIdField, representativeIdField;
 
     @FXML
-    private TextField fieldDuration, fieldScheduleDays, fieldDirectUsers, fieldIndirectUsers;
+    private TextField durationField, scheduleDaysField, directUsersField, indirectUsersField;
 
     @FXML
-    private TextArea fieldDescription, fieldGeneralObjective;
+    private TextArea descriptionField, generalObjectiveField;
 
     @FXML
-    private ComboBox<String> comboStatus;
+    private ComboBox<String> statusCombo;
 
     @FXML
     private Label statusLabel;
@@ -48,7 +48,7 @@ public class GUI_ManageProjectRequestController {
 
     @FXML
     public void initialize() {
-        comboStatus.setItems(FXCollections.observableArrayList("pendiente", "aprobada", "rechazada"));
+        statusCombo.setItems(FXCollections.observableArrayList("pendiente", "aprobada", "rechazada"));
 
         if (projectRequestDAO == null) {
             projectRequestDAO = new ProjectRequestDAO();
@@ -64,16 +64,16 @@ public class GUI_ManageProjectRequestController {
         this.projectRequest = projectRequest;
 
         fieldTuition.setText(projectRequest.getTuition());
-        fieldOrganizationId.setText(String.valueOf(projectRequest.getOrganizationId()));
-        fieldProjectId.setText(projectRequest.getProjectName());
-        fieldRepresentativeId.setText(String.valueOf(projectRequest.getRepresentativeId()));
-        fieldDescription.setText(projectRequest.getDescription());
-        fieldGeneralObjective.setText(projectRequest.getGeneralObjective());
-        fieldDuration.setText(String.valueOf(projectRequest.getDuration()));
-        fieldScheduleDays.setText(projectRequest.getScheduleDays());
-        fieldDirectUsers.setText(String.valueOf(projectRequest.getDirectUsers()));
-        fieldIndirectUsers.setText(String.valueOf(projectRequest.getIndirectUsers()));
-        comboStatus.setValue(projectRequest.getStatus() != null ? projectRequest.getStatus().name() : "pendiente");
+        organizationIdField.setText(String.valueOf(projectRequest.getOrganizationId()));
+        projectIdField.setText(projectRequest.getProjectName());
+        representativeIdField.setText(String.valueOf(projectRequest.getRepresentativeId()));
+        descriptionField.setText(projectRequest.getDescription());
+        generalObjectiveField.setText(projectRequest.getGeneralObjective());
+        durationField.setText(String.valueOf(projectRequest.getDuration()));
+        scheduleDaysField.setText(projectRequest.getScheduleDays());
+        directUsersField.setText(String.valueOf(projectRequest.getDirectUsers()));
+        indirectUsersField.setText(String.valueOf(projectRequest.getIndirectUsers()));
+        statusCombo.setValue(projectRequest.getStatus() != null ? projectRequest.getStatus().name() : "pendiente");
     }
 
     @FXML
@@ -84,16 +84,16 @@ public class GUI_ManageProjectRequestController {
             }
 
             projectRequest.setTuition(fieldTuition.getText());
-            projectRequest.setOrganizationId(fieldOrganizationId.getText());
-            projectRequest.setProjectName(fieldProjectId.getText());
-            projectRequest.setRepresentativeId(fieldRepresentativeId.getText());
-            projectRequest.setDescription(fieldDescription.getText());
-            projectRequest.setGeneralObjective(fieldGeneralObjective.getText());
-            projectRequest.setDuration(Integer.parseInt(fieldDuration.getText()));
-            projectRequest.setScheduleDays(fieldScheduleDays.getText());
-            projectRequest.setDirectUsers(Integer.parseInt(fieldDirectUsers.getText()));
-            projectRequest.setIndirectUsers(Integer.parseInt(fieldIndirectUsers.getText()));
-            projectRequest.setStatus(ProjectStatus.valueOf(comboStatus.getValue()));
+            projectRequest.setOrganizationId(organizationIdField.getText());
+            projectRequest.setProjectName(projectIdField.getText());
+            projectRequest.setRepresentativeId(representativeIdField.getText());
+            projectRequest.setDescription(descriptionField.getText());
+            projectRequest.setGeneralObjective(generalObjectiveField.getText());
+            projectRequest.setDuration(Integer.parseInt(durationField.getText()));
+            projectRequest.setScheduleDays(scheduleDaysField.getText());
+            projectRequest.setDirectUsers(Integer.parseInt(directUsersField.getText()));
+            projectRequest.setIndirectUsers(Integer.parseInt(indirectUsersField.getText()));
+            projectRequest.setStatus(ProjectStatus.valueOf(statusCombo.getValue()));
 
             boolean result = projectRequestDAO.updateProjectRequest(projectRequest);
 
@@ -132,14 +132,14 @@ public class GUI_ManageProjectRequestController {
 
     private boolean areFieldsFilled() {
         return !fieldTuition.getText().isEmpty() &&
-                !fieldOrganizationId.getText().isEmpty() &&
-                !fieldProjectId.getText().isEmpty() &&
-                !fieldRepresentativeId.getText().isEmpty() &&
-                !fieldGeneralObjective.getText().isEmpty() &&
-                !fieldDuration.getText().isEmpty() &&
-                !fieldScheduleDays.getText().isEmpty() &&
-                !fieldDirectUsers.getText().isEmpty() &&
-                !fieldIndirectUsers.getText().isEmpty() &&
-                comboStatus.getValue() != null;
+                !organizationIdField.getText().isEmpty() &&
+                !projectIdField.getText().isEmpty() &&
+                !representativeIdField.getText().isEmpty() &&
+                !generalObjectiveField.getText().isEmpty() &&
+                !durationField.getText().isEmpty() &&
+                !scheduleDaysField.getText().isEmpty() &&
+                !directUsersField.getText().isEmpty() &&
+                !indirectUsersField.getText().isEmpty() &&
+                statusCombo.getValue() != null;
     }
 }

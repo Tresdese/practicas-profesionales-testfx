@@ -20,34 +20,34 @@
         <TextField fx:id="fieldTuition" layoutX="220.0" layoutY="66.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="100.0" text="ID Organización:" />
-        <TextField fx:id="fieldOrganizationId" layoutX="220.0" layoutY="96.0" prefWidth="200.0" />
+        <TextField fx:id="organizationIdField" layoutX="220.0" layoutY="96.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="130.0" text="ID Proyecto:" />
-        <TextField fx:id="fieldProjectId" layoutX="220.0" layoutY="126.0" prefWidth="200.0" />
+        <TextField fx:id="projectIdField" layoutX="220.0" layoutY="126.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="160.0" text="ID Representante:" />
-        <TextField fx:id="fieldRepresentativeId" layoutX="220.0" layoutY="156.0" prefWidth="200.0" />
+        <TextField fx:id="representativeIdField" layoutX="220.0" layoutY="156.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="190.0" text="Descripción:" />
-        <TextArea fx:id="fieldDescription" layoutX="220.0" layoutY="186.0" prefHeight="60.0" prefWidth="200.0" wrapText="true" />
+        <TextArea fx:id="descriptionField" layoutX="220.0" layoutY="186.0" prefHeight="60.0" prefWidth="200.0" wrapText="true" />
 
         <Label layoutX="69.0" layoutY="260.0" text="Objetivo General:" />
-        <TextArea fx:id="fieldGeneralObjective" layoutX="220.0" layoutY="256.0" prefHeight="60.0" prefWidth="200.0" wrapText="true" />
+        <TextArea fx:id="generalObjectiveField" layoutX="220.0" layoutY="256.0" prefHeight="60.0" prefWidth="200.0" wrapText="true" />
 
         <Label layoutX="69.0" layoutY="330.0" text="Duración (horas):" />
-        <TextField fx:id="fieldDuration" layoutX="220.0" layoutY="326.0" prefWidth="200.0" />
+        <TextField fx:id="durationField" layoutX="220.0" layoutY="326.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="360.0" text="Horario:" />
-        <TextField fx:id="fieldScheduleDays" layoutX="220.0" layoutY="356.0" prefWidth="200.0" />
+        <TextField fx:id="scheduleDaysField" layoutX="220.0" layoutY="356.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="390.0" text="Usuarios Directos:" />
-        <TextField fx:id="fieldDirectUsers" layoutX="220.0" layoutY="386.0" prefWidth="200.0" />
+        <TextField fx:id="directUsersField" layoutX="220.0" layoutY="386.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="420.0" text="Usuarios Indirectos:" />
-        <TextField fx:id="fieldIndirectUsers" layoutX="220.0" layoutY="416.0" prefWidth="200.0" />
+        <TextField fx:id="indirectUsersField" layoutX="220.0" layoutY="416.0" prefWidth="200.0" />
 
         <Label layoutX="69.0" layoutY="450.0" text="Estado:" />
-        <ComboBox fx:id="comboStatus" layoutX="220.0" layoutY="446.0" prefWidth="200.0" />
+        <ComboBox fx:id="statusCombo" layoutX="220.0" layoutY="446.0" prefWidth="200.0" />
 
         <Button layoutX="141.0" layoutY="500.0" onAction="#handleSaveChanges" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
         <Button layoutX="141.0" layoutY="540.0" onAction="#handleCancel" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #c0c0c0;" text="Cancelar" textFill="BLACK" />

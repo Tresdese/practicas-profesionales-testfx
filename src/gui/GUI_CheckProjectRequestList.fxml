@@ -47,6 +47,6 @@
         <Button fx:id="registerRequestButton" layoutX="400.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="250.0" style="-fx-background-color: #2772d3;" text="Registrar Nueva Solicitud" textFill="WHITE" />
         <Button fx:id="refreshListButton" layoutX="699.0" layoutY="627.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #2772d3;" text="Actualizar Lista" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelRequestCounts" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
+        <Label fx:id="requestCountsLabel" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
     </children>
 </AnchorPane>

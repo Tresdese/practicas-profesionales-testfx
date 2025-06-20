@@ -20,7 +20,7 @@ public class GUI_UpdateProfileController {
     private static final int MAX_SURNAMES = 50;
 
     @FXML
-    private TextField fieldNames, surnamesField, phoneField, emailField;
+    private TextField namesField, surnamesField, phoneField, emailField;
 
     @FXML
     private Label statusLabel, namesCharCountLabel, surnamesCharCountLabel;
@@ -39,7 +39,7 @@ public class GUI_UpdateProfileController {
     }
 
     private void configureTextFormatters() {
-        fieldNames.setTextFormatter(createTextFormatter(MAX_NAMES));
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
         surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
     }
 
@@ -50,7 +50,7 @@ public class GUI_UpdateProfileController {
     }
 
     private void configureCharCountLabels() {
-        configureCharCount(fieldNames, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
         configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
     }
 
@@ -92,7 +92,7 @@ public class GUI_UpdateProfileController {
             StudentDTO updatedStudent = new StudentDTO(
                     currentStudent.getTuition(),
                     currentStudent.getState(),
-                    fieldNames.getText(),
+                    namesField.getText(),
                     surnamesField.getText(),
                     phone,
                     email,
@@ -123,14 +123,14 @@ public class GUI_UpdateProfileController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNames.getText().isEmpty() &&
+        return !namesField.getText().isEmpty() &&
                 !surnamesField.getText().isEmpty() &&
                 !phoneField.getText().isEmpty() &&
                 !emailField.getText().isEmpty();
     }
 
     public void setStudentData(String names, String surnames, String phone, String email) {
-        fieldNames.setText(names);
+        namesField.setText(names);
         surnamesField.setText(surnames);
         phoneField.setText(phone);
         emailField.setText(email);

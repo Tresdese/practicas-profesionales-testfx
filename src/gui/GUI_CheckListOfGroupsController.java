@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import logic.DTO.GroupDTO;
 import logic.DAO.GroupDAO;
 import logic.DTO.Role;
@@ -21,19 +20,19 @@ public class GUI_CheckListOfGroupsController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckListOfGroupsController.class);
 
     @FXML
-    private TableView<GroupDTO> tableViewGroups;
+    private TableView<GroupDTO> groupsTableView;
 
     @FXML
-    private TableColumn<GroupDTO, String> columnNRC;
+    private TableColumn<GroupDTO, String> NRCColumn;
 
     @FXML
-    private TableColumn<GroupDTO, String> columnName;
+    private TableColumn<GroupDTO, String> nameColumn;
 
     @FXML
-    private TableColumn<GroupDTO, String> columnIdUser;
+    private TableColumn<GroupDTO, String> idUserColumn;
 
     @FXML
-    private TableColumn<GroupDTO, String> columnIdPeriod;
+    private TableColumn<GroupDTO, String> idPeriodColumn;
 
     @FXML
     private TextField searchField;
@@ -42,13 +41,13 @@ public class GUI_CheckListOfGroupsController {
     private Button searchButton;
 
     @FXML
-    private Button buttonRegisterGroup;
+    private Button registerGroupButton;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private Label labelGroupCounts;
+    private Label groupCountsLabel;
 
     private GroupDTO selectedGroup;
     private GroupDAO groupDAO;
@@ -57,19 +56,19 @@ public class GUI_CheckListOfGroupsController {
     public void initialize() {
         this.groupDAO = new GroupDAO();
 
-        columnNRC.setCellValueFactory(new PropertyValueFactory<>("NRC"));
-        columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        columnIdUser.setCellValueFactory(new PropertyValueFactory<>("idUser"));
-        columnIdPeriod.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
+        NRCColumn.setCellValueFactory(new PropertyValueFactory<>("NRC"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        idUserColumn.setCellValueFactory(new PropertyValueFactory<>("idUser"));
+        idPeriodColumn.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
 
         loadGroupData();
 
         searchButton.setOnAction(event -> searchGroup());
-        buttonRegisterGroup.setOnAction(event -> openRegisterGroupWindow());
+        registerGroupButton.setOnAction(event -> openRegisterGroupWindow());
 
-        tableViewGroups.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        groupsTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             selectedGroup = newVal;
-            tableViewGroups.refresh();
+            groupsTableView.refresh();
         });
     }
 
@@ -97,7 +96,7 @@ public class GUI_CheckListOfGroupsController {
             statusLabel.setText("Error al conectar a la base de datos.");
             logger.error("Error al cargar los grupos: {}", e.getMessage(), e);
         }
-        tableViewGroups.setItems(groupList);
+        groupsTableView.setItems(groupList);
         updateGroupCounts(groupList);
     }
 
@@ -120,13 +119,13 @@ public class GUI_CheckListOfGroupsController {
             logger.error("Error al buscar grupos: {}", e.getMessage(), e);
         }
 
-        tableViewGroups.setItems(filteredList);
+        groupsTableView.setItems(filteredList);
         updateGroupCounts(filteredList);
     }
 
     private void updateGroupCounts(ObservableList<GroupDTO> list) {
         int total = list.size();
-        labelGroupCounts.setText("Totales: " + total);
+        groupCountsLabel.setText("Totales: " + total);
     }
 
     public void setUserRole(Role userRole) {
@@ -143,11 +142,11 @@ public class GUI_CheckListOfGroupsController {
 
     public void applyRoleRestrictions() {
         if (userRole == Role.ACADEMICO_EVALUADOR) {
-            setButtonVisibility(buttonRegisterGroup, false);
+            setButtonVisibility(registerGroupButton, false);
         } else if (userRole == Role.ACADEMICO) {
-            setButtonVisibility(buttonRegisterGroup, false);
+            setButtonVisibility(registerGroupButton, false);
         } else if (userRole == Role.COORDINADOR) {
-            setButtonVisibility(buttonRegisterGroup, true);
+            setButtonVisibility(registerGroupButton, true);
         }
     }
 }

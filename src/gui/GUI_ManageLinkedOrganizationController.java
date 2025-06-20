@@ -24,7 +24,7 @@ public class GUI_ManageLinkedOrganizationController {
     private static final Logger logger = LogManager.getLogger(GUI_ManageLinkedOrganizationController.class);
 
     @FXML
-    private TextField fieldName, fieldAddress;
+    private TextField nameField, addressField;
 
     @FXML
     private Label statusLabel;
@@ -63,8 +63,8 @@ public class GUI_ManageLinkedOrganizationController {
 
         this.organization = organization;
 
-        fieldName.setText(organization.getName() != null ? organization.getName() : "");
-        fieldAddress.setText(organization.getAddress() != null ? organization.getAddress() : "");
+        nameField.setText(organization.getName() != null ? organization.getName() : "");
+        addressField.setText(organization.getAddress() != null ? organization.getAddress() : "");
     }
 
     @FXML
@@ -74,8 +74,8 @@ public class GUI_ManageLinkedOrganizationController {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String name = fieldName.getText();
-            String address = fieldAddress.getText();
+            String name = nameField.getText();
+            String address = addressField.getText();
 
             organization.setName(name);
             organization.setAddress(address);
@@ -121,7 +121,7 @@ public class GUI_ManageLinkedOrganizationController {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldName.getText().isEmpty() &&
-                !fieldAddress.getText().isEmpty();
+        return !nameField.getText().isEmpty() &&
+                !addressField.getText().isEmpty();
     }
 }

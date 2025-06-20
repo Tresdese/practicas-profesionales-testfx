@@ -15,12 +15,12 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="representativeName" prefWidth="134.0" text="Nombres" />
-                        <TableColumn fx:id="representativeSurname" prefWidth="126.0" text="Apellidos" />
-                        <TableColumn fx:id="representativeEmail" prefWidth="185.0" text="Correo" />
-                        <TableColumn fx:id="representativeOrganization" prefWidth="176.0" text="Organizacion que representa" />
-                        <TableColumn fx:id="representativeDepartment" text="Departamento" />
-                        <TableColumn fx:id="columnManagement" minWidth="0.0" prefWidth="158.0" text="Gestionar" />
+                        <TableColumn fx:id="representativeNameColumn" prefWidth="134.0" text="Nombres" />
+                        <TableColumn fx:id="representativeSurnameColumn" prefWidth="126.0" text="Apellidos" />
+                        <TableColumn fx:id="representativeEmailColumn" prefWidth="185.0" text="Correo" />
+                        <TableColumn fx:id="representativeOrganizationColumn" prefWidth="176.0" text="Organizacion que representa" />
+                        <TableColumn fx:id="representativeDepartmentColumn" text="Departamento" />
+                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="158.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
@@ -36,8 +36,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterRepresentative" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Representante" textFill="WHITE" />
+        <Button fx:id="registerRepresentativeButton" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Representante" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelRepresentativeCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="representativeCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

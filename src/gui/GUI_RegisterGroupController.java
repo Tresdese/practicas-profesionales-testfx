@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.paint.Color;
 import logic.DTO.GroupDTO;
 import logic.DAO.GroupDAO;
 import logic.DAO.UserDAO;
@@ -107,7 +108,7 @@ public class GUI_RegisterGroupController {
         try {
             if (!areFieldsFilled()) {
                 statusLabel.setText("Todos los campos deben estar llenos.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 return;
             }
 
@@ -126,23 +127,23 @@ public class GUI_RegisterGroupController {
 
             if (success) {
                 statusLabel.setText("¡Grupo registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                statusLabel.setTextFill(Color.GREEN);
             } else {
                 statusLabel.setText("No se pudo registrar el grupo.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
             }
         } catch (SQLException e) {
             logger.error("Error de base de datos al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Error de base de datos al registrar el grupo.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (NullPointerException e) {
             logger.error("Referencia nula al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Error interno al registrar el grupo.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             logger.error("Error al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

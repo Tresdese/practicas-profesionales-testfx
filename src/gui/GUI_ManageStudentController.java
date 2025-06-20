@@ -28,7 +28,7 @@ public class GUI_ManageStudentController {
     private static final int MAX_SURNAMES = 50;
 
     @FXML
-    private TextField namesField, surnamesField, fieldCreditAdvance;
+    private TextField namesField, surnamesField, creditAdvanceField;
 
     @FXML
     private ChoiceBox<String> nrcChoiceBox;
@@ -108,7 +108,7 @@ public class GUI_ManageStudentController {
         namesField.setText(student.getNames() != null ? student.getNames() : "");
         surnamesField.setText(student.getSurnames() != null ? student.getSurnames() : "");
         nrcChoiceBox.setValue(student.getNRC() != null ? student.getNRC() : "");
-        fieldCreditAdvance.setText(student.getCreditAdvance() != null ? student.getCreditAdvance() : "");
+        creditAdvanceField.setText(student.getCreditAdvance() != null ? student.getCreditAdvance() : "");
     }
 
     @FXML
@@ -128,7 +128,7 @@ public class GUI_ManageStudentController {
             String names = namesField.getText();
             String surnames = surnamesField.getText();
             String nrc = nrcChoiceBox.getValue();
-            String creditAdvance = fieldCreditAdvance.getText();
+            String creditAdvance = creditAdvanceField.getText();
 
             student.setNames(names);
             student.setSurnames(surnames);
@@ -154,7 +154,7 @@ public class GUI_ManageStudentController {
         return !namesField.getText().isEmpty() &&
                 !surnamesField.getText().isEmpty() &&
                 nrcChoiceBox.getValue() != null &&
-                !fieldCreditAdvance.getText().isEmpty();
+                !creditAdvanceField.getText().isEmpty();
     }
 
     @FXML

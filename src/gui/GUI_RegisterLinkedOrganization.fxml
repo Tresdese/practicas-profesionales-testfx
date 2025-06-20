@@ -14,11 +14,11 @@
                 <Font size="18.0" />
             </font>
         </Label>
-        <Label fx:id="labelName" layoutX="147.0" layoutY="150.0" text="Nombre" />
+        <Label fx:id="nameLabel" layoutX="147.0" layoutY="150.0" text="Nombre" />
         <TextField fx:id="nameField" layoutX="281.0" layoutY="146.0" />
         <Label fx:id="nameCharCountLabel" layoutX="470.0" layoutY="150.0" text="0/100" />
-        <Label fx:id="labelAddress" layoutX="144.0" layoutY="214.0" text="Dirección" />
-        <TextField fx:id="fieldAddress" layoutX="281.0" layoutY="210.0" />
+        <Label fx:id="addressLabel" layoutX="144.0" layoutY="214.0" text="Dirección" />
+        <TextField fx:id="addressField" layoutX="281.0" layoutY="210.0" />
         <Label fx:id="addressCharCountLabel" layoutX="470.0" layoutY="214.0" text="0/150" />
         <Label fx:id="statusLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="54.0" layoutY="333.0" prefWidth="500.0" textFill="red" wrapText="true">
             <font>

@@ -10,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import logic.DTO.EvidenceDTO;
 import logic.DTO.ScheduleOfActivitiesDTO;
 import logic.DAO.EvidenceDAO;
@@ -28,19 +27,19 @@ public class GUI_CheckScheduleActivityListController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckScheduleActivityListController.class);
 
     @FXML
-    private Button buttonRegisterSchedule;
+    private Button registerScheduleButton;
 
     @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, String> columnMilestone;
+    private TableColumn<ScheduleOfActivitiesDTO, String> milestoneColumn;
 
     @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, String> columnEstimatedDate;
+    private TableColumn<ScheduleOfActivitiesDTO, String> estimatedDateColumn;
 
     @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, String> columnTuition;
+    private TableColumn<ScheduleOfActivitiesDTO, String> tuitionColumn;
 
     @FXML
-    private TableColumn<ScheduleOfActivitiesDTO, String> columnEvidence;
+    private TableColumn<ScheduleOfActivitiesDTO, String> evidenceColumn;
 
     @FXML
     private Button searchButton;
@@ -52,7 +51,7 @@ public class GUI_CheckScheduleActivityListController {
     private Label statusLabel;
 
     @FXML
-    private Label labelScheduleCounts;
+    private Label scheduleCountsLabel;
 
     @FXML
     private TableView<ScheduleOfActivitiesDTO> tableView;
@@ -63,16 +62,16 @@ public class GUI_CheckScheduleActivityListController {
 
     @FXML
     public void initialize() {
-        columnMilestone.setCellValueFactory(new PropertyValueFactory<>("milestone"));
-        columnEstimatedDate.setCellValueFactory(cellData -> {
+        milestoneColumn.setCellValueFactory(new PropertyValueFactory<>("milestone"));
+        estimatedDateColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getEstimatedDate() != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 return new SimpleStringProperty(sdf.format(cellData.getValue().getEstimatedDate()));
             }
             return new SimpleStringProperty("");
         });
-        columnTuition.setCellValueFactory(new PropertyValueFactory<>("tuition"));
-        columnEvidence.setCellValueFactory(cellData -> {
+        tuitionColumn.setCellValueFactory(new PropertyValueFactory<>("tuition"));
+        evidenceColumn.setCellValueFactory(cellData -> {
             String idEvidence = cellData.getValue().getIdEvidence();
             String evidenceName = getEvidenceNameById(idEvidence);
             return new SimpleStringProperty(evidenceName);
@@ -81,7 +80,7 @@ public class GUI_CheckScheduleActivityListController {
         loadScheduleData();
 
         searchButton.setOnAction(event -> searchSchedule());
-        buttonRegisterSchedule.setOnAction(event -> openRegisterScheduleWindow());
+        registerScheduleButton.setOnAction(event -> openRegisterScheduleWindow());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedSchedule = newValue;
@@ -150,6 +149,6 @@ public class GUI_CheckScheduleActivityListController {
 
     private void updateScheduleCounts(ObservableList<ScheduleOfActivitiesDTO> list) {
         int total = list.size();
-        labelScheduleCounts.setText("Totales: " + total);
+        scheduleCountsLabel.setText("Totales: " + total);
     }
 }

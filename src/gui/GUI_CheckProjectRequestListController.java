@@ -74,7 +74,7 @@ public class GUI_CheckProjectRequestListController {
     private Label statusLabel;
 
     @FXML
-    private Label labelRequestCounts;
+    private Label requestCountsLabel;
 
     private ProjectRequestDTO selectedRequest;
     private ProjectRequestDAO projectRequestDAO;
@@ -301,6 +301,6 @@ public class GUI_CheckProjectRequestListController {
 
     private void updateRequestCounts(ObservableList<ProjectRequestDTO> list) {
         int total = list.size();
-        labelRequestCounts.setText("Totales: " + total);
+        requestCountsLabel.setText("Totales: " + total);
     }
 }

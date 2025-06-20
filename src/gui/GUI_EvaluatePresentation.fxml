@@ -12,7 +12,7 @@
         <HBox layoutX="20.0" layoutY="520.0" spacing="20.0">
             <Button fx:id="saveButton" text="Guardar Calificaciones" />
             <Label text="Promedio:" />
-            <TextField fx:id="averageField" editable="false" prefWidth="80.0" />
+            <TextField fx:id="averageGradeField" editable="false" prefWidth="80.0" />
             <VBox>
                 <Label text="Comentario" />
                 <TextArea fx:id="commentArea" prefHeight="0.0" prefWidth="478.0" />

@@ -35,7 +35,7 @@ public class GUI_CheckProjectListController {
     private static final Logger logger = LogManager.getLogger(GUI_CheckProjectListController.class);
 
     @FXML
-    private Button buttonRegisterProject;
+    private Button registerProjectButton;
 
     @FXML
     private TableColumn<ProjectDTO, String> projectNameColumn;
@@ -109,16 +109,16 @@ public class GUI_CheckProjectListController {
 
     private void applyRolRestrictions() {
         if (userRole == Role.COORDINADOR) {
-            buttonRegisterProject.setVisible(true);
+            registerProjectButton.setVisible(true);
         } else if (userRole == Role.ACADEMICO) {
-            buttonRegisterProject.setVisible(false);
+            registerProjectButton.setVisible(false);
         } else {
-            buttonRegisterProject.setVisible(false);
+            registerProjectButton.setVisible(false);
         }
     }
 
     private void initializeButtons() {
-        buttonRegisterProject.setOnAction(event -> openRegisterProjectWindow());
+        registerProjectButton.setOnAction(event -> openRegisterProjectWindow());
         searchButton.setOnAction(event -> searchProject());
     }
 
