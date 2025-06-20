@@ -5,28 +5,27 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_DetailsStudentController">
    <children>
-      <Label layoutX="220.0" layoutY="30.0" text="Detalle del Estudiante" style="-fx-font-size: 18px;"/>
-      <Label layoutX="80.0" layoutY="90.0" text="Matrícula:"/>
-      <Label fx:id="labelTuition" layoutX="200.0" layoutY="90.0" text=""/>
-      <Label layoutX="80.0" layoutY="130.0" text="Nombres:"/>
-      <Label fx:id="labelNames" layoutX="200.0" layoutY="130.0" text=""/>
-      <Label layoutX="80.0" layoutY="170.0" text="Apellidos:"/>
-      <Label fx:id="labelSurnames" layoutX="200.0" layoutY="170.0" text=""/>
-      <Label layoutX="80.0" layoutY="210.0" text="Correo:"/>
-      <Label fx:id="labelEmail" layoutX="200.0" layoutY="210.0" text=""/>
-      <Label layoutX="80.0" layoutY="250.0" text="NRC:"/>
-      <Label fx:id="labelNRC" layoutX="200.0" layoutY="250.0" text=""/>
+      <Label layoutX="220.0" layoutY="30.0" style="-fx-font-size: 18px;" text="Detalle del Estudiante" />
+      <Label layoutX="80.0" layoutY="90.0" text="Matrícula:" />
+      <Label fx:id="labelTuition" layoutX="200.0" layoutY="90.0" text="" />
+      <Label layoutX="80.0" layoutY="130.0" text="Nombres:" />
+      <Label fx:id="labelNames" layoutX="200.0" layoutY="130.0" text="" />
+      <Label layoutX="80.0" layoutY="170.0" text="Apellidos:" />
+      <Label fx:id="labelSurnames" layoutX="200.0" layoutY="170.0" text="" />
+      <Label layoutX="80.0" layoutY="210.0" text="Correo:" />
+      <Label fx:id="labelEmail" layoutX="200.0" layoutY="210.0" text="" />
+      <Label layoutX="80.0" layoutY="250.0" text="NRC:" />
+      <Label fx:id="labelNRC" layoutX="200.0" layoutY="250.0" text="" />
 
-      <Label layoutX="80.0" layoutY="300.0" text="Proyecto asignado:" style="-fx-font-weight: bold;"/>
-      <Label layoutX="100.0" layoutY="330.0" text="Nombre:"/>
-      <Label fx:id="labelProjectName" layoutX="200.0" layoutY="330.0" text=""/>
-      <Label layoutX="100.0" layoutY="360.0" text="Descripción:"/>
-      <Label fx:id="labelProjectDescription" layoutX="200.0" layoutY="360.0" text=""/>
-      <Label layoutX="100.0" layoutY="390.0" text="Organización:"/>
-      <Label fx:id="labelProjectOrganization" layoutX="200.0" layoutY="390.0" text=""/>
-      <Button fx:id="buttonCheckReports" layoutX="220.0" layoutY="440.0"
-              text="Consultar Reportes" onAction="#handleCheckReports"/>
-      <Button fx:id="buttonCheckSelfAssessment" layoutX="360.0" layoutY="440.0"
-              text="Ver Autoevaluación" onAction="#handleCheckSelfAssessment"/>
+      <Label layoutX="80.0" layoutY="300.0" style="-fx-font-weight: bold;" text="Proyecto asignado:" />
+      <Label layoutX="100.0" layoutY="330.0" text="Nombre:" />
+      <Label fx:id="labelProjectName" layoutX="200.0" layoutY="330.0" text="" />
+      <Label layoutX="100.0" layoutY="360.0" text="Descripción:" />
+      <Label fx:id="labelProjectDescription" layoutX="200.0" layoutY="360.0" text="" />
+      <Label layoutX="100.0" layoutY="390.0" text="Organización:" />
+      <Label fx:id="labelProjectOrganization" layoutX="200.0" layoutY="390.0" text="" />
+      <Button fx:id="buttonCheckReports" layoutX="256.0" layoutY="440.0" onAction="#handleCheckReports" text="Consultar Reportes" />
+      <Button fx:id="buttonCheckSelfAssessment" layoutX="421.0" layoutY="440.0" onAction="#handleCheckSelfAssessment" text="Ver Autoevaluación" />
+      <Button fx:id="buttonCheckPresentationGrade" layoutX="39.0" layoutY="440.0" onAction="#handleCheckPresentationGrade" text="Ver Calificación Presentación" />
    </children>
 </AnchorPane>
