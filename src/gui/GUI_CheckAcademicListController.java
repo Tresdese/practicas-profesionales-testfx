@@ -25,25 +25,25 @@ public class GUI_CheckAcademicListController {
     private TableView<UserDTO> tableView;
 
     @FXML
-    private TableColumn<UserDTO, String> columnStaffNumber;
+    private TableColumn<UserDTO, String> staffNumberColumn;
 
     @FXML
-    private TableColumn<UserDTO, String> columnNames;
+    private TableColumn<UserDTO, String> namesColumn;
 
     @FXML
-    private TableColumn<UserDTO, String> columnSurnames;
+    private TableColumn<UserDTO, String> surnamesColumn;
 
     @FXML
-    private TableColumn<UserDTO, String> columnUserNames;
+    private TableColumn<UserDTO, String> userNamesColumn;
 
     @FXML
-    private TableColumn<UserDTO, Role> columnnRole;
+    private TableColumn<UserDTO, Role> roleColumn;
 
     @FXML
-    private TableColumn<UserDTO, Void> columnDetails;
+    private TableColumn<UserDTO, Void> detailsColumn;
 
     @FXML
-    private TableColumn<UserDTO, Void> columnManagement;
+    private TableColumn<UserDTO, Void> managementColumn;
 
     @FXML
     private TextField searchField;
@@ -52,13 +52,13 @@ public class GUI_CheckAcademicListController {
     private Button searchButton;
 
     @FXML
-    private Button buttonRegisterAcademic;
+    private Button registerAcademicButton;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private Label labelAcademicCounts;
+    private Label academicCountsLabel;
 
     private UserDTO selectedAcademic;
     private UserService userService;
@@ -72,11 +72,11 @@ public class GUI_CheckAcademicListController {
             return;
         }
 
-        columnStaffNumber.setCellValueFactory(new PropertyValueFactory<>("staffNumber"));
-        columnNames.setCellValueFactory(new PropertyValueFactory<>("names"));
-        columnSurnames.setCellValueFactory(new PropertyValueFactory<>("surnames"));
-        columnUserNames.setCellValueFactory(new PropertyValueFactory<>("userName"));
-        columnnRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+        staffNumberColumn.setCellValueFactory(new PropertyValueFactory<>("staffNumber"));
+        namesColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
+        surnamesColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
+        userNamesColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
+        roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
 
         addDetailsButtonToTable();
         addManagementButtonToTable();
@@ -84,7 +84,7 @@ public class GUI_CheckAcademicListController {
         loadAcademicData();
 
         searchButton.setOnAction(event -> searchAcademic());
-        buttonRegisterAcademic.setOnAction(event -> openRegisterAcademicWindow());
+        registerAcademicButton.setOnAction(event -> openRegisterAcademicWindow());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedAcademic = newValue;
@@ -161,7 +161,7 @@ public class GUI_CheckAcademicListController {
             }
         };
 
-        columnDetails.setCellFactory(cellFactory);
+        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {
@@ -186,7 +186,7 @@ public class GUI_CheckAcademicListController {
             }
         };
 
-        columnManagement.setCellFactory(cellFactory);
+        managementColumn.setCellFactory(cellFactory);
     }
 
     private void openManageAcademicWindow(UserDTO academic) {
@@ -206,9 +206,9 @@ public class GUI_CheckAcademicListController {
             int total = users.size();
             int activos = 0;
             int inactivos = 0;
-            labelAcademicCounts.setText("Totales: " + total);
+            academicCountsLabel.setText("Totales: " + total);
         } catch (SQLException e) {
-            labelAcademicCounts.setText("Error al contar académicos");
+            academicCountsLabel.setText("Error al contar académicos");
             logger.error("Error al contar académicos: {}", e.getMessage(), e);
         }
     }
@@ -217,6 +217,6 @@ public class GUI_CheckAcademicListController {
         int total = list.size();
         int activos = 0;
         int inactivos = 0;
-        labelAcademicCounts.setText("Totales: " + total);
+        academicCountsLabel.setText("Totales: " + total);
     }
 }

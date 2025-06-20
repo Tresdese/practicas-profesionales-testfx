@@ -10,47 +10,51 @@
     <left>
         <VBox spacing="15.0" alignment="TOP_CENTER" style="-fx-background-color: #2A3E8C; -fx-padding: 20;">
             <Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-text-fill: white;" text="Hola, Usuario" />
-            <Button fx:id="buttonViewStudentList" text="Ver lista de estudiantes"
-                    onAction="#handleViewStudentList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewStudentListButton" text="Ver lista de estudiantes"
+                    onAction="#handleViewStudentListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewAcademicList" text="Ver lista de académicos"
-                    onAction="#handleViewAcademicList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewAcademicListButton" text="Ver lista de académicos"
+                    onAction="#handleViewAcademicListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewOrganizationList" text="Ver lista de organizaciones"
-                    onAction="#handleViewOrganizationList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewOrganizationListButton" text="Ver lista de organizaciones"
+                    onAction="#handleViewOrganizationListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewRepresentativeList" text="Ver lista de representantes"
-                    onAction="#handleViewRepresentativeList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewRepresentativeListButton" text="Ver lista de representantes"
+                    onAction="#handleViewRepresentativeListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewProjectList" text="Ver lista de proyectos"
-                    onAction="#handleViewProjectList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewProjectListButton" text="Ver lista de proyectos"
+                    onAction="#handleViewProjectListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="handleViewProjectRequest" text="Ver lista de solicitudes de prácticas"
-                    onAction="#handleViewProjectRequest" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewProjectRequestButton" text="Ver lista de solicitudes de prácticas"
+                    onAction="#handleViewProjectRequestButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonCheckPresentationGrade" text="Consultar Calificaciones de Presentación"
-                    onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="checkPresentationGradeButton" text="Consultar Calificaciones de Presentación"
+                    onAction="#handleCheckPresentationGradeButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonEvaluatePresentation" text="Calificar Presentación"
-                    onAction="#handleEvaluatePresentation" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="evaluatePresentationButton" text="Calificar Presentación"
+                    onAction="#handleEvaluatePresentationButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewPeriodList" text="Ver lista de períodos"
-                    onAction="#handleViewPeriodList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewPeriodListButton" text="Ver lista de períodos"
+                    onAction="#handleViewPeriodListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonViewGroupList" text="Ver lista de grupos"
-                    onAction="#handleViewGroupList" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="viewGroupListButton" text="Ver lista de grupos"
+                    onAction="#handleViewGroupListButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageAssessmentCriteria" text="Gestionar Criterios de Evaluación"
-                    onAction="#handleManageAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="manageAssessmentCriteriaButton" text="Gestionar Criterios de Evaluación"
+                    onAction="#handleManageAssessmentCriteriaButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageSelfAssessmentCriteria" text="Gestionar Criterios de Autoevaluación"
-                    onAction="#handleManageSelfAssessmentCriteria" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="manageSelfAssessmentCriteriaButton" text="Gestionar Criterios de Autoevaluación"
+                    onAction="#handleManageSelfAssessmentCriteriaButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonManageActivity" text="Gestionar Actividades"
-                    onAction="#handleManageActivity" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
+            <Button fx:id="manageActivityButton" text="Gestionar Actividades"
+                    onAction="#handleManageActivityButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="buttonLogout" text="Cerrar sesión"
-                    onAction="#handleLogout" style="-fx-background-color: #FF4C4C; -fx-text-fill: white;
+            <Button fx:id="ableRegisterEvaluationButton"
+                    text="Habilitar boton de registro de evaluaciones"
+                    onAction="#handleAbleRegisterEvaluationButton"
+                    style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
+            <Button fx:id="logoutButton" text="Cerrar sesión"
+                    onAction="#handleLogoutButton" style="-fx-background-color: #FF4C4C; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
         </VBox>
     </left>

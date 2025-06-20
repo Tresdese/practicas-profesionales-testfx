@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DAO.GroupDAO;
 import logic.DTO.GroupDTO;
 import logic.DTO.StudentDTO;
@@ -39,7 +40,7 @@ public class GUI_RegisterStudentController {
     private PasswordField passwordField, confirmPasswordField;
 
     @FXML
-    private Button togglePasswordVisibility;
+    private Button togglePasswordVisibilityButton;
 
     @FXML
     private Label namesCharCountLabel, surnamesCharCountLabel, phoneCharCountLabel, emailCharCountLabel, userCharCountLabel, passwordCharCountLabel;
@@ -57,8 +58,8 @@ public class GUI_RegisterStudentController {
     }
 
     private void configurePasswordVisibility() {
-        togglePasswordVisibility.setText("🙈");
-        togglePasswordVisibility.setOnAction(event -> togglePasswordVisibility());
+        togglePasswordVisibilityButton.setText("🙈");
+        togglePasswordVisibilityButton.setOnAction(event -> togglePasswordVisibility());
     }
 
     private void configureTextFormatters() {
@@ -109,7 +110,7 @@ public class GUI_RegisterStudentController {
             passwordField.setManaged(true);
             confirmPasswordField.setVisible(true);
             confirmPasswordField.setManaged(true);
-            togglePasswordVisibility.setText("🙈");
+            togglePasswordVisibilityButton.setText("🙈");
         } else {
             passwordVisibleField.setText(passwordField.getText());
             confirmPasswordVisibleField.setText(confirmPasswordField.getText());
@@ -121,7 +122,7 @@ public class GUI_RegisterStudentController {
             passwordVisibleField.setManaged(true);
             confirmPasswordVisibleField.setVisible(true);
             confirmPasswordVisibleField.setManaged(true);
-            togglePasswordVisibility.setText("👁");
+            togglePasswordVisibilityButton.setText("👁");
         }
         isPasswordVisible = !isPasswordVisible;
     }
@@ -129,7 +130,7 @@ public class GUI_RegisterStudentController {
     @FXML
     private void handleRegisterStudent() {
         statusLabel.setText("");
-        statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+        statusLabel.setTextFill(Color.RED);
 
         if (!validateFields()) {
             return;
@@ -143,7 +144,7 @@ public class GUI_RegisterStudentController {
         try {
             registerStudent(student);
             statusLabel.setText("¡Estudiante registrado exitosamente!");
-            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            statusLabel.setTextFill(Color.GREEN);
             if (parentController != null) {
                 parentController.loadStudentData();
             }

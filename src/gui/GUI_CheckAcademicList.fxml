@@ -15,13 +15,13 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnStaffNumber" prefWidth="120.0" text="Numero de personal" />
-                        <TableColumn fx:id="columnNames" prefWidth="150.0" text="Nombres" />
-                        <TableColumn fx:id="columnSurnames" prefWidth="150.0" text="Apellidos" />
-                        <TableColumn fx:id="columnUserNames" prefWidth="150.0" text="Nombre de usuario" />
-                        <TableColumn fx:id="columnnRole" prefWidth="100.0" text="Rol" />
-                        <TableColumn fx:id="columnDetails" prefWidth="150.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" prefWidth="150.0" text="Gestionar" />
+                        <TableColumn fx:id="staffNumberColumn" prefWidth="120.0" text="Numero de personal" />
+                        <TableColumn fx:id="namesColumn" prefWidth="150.0" text="Nombres" />
+                        <TableColumn fx:id="surnamesColumn" prefWidth="150.0" text="Apellidos" />
+                        <TableColumn fx:id="userNamesColumn" prefWidth="150.0" text="Nombre de usuario" />
+                        <TableColumn fx:id="roleColumn" prefWidth="100.0" text="Rol" />
+                        <TableColumn fx:id="detailsColumn" prefWidth="150.0" text="Ver Detalles" />
+                        <TableColumn fx:id="managementColumn" prefWidth="150.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
@@ -37,8 +37,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterAcademic" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Académico" textFill="WHITE" />
+        <Button fx:id="registerAcademicButton" layoutX="400.0" layoutY="600.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Académico" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelAcademicCounts" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
+        <Label fx:id="academicCountsLabel" layoutX="35.0" layoutY="620.0" text="Totales: 0" />
     </children>
 </AnchorPane>

@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.exceptions.EmptyFields;
 import logic.services.LinkedOrganizationService;
@@ -19,7 +20,7 @@ public class GUI_RegisterLinkedOrganizationController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldName, fieldAddress;
+    private TextField nameField, fieldAddress;
 
     private GUI_CheckListLinkedOrganizationController parentController;
 
@@ -51,7 +52,7 @@ public class GUI_RegisterLinkedOrganizationController {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
 
-            String name = fieldName.getText();
+            String name = nameField.getText();
             String address = fieldAddress.getText();
 
             LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
@@ -59,7 +60,7 @@ public class GUI_RegisterLinkedOrganizationController {
             organization.setIdOrganization(generatedId);
 
             statusLabel.setText("¡Organización registrada exitosamente!");
-            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            statusLabel.setTextFill(Color.GREEN);
 
             if (parentController != null) {
                 parentController.loadOrganizationData();
@@ -68,20 +69,20 @@ public class GUI_RegisterLinkedOrganizationController {
         } catch (SQLException e) {
             logger.error("Error de SQL al registrar la organización: {}", e.getMessage(), e);
             statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (EmptyFields e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
     public boolean areFieldsFilled() {
-        return !fieldName.getText().isEmpty() &&
+        return !nameField.getText().isEmpty() &&
                 !fieldAddress.getText().isEmpty();
     }
 }

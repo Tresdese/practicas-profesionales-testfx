@@ -46,7 +46,7 @@ public class GUI_AssignProjectController {
     private ChoiceBox<ProjectDTO> projectChoiceBox;
 
     @FXML
-    private Button buttonAssignProject;
+    private Button assignProjectButton;
 
     @FXML
     private Label statusLabel;
@@ -231,7 +231,7 @@ public class GUI_AssignProjectController {
     }
 
     private void closeWindow() {
-        Stage stage = (Stage) buttonAssignProject.getScene().getWindow();
+        Stage stage = (Stage) assignProjectButton.getScene().getWindow();
         stage.close();
     }
 }

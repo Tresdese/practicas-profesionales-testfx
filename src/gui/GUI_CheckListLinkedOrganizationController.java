@@ -27,16 +27,16 @@ public class GUI_CheckListLinkedOrganizationController {
     private TableView<LinkedOrganizationDTO> tableView;
 
     @FXML
-    private TableColumn<LinkedOrganizationDTO, String> columnOrganizationName;
+    private TableColumn<LinkedOrganizationDTO, String> organizationNameColumn;
 
     @FXML
-    private TableColumn<LinkedOrganizationDTO, String> columnOrganizationAddress;
+    private TableColumn<LinkedOrganizationDTO, String> organizationAddressColumn;
 
     @FXML
-    private TableColumn<LinkedOrganizationDTO, Void> columnDetails;
+    private TableColumn<LinkedOrganizationDTO, Void> detailsColumn;
 
     @FXML
-    private TableColumn<LinkedOrganizationDTO, Void> columnManagement;
+    private TableColumn<LinkedOrganizationDTO, Void> managementColumn;
 
     @FXML
     private TextField searchField;
@@ -45,13 +45,13 @@ public class GUI_CheckListLinkedOrganizationController {
     private Button searchButton;
 
     @FXML
-    private Button buttonRegisterOrganization;
+    private Button registerOrganizationButton;
 
     @FXML
     private Label statusLabel;
 
     @FXML
-    private Label labelOrganizationCounts;
+    private Label organizationCountsLabel;
 
     private LinkedOrganizationDTO selectedLinkedOrganization;
     private LinkedOrganizationService linkedOrganizationService;
@@ -68,8 +68,8 @@ public class GUI_CheckListLinkedOrganizationController {
             logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
         }
 
-        columnOrganizationName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        columnOrganizationAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        organizationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        organizationAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
 
         addDetailsButtonToTable();
         addManagementButtonToTable();
@@ -77,7 +77,7 @@ public class GUI_CheckListLinkedOrganizationController {
         loadOrganizationData();
 
         searchButton.setOnAction(event -> searchOrganization());
-        buttonRegisterOrganization.setOnAction(event -> openRegisterOrganizationWindow());
+        registerOrganizationButton.setOnAction(event -> openRegisterOrganizationWindow());
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedLinkedOrganization = newValue;
@@ -163,7 +163,7 @@ public class GUI_CheckListLinkedOrganizationController {
             }
         };
 
-        columnDetails.setCellFactory(cellFactory);
+        detailsColumn.setCellFactory(cellFactory);
     }
 
     private void addManagementButtonToTable() {
@@ -188,7 +188,7 @@ public class GUI_CheckListLinkedOrganizationController {
             }
         };
 
-        columnManagement.setCellFactory(cellFactory);
+        managementColumn.setCellFactory(cellFactory);
     }
 
     private void openManageOrganizationWindow(LinkedOrganizationDTO organization) {
@@ -204,6 +204,6 @@ public class GUI_CheckListLinkedOrganizationController {
 
     private void updateOrganizationCounts(ObservableList<LinkedOrganizationDTO> list) {
         int total = list.size();
-        labelOrganizationCounts.setText("Totales: " + total);
+        organizationCountsLabel.setText("Totales: " + total);
     }
 }

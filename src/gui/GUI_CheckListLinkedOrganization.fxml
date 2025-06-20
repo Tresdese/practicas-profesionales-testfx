@@ -15,10 +15,10 @@
             <center>
                 <TableView fx:id="tableView" editable="true" prefHeight="480.0" prefWidth="950.0" BorderPane.alignment="CENTER">
                     <columns>
-                        <TableColumn fx:id="columnOrganizationName" prefWidth="237.0" text="Nombre de la organizacion" />
-                        <TableColumn fx:id="columnOrganizationAddress" prefWidth="240.0" text="Direccion de la organizacion" />
-                        <TableColumn fx:id="columnDetails" prefWidth="264.0" text="Ver Detalles" />
-                        <TableColumn fx:id="columnManagement" minWidth="0.0" prefWidth="208.0" text="Gestionar" />
+                        <TableColumn fx:id="organizationNameColumn" prefWidth="237.0" text="Nombre de la organizacion" />
+                        <TableColumn fx:id="organizationAddressColumn" prefWidth="240.0" text="Direccion de la organizacion" />
+                        <TableColumn fx:id="detailsColumn" prefWidth="264.0" text="Ver Detalles" />
+                        <TableColumn fx:id="managementColumn" minWidth="0.0" prefWidth="208.0" text="Gestionar" />
                     </columns>
                 </TableView>
             </center>
@@ -34,8 +34,8 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <Button fx:id="buttonRegisterOrganization" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE" />
+        <Button fx:id="registerOrganizationButton" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="labelOrganizationCounts" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
+        <Label fx:id="organizationCountsLabel" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
     </children>
 </AnchorPane>

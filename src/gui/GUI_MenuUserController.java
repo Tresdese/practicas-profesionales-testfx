@@ -1,5 +1,6 @@
 package gui;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,61 +12,69 @@ import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-
 public class GUI_MenuUserController {
 
     private static final Logger logger = LogManager.getLogger(GUI_MenuUserController.class);
+
+    private static boolean enabledEvaluation = false;
 
     @FXML
     private Label welcomeLabel;
 
     @FXML
-    private Button buttonViewStudentList;
+    private Button viewStudentListButton;
 
     @FXML
-    private Button buttonCheckPresentationGrade;
+    private Button checkPresentationGradeButton;
 
     @FXML
-    private Button buttonEvaluatePresentation;
+    private Button evaluatePresentationButton;
 
     @FXML
-    private Button buttonViewAcademicList;
+    private Button viewAcademicListButton;
 
     @FXML
-    private Button buttonViewOrganizationList;
+    private Button viewOrganizationListButton;
 
     @FXML
-    private Button buttonViewRepresentativeList;
+    private Button viewRepresentativeListButton;
 
     @FXML
-    private Button buttonViewProjectList;
+    private Button viewProjectListButton;
 
     @FXML
-    private Button handleViewProjectRequest;
+    private Button viewProjectRequestButton;
 
     @FXML
-    private Button buttonViewPeriodList;
+    private Button viewPeriodListButton;
 
     @FXML
-    private Button buttonViewGroupList;
+    private Button viewGroupListButton;
 
     @FXML
-    private Button buttonManageAssessmentCriteria;
+    private Button manageAssessmentCriteriaButton;
 
     @FXML
-    private Button buttonManageSelfAssessmentCriteria;
+    private Button manageSelfAssessmentCriteriaButton;
 
     @FXML
-    private Button buttonManageActivity;
+    private Button manageActivityButton;
 
     @FXML
-    private Button buttonLogout;
+    private Button ableRegisterEvaluationButton;
 
+    @FXML
+    private Button logoutButton;
+
+    private int actualUserId;
     private String userRole;
 
     public void setUserName(String userName) {
         welcomeLabel.setText("Hola, " + userName);
+    }
+
+    public void setActualUserId(int id) {
+        this.actualUserId = id;
     }
 
     void setButtonVisibility(Button btn, boolean visible) {
@@ -79,54 +88,57 @@ public class GUI_MenuUserController {
         this.userRole = role.name();
 
         if (role == Role.ACADEMICO_EVALUADOR) {
-            setButtonVisibility(buttonViewStudentList, false);
-            setButtonVisibility(buttonViewAcademicList, false);
-            setButtonVisibility(buttonViewOrganizationList, false);
-            setButtonVisibility(buttonViewRepresentativeList, false);
-            setButtonVisibility(buttonViewProjectList, false);
-            setButtonVisibility(handleViewProjectRequest, false);
-            setButtonVisibility(buttonCheckPresentationGrade, true);
-            setButtonVisibility(buttonEvaluatePresentation, true);
-            setButtonVisibility(buttonViewPeriodList, false);
-            setButtonVisibility(buttonViewGroupList, false);
-            setButtonVisibility(buttonManageAssessmentCriteria, true);
-            setButtonVisibility(buttonManageSelfAssessmentCriteria, true);
-            setButtonVisibility(buttonManageActivity, true);
+            setButtonVisibility(viewStudentListButton, false);
+            setButtonVisibility(viewAcademicListButton, false);
+            setButtonVisibility(viewOrganizationListButton, false);
+            setButtonVisibility(viewRepresentativeListButton, false);
+            setButtonVisibility(viewProjectListButton, false);
+            setButtonVisibility(viewProjectRequestButton, false);
+            setButtonVisibility(checkPresentationGradeButton, enabledEvaluation);
+            setButtonVisibility(evaluatePresentationButton, enabledEvaluation);
+            setButtonVisibility(viewPeriodListButton, false);
+            setButtonVisibility(viewGroupListButton, false);
+            setButtonVisibility(manageAssessmentCriteriaButton, true);
+            setButtonVisibility(manageSelfAssessmentCriteriaButton, true);
+            setButtonVisibility(manageActivityButton, true);
+            setButtonVisibility(ableRegisterEvaluationButton, false);
 
         } else if (role == Role.ACADEMICO) {
-            setButtonVisibility(buttonViewStudentList, true);
-            setButtonVisibility(buttonCheckPresentationGrade, true);
-            setButtonVisibility(buttonEvaluatePresentation, false);
-            setButtonVisibility(buttonViewAcademicList, false);
-            setButtonVisibility(buttonViewOrganizationList, false);
-            setButtonVisibility(buttonViewRepresentativeList, false);
-            setButtonVisibility(buttonViewProjectList, false);
-            setButtonVisibility(handleViewProjectRequest, false);
-            setButtonVisibility(buttonViewPeriodList, true);
-            setButtonVisibility(buttonViewGroupList, true);
-            setButtonVisibility(buttonManageAssessmentCriteria, false);
-            setButtonVisibility(buttonManageSelfAssessmentCriteria, false);
-            setButtonVisibility(buttonManageActivity, false);
+            setButtonVisibility(viewStudentListButton, true);
+            setButtonVisibility(checkPresentationGradeButton, true);
+            setButtonVisibility(evaluatePresentationButton, false);
+            setButtonVisibility(viewAcademicListButton, false);
+            setButtonVisibility(viewOrganizationListButton, false);
+            setButtonVisibility(viewRepresentativeListButton, false);
+            setButtonVisibility(viewProjectListButton, false);
+            setButtonVisibility(viewProjectRequestButton, false);
+            setButtonVisibility(viewPeriodListButton, true);
+            setButtonVisibility(viewGroupListButton, true);
+            setButtonVisibility(manageAssessmentCriteriaButton, false);
+            setButtonVisibility(manageSelfAssessmentCriteriaButton, false);
+            setButtonVisibility(manageActivityButton, false);
+            setButtonVisibility(ableRegisterEvaluationButton, false);
 
         } else if (role == Role.COORDINADOR) {
-            setButtonVisibility(buttonViewStudentList, true);
-            setButtonVisibility(buttonCheckPresentationGrade, true);
-            setButtonVisibility(buttonEvaluatePresentation, false);
-            setButtonVisibility(buttonViewAcademicList, true);
-            setButtonVisibility(buttonViewOrganizationList, true);
-            setButtonVisibility(buttonViewRepresentativeList, true);
-            setButtonVisibility(buttonViewProjectList, true);
-            setButtonVisibility(handleViewProjectRequest, true);
-            setButtonVisibility(buttonViewPeriodList, true);
-            setButtonVisibility(buttonViewGroupList, true);
-            setButtonVisibility(buttonManageAssessmentCriteria, true);
-            setButtonVisibility(buttonManageSelfAssessmentCriteria, true);
-            setButtonVisibility(buttonManageActivity, true);
+            setButtonVisibility(viewStudentListButton, true);
+            setButtonVisibility(checkPresentationGradeButton, true);
+            setButtonVisibility(evaluatePresentationButton, false);
+            setButtonVisibility(viewAcademicListButton, true);
+            setButtonVisibility(viewOrganizationListButton, true);
+            setButtonVisibility(viewRepresentativeListButton, true);
+            setButtonVisibility(viewProjectListButton, true);
+            setButtonVisibility(viewProjectRequestButton, true);
+            setButtonVisibility(viewPeriodListButton, true);
+            setButtonVisibility(viewGroupListButton, true);
+            setButtonVisibility(manageAssessmentCriteriaButton, true);
+            setButtonVisibility(manageSelfAssessmentCriteriaButton, true);
+            setButtonVisibility(manageActivityButton, true);
+            setButtonVisibility(ableRegisterEvaluationButton, true);
         }
     }
 
     @FXML
-    private void handleCheckPresentationGrade() {
+    private void handleCheckPresentationGradeButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckPresentationGrade.fxml"));
             Parent root = loader.load();
@@ -134,19 +146,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Consultar Calificaciones de Presentación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de calificaciones: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de calificaciones: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleEvaluatePresentation() {
+    private void handleEvaluatePresentationButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfPresentations.fxml"));
             Parent root = loader.load();
@@ -154,45 +160,32 @@ public class GUI_MenuUserController {
             stage.setTitle("Calificar Presentación");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de evaluación: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de evaluación: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewStudentList() {
+    private void handleViewStudentListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfStudents.fxml"));
             Parent root = loader.load();
 
             GUI_CheckListOfStudentsController controller = loader.getController();
             controller.setUserRole(Role.valueOf(userRole));
+            controller.setIdUserAcademic(actualUserId);
 
             Stage stage = new Stage();
             stage.setTitle("Lista de Estudiantes");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            logger.error("Error al convertir el rol de usuario: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML o controlador no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewAcademicList() {
+    private void handleViewAcademicListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckAcademicList.fxml"));
             Parent root = loader.load();
@@ -200,19 +193,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Académicos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewOrganizationList() {
+    private void handleViewOrganizationListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListLinkedOrganization.fxml"));
             Parent root = loader.load();
@@ -220,19 +207,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Organizaciones");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewRepresentativeList() {
+    private void handleViewRepresentativeListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckRepresentativeList.fxml"));
             Parent root = loader.load();
@@ -240,19 +221,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Representantes");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewProjectList() {
+    private void handleViewProjectListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckProjectList.fxml"));
             Parent root = loader.load();
@@ -263,21 +238,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Proyectos");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            logger.error("Error al convertir el rol de usuario: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML o controlador no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewProjectRequest() {
+    private void handleViewProjectRequestButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckProjectRequestList.fxml"));
             Parent root = loader.load();
@@ -288,21 +255,13 @@ public class GUI_MenuUserController {
             stage.setTitle("Lista de Solicitudes de Prácticas");
             stage.setScene(new Scene(root));
             stage.show();
-        } catch (IOException e) {
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            logger.error("Error al convertir el rol de usuario: {}", e.getMessage(), e);
-        } catch (NullPointerException e) {
-            logger.error("Recurso FXML o controlador no encontrado: {}", e.getMessage(), e);
-        } catch (IllegalStateException e) {
-            logger.error("Error en el estado de JavaFX: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
+            logger.error("Error al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
         }
     }
 
     @FXML
-    private void handleViewPeriodList() {
+    private void handleViewPeriodListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfPeriods.fxml"));
             Parent root = loader.load();
@@ -320,7 +279,7 @@ public class GUI_MenuUserController {
     }
 
     @FXML
-    private void handleViewGroupList() {
+    private void handleViewGroupListButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfGroups.fxml"));
             Parent root = loader.load();
@@ -338,7 +297,7 @@ public class GUI_MenuUserController {
     }
 
     @FXML
-    private void handleManageAssessmentCriteria() {
+    private void handleManageAssessmentCriteriaButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageAssessmentCriteria.fxml"));
             Parent root = loader.load();
@@ -352,7 +311,7 @@ public class GUI_MenuUserController {
     }
 
     @FXML
-    private void handleManageSelfAssessmentCriteria() {
+    private void handleManageSelfAssessmentCriteriaButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageSelfAssessmentCriteria.fxml"));
             Parent root = loader.load();
@@ -366,7 +325,7 @@ public class GUI_MenuUserController {
     }
 
     @FXML
-    private void handleManageActivity() {
+    private void handleManageActivityButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ManageActivity.fxml"));
             Parent root = loader.load();
@@ -380,10 +339,15 @@ public class GUI_MenuUserController {
     }
 
     @FXML
-    private void handleLogout() {
+    private void handleAbleRegisterEvaluationButton(ActionEvent event) {
+        enabledEvaluation = !enabledEvaluation;
+    }
+
+    @FXML
+    private void handleLogoutButton() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("GUI_Login.fxml"));
-            Stage stage = (Stage) buttonLogout.getScene().getWindow();
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Inicio de Sesión");
             stage.show();

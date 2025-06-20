@@ -1,7 +1,6 @@
 package gui;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -29,7 +28,7 @@ public class GUI_RegisterRepresentativeController {
     private static final Logger logger = LogManager.getLogger(GUI_RegisterRepresentativeController.class);
 
     @FXML
-    private Button buttonRegisterUser;
+    private Button registerUserButton;
 
     @FXML
     private TextField emailField;

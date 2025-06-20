@@ -62,7 +62,7 @@
          <Label text="Contraseña" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
          <PasswordField fx:id="passwordField" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
          <TextField fx:id="passwordVisibleField" managed="false" visible="false" GridPane.rowIndex="2" GridPane.columnIndex="4"/>
-         <Button fx:id="togglePasswordVisibility" text="🙈" GridPane.rowIndex="2" GridPane.columnIndex="5"/>
+         <Button fx:id="togglePasswordVisibilityButton" text="🙈" GridPane.rowIndex="2" GridPane.columnIndex="5"/>
          <Label fx:id="passwordCharCountLabel" text="0/64" GridPane.rowIndex="2" GridPane.columnIndex="6"/>
 
          <Label text="Confirmar Contraseña" GridPane.rowIndex="3" GridPane.columnIndex="3"/>

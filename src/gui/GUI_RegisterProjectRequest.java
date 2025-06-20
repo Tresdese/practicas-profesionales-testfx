@@ -15,10 +15,10 @@ public class GUI_RegisterProjectRequest extends Application {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequest.class);
 
-    private static StudentDTO estudianteActual;
+    private static StudentDTO actualStudent;
 
-    public static void setEstudianteActual(StudentDTO estudiante) {
-        estudianteActual = estudiante;
+    public static void setActualStudent(StudentDTO estudiante) {
+        actualStudent = estudiante;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class GUI_RegisterProjectRequest extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterProjectRequest.fxml"));
             Parent root = loader.load();
             GUI_RegisterProjectRequestController controller = loader.getController();
-            controller.setStudent(estudianteActual);
+            controller.setStudent(actualStudent);
 
             Scene scene = new Scene(root);
 

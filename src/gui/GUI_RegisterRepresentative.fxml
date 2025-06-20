@@ -25,7 +25,7 @@
         <ChoiceBox fx:id="organizationBox" layoutX="231.0" layoutY="262.0" prefWidth="150.0" />
         <Label layoutX="135.0" layoutY="308.0" text="Departamento" />
         <ChoiceBox fx:id="departmentBox" layoutX="231.0" layoutY="304.0" prefWidth="150.0" />
-        <Button fx:id="buttonRegisterUser" layoutX="242.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleRegisterRepresentative" style="-fx-background-color: #2772d3;" text="Registrar académico" textFill="WHITE">
+        <Button fx:id="registerUserButton" layoutX="242.0" layoutY="351.0" mnemonicParsing="false" onAction="#handleRegisterRepresentative" style="-fx-background-color: #2772d3;" text="Registrar académico" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
             </opaqueInsets>

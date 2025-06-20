@@ -23,10 +23,13 @@ public class GUI_ReassignProjectController {
 
     @FXML
     private Label studentNameLabel;
+    
     @FXML
     private ChoiceBox<ProjectDTO> projectChoiceBox;
+
     @FXML
-    private Button buttonAssignProject;
+    private Button assignProjectButton;
+
     @FXML
     private Label statusLabel;
 
@@ -35,11 +38,11 @@ public class GUI_ReassignProjectController {
 
     @FXML
     private void initialize() {
-        buttonAssignProject.setOnAction(event -> handleReassignProject());
+        assignProjectButton.setOnAction(event -> handleAssignProjectButton());
     }
 
     @FXML
-    public void handleReassignProject() {
+    public void handleAssignProjectButton() {
         ProjectDTO selectedProject = projectChoiceBox.getValue();
         if (selectedProject == null) {
             statusLabel.setText("Seleccione un proyecto.");
@@ -80,7 +83,7 @@ public class GUI_ReassignProjectController {
     }
 
     private void closeWindow() {
-        Stage stage = (Stage) buttonAssignProject.getScene().getWindow();
+        Stage stage = (Stage) assignProjectButton.getScene().getWindow();
         stage.close();
     }
 }

@@ -16,6 +16,7 @@ import logic.DTO.ProjectStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class GUI_RegisterProjectRequestController {
                 loadRepresentatives();
                 loadProjects();
             });
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
             setStatus("Error al inicializar la interfaz.", true);
         }

@@ -47,7 +47,7 @@ public class GUI_RegisterReportController {
     private TextArea observationsArea;
 
     @FXML
-    private Button handleRegister, buttonRegisterActivity;
+    private Button handleRegister, registerActivityButton;
 
     @FXML
     private ComboBox<ActivityDTO> activityComboBox;

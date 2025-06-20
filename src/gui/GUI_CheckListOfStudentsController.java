@@ -14,9 +14,11 @@ import javafx.util.Callback;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
+import logic.DTO.UserStudentViewDTO;
 import logic.services.ServiceFactory;
 import logic.services.StudentService;
 import logic.DTO.Role;
+import logic.DAO.UserStudentViewDAO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,6 +59,9 @@ public class GUI_CheckListOfStudentsController {
     private TextField searchField;
 
     @FXML
+    private ChoiceBox<String> filterChoiceBox;
+
+    @FXML
     private Button searchButton;
 
     @FXML
@@ -77,6 +82,12 @@ public class GUI_CheckListOfStudentsController {
     private ProjectDTO currentProject;
     private Role userRole;
 
+    private int idUserAcademic = -1;
+
+    public void setIdUserAcademic(int idUsuario) {
+        this.idUserAcademic = idUsuario;
+    }
+
     public void initialize() {
         try {
             this.studentService = ServiceFactory.getStudentService();
@@ -85,6 +96,10 @@ public class GUI_CheckListOfStudentsController {
             statusLabel.setText("Error interno. Intente más tarde.");
             return;
         }
+
+        filterChoiceBox.getItems().addAll("Todos", "Mis estudiantes");
+        filterChoiceBox.setValue("Todos");
+        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadStudentData());
 
         setColumns();
 
@@ -221,12 +236,28 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
+
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
         try {
-            List<StudentDTO> students = studentService.getAllStudents();
-            for (StudentDTO student : students) {
-                if (student.getState() == 1) {
+            UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
+            List<UserStudentViewDTO> userStudentViews = userStudentViewDAO.getAllUserStudentViews();
+            boolean verTodos = filterChoiceBox != null && "Todos".equals(filterChoiceBox.getValue());
+            for (UserStudentViewDTO userStudentView : userStudentViews) {
+                if (userStudentView.isStatus() && (verTodos || userStudentView.getUserId() == idUserAcademic)) {
+                    StudentDTO student = new StudentDTO(
+                            userStudentView.getTuition(),
+                            userStudentView.isStatus() ? 1 : 0,
+                            userStudentView.getStudentNames(),
+                            userStudentView.getStudentSurnames(),
+                            userStudentView.getPhoneNumber(),
+                            userStudentView.getEmail(),
+                            userStudentView.getStudentUsername(),
+                            "",
+                            String.valueOf(userStudentView.getNrc()),
+                            userStudentView.getCreditProgress() != null ? String.valueOf(userStudentView.getCreditProgress()) : "",
+                            userStudentView.getFinalGrade() != null ? userStudentView.getFinalGrade().doubleValue() : 0.0
+                    );
                     studentList.add(student);
                 }
             }
@@ -249,8 +280,23 @@ public class GUI_CheckListOfStudentsController {
         ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            StudentDTO student = studentService.searchStudentByTuition(searchQuery);
-            if (student != null) {
+            UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
+            UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
+            if (userStudentView != null && userStudentView.isStatus() &&
+                    (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
+                StudentDTO student = new StudentDTO(
+                        userStudentView.getTuition(),
+                        userStudentView.isStatus() ? 1 : 0,
+                        userStudentView.getStudentNames(),
+                        userStudentView.getStudentSurnames(),
+                        userStudentView.getPhoneNumber(),
+                        userStudentView.getEmail(),
+                        userStudentView.getStudentUsername(),
+                        "",
+                        String.valueOf(userStudentView.getNrc()),
+                        userStudentView.getCreditProgress() != null ? String.valueOf(userStudentView.getCreditProgress()) : "",
+                        userStudentView.getFinalGrade() != null ? userStudentView.getFinalGrade().doubleValue() : 0.0
+                );
                 filteredList.add(student);
             }
         } catch (SQLException e) {
@@ -263,15 +309,19 @@ public class GUI_CheckListOfStudentsController {
 
     private void updateStudentCounts() {
         try {
-            List<StudentDTO> students = studentService.getAllStudents();
-            int total = students.size();
+            UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
+            List<UserStudentViewDTO> userStudentViews = userStudentViewDAO.getAllUserStudentViews();
+            int total = 0;
             int activos = 0;
             int inactivos = 0;
-            for (StudentDTO s : students) {
-                if (s.getState() == 1) {
-                    activos++;
-                } else {
-                    inactivos++;
+            for (UserStudentViewDTO userStudentView : userStudentViews) {
+                if (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic) {
+                    total++;
+                    if (userStudentView.isStatus()) {
+                        activos++;
+                    } else {
+                        inactivos++;
+                    }
                 }
             }
             studentCountsLabel.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);

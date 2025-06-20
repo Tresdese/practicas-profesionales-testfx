@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DTO.StudentDTO;
 import logic.exceptions.*;
 import logic.services.StudentService;
@@ -66,20 +67,20 @@ public class GUI_UpdateProfileController {
         if (studentService == null) {
             logger.error("El servicio StudentService no ha sido inicializado.");
             statusLabel.setText("Error interno: Servicio no disponible.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             return;
         }
 
         if (currentStudent == null) {
             logger.error("El objeto currentStudent no ha sido inicializado.");
             statusLabel.setText("Error: No se pudo cargar la información del estudiante.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             return;
         }
 
         if (!areFieldsFilled()) {
             statusLabel.setText("Todos los campos deben estar llenos.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             return;
         }
 
@@ -105,19 +106,19 @@ public class GUI_UpdateProfileController {
             studentService.updateStudent(updatedStudent);
 
             statusLabel.setText("¡Perfil actualizado exitosamente!");
-            statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+            statusLabel.setTextFill(Color.GREEN);
         } catch (SQLException | RepeatedEmail | RepeatedPhone e) {
             logger.warn("Error al actualizar el perfil: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (InvalidData e) {
             logger.warn("Error de validación: {}", e.getMessage(), e);
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

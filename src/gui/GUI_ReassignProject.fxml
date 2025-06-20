@@ -9,7 +9,7 @@
 
 <AnchorPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_ReassignProjectController">
     <children>
-        <Label fx:id="label" layoutX="135.0" layoutY="27.0" text="Reasignar Proyecto" textAlignment="CENTER">
+        <Label fx:id="titleLabel" layoutX="135.0" layoutY="27.0" text="Reasignar Proyecto" textAlignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
@@ -22,7 +22,7 @@
         </Label>
         <Label layoutX="81.0" layoutY="153.0" text="Proyecto disponible:" />
         <ChoiceBox fx:id="projectChoiceBox" layoutX="200.0" layoutY="149.0" prefWidth="200.0" />
-        <Button fx:id="buttonAssignProject" layoutX="185.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleReassignProject" style="-fx-background-color: #2772d3;" text="Asignar proyecto" textFill="WHITE">
+        <Button fx:id="assignProjectButton" layoutX="185.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleAssignProjectButton" style="-fx-background-color: #2772d3;" text="Asignar proyecto" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />
             </opaqueInsets>

@@ -94,7 +94,8 @@ public class GUI_LoginController {
 
                 GUI_MenuUserController controller = loader.getController();
                 controller.setUserName(generalUser.getNames());
-                controller.setUserRole(role); // Ahora pasas el enum
+                controller.setUserRole(role);
+                controller.setActualUserId(Integer.parseInt(generalUser.getIdUser()));
 
                 stage.setTitle("Menú Usuario");
                 stage.show();
