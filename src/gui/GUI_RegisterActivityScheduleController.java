@@ -1,7 +1,5 @@
 package gui;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -20,74 +18,31 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GUI_RegisterActivityScheduleController {
 
     @FXML
-    private TextField evidenceNameField;
-
-    @FXML
-    private DatePicker deliveryDatePicker;
-
-    @FXML
     private TextField evidenceFileTextField;
-
     @FXML
     private Button selectFileButton;
-
-    @FXML
-    private Button registerEvidenceButton;
-
     @FXML
     private TextField fieldMilestone;
-
     @FXML
     private DatePicker fieldEstimatedDate;
-
     @FXML
     private TextField fieldTuition;
-
-    @FXML
-    private ChoiceBox<EvidenceDTO> choiceEvidence;
-
     @FXML
     private Button registerScheduleButton;
-
     @FXML
     private Label statusLabel;
 
     private StudentDTO student;
     private File selectedEvidenceFile;
-    private ObservableList<EvidenceDTO> evidences = FXCollections.observableArrayList();
 
     private static final Logger LOGGER = Logger.getLogger(GUI_RegisterActivityScheduleController.class.getName());
-
-    @FXML
-    private void initialize() {
-        evidenceFileTextField.setEditable(false);
-        setScheduleSectionEnabled(false);
-        loadEvidences();
-        choiceEvidence.setConverter(new javafx.util.StringConverter<EvidenceDTO>() {
-            @Override
-            public String toString(EvidenceDTO evidence) {
-                return evidence != null ? evidence.getEvidenceName() : "";
-            }
-            @Override
-            public EvidenceDTO fromString(String string) {
-                return null;
-            }
-        });
-
-        choiceEvidence.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            boolean enabled = newVal != null;
-            setScheduleSectionEnabled(enabled);
-        });
-    }
 
     public void setStudent(StudentDTO student) {
         this.student = student;
@@ -117,44 +72,56 @@ public class GUI_RegisterActivityScheduleController {
     }
 
     @FXML
-    private void handleRegisterEvidence() {
-        String name = evidenceNameField.getText();
-        LocalDate localDate = deliveryDatePicker.getValue();
-        String route = evidenceFileTextField.getText();
+    private void handleRegisterActivitySchedule() {
+        statusLabel.setText("");
+        if (!validateInputs()) return;
 
-        if (name.isEmpty() || localDate == null || route.isEmpty()) {
-            showAlert("Completa todos los campos de evidencia.");
-            return;
+        int evidenceId = saveEvidenceFile(selectedEvidenceFile);
+        if (evidenceId == -1) return;
+
+        boolean scheduleSaved = saveActivitySchedule(evidenceId);
+        if (!scheduleSaved) return;
+
+        statusLabel.setText("¡Cronograma y evidencia registrados exitosamente!");
+        statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+        clearForm();
+    }
+
+    private boolean validateInputs() {
+        String filePath = evidenceFileTextField.getText();
+        String milestone = fieldMilestone.getText();
+        LocalDate estimatedDate = fieldEstimatedDate.getValue();
+        String tuition = fieldTuition.getText();
+
+        if (filePath.isEmpty() || milestone.isEmpty() || estimatedDate == null || tuition.isEmpty() || selectedEvidenceFile == null) {
+            statusLabel.setText("Completa todos los campos y selecciona un archivo.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return false;
         }
+        return true;
+    }
 
-        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
+    private int saveEvidenceFile(File file) {
         try {
             EvidenceDAO evidenceDAO = new EvidenceDAO();
             int nextId = evidenceDAO.getNextEvidenceId();
 
-            String driveUrl = uploadEvidenceToDrive(selectedEvidenceFile);
-            if (driveUrl == null) return;
+            String driveUrl = uploadEvidenceToDrive(file);
+            if (driveUrl == null) return -1;
 
-            EvidenceDTO evidence = new EvidenceDTO(nextId, name, date, driveUrl);
+            EvidenceDTO evidence = new EvidenceDTO(nextId, file.getName(), new Date(), driveUrl);
             boolean inserted = evidenceDAO.insertEvidence(evidence);
-            if (inserted) {
-                showAlert("Evidencia registrada correctamente.");
-                clearEvidenceForm();
-                loadEvidences();
-                setScheduleSectionEnabled(true);
-                for (EvidenceDTO ev : evidences) {
-                    if (ev.getIdEvidence() == nextId) {
-                        choiceEvidence.setValue(ev);
-                        break;
-                    }
-                }
-            } else {
-                showAlert("No se pudo registrar la evidencia.");
+            if (!inserted) {
+                statusLabel.setText("No se pudo registrar la evidencia.");
+                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                return -1;
             }
+            return nextId;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al registrar la evidencia", e);
-            showAlert("Error de base de datos al registrar la evidencia.");
+            statusLabel.setText("Error de base de datos al registrar la evidencia.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return -1;
         }
     }
 
@@ -185,51 +152,23 @@ public class GUI_RegisterActivityScheduleController {
         }
     }
 
-    private void loadEvidences() {
-        try {
-            EvidenceDAO evidenceDAO = new EvidenceDAO();
-            List<EvidenceDTO> list = evidenceDAO.getAllEvidences();
-            evidences.setAll(list);
-            choiceEvidence.setItems(evidences);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al cargar evidencias", e);
-        }
-    }
-
-    @FXML
-    private void handleRegisterActivitySchedule() {
+    private boolean saveActivitySchedule(int evidenceId) {
         String milestone = fieldMilestone.getText();
         LocalDate localDate = fieldEstimatedDate.getValue();
         String tuition = fieldTuition.getText();
-        EvidenceDTO selectedEvidence = choiceEvidence.getValue();
-
-        if (milestone.isEmpty() || localDate == null || tuition.isEmpty() || selectedEvidence == null) {
-            statusLabel.setText("Completa todos los campos del cronograma.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            return;
-        }
-
         Timestamp estimatedDate = Timestamp.valueOf(localDate.atStartOfDay());
-        String idEvidence = String.valueOf(selectedEvidence.getIdEvidence());
 
         try {
             ScheduleOfActivitiesDAO scheduleDAO = new ScheduleOfActivitiesDAO();
             ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
-                    null, milestone, estimatedDate, tuition, idEvidence
+                    null, milestone, estimatedDate, tuition, String.valueOf(evidenceId)
             );
-            boolean inserted = scheduleDAO.insertScheduleOfActivities(schedule);
-            if (inserted) {
-                statusLabel.setText("¡Cronograma registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-                clearScheduleForm();
-            } else {
-                statusLabel.setText("No se pudo registrar el cronograma.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            }
+            return scheduleDAO.insertScheduleOfActivities(schedule);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error al registrar el cronograma", e);
             statusLabel.setText("Error de base de datos al registrar el cronograma.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            return false;
         }
     }
 
@@ -247,29 +186,16 @@ public class GUI_RegisterActivityScheduleController {
         }
     }
 
-    private void setScheduleSectionEnabled(boolean enabled) {
-        fieldMilestone.setDisable(!enabled);
-        fieldEstimatedDate.setDisable(!enabled);
-        fieldTuition.setDisable(!enabled);
-        registerScheduleButton.setDisable(!enabled);
-    }
-
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
         alert.showAndWait();
     }
 
-    private void clearEvidenceForm() {
-        evidenceNameField.clear();
-        deliveryDatePicker.setValue(null);
+    private void clearForm() {
         evidenceFileTextField.clear();
         selectedEvidenceFile = null;
-    }
-
-    private void clearScheduleForm() {
         fieldMilestone.clear();
         fieldEstimatedDate.setValue(null);
         fieldTuition.clear();
-        choiceEvidence.setValue(null);
     }
 }

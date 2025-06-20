@@ -40,6 +40,8 @@ public class GUI_AssignedProjectController {
     private Button checkPresentationGradeButton;
     @FXML
     private Button registerSelfAssessmentButton;
+    @FXML
+    private Button openRegisterReportButton;
 
     private StudentDTO student;
 
@@ -155,7 +157,6 @@ public class GUI_AssignedProjectController {
         return org == null || "N/A".equals(org.getIdOrganization());
     }
 
-    // Busca el representante asignado al departamento
     private RepresentativeDTO getRepresentativeByDepartment(RepresentativeDAO repDAO, int idDepartment) throws Exception {
         for (RepresentativeDTO r : repDAO.getAllRepresentatives()) {
             if (r.getIdDepartment() != null && !r.getIdDepartment().isEmpty()) {
@@ -177,6 +178,9 @@ public class GUI_AssignedProjectController {
         nameLabel.setText("¡No tienes proyecto asignado!");
         nameLabel.setStyle("-fx-text-fill: #D32F2F; -fx-font-size: 22px; -fx-font-weight: bold;");
         setOtherLabels("-", "-fx-text-fill: #B0B0B0;");
+        checkPresentationGradeButton.setDisable(true);
+        registerSelfAssessmentButton.setDisable(true);
+        openRegisterReportButton.setDisable(true);
     }
 
     private void showProjectNotFound() {

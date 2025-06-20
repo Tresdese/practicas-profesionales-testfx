@@ -3,36 +3,26 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterActivityScheduleController">
+<AnchorPane prefHeight="420.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_RegisterActivityScheduleController">
     <VBox spacing="25" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="30" AnchorPane.rightAnchor="30" AnchorPane.bottomAnchor="20">
-        <!-- Sección Evidencia -->
+        <Label style="-fx-font-size: 18px;" text="Registrar Cronograma y Evidencia" />
         <VBox spacing="10">
-            <Label style="-fx-font-size: 18px;" text="Registrar Evidencia" />
-            <Label text="Nombre de la Evidencia:" />
-            <TextField fx:id="evidenceNameField" promptText="Nombre de la evidencia" />
-            <Label text="Fecha de Entrega:" />
-            <DatePicker fx:id="deliveryDatePicker" />
             <Label text="Archivo de Evidencia:" />
             <HBox spacing="8">
                 <TextField fx:id="evidenceFileTextField" editable="false" prefWidth="250" promptText="Ruta del archivo" />
                 <Button fx:id="selectFileButton" onAction="#handleSelectEvidenceFile" text="Seleccionar Archivo" />
             </HBox>
-            <Button fx:id="registerEvidenceButton" onAction="#handleRegisterEvidence" text="Registrar Evidencia" prefWidth="150" />
         </VBox>
         <Separator />
-        <!-- Sección Cronograma -->
         <VBox spacing="10">
-            <Label style="-fx-font-size: 18px;" text="Registrar Cronograma de Actividades" />
             <Label text="Hito:" />
             <TextField fx:id="fieldMilestone" promptText="Hito" />
             <Label text="Fecha Estimada:" />
             <DatePicker fx:id="fieldEstimatedDate" />
             <Label text="Matrícula:" />
-            <TextField fx:id="fieldTuition" promptText="Matrícula" />
-            <Label text="Evidencia:" />
-            <ChoiceBox fx:id="choiceEvidence" />
-            <Button fx:id="registerScheduleButton" onAction="#handleRegisterActivitySchedule" text="Registrar Cronograma" prefWidth="180" />
-            <Label fx:id="statusLabel" textFill="red" wrapText="true" />
+            <TextField fx:id="fieldTuition" promptText="Matrícula" editable="false"/>
         </VBox>
+        <Button fx:id="registerScheduleButton" onAction="#handleRegisterActivitySchedule" text="Registrar Cronograma y Evidencia" prefWidth="220" />
+        <Label fx:id="statusLabel" textFill="red" wrapText="true" />
     </VBox>
 </AnchorPane>
