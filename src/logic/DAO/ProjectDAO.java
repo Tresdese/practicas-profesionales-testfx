@@ -62,7 +62,7 @@ public class ProjectDAO implements IProjectDAO {
     }
 
     public ProjectDTO searchProjectById(String idProject) throws SQLException {
-        ProjectDTO project = new ProjectDTO();
+        ProjectDTO project = new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {

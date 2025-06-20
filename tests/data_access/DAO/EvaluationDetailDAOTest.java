@@ -6,6 +6,7 @@ import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
 import java.sql.*;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +16,7 @@ class EvaluationDetailDAOTest {
     private ConnectionDataBase connectionDB;
     private Connection connection;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private LinkedOrganizationDAO organizationDAO;
     private ProjectDAO projectDAO;
     private StudentDAO studentDAO;
@@ -34,12 +36,14 @@ class EvaluationDetailDAOTest {
     private int nrc;
     private int evaluationId;
     private int criterionId;
+    private int departmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
         studentDAO = new StudentDAO();
@@ -71,6 +75,7 @@ class EvaluationDetailDAOTest {
         stmt.execute("TRUNCATE TABLE grupo");
         stmt.execute("TRUNCATE TABLE periodo");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("TRUNCATE TABLE criterio_de_evaluacion");
         stmt.execute("ALTER TABLE detalle_evaluacion AUTO_INCREMENT = 1");
@@ -95,6 +100,11 @@ class EvaluationDetailDAOTest {
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        departmentDAO.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departments.get(0).getDepartmentId();
+
         // Period
         periodId = 20241;
         PeriodDTO period = new PeriodDTO(String.valueOf(periodId), "2024-1", new java.sql.Timestamp(System.currentTimeMillis()), new java.sql.Timestamp(System.currentTimeMillis() + 1000000));
@@ -118,7 +128,7 @@ class EvaluationDetailDAOTest {
                 null, "Proyecto Test", "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId), organizationId
+                String.valueOf(userId), organizationId, departmentId
         );
         projectDAO.insertProject(project);
         projectId = projectDAO.getAllProjects().get(0).getIdProject();
@@ -132,7 +142,8 @@ class EvaluationDetailDAOTest {
 
         // Evaluation presentation
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 9.5
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 9.5
         );
         evaluationId = evaluationDAO.insertEvaluationPresentation(evaluation);
 

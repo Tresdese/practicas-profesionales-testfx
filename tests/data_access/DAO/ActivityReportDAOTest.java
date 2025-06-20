@@ -17,6 +17,7 @@ class ActivityReportDAOTest {
     private ActivityReportDAO activityReportDAO;
     private LinkedOrganizationDAO organizationDAO;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private ProjectDAO projectDAO;
     private StudentDAO studentDAO;
     private EvidenceDAO evidenceDAO;
@@ -32,6 +33,7 @@ class ActivityReportDAOTest {
     private final int TEST_PERIOD_ID = 1001;
     private final int TEST_NRC = 11111;
     private String studentEnrollment = "S23014958";
+    private int departmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
@@ -40,6 +42,7 @@ class ActivityReportDAOTest {
         activityReportDAO = new ActivityReportDAO();
         organizationDAO = new LinkedOrganizationDAO();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         projectDAO = new ProjectDAO();
         studentDAO = new StudentDAO();
         evidenceDAO = new EvidenceDAO();
@@ -63,6 +66,7 @@ class ActivityReportDAOTest {
         stmt.execute("TRUNCATE TABLE evidencia");
         stmt.execute("TRUNCATE TABLE proyecto");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("TRUNCATE TABLE estudiante");
         stmt.execute("TRUNCATE TABLE grupo");
@@ -114,11 +118,16 @@ class ActivityReportDAOTest {
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        departmentDAO.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departments.get(0).getDepartmentId();
+
         // 6. Project using ProjectDAO
         ProjectDTO project = new ProjectDTO(null, "Proyecto Test", "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                String.valueOf(userId), organizationId);
+                String.valueOf(userId), organizationId, departmentId);
         projectId = insertProjectAndGetId(project);
 
         // 7. Evidence using EvidenceDAO

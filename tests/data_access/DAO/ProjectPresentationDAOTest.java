@@ -1,10 +1,7 @@
 package data_access.DAO;
 
 import data_access.ConnectionDataBase;
-import logic.DAO.LinkedOrganizationDAO;
-import logic.DAO.ProjectDAO;
-import logic.DAO.ProjectPresentationDAO;
-import logic.DAO.UserDAO;
+import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
@@ -19,6 +16,7 @@ class ProjectPresentationDAOTest {
     private ConnectionDataBase connectionDB;
     private Connection connection;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private LinkedOrganizationDAO linkedOrganizationDAO;
     private ProjectDAO projectDAO;
     private ProjectPresentationDAO projectPresentationDAO;
@@ -26,12 +24,14 @@ class ProjectPresentationDAOTest {
     private int userId;
     private int organizationId;
     private String projectId;
+    private int departmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
         projectPresentationDAO = new ProjectPresentationDAO();
@@ -51,6 +51,7 @@ class ProjectPresentationDAOTest {
         stmt.execute("TRUNCATE TABLE presentacion_proyecto");
         stmt.execute("TRUNCATE TABLE proyecto");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
         stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
@@ -64,6 +65,11 @@ class ProjectPresentationDAOTest {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
         organizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
 
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        departmentDAO.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departments.get(0).getDepartmentId();
+
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
@@ -74,7 +80,8 @@ class ProjectPresentationDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(userId),
-                organizationId
+                organizationId,
+                departmentId
         );
         projectDAO.insertProject(project);
 

@@ -17,6 +17,7 @@ class ProjectRequestDAOTest {
     private Connection connection;
     private LinkedOrganizationDAO linkedOrganizationDAO;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private ProjectDAO projectDAO;
     private StudentDAO studentDAO;
     private ProjectRequestDAO projectRequestDAO;
@@ -30,6 +31,7 @@ class ProjectRequestDAOTest {
     private String studentTuiton;
     private String representativeId;
     private String projectName;
+    private int departmentId;
 
     private static final int TEST_PERIOD_ID = 1001;
     private static final int TEST_NRC = 11111;
@@ -40,6 +42,7 @@ class ProjectRequestDAOTest {
         connection = connectionDB.connectDB();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         projectDAO = new ProjectDAO();
         studentDAO = new StudentDAO();
         projectRequestDAO = new ProjectRequestDAO();
@@ -81,6 +84,7 @@ class ProjectRequestDAOTest {
         stmt.execute("TRUNCATE TABLE periodo");
         stmt.execute("TRUNCATE TABLE proyecto");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("TRUNCATE TABLE representante");
         stmt.execute("ALTER TABLE solicitud_proyecto AUTO_INCREMENT = 1");
@@ -109,7 +113,12 @@ class ProjectRequestDAOTest {
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
-        RepresentativeDTO representative = new RepresentativeDTO(null, "RepName", "RepSurname", "rep@example.com", String.valueOf(organizationId));
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        departmentDAO.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departments.get(0).getDepartmentId();
+
+        RepresentativeDTO representative = new RepresentativeDTO(null, "RepName", "RepSurname", "rep@example.com", String.valueOf(organizationId), String.valueOf(departmentId));
         representativeDAO.insertRepresentative(representative);
         List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives();
         representativeId = representatives.get(0).getIdRepresentative();
@@ -122,7 +131,8 @@ class ProjectRequestDAOTest {
                 new Timestamp(System.currentTimeMillis()),
                 new Timestamp(System.currentTimeMillis()),
                 String.valueOf(userId),
-                organizationId
+                organizationId,
+                departmentId
         );
         projectDAO.insertProject(project);
         List<ProjectDTO> projects = projectDAO.getAllProjects();

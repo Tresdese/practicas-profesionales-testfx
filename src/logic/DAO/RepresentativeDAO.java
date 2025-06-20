@@ -84,8 +84,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
 
     @Override
     public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException {
-        RepresentativeDTO representative = null;
-        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, Integer.parseInt(idRepresentative));

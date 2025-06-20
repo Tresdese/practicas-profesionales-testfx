@@ -16,6 +16,7 @@ class EvaluationPresentationDAOTest {
     private ConnectionDataBase connectionDB;
     private Connection connection;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private LinkedOrganizationDAO organizationDAO;
     private ProjectDAO projectDAO;
     private StudentDAO studentDAO;
@@ -31,12 +32,14 @@ class EvaluationPresentationDAOTest {
     private int presentationId;
     private int periodId;
     private int nrc;
+    private int departmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
         studentDAO = new StudentDAO();
@@ -65,6 +68,7 @@ class EvaluationPresentationDAOTest {
         stmt.execute("TRUNCATE TABLE grupo");
         stmt.execute("TRUNCATE TABLE periodo");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("ALTER TABLE evaluacion_presentacion AUTO_INCREMENT = 1");
         stmt.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
@@ -85,6 +89,11 @@ class EvaluationPresentationDAOTest {
         // User
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
+
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        departmentDAO.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departments.get(0).getDepartmentId();
 
         // Period
         periodId = 20241;
@@ -121,7 +130,8 @@ class EvaluationPresentationDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(userId),
-                organizationId
+                organizationId,
+                departmentId
         );
         projectDAO.insertProject(project);
         projectId = projectDAO.getAllProjects().get(0).getIdProject();
@@ -174,10 +184,11 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0,
+                0, // idEvaluation (o puedes omitir si usas el constructor sin idEvaluation)
                 presentationId,
                 studentMatricula,
-                new java.sql.Date(System.currentTimeMillis()),
+                new java.util.Date(),
+                "Comentario de prueba",
                 9.5
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
@@ -191,7 +202,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void updateEvaluationPresentation() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 8.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 8.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
 
@@ -207,7 +219,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void deleteEvaluationPresentation() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 7.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 7.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
 
@@ -221,7 +234,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void searchEvaluationPresentationById() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 8.5
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 8.5
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
 
@@ -234,7 +248,8 @@ class EvaluationPresentationDAOTest {
     void getAllEvaluationPresentations() throws Exception {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                    0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 7.0 + i
+                    0, presentationId, studentMatricula, new java.util.Date(),
+                    "Comentario de prueba", 7.0 + i
             );
             evaluationDAO.insertEvaluationPresentation(evaluation);
         }
@@ -245,7 +260,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void getLastInsertedId() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 10.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 10.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
         assertTrue(id > 0);
@@ -254,7 +270,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void getEvaluationPresentationsByTuiton() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 9.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 9.0
         );
         evaluationDAO.insertEvaluationPresentation(evaluation);
 
@@ -266,7 +283,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_withInvalidData() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, "NOEXISTE", new java.sql.Date(System.currentTimeMillis()), -5.0
+                0, presentationId, "NOEXISTE", new java.util.Date(),
+                "Comentario de prueba", -5.0
         );
         assertThrows(Exception.class, () -> evaluationDAO.insertEvaluationPresentation(evaluation));
     }
@@ -274,7 +292,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void updateEvaluationPresentation_notExisting() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                9999, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 8.0
+                9999, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 8.0
         );
         boolean updated = evaluationDAO.updateEvaluationPresentation(evaluation);
         assertFalse(updated);
@@ -302,7 +321,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_nullDate() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, null, 8.0
+                0, presentationId, studentMatricula, null,
+                "Comentario de prueba", 8.0
         );
         assertThrows(Exception.class, () -> evaluationDAO.insertEvaluationPresentation(evaluation));
     }
@@ -316,7 +336,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_upperLimitAverage() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 10.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 10.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
         assertTrue(id > 0);
@@ -327,7 +348,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_lowerLimitAverage() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 0.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 0.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
         assertTrue(id > 0);
@@ -339,7 +361,8 @@ class EvaluationPresentationDAOTest {
     void getEvaluationPresentationsByTuiton_multipleRecords() throws Exception {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                    0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 7.0 + i
+                    0, presentationId, studentMatricula, new java.util.Date(),
+                    "Comentario de prueba", 7.0 + i
             );
             evaluationDAO.insertEvaluationPresentation(evaluation);
         }
@@ -352,7 +375,8 @@ class EvaluationPresentationDAOTest {
         int[] ids = new int[3];
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                    0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 7.0 + i
+                    0, presentationId, studentMatricula, new java.util.Date(),
+                    "Comentario de prueba", 7.0 + i
             );
             ids[i] = evaluationDAO.insertEvaluationPresentation(evaluation);
         }
@@ -366,7 +390,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_nullMatricula() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, null, new java.sql.Date(System.currentTimeMillis()), 8.0
+                0, presentationId, null, new java.util.Date(),
+                "Comentario de prueba", 8.0
         );
         assertThrows(Exception.class, () -> evaluationDAO.insertEvaluationPresentation(evaluation));
     }
@@ -374,7 +399,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void insertEvaluationPresentation_invalidPresentationId() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, 9999, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 8.0
+                0, 9999, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 8.0
         );
         assertThrows(Exception.class, () -> evaluationDAO.insertEvaluationPresentation(evaluation));
     }
@@ -382,7 +408,8 @@ class EvaluationPresentationDAOTest {
     @Test
     void updateEvaluationPresentation_nullDate() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.sql.Date(System.currentTimeMillis()), 8.0
+                0, presentationId, studentMatricula, new java.util.Date(),
+                "Comentario de prueba", 8.0
         );
         int id = evaluationDAO.insertEvaluationPresentation(evaluation);
         EvaluationPresentationDTO toUpdate = evaluationDAO.searchEvaluationPresentationById(id);

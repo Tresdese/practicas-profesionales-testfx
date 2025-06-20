@@ -18,6 +18,7 @@ class ReportDAOTest {
     private Connection connection;
     private ReportDAO reportDAO;
     private UserDAO userDAO;
+    private DepartmentDAO departmentDAO;
     private LinkedOrganizationDAO organizationDAO;
     private ProjectDAO projectDAO;
     private StudentDAO studentDAO;
@@ -31,12 +32,14 @@ class ReportDAOTest {
     private String studentTuition;
     private String testNRC = "11111";
     private String testPeriodId = "1001";
+    private int departmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
+        departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
         studentDAO = new StudentDAO();
@@ -87,6 +90,7 @@ class ReportDAOTest {
         stmt.execute("TRUNCATE TABLE evidencia");
         stmt.execute("TRUNCATE TABLE estudiante");
         stmt.execute("TRUNCATE TABLE grupo");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE periodo");
         stmt.execute("TRUNCATE TABLE proyecto");
         stmt.execute("TRUNCATE TABLE usuario");
@@ -127,6 +131,8 @@ class ReportDAOTest {
         LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
+        departmentId = createTestDepartment();
+
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
     }
@@ -150,6 +156,22 @@ class ReportDAOTest {
         throw new SQLException("No se pudo obtener el id del usuario insertado");
     }
 
+    private int createTestDepartment() throws SQLException {
+        String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Dept test");
+            stmt.setString(2, "Description test");
+            stmt.setInt(3, organizationId);
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo obtener el id del departamento insertado");
+    }
+
     private void createBaseProject() throws SQLException {
         ProjectDTO project = new ProjectDTO(
                 null,
@@ -158,7 +180,8 @@ class ReportDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(userId),
-                organizationId
+                organizationId,
+                departmentId
         );
         boolean inserted = projectDAO.insertProject(project);
         assertTrue(inserted, "El proyecto debe insertarse correctamente");

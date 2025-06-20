@@ -19,7 +19,6 @@ class PeriodDAOTest {
     private Connection connection;
     private PeriodDAO periodDAO;
 
-    // Base data for tests
     private final String baseId = "1000";
     private final String baseName = "Periodo Base";
     private final Timestamp baseStart = Timestamp.valueOf("2025-01-01 00:00:00");
@@ -144,6 +143,114 @@ class PeriodDAOTest {
             assertTrue(periods.size() >= 2, "Deberían existir al menos dos periodos en la base de datos");
         } catch (SQLException e) {
             fail("Error en getAllPeriodsSuccessfully: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void insertPeriodFailsWithDuplicateId() {
+        try {
+            PeriodDTO duplicate = new PeriodDTO(
+                    baseId,
+                    "Periodo Duplicado",
+                    Timestamp.valueOf("2028-01-01 00:00:00"),
+                    Timestamp.valueOf("2028-06-30 23:59:59")
+            );
+            boolean result = periodDAO.insertPeriod(duplicate);
+            assertFalse(result, "No debería permitir insertar un periodo con ID duplicado");
+        } catch (SQLException e) {
+            fail("Error inesperado en insertPeriodFailsWithDuplicateId: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void updatePeriodFailsWhenNotExists() {
+        try {
+            PeriodDTO nonExistent = new PeriodDTO(
+                    "9999",
+                    "No Existe",
+                    Timestamp.valueOf("2030-01-01 00:00:00"),
+                    Timestamp.valueOf("2030-06-30 23:59:59")
+            );
+            boolean result = periodDAO.updatePeriod(nonExistent);
+            assertFalse(result, "No debería actualizar un periodo inexistente");
+        } catch (SQLException e) {
+            fail("Error inesperado en updatePeriodFailsWhenNotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void deletePeriodFailsWhenNotExists() {
+        try {
+            boolean result = periodDAO.deletePeriodById("8888");
+            assertFalse(result, "No debería eliminar un periodo inexistente");
+        } catch (SQLException e) {
+            fail("Error inesperado en deletePeriodFailsWhenNotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void searchPeriodByIdReturnsNAWhenNotExists() {
+        try {
+            PeriodDTO found = periodDAO.searchPeriodById("7777");
+            assertNotNull(found, "El resultado no debe ser nulo");
+            assertEquals("N/A", found.getIdPeriod(), "El id debe ser 'N/A' si no existe");
+            assertEquals("N/A", found.getName(), "El nombre debe ser 'N/A' si no existe");
+        } catch (SQLException e) {
+            fail("Error inesperado en searchPeriodByIdReturnsNAWhenNotExists: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void getAllPeriodsReturnsEmptyListWhenNoPeriodsExist() {
+        try {
+            clearTable();
+            List<PeriodDTO> list = periodDAO.getAllPeriods();
+            assertNotNull(list, "La lista no debe ser nula");
+            assertTrue(list.isEmpty(), "La lista debe estar vacía si no hay periodos");
+        } catch (SQLException e) {
+            fail("Error inesperado en getAllPeriodsReturnsEmptyListWhenNoPeriodsExist: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void insertPeriodFailsWithNullOrEmptyFields() {
+        assertThrows(SQLException.class, () -> {
+            PeriodDTO nullFields = new PeriodDTO(null, null, null, null);
+            periodDAO.insertPeriod(nullFields);
+        });
+
+        assertThrows(SQLException.class, () -> {
+            PeriodDTO emptyFields = new PeriodDTO("", "", null, null);
+            periodDAO.insertPeriod(emptyFields);
+        });
+    }
+
+    @Test
+    void insertPeriodWithLongFields() {
+        String longId = "a".repeat(300); // Ajusta según el límite real de la columna
+        String longName = "b".repeat(300);
+        PeriodDTO period = new PeriodDTO(longId, longName, baseStart, baseEnd);
+        assertThrows(SQLException.class, () -> periodDAO.insertPeriod(period));
+    }
+
+    @Test
+    void getAllPeriodsReturnsOrderedList() {
+        try {
+            clearTable();
+            PeriodDTO p1 = new PeriodDTO("1", "A", baseStart, baseEnd);
+            PeriodDTO p2 = new PeriodDTO("2", "B", baseStart, baseEnd);
+            PeriodDTO p3 = new PeriodDTO("3", "C", baseStart, baseEnd);
+            periodDAO.insertPeriod(p1);
+            periodDAO.insertPeriod(p2);
+            periodDAO.insertPeriod(p3);
+
+            List<PeriodDTO> list = periodDAO.getAllPeriods();
+            assertEquals(3, list.size());
+            assertEquals("1", list.get(0).getIdPeriod());
+            assertEquals("2", list.get(1).getIdPeriod());
+            assertEquals("3", list.get(2).getIdPeriod());
+        } catch (SQLException e) {
+            fail("Error inesperado en getAllPeriodsReturnsOrderedList: " + e.getMessage());
         }
     }
 }

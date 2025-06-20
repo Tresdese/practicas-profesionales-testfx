@@ -21,6 +21,7 @@ class ProjectDAOTest {
 
     private int testUserId;
     private int testOrganizationId;
+    private int testDepartmentId;
 
     @BeforeAll
     void setUpAll() throws Exception {
@@ -44,6 +45,7 @@ class ProjectDAOTest {
         stmt.execute("SET FOREIGN_KEY_CHECKS=0");
         stmt.execute("TRUNCATE TABLE proyecto");
         stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
         stmt.execute("TRUNCATE TABLE organizacion_vinculada");
         stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
         stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
@@ -55,6 +57,8 @@ class ProjectDAOTest {
     private void createBaseUserAndOrganization() throws SQLException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
         testOrganizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
+
+        testDepartmentId = createTestDepartment();
 
         UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         testUserId = insertUserAndGetId(user);
@@ -77,6 +81,22 @@ class ProjectDAOTest {
             }
         }
         throw new SQLException("No se pudo obtener el id del usuario insertado");
+    }
+
+    private int createTestDepartment() throws SQLException {
+        String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Dept test");
+            stmt.setString(2, "Description test");
+            stmt.setInt(3, testOrganizationId);
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo obtener el id del departamento insertado");
     }
 
     @AfterAll
@@ -103,7 +123,8 @@ class ProjectDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId),
-                testOrganizationId
+                testOrganizationId,
+                testDepartmentId
         );
         boolean inserted = projectDAO.insertProject(project);
         assertTrue(inserted, "El proyecto debe insertarse correctamente");
@@ -121,12 +142,13 @@ class ProjectDAOTest {
     void searchProjectByIdSuccessfully() throws Exception {
         ProjectDTO project = new ProjectDTO(
                 null,
-                "Proyecto Buscar",
-                "Descripción Buscar",
+                "Proyecto Test",
+                "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId),
-                testOrganizationId
+                testOrganizationId,
+                testDepartmentId
         );
         projectDAO.insertProject(project);
 
@@ -148,7 +170,8 @@ class ProjectDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId),
-                testOrganizationId
+                testOrganizationId,
+                testDepartmentId
         );
         projectDAO.insertProject(project);
 
@@ -174,7 +197,8 @@ class ProjectDAOTest {
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId),
-                testOrganizationId
+                testOrganizationId,
+                testDepartmentId
         );
         projectDAO.insertProject(project);
 
@@ -190,7 +214,7 @@ class ProjectDAOTest {
 
     @Test
     void insertProjectWithNullData() {
-        ProjectDTO project = new ProjectDTO(null, null, null, null, null, null, 0);
+        ProjectDTO project = new ProjectDTO(null, null, null, null, null, null, 0, 0);
         assertThrows(SQLException.class, () -> projectDAO.insertProject(project),
                 "No debe permitir insertar proyecto con datos nulos");
     }
@@ -198,7 +222,8 @@ class ProjectDAOTest {
     @Test
     void updateNonExistentProject() throws Exception {
         ProjectDTO project = new ProjectDTO("9999", "No existe", "Desc", new Timestamp(System.currentTimeMillis()),
-                new Timestamp(System.currentTimeMillis()), String.valueOf(testUserId), testOrganizationId);
+                new Timestamp(System.currentTimeMillis()), String.valueOf(testUserId), testOrganizationId,
+                testDepartmentId);
         boolean updated = projectDAO.updateProject(project);
         assertFalse(updated, "No debe actualizar un proyecto inexistente");
     }
@@ -213,10 +238,10 @@ class ProjectDAOTest {
     void insertDuplicateProjectName() throws Exception {
         ProjectDTO project1 = new ProjectDTO(null, "Proyecto Duplicado", "Desc1",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
-                String.valueOf(testUserId), testOrganizationId);
+                String.valueOf(testUserId), testOrganizationId, testDepartmentId);
         ProjectDTO project2 = new ProjectDTO(null, "Proyecto Duplicado", "Desc2",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
-                String.valueOf(testUserId), testOrganizationId);
+                String.valueOf(testUserId), testOrganizationId, testDepartmentId);
 
         boolean inserted1 = projectDAO.insertProject(project1);
         boolean inserted2 = projectDAO.insertProject(project2);
@@ -238,7 +263,7 @@ class ProjectDAOTest {
         for (int i = 0; i < 3; i++) {
             ProjectDTO project = new ProjectDTO(null, "Proyecto" + i, "Desc" + i,
                     new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
-                    String.valueOf(testUserId), testOrganizationId);
+                    String.valueOf(testUserId), testOrganizationId, testDepartmentId);
             projectDAO.insertProject(project);
         }
         List<ProjectDTO> projects = projectDAO.getAllProjects();
@@ -249,7 +274,7 @@ class ProjectDAOTest {
     void updateProjectWithNullData() throws Exception {
         ProjectDTO project = new ProjectDTO(null, "Proyecto Null", "Desc",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
-                String.valueOf(testUserId), testOrganizationId);
+                String.valueOf(testUserId), testOrganizationId, testDepartmentId);
         projectDAO.insertProject(project);
         List<ProjectDTO> projects = projectDAO.getAllProjects();
         ProjectDTO toUpdate = projects.get(0);
