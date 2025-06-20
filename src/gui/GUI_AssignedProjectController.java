@@ -24,22 +24,31 @@ public class GUI_AssignedProjectController {
 
     @FXML
     private Label nameLabel;
+
     @FXML
     private Label descriptionLabel;
+
     @FXML
     private Label approximateDateLabel;
+
     @FXML
     private Label startDateLabel;
+
     @FXML
     private Label userLabel;
+
     @FXML
     private Label organizationLabel;
+
     @FXML
     private Label representativeLabel;
+
     @FXML
     private Button checkPresentationGradeButton;
+
     @FXML
     private Button registerSelfAssessmentButton;
+
     @FXML
     private Button openRegisterReportButton;
 
