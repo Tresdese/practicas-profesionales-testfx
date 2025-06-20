@@ -28,9 +28,6 @@
             <Button fx:id="viewProjectRequestButton" text="Ver lista de solicitudes de prácticas"
                     onAction="#handleViewProjectRequestButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
-            <Button fx:id="checkPresentationGradeButton" text="Consultar Calificaciones de Presentación"
-                    onAction="#handleCheckPresentationGradeButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
-                     -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />
             <Button fx:id="evaluatePresentationButton" text="Calificar Presentación"
                     onAction="#handleEvaluatePresentationButton" style="-fx-background-color: #1E90FF; -fx-text-fill: white;
                      -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" />

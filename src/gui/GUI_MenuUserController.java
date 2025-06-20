@@ -25,9 +25,6 @@ public class GUI_MenuUserController {
     private Button viewStudentListButton;
 
     @FXML
-    private Button checkPresentationGradeButton;
-
-    @FXML
     private Button evaluatePresentationButton;
 
     @FXML
@@ -94,7 +91,6 @@ public class GUI_MenuUserController {
             setButtonVisibility(viewRepresentativeListButton, false);
             setButtonVisibility(viewProjectListButton, false);
             setButtonVisibility(viewProjectRequestButton, false);
-            setButtonVisibility(checkPresentationGradeButton, enabledEvaluation);
             setButtonVisibility(evaluatePresentationButton, enabledEvaluation);
             setButtonVisibility(viewPeriodListButton, false);
             setButtonVisibility(viewGroupListButton, false);
@@ -105,7 +101,6 @@ public class GUI_MenuUserController {
 
         } else if (role == Role.ACADEMICO) {
             setButtonVisibility(viewStudentListButton, true);
-            setButtonVisibility(checkPresentationGradeButton, true);
             setButtonVisibility(evaluatePresentationButton, false);
             setButtonVisibility(viewAcademicListButton, false);
             setButtonVisibility(viewOrganizationListButton, false);
@@ -121,7 +116,6 @@ public class GUI_MenuUserController {
 
         } else if (role == Role.COORDINADOR) {
             setButtonVisibility(viewStudentListButton, true);
-            setButtonVisibility(checkPresentationGradeButton, true);
             setButtonVisibility(evaluatePresentationButton, false);
             setButtonVisibility(viewAcademicListButton, true);
             setButtonVisibility(viewOrganizationListButton, true);

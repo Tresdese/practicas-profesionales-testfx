@@ -16,19 +16,13 @@
         </Label>
 
         <Label layoutX="38.0" layoutY="79.0" text="Número de Personal:" />
-        <TextField fx:id="fieldNumberOfStaff" layoutX="172.0" layoutY="75.0" />
+        <TextField fx:id="numberOfStaffField" layoutX="172.0" layoutY="75.0" />
 
         <Label layoutX="68.0" layoutY="118.0" text="Nombres:" />
-        <TextField fx:id="fieldNames" layoutX="172.0" layoutY="114.0" />
+        <TextField fx:id="namesField" layoutX="172.0" layoutY="114.0" />
 
         <Label layoutX="68.0" layoutY="156.0" text="Apellidos:" />
-        <TextField fx:id="fieldSurnames" layoutX="172.0" layoutY="152.0" />
-
-        <Label layoutX="40.0" layoutY="194.0" text="Nombre de Usuario:" />
-        <TextField fx:id="fieldUserName" layoutX="172.0" layoutY="190.0" />
-
-        <Label layoutX="62.0" layoutY="236.0" text="Contraseña:" />
-        <TextField fx:id="fieldPassword" layoutX="172.0" layoutY="232.0" />
+        <TextField fx:id="surnamesField" layoutX="172.0" layoutY="152.0" />
 
         <Label layoutX="84.0" layoutY="280.0" text="Rol:" />
         <ChoiceBox fx:id="roleBox" layoutX="172.0" layoutY="276.0" prefWidth="150.0" />

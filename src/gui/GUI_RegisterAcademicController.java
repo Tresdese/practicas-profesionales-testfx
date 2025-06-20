@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.exceptions.*;
@@ -54,7 +55,7 @@ public class GUI_RegisterAcademicController {
             userService = serviceConfig.getUserService();
         } catch (SQLException e) {
             statusLabel.setText("Error al conectar a la base de datos.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             logger.error("Error al inicializar el servicio de usuarios: {}", e.getMessage(), e);
         }
     }
@@ -109,7 +110,7 @@ public class GUI_RegisterAcademicController {
 
             if (!password.equals(confirmPassword)) {
                 statusLabel.setText("Las contraseñas no coinciden.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 return;
             }
 
@@ -126,7 +127,7 @@ public class GUI_RegisterAcademicController {
                 boolean success = userService.registerUser(academic);
 
                 statusLabel.setText("¡Académico registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                statusLabel.setTextFill(Color.GREEN);
 
                 if (parentController != null) {
                     parentController.loadAcademicData();
@@ -136,20 +137,20 @@ public class GUI_RegisterAcademicController {
 
             } catch (RepeatedId e) {
                 statusLabel.setText(e.getMessage());
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error - ID repetido: {}", e.getMessage());
             } catch (RepeatedName e) {
                 statusLabel.setText(e.getMessage());
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error - Nombre de usuario repetido: {}", e.getMessage());
             } catch (SQLException e) {
                 statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error de SQL al registrar el académico: {}", e.getMessage(), e);
             }
         } catch (EmptyFields | InvalidData e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             logger.error("Error: {}", e.getMessage(), e);
         }
     }

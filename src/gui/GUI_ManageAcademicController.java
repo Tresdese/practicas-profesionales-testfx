@@ -20,7 +20,7 @@ public class GUI_ManageAcademicController implements Initializable {
     private static final Logger logger = LogManager.getLogger(GUI_ManageAcademicController.class);
 
     @FXML
-    private TextField fieldNumberOfStaff, fieldNames, fieldSurnames, fieldUserName, fieldPassword;
+    private TextField numberOfStaffField, namesField, surnamesField;
 
     @FXML
     private ChoiceBox<Role> roleBox;
@@ -43,11 +43,9 @@ public class GUI_ManageAcademicController implements Initializable {
 
         this.academic = academic;
 
-        fieldNumberOfStaff.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
-        fieldNames.setText(academic.getNames() != null ? academic.getNames() : "");
-        fieldSurnames.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
-        fieldUserName.setText(academic.getUserName() != null ? academic.getUserName() : "");
-        fieldPassword.setText(academic.getPassword() != null ? academic.getPassword() : "");
+        numberOfStaffField.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
+        namesField.setText(academic.getNames() != null ? academic.getNames() : "");
+        surnamesField.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
         roleBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
     }
 
@@ -60,18 +58,14 @@ public class GUI_ManageAcademicController implements Initializable {
                 throw new IllegalArgumentException("Todos los campos deben estar llenos.");
             }
 
-            String numberOffStaff = fieldNumberOfStaff.getText();
-            String names = fieldNames.getText();
-            String surnames = fieldSurnames.getText();
-            String userName = fieldUserName.getText();
-            String password = fieldPassword.getText();
+            String numberOffStaff = numberOfStaffField.getText();
+            String names = namesField.getText();
+            String surnames = surnamesField.getText();
             Role role = roleBox.getValue();
 
             academic.setStaffNumber(numberOffStaff);
             academic.setNames(names);
             academic.setSurnames(surnames);
-            academic.setUserName(userName);
-            academic.setPassword(password);
             academic.setRole(role);
 
             boolean success = userDAO.updateUser(academic);
@@ -89,11 +83,9 @@ public class GUI_ManageAcademicController implements Initializable {
     }
 
     private boolean areFieldsFilled() {
-        return !fieldNumberOfStaff.getText().isEmpty() &&
-                !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                !fieldUserName.getText().isEmpty() &&
-                !fieldPassword.getText().isEmpty() &&
+        return !numberOfStaffField.getText().isEmpty() &&
+                !namesField.getText().isEmpty() &&
+                !surnamesField.getText().isEmpty() &&
                 roleBox.getValue() != null;
     }
 
