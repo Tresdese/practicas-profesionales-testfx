@@ -5,12 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import logic.DAO.DepartmentDAO;
-import logic.DTO.DepartmentDTO;
-import logic.DTO.LinkedOrganizationDTO;
-import logic.DTO.ProjectDTO;
-import logic.DTO.Role;
-import logic.DTO.UserDTO;
+import logic.DAO.UserDAO;
+import logic.DTO.*;
 import logic.exceptions.EmptyFields;
 import logic.exceptions.InvalidData;
 import logic.exceptions.RepeatedId;
@@ -20,16 +19,21 @@ import logic.services.ServiceConfig;
 import logic.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import javafx.scene.paint.Color;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GUI_RegisterProjectController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectController.class);
+
+    private static final int MAX_NAME = 100;
+    private static final int MAX_DESCRIPTION = 300;
 
     @FXML
     private TextField nameField;
@@ -49,12 +53,18 @@ public class GUI_RegisterProjectController {
     private Button buttonRegisterProyect;
     @FXML
     private Label statusLabel;
+    @FXML
+    private Label nameCharCountLabel;
+    @FXML
+    private Label descriptionCharCountLabel;
 
     private ServiceConfig serviceConfig;
     private ProjectService projectService;
     private LinkedOrganizationService organizationService;
     private UserService userService;
     private DepartmentDAO departmentDAO;
+
+    private ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -66,8 +76,37 @@ public class GUI_RegisterProjectController {
             departmentDAO = new DepartmentDAO();
 
             loadAcademics();
+
             loadOrganizations();
             loadDepartments();
+
+            nameField.setTextFormatter(createTextFormatter(MAX_NAME));
+            descriptionField.setTextFormatter(createTextFormatter(MAX_DESCRIPTION));
+            configureCharCount(nameField, nameCharCountLabel, MAX_NAME);
+            configureCharCount(descriptionField, descriptionCharCountLabel, MAX_DESCRIPTION);
+
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
+                @Override
+                public String toString(LocalDate date) {
+                    return date != null ? dateFormatter.format(date) : "";
+                }
+                @Override
+                public LocalDate fromString(String string) {
+                    if (string == null || string.trim().isEmpty()) {
+                        return null;
+                    }
+                    try {
+                        return LocalDate.parse(string, dateFormatter);
+                    } catch (DateTimeParseException e) {
+                        return null;
+                    }
+                }
+            };
+            startDatePicker.setConverter(converter);
+            endDatePicker.setConverter(converter);
+            startDatePicker.getEditor().setDisable(true);
+            endDatePicker.getEditor().setDisable(true);
 
         } catch (SQLException e) {
             logger.error("Error al inicializar servicios: {}", e.getMessage(), e);
@@ -76,14 +115,41 @@ public class GUI_RegisterProjectController {
         }
     }
 
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCount(TextInputControl textField, Label charCountLabel, int maxLength) {
+        if (charCountLabel == null) return;
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((obs, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
     private void loadAcademics() {
         try {
-            List<UserDTO> academics = userService.getAllUsers();
-            academicBox.setItems(FXCollections.observableArrayList(academics));
+            UserDAO userDAO = new UserDAO();
+            List<UserDTO> academics = userDAO.getAllUsers().stream()
+                    .filter(user -> user.getRole() == Role.ACADEMICO)
+                    .collect(Collectors.toList());
+            academicList.setAll(academics);
+            academicBox.setItems(academicList);
+            academicBox.setConverter(new javafx.util.StringConverter<UserDTO>() {
+                @Override
+                public String toString(UserDTO user) {
+                    return user == null ? "" : user.getNames() + " " + user.getSurnames();
+                }
+                @Override
+                public UserDTO fromString(String string) {
+                    return null;
+                }
+            });
         } catch (SQLException e) {
             logger.error("Error al cargar académicos: {}", e.getMessage(), e);
             statusLabel.setText("Error al cargar académicos.");
-            statusLabel.setTextFill(Color.RED);
         }
     }
 

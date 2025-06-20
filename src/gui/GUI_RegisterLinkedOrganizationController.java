@@ -16,11 +16,17 @@ public class GUI_RegisterLinkedOrganizationController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterLinkedOrganizationController.class);
 
+    private static final int MAX_NAME = 100;
+    private static final int MAX_ADDRESS = 150;
+
     @FXML
     private Label statusLabel;
 
     @FXML
     private TextField nameField, fieldAddress;
+
+    @FXML
+    private Label nameCharCountLabel, addressCharCountLabel;
 
     private GUI_CheckListLinkedOrganizationController parentController;
 
@@ -42,8 +48,27 @@ public class GUI_RegisterLinkedOrganizationController {
         } catch (SQLException e) {
             logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
         }
+
+        // Limitar caracteres y mostrar contador
+        nameField.setTextFormatter(createTextFormatter(MAX_NAME));
+        fieldAddress.setTextFormatter(createTextFormatter(MAX_ADDRESS));
+        configureCharCount(nameField, nameCharCountLabel, MAX_NAME);
+        configureCharCount(fieldAddress, addressCharCountLabel, MAX_ADDRESS);
     }
 
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        if (charCountLabel == null) return;
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((obs, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
 
     @FXML
     private void handleRegisterLinkedOrganization() {

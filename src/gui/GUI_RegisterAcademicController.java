@@ -19,6 +19,12 @@ public class GUI_RegisterAcademicController {
 
     private static final Logger logger = LogManager.getLogger(GUI_RegisterAcademicController.class);
 
+    private static final int MAX_NUMBER_OFF_STAFF = 5;
+    private static final int MAX_NAMES = 50;
+    private static final int MAX_SURNAMES = 50;
+    private static final int MAX_USER = 50;
+    private static final int MAX_PASSWORD = 64;
+
     @FXML
     private ChoiceBox<String> roleBox;
 
@@ -26,13 +32,16 @@ public class GUI_RegisterAcademicController {
     private Label statusLabel;
 
     @FXML
-    private TextField fieldNumberOffStaff, fieldNames, fieldSurnames, fieldUser, fieldPasswordVisible, fieldConfirmPasswordVisible;
+    private TextField numberOfStaffField, namesField, surnamesField, userField, passwordVisibleField, confirmPasswordVisibleField;
 
     @FXML
-    private PasswordField fieldPassword, fieldConfirmPassword;
+    private PasswordField passwordField, fieldConfirmPassword;
 
     @FXML
     private Button togglePasswordVisibility;
+
+    @FXML
+    private Label numberOffStaffCharCountLabel, namesCharCountLabel, surnamesCharCountLabel, userCharCountLabel, passwordCharCountLabel;
 
     private boolean isPasswordVisible = false;
     private GUI_CheckAcademicListController parentController;
@@ -50,6 +59,9 @@ public class GUI_RegisterAcademicController {
 
         roleBox.getItems().addAll("Académico", "Académico Evaluador", "Coordinador");
 
+        configureTextFormatters();
+        configureCharCountLabels();
+
         try {
             ServiceConfig serviceConfig = new ServiceConfig();
             userService = serviceConfig.getUserService();
@@ -60,36 +72,69 @@ public class GUI_RegisterAcademicController {
         }
     }
 
+    private void configureTextFormatters() {
+        numberOfStaffField.setTextFormatter(createTextFormatter(MAX_NUMBER_OFF_STAFF));
+        namesField.setTextFormatter(createTextFormatter(MAX_NAMES));
+        surnamesField.setTextFormatter(createTextFormatter(MAX_SURNAMES));
+        userField.setTextFormatter(createTextFormatter(MAX_USER));
+        passwordField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+        passwordVisibleField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+        fieldConfirmPassword.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+        confirmPasswordVisibleField.setTextFormatter(createTextFormatter(MAX_PASSWORD));
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
+        );
+    }
+
+    private void configureCharCountLabels() {
+        configureCharCount(numberOfStaffField, numberOffStaffCharCountLabel, MAX_NUMBER_OFF_STAFF);
+        configureCharCount(namesField, namesCharCountLabel, MAX_NAMES);
+        configureCharCount(surnamesField, surnamesCharCountLabel, MAX_SURNAMES);
+        configureCharCount(userField, userCharCountLabel, MAX_USER);
+        configureCharCount(passwordField, passwordCharCountLabel, MAX_PASSWORD);
+        configureCharCount(passwordVisibleField, passwordCharCountLabel, MAX_PASSWORD);
+    }
+
+    private void configureCharCount(TextField textField, Label charCountLabel, int maxLength) {
+        charCountLabel.setText("0/" + maxLength);
+        textField.textProperty().addListener((observable, oldText, newText) ->
+                charCountLabel.setText(newText.length() + "/" + maxLength)
+        );
+    }
+
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
-            fieldPassword.setText(fieldPasswordVisible.getText());
-            fieldConfirmPassword.setText(fieldConfirmPasswordVisible.getText());
+            passwordField.setText(passwordVisibleField.getText());
+            fieldConfirmPassword.setText(confirmPasswordVisibleField.getText());
 
-            fieldPasswordVisible.setVisible(false);
-            fieldPasswordVisible.setManaged(false);
-            fieldConfirmPasswordVisible.setVisible(false);
-            fieldConfirmPasswordVisible.setManaged(false);
+            passwordVisibleField.setVisible(false);
+            passwordVisibleField.setManaged(false);
+            confirmPasswordVisibleField.setVisible(false);
+            confirmPasswordVisibleField.setManaged(false);
 
-            fieldPassword.setVisible(true);
-            fieldPassword.setManaged(true);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
             fieldConfirmPassword.setVisible(true);
             fieldConfirmPassword.setManaged(true);
 
             togglePasswordVisibility.setText("🙈");
         } else {
-            fieldPasswordVisible.setText(fieldPassword.getText());
-            fieldConfirmPasswordVisible.setText(fieldConfirmPassword.getText());
+            passwordVisibleField.setText(passwordField.getText());
+            confirmPasswordVisibleField.setText(fieldConfirmPassword.getText());
 
-            fieldPassword.setVisible(false);
-            fieldPassword.setManaged(false);
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
             fieldConfirmPassword.setVisible(false);
             fieldConfirmPassword.setManaged(false);
 
-            fieldPasswordVisible.setVisible(true);
-            fieldPasswordVisible.setManaged(true);
-            fieldConfirmPasswordVisible.setVisible(true);
-            fieldConfirmPasswordVisible.setManaged(true);
+            passwordVisibleField.setVisible(true);
+            passwordVisibleField.setManaged(true);
+            confirmPasswordVisibleField.setVisible(true);
+            confirmPasswordVisibleField.setManaged(true);
 
             togglePasswordVisibility.setText("👁");
         }
@@ -102,11 +147,11 @@ public class GUI_RegisterAcademicController {
             if (!areFieldsFilled()) {
                 throw new EmptyFields("Todos los campos deben estar llenos.");
             }
-            String numberOffStaff = fieldNumberOffStaff.getText();
+            String numberOffStaff = numberOfStaffField.getText();
             StaffNumberValidator.validate(numberOffStaff);
 
-            String password = isPasswordVisible ? fieldPasswordVisible.getText() : fieldPassword.getText();
-            String confirmPassword = isPasswordVisible ? fieldConfirmPasswordVisible.getText() : fieldConfirmPassword.getText();
+            String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
+            String confirmPassword = isPasswordVisible ? confirmPasswordVisibleField.getText() : fieldConfirmPassword.getText();
 
             if (!password.equals(confirmPassword)) {
                 statusLabel.setText("Las contraseñas no coinciden.");
@@ -114,11 +159,11 @@ public class GUI_RegisterAcademicController {
                 return;
             }
 
-            String names = fieldNames.getText();
-            String surname = fieldSurnames.getText();
+            String names = namesField.getText();
+            String surname = surnamesField.getText();
             String selectedRoleText = roleBox.getValue();
             Role role = getRoleFromText(selectedRoleText);
-            String userName = fieldUser.getText();
+            String userName = userField.getText();
             String hashedPassword = PasswordHasher.hashPassword(password);
 
             UserDTO academic = new UserDTO("0", numberOffStaff, names, surname, userName, hashedPassword, role);
@@ -156,24 +201,25 @@ public class GUI_RegisterAcademicController {
     }
 
     private void clearFields() {
-        fieldNumberOffStaff.clear();
-        fieldNames.clear();
-        fieldSurnames.clear();
-        fieldUser.clear();
-        fieldPassword.clear();
+        numberOfStaffField.clear();
+        namesField.clear();
+        surnamesField.clear();
+        userField.clear();
+        passwordField.clear();
         fieldConfirmPassword.clear();
-        fieldPasswordVisible.clear();
-        fieldConfirmPasswordVisible.clear();
+        passwordVisibleField.clear();
+        confirmPasswordVisibleField.clear();
         roleBox.setValue(null);
     }
 
     public boolean areFieldsFilled() {
-        return !fieldNumberOffStaff.getText().isEmpty() &&
-                !fieldNames.getText().isEmpty() &&
-                !fieldSurnames.getText().isEmpty() &&
-                !fieldUser.getText().isEmpty() &&
-                (!fieldPassword.getText().isEmpty() || !fieldPasswordVisible.getText().isEmpty()) &&
-                (!fieldConfirmPassword.getText().isEmpty() || !fieldConfirmPasswordVisible.getText().isEmpty());
+        return !numberOfStaffField.getText().isEmpty() &&
+                !namesField.getText().isEmpty() &&
+                !surnamesField.getText().isEmpty() &&
+                !userField.getText().isEmpty() &&
+                (!passwordField.getText().isEmpty() || !passwordVisibleField.getText().isEmpty()) &&
+                (!fieldConfirmPassword.getText().isEmpty() || !confirmPasswordVisibleField.getText().isEmpty()) &&
+                roleBox.getValue() != null;
     }
 
     private Role getRoleFromText(String text) {

@@ -37,13 +37,13 @@ public class GUI_RegisterGroupController {
     @FXML
     private Button registerButton;
 
-    private ObservableList<UserDTO> academicosList = FXCollections.observableArrayList();
-    private ObservableList<PeriodDTO> periodosList = FXCollections.observableArrayList();
+    private ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
+    private ObservableList<PeriodDTO> periodList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        cargarAcademicos();
-        cargarPeriodos();
+        loadAcademics();
+        loadPeriods();
         registerButton.setOnAction(event -> handleRegisterGroup());
         nameField.setTextFormatter(new TextFormatter<>(change ->
                 change.getControlNewText().length() <= 50 ? change : null));
@@ -53,14 +53,14 @@ public class GUI_RegisterGroupController {
         );
     }
 
-    private void cargarAcademicos() {
+    private void loadAcademics() {
         try {
             UserDAO userDAO = new UserDAO();
-            List<UserDTO> academicos = userDAO.getAllUsers().stream()
+            List<UserDTO> academics = userDAO.getAllUsers().stream()
                     .filter(user -> user.getRole() == Role.ACADEMICO)
                     .collect(Collectors.toList());
-            academicosList.setAll(academicos);
-            academicChoiceBox.setItems(academicosList);
+            academicList.setAll(academics);
+            academicChoiceBox.setItems(academicList);
             academicChoiceBox.setConverter(new javafx.util.StringConverter<UserDTO>() {
                 @Override
                 public String toString(UserDTO user) {
@@ -71,18 +71,18 @@ public class GUI_RegisterGroupController {
                     return null;
                 }
             });
-        } catch (Exception e) {
+        } catch (SQLException e) {
             logger.error("Error al cargar académicos: {}", e.getMessage(), e);
             statusLabel.setText("Error al cargar académicos.");
         }
     }
 
-    private void cargarPeriodos() {
+    private void loadPeriods() {
         try {
             PeriodDAO periodDAO = new PeriodDAO();
-            List<PeriodDTO> periodos = periodDAO.getAllPeriods();
-            periodosList.setAll(periodos);
-            periodChoiceBox.setItems(periodosList);
+            List<PeriodDTO> periods = periodDAO.getAllPeriods();
+            periodList.setAll(periods);
+            periodChoiceBox.setItems(periodList);
             periodChoiceBox.setConverter(new javafx.util.StringConverter<PeriodDTO>() {
                 @Override
                 public String toString(PeriodDTO period) {
@@ -111,14 +111,14 @@ public class GUI_RegisterGroupController {
                 return;
             }
 
-            UserDTO academicoSeleccionado = academicChoiceBox.getValue();
-            PeriodDTO periodoSeleccionado = periodChoiceBox.getValue();
+            UserDTO selectedAcademic = academicChoiceBox.getValue();
+            PeriodDTO selectedPeriod = periodChoiceBox.getValue();
 
             GroupDTO group = new GroupDTO(
                     nrcField.getText(),
                     nameField.getText(),
-                    academicoSeleccionado.getIdUser(),
-                    periodoSeleccionado.getIdPeriod()
+                    selectedAcademic.getIdUser(),
+                    selectedPeriod.getIdPeriod()
             );
 
             GroupDAO groupDAO = new GroupDAO();
