@@ -283,12 +283,26 @@ class ReportDAOTest {
 
     @Test
     void deleteReportSuccessfully() throws SQLException {
-        String reportNumber = insertTestReport("Observaciones para eliminar", String.valueOf(testEvidenceId));
-        boolean result = reportDAO.deleteReport(reportNumber);
-        assertTrue(result);
+        ReportDTO report = new ReportDTO(
+                null, 
+                new java.util.Date(),
+                10,
+                "Objetivo",
+                "Metodología",
+                "Resultado",
+                projectId,
+                studentTuition,
+                "Observaciones",
+                String.valueOf(testEvidenceId)
+        );
+        reportDAO.insertReport(report);
+        String id = report.getNumberReport();
 
-        ReportDTO deleted = reportDAO.searchReportById(reportNumber);
-        assertNull(deleted);
+        boolean deleted = reportDAO.deleteReport(id);
+        assertTrue(deleted);
+
+        ReportDTO deletedReport = reportDAO.searchReportById(id);
+        assertEquals("N/A", deletedReport.getNumberReport());
     }
 
     @Test
