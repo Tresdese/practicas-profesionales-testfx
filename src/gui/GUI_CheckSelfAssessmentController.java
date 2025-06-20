@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import logic.DAO.CriterionSelfAssessmentDAO;
 import logic.DAO.EvidenceDAO;
+import logic.DAO.SelfAssessmentCriteriaDAO;
 import logic.DAO.SelfAssessmentDAO;
 import logic.DTO.CriterionSelfAssessmentDTO;
 import logic.DTO.SelfAssessmentDTO;
@@ -91,9 +92,18 @@ public class GUI_CheckSelfAssessmentController {
 
     private void updateCriteriaList(List<CriterionSelfAssessmentDTO> criterios) {
         criteriaListView.getItems().clear();
+        SelfAssessmentCriteriaDAO selfAssessmentCriteriaDAO = new SelfAssessmentCriteriaDAO();
         for (var criterio : criterios) {
+            String nombreCriterio = "Desconocido";
+            try {
+                String idCriterio = String.valueOf(criterio.getIdCriteria());
+                var dto = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById(idCriterio);
+                nombreCriterio = dto.getNameCriteria();
+            } catch (SQLException e) {
+                LOGGER.error("Error al obtener el nombre del criterio: {}", e.getMessage(), e);
+            }
             criteriaListView.getItems().add(
-                    "Criterio ID: " + criterio.getIdCriteria() +
+                    "Criterio: " + nombreCriterio +
                             " | Calificación: " + criterio.getGrade() +
                             " | Comentarios: " + criterio.getComments()
             );
