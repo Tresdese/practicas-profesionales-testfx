@@ -85,10 +85,6 @@ public class GUI_MenuStudentController {
             showAlert("Error", "No se pudo abrir la ventana de actualización de perfil.");
         }
     }
-    @FXML
-    private void handleViewProgress() {
-        showAlert("Avance", "Aquí se mostraría el avance crediticio del estudiante.");
-    }
 
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

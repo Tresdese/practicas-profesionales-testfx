@@ -97,9 +97,9 @@ public class GUI_MenuUserController {
             setButtonVisibility(evaluatePresentationButton, enabledEvaluation);
             setButtonVisibility(viewPeriodListButton, false);
             setButtonVisibility(viewGroupListButton, false);
-            setButtonVisibility(manageAssessmentCriteriaButton, true);
-            setButtonVisibility(manageSelfAssessmentCriteriaButton, true);
-            setButtonVisibility(manageActivityButton, true);
+            setButtonVisibility(manageAssessmentCriteriaButton, false);
+            setButtonVisibility(manageSelfAssessmentCriteriaButton, false);
+            setButtonVisibility(manageActivityButton, false);
             setButtonVisibility(ableRegisterEvaluationButton, false);
 
         } else if (role == Role.ACADEMICO) {
