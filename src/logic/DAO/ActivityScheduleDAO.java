@@ -51,6 +51,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
     }
 
     public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule) throws SQLException {
+        ActivityScheduleDTO activityScheduleDTO = new ActivityScheduleDTO(-1, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
@@ -58,11 +59,11 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
             statement.setInt(2, activitySchedule.getIdActivity());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new ActivityScheduleDTO(resultSet.getInt("idCronograma"), resultSet.getInt("idActividad"));
+                    activityScheduleDTO = new ActivityScheduleDTO(resultSet.getInt("idCronograma"), resultSet.getInt("idActividad"));
                 }
             }
         }
-        return null;
+        return activityScheduleDTO;
     }
 
     public List<ActivityScheduleDTO> getAllActivitySchedules() throws SQLException {

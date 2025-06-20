@@ -181,22 +181,17 @@ class ProjectPresentationDAOTest {
 
     @Test
     void deleteProjectPresentationSuccessfully() throws Exception {
-        ProjectPresentationDTO presentation = new ProjectPresentationDTO(
-                1,
-                projectId,
-                new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
-        );
-        projectPresentationDAO.insertProjectPresentation(presentation);
+        ProjectPresentationDTO presentation = new ProjectPresentationDTO(1, projectId, new Timestamp(System.currentTimeMillis()), Tipe.Parcial);
+        assertTrue(projectPresentationDAO.insertProjectPresentation(presentation));
 
-        List<ProjectPresentationDTO> presentations = projectPresentationDAO.getAllProjectPresentations();
-        int id = presentations.get(0).getIdPresentation();
+        assertTrue(projectPresentationDAO.deleteProjectPresentation(presentation.getIdPresentation()));
 
-        boolean deleted = projectPresentationDAO.deleteProjectPresentation(id);
-        assertTrue(deleted);
-
-        ProjectPresentationDTO found = projectPresentationDAO.searchProjectPresentationById(id);
-        assertNull(found);
+        ProjectPresentationDTO deleted = projectPresentationDAO.searchProjectPresentationById(presentation.getIdPresentation());
+        assertNotNull(deleted);
+        assertEquals(-1, deleted.getIdPresentation());
+        assertEquals("N/A", deleted.getIdProject());
+        assertNull(deleted.getDate());
+        assertNull(deleted.getTipe());
     }
 
     @Test

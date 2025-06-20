@@ -52,7 +52,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
     }
 
     public EvaluationDetailDTO searchEvaluationDetailById(int idDetail) throws SQLException {
-        EvaluationDetailDTO detail = null;
+        EvaluationDetailDTO detail = new EvaluationDetailDTO(-1, -1, -1, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {

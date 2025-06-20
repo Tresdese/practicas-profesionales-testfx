@@ -62,13 +62,14 @@ public class UserDAO implements IUserDAO {
     }
 
     public UserDTO searchUserById(String idUser) throws SQLException {
+        UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new UserDTO(
+                    user = new UserDTO(
                             resultSet.getString("idUsuario"),
                             resultSet.getString("numeroDePersonal"),
                             resultSet.getString("nombres"),
@@ -80,7 +81,7 @@ public class UserDAO implements IUserDAO {
                 }
             }
         }
-        return null;
+        return user;
     }
 
     public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException {

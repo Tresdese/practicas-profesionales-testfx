@@ -94,7 +94,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     @Override
     public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
-        ProjectRequestDTO request = null;
+        ProjectRequestDTO request = new ProjectRequestDTO(-1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0, "N/A", 0, 0, null, null);
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_SELECT)) {

@@ -109,15 +109,17 @@ class UserDAOTest {
     @Test
     void testDeleteUser() {
         try {
-            insertTestUser("4", "11223", "Ana", "Martínez", "anamartinez", "clave789", Role.COORDINADOR);
+            insertTestUser("4", "99999", "Prueba", "Eliminar", "usuariodelete", "claveeliminar", Role.ACADEMICO);
 
-            boolean result = userDAO.deleteUser("4");
-            assertTrue(result, "Deletion should be successful");
+            boolean deleted = userDAO.deleteUser("4");
+            assertTrue(deleted, "El usuario debe eliminarse correctamente");
 
             UserDTO deletedUser = userDAO.searchUserById("4");
-            assertNull(deletedUser, "Deleted user should not exist");
+            assertNotNull(deletedUser, "El método nunca retorna null");
+            assertEquals("INVALID", deletedUser.getIdUser());
+            assertEquals(Role.GUEST, deletedUser.getRole());
         } catch (SQLException e) {
-            fail("Error in testDeleteUser: " + e.getMessage());
+            fail("Error en testDeleteUser: " + e.getMessage());
         }
     }
 
@@ -186,12 +188,14 @@ class UserDAOTest {
     }
 
     @Test
-    void testSearchUserById_NotExists() {
+    void testSearchUserByIdNotExists() {
         try {
-            UserDTO user = userDAO.searchUserById("777");
-            assertNull(user, "Searching for a non-existent user should return null");
+            UserDTO user = userDAO.searchUserById("99999");
+            assertNotNull(user, "El método nunca retorna null");
+            assertEquals("INVALID", user.getIdUser());
+            assertEquals(Role.GUEST, user.getRole());
         } catch (SQLException e) {
-            fail("Error in testSearchUserById_NotExists: " + e.getMessage());
+            fail("Error en testSearchUserByIdNotExists: " + e.getMessage());
         }
     }
 

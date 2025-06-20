@@ -226,19 +226,38 @@ class ProjectRequestDAOTest {
     @Test
     void deleteProjectRequestSuccessfully() throws Exception {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
-                projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
-                100, "Lunes", 5, 10, "pendiente", null
+                0,
+                studentTuiton,
+                String.valueOf(organizationId),
+                String.valueOf(representativeId),
+                projectName,
+                "Descripción de la solicitud de proyecto",
+                "Objetivo general de la solicitud",
+                "Objetivos inmediatos de la solicitud",
+                "Objetivos mediatos de la solicitud",
+                "Metodología propuesta",
+                "Recursos necesarios",
+                "Actividades a realizar",
+                "Responsabilidades del estudiante",
+                420,
+                "Lunes a Viernes",
+                10,
+                20,
+                "pendiente",
+                null
         );
         projectRequestDAO.insertProjectRequest(request);
-        List<ProjectRequestDTO> requests = projectRequestDAO.getAllProjectRequests();
-        int id = requests.get(0).getRequestId();
 
-        boolean deleted = projectRequestDAO.deleteProjectRequest(id);
+        List<ProjectRequestDTO> requests = projectRequestDAO.getAllProjectRequests();
+        int requestId = requests.get(0).getRequestId();
+
+        boolean deleted = projectRequestDAO.deleteProjectRequest(requestId);
         assertTrue(deleted);
 
-        ProjectRequestDTO deletedRequest = projectRequestDAO.searchProjectRequestById(id);
-        assertNull(deletedRequest);
+        ProjectRequestDTO deletedRequest = projectRequestDAO.searchProjectRequestById(requestId);
+
+        assertEquals(-1, deletedRequest.getRequestId());
+        assertNull(deletedRequest.getStatus());
     }
 
     @Test
@@ -292,6 +311,8 @@ class ProjectRequestDAOTest {
         assertTrue(updated);
 
         ProjectRequestDTO updatedRequest = projectRequestDAO.searchProjectRequestById(id);
+        assertNotNull(updatedRequest);
+        assertEquals(id, updatedRequest.getRequestId());
         assertEquals(ProjectStatus.aprobada, updatedRequest.getStatus());
     }
 

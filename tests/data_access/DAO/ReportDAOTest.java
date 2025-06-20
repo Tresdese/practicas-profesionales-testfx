@@ -339,7 +339,17 @@ class ReportDAOTest {
     @Test
     void searchNonExistentReport() throws SQLException {
         ReportDTO report = reportDAO.searchReportById("99999");
-        assertNull(report, "No debe encontrar un reporte inexistente");
+        assertNotNull(report, "El método nunca retorna null");
+        assertEquals("N/A", report.getNumberReport());
+        assertNull(report.getReportDate());
+        assertEquals(0, report.getTotalHours());
+        assertEquals("N/A", report.getGeneralObjective());
+        assertEquals("N/A", report.getMethodology());
+        assertEquals("N/A", report.getObtainedResult());
+        assertEquals(0, report.getProjectId());
+        assertEquals("N/A", report.getTuition());
+        assertEquals("N/A", report.getObservations());
+        assertEquals("0", report.getIdEvidence());
     }
 
     @Test

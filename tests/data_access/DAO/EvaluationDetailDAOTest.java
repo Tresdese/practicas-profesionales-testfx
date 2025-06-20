@@ -221,15 +221,17 @@ class EvaluationDetailDAOTest {
 
     @Test
     void testDeleteEvaluationDetail() throws Exception {
-        EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 7.0);
+        EvaluationDetailDTO detail = new EvaluationDetailDTO(-1, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
-        EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
+
+        List<EvaluationDetailDTO> all = detailDAO.getAllEvaluationDetails();
+        EvaluationDetailDTO inserted = all.get(all.size() - 1);
 
         boolean deleted = detailDAO.deleteEvaluationDetail(inserted.getIdDetail());
         assertTrue(deleted);
 
-        EvaluationDetailDTO found = detailDAO.searchEvaluationDetailById(inserted.getIdDetail());
-        assertNull(found);
+        EvaluationDetailDTO result = detailDAO.searchEvaluationDetailById(inserted.getIdDetail());
+        assertEquals(-1, result.getIdDetail());
     }
 
     @Test
@@ -308,7 +310,7 @@ class EvaluationDetailDAOTest {
     @Test
     void testSearchEvaluationDetailByIdNotExisting() throws Exception {
         EvaluationDetailDTO found = detailDAO.searchEvaluationDetailById(9999);
-        assertNull(found);
+        assertEquals(-1, found.getIdDetail());
     }
 
     @Test
@@ -394,7 +396,7 @@ class EvaluationDetailDAOTest {
     @Test
     void testSearchEvaluationDetailByInvalidId() throws Exception {
         EvaluationDetailDTO found = detailDAO.searchEvaluationDetailById(-1);
-        assertNull(found);
+        assertEquals(-1, found.getIdDetail());
     }
 
     @Test

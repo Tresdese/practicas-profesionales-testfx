@@ -5,7 +5,7 @@ public class ProjectRequestDTO {
     private String tuition;
     private String organizationId;
     private String representativeId;
-    private String projectName; // Cambiado de projectId a projectName
+    private String projectName;
     private String description;
     private String generalObjective;
     private String immediateObjectives;
