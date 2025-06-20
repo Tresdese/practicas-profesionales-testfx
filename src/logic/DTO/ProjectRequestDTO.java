@@ -81,7 +81,11 @@ public class ProjectRequestDTO {
         this.scheduleDays = scheduleDays;
         this.directUsers = directUsers;
         this.indirectUsers = indirectUsers;
-        this.status = ProjectStatus.valueOf(status);
+        if (status == null || status.isEmpty()) {
+            this.status = ProjectStatus.pendiente;
+        } else {
+            this.status = ProjectStatus.valueOf(status);
+        }
         this.requestDate = requestDate;
     }
 

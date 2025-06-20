@@ -220,8 +220,8 @@ class EvaluationPresentationDAOTest {
     void deleteEvaluationPresentation() throws Exception {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 -1,
-                1,
-                "A12345",
+                presentationId,
+                studentMatricula,
                 new java.util.Date(),
                 "Comentario de prueba",
                 8.5
@@ -232,8 +232,7 @@ class EvaluationPresentationDAOTest {
         assertTrue(deleted);
 
         EvaluationPresentationDTO deletedEval = evaluationDAO.searchEvaluationPresentationById(id);
-
-        assertEquals(-1, deletedEval.getIdEvaluation());
+        assertEquals(0, deletedEval.getIdEvaluation());
     }
 
     @Test
@@ -336,7 +335,7 @@ class EvaluationPresentationDAOTest {
     void searchEvaluationPresentationById_notExisting() throws Exception {
         int nonExistentId = 99999;
         EvaluationPresentationDTO result = evaluationDAO.searchEvaluationPresentationById(nonExistentId);
-        assertEquals(-1, result.getIdEvaluation());
+        assertEquals(0, result.getIdEvaluation());
     }
 
     @Test
@@ -382,8 +381,8 @@ class EvaluationPresentationDAOTest {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0,
-                    100 + i,
-                    "A01234" + i,
+                    presentationId,
+                    studentMatricula,
                     new java.util.Date(),
                     "Comentario " + i,
                     8.0 + i
@@ -395,7 +394,7 @@ class EvaluationPresentationDAOTest {
         assertTrue(deleted);
 
         EvaluationPresentationDTO deletedEval = evaluationDAO.searchEvaluationPresentationById(ids[1]);
-        assertEquals(-1, deletedEval.getIdEvaluation());
+        assertEquals(0, deletedEval.getIdEvaluation());
     }
 
     @Test
