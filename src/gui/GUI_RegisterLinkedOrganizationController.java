@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class GUI_RegisterLinkedOrganizationController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterLinkedOrganizationController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterLinkedOrganizationController.class);
 
     private static final int MAX_NAME = 100;
     private static final int MAX_ADDRESS = 150;
@@ -46,10 +46,30 @@ public class GUI_RegisterLinkedOrganizationController {
             ServiceConfig serviceConfig = new ServiceConfig();
             organizationService = serviceConfig.getLinkedOrganizationService();
         } catch (SQLException e) {
-            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+           String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: ", e);
+            } else if (sqlState != null && sqlState.equals("42000")){
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: ", e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: ", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio de organización.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio de organización: ", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error al inicializar el servicio de organización.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al inicializar el servicio de organización: ", e.getMessage(), e);
         }
 
-        // Limitar caracteres y mostrar contador
         nameField.setTextFormatter(createTextFormatter(MAX_NAME));
         addressField.setTextFormatter(createTextFormatter(MAX_ADDRESS));
         configureCharCount(nameField, nameCharCountLabel, MAX_NAME);
@@ -92,15 +112,34 @@ public class GUI_RegisterLinkedOrganizationController {
             }
 
         } catch (SQLException e) {
-            logger.error("Error de SQL al registrar la organización: {}", e.getMessage(), e);
-            statusLabel.setText("Error de conexión con la base de datos. Intente más tarde.");
-            statusLabel.setTextFill(Color.RED);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage());
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                statusLabel.setText("Violación de restricción de integridad. Verifique los datos ingresados.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e);
+            } else {
+                statusLabel.setText("Error al registrar la organización.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al registrar la organización: {}", e);
+            }
         } catch (EmptyFields e) {
-            logger.warn("Error de validación: {}", e.getMessage(), e);
+            LOGGER.warn("Error de validación: {}", e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error inesperado: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado: {}", e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
         }

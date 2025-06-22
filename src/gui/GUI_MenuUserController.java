@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.DTO.Role;
@@ -13,11 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class GUI_MenuUserController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_MenuUserController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_MenuUserController.class);
 
     private static boolean enabledEvaluation = false;
 
@@ -144,7 +145,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de calificaciones: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de calificaciones. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de calificaciones: {}", e.getMessage(), e);
+        }catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de calificaciones. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de calificaciones: {}", e.getMessage(), e);
         }
     }
 
@@ -158,7 +163,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de evaluación: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de evaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de evaluación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de evaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de evaluación: {}", e.getMessage(), e);
         }
     }
 
@@ -177,7 +186,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de estudiantes. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de estudiantes. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de estudiantes: {}", e.getMessage(), e);
         }
     }
 
@@ -191,7 +204,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de académicos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de académicos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de académicos: {}", e.getMessage(), e);
         }
     }
 
@@ -205,7 +222,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de organizaciones. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de organizaciones. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de organizaciones: {}", e.getMessage(), e);
         }
     }
 
@@ -219,7 +240,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de representantes. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de representantes. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de representantes: {}", e.getMessage(), e);
         }
     }
 
@@ -236,7 +261,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de proyectos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de proyectos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de proyectos: {}", e.getMessage(), e);
         }
     }
 
@@ -253,7 +282,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de solicitudes de prácticas. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de solicitudes de prácticas. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de solicitudes de prácticas: {}", e.getMessage(), e);
         }
     }
 
@@ -271,7 +304,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de períodos: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de períodos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de períodos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de períodos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de períodos: {}", e.getMessage(), e);
         }
     }
 
@@ -289,7 +326,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de lista de grupos: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de lista de grupos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de lista de grupos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de lista de grupos. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de lista de grupos: {}", e.getMessage(), e);
         }
     }
 
@@ -303,7 +344,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de criterios de evaluación: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de criterios de evaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de criterios de evaluación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de criterios de evaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de criterios de evaluación: {}", e.getMessage(), e);
         }
     }
 
@@ -317,7 +362,11 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de criterios de autoevaluación: {}", e.getMessage(), e);
+        showAlert("Error al abrir la ventana de criterios de autoevaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de criterios de autoevaluación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de criterios de autoevaluación. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de criterios de autoevaluación: {}", e.getMessage(), e);
         }
     }
 
@@ -331,14 +380,18 @@ public class GUI_MenuUserController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de actividades: {}", e.getMessage(), e);
+            showAlert("Error al abrir la ventana de actividades. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al abrir la ventana de actividades: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al abrir la ventana de actividades. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al abrir la ventana de actividades: {}", e.getMessage(), e);
         }
     }
 
     @FXML
     private void handleAbleRegisterEvaluationButton(ActionEvent event) {
         enabledEvaluation = !enabledEvaluation;
-        logger.info("Habilitación de evaluación: {}", enabledEvaluation ? "Activada" : "Desactivada");
+        LOGGER.info("Habilitación de evaluación: {}", enabledEvaluation ? "Activada" : "Desactivada");
     }
 
     @FXML
@@ -350,7 +403,16 @@ public class GUI_MenuUserController {
             stage.setTitle("Inicio de Sesión");
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
+            showAlert("Error al cerrar sesión. Por favor, intenta nuevamente.");
+            LOGGER.error("Error al cerrar sesión: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            showAlert("Error inesperado al cerrar sesión. Por favor, intenta nuevamente.");
+            LOGGER.error("Error inesperado al cerrar sesión: {}", e.getMessage(), e);
         }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.showAndWait();
     }
 }

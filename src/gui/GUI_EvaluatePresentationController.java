@@ -19,7 +19,7 @@ import java.util.List;
 
 public class GUI_EvaluatePresentationController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_EvaluatePresentationController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_EvaluatePresentationController.class);
 
     @FXML
     private VBox criteriaInputContainer;
@@ -64,6 +64,12 @@ public class GUI_EvaluatePresentationController {
 
             criteriaList = assessmentCriterionDAO.getAllAssessmentCriteria();
 
+            if (criteriaList == null || criteriaList.isEmpty()) {
+                Label emptyLabel = new Label("No hay criterios de evaluación disponibles.");
+                criteriaInputContainer.getChildren().add(emptyLabel);
+                return;
+            }
+
             for (AssessmentCriterionDTO criterion : criteriaList) {
                 HBox hBox = new HBox(10);
 
@@ -94,7 +100,26 @@ public class GUI_EvaluatePresentationController {
                 scoreFields.add(scoreField);
             }
         } catch (SQLException e) {
-            logger.error("Error al cargar los criterios de evaluación.", e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                showAlert("Conexión interrumpida con la base de datos. Intenta más tarde.");
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                showAlert("La base de datos no está disponible.");
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {} " , e.getMessage(), e);
+                showAlert("Acceso denegado a la base de datos.");
+            } else {
+                LOGGER.error("Error al cargar los criterios de evaluación: {}", e.getMessage(), e);
+                showAlert("Ocurrió un error al cargar los criterios. Intenta más tarde.");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al cargar los criterios de evaluación: {} ", e.getMessage(), e);
+            showAlert("Ocurrió un error inesperado. Intenta más tarde.");
         }
     }
 
@@ -108,7 +133,7 @@ public class GUI_EvaluatePresentationController {
                         return change;
                     }
                 } catch (NumberFormatException e) {
-                    logger.error("Formato de calificación inválido", e);
+                    LOGGER.error("Formato de calificación inválido", e);
                 }
             }
             change.setText("");
@@ -120,10 +145,10 @@ public class GUI_EvaluatePresentationController {
                 try {
                     double score = Double.parseDouble(newValue);
                 } catch (NumberFormatException e) {
-                    logger.error("Formato incorrecto de los valores: " + newValue, e);
+                    LOGGER.error("Formato incorrecto de los valores: " + newValue, e);
                 }
             } else {
-                logger.warn("El valor ingresado no cumple con el formato esperado: " + newValue);
+                LOGGER.warn("El valor ingresado no cumple con el formato esperado: " + newValue);
             }
         });
     }
@@ -168,20 +193,23 @@ public class GUI_EvaluatePresentationController {
                 notCompetentLabel.getStyleClass().add("highlighted");
             }
         } catch (NumberFormatException e) {
-            logger.error("Formato incorrecto de los valores.");
+            LOGGER.error("Formato incorrecto de los valores. {}", e.getMessage(), e);
+            showAlert("Por favor, ingrese valores numéricos válidos.");
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al resaltar el nivel de competencia: {}", e.getMessage(), e);
+            showAlert("Ocurrió inesperado un error al resaltar el nivel de competencia.");
         }
     }
 
     public void setPresentationIdAndTuiton(int presentationId, String tuiton) {
         this.presentationId = presentationId;
         this.tuition = tuiton;
-        logger.info("ID de la presentación configurado: " + presentationId + ", Matrícula: " + tuiton);
+        LOGGER.info("ID de la presentación configurado: " + presentationId + ", Matrícula: " + tuiton);
     }
 
     private void saveScores() {
         if (criteriaList == null || criteriaList.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "No hay criterios de evaluación cargados.", ButtonType.OK);
-            alert.showAndWait();
+            showAlert("No hay criterios de evaluación disponibles. Por favor, verifica la configuración.");
             return;
         }
 
@@ -224,22 +252,47 @@ public class GUI_EvaluatePresentationController {
                     presentationId,
                     tuition,
                     new java.util.Date(),
-                    commentArea.getText(), // Obtiene el comentario del área de texto
+                    commentArea.getText(),
                     averageScore
             );
             int evaluationId = evaluationPresentationDAO.insertEvaluationPresentation(evaluation);
 
             for (EvaluationDetailDTO detail : evaluationDetails) {
-                detail.setIdEvaluation(evaluationId); // Asignar el ID de evaluación generado
-                evaluationDetailDAO.insertEvaluationDetail(detail); // Insertar detalle
+                detail.setIdEvaluation(evaluationId);
+                evaluationDetailDAO.insertEvaluationDetail(detail);
             }
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Calificaciones guardadas exitosamente.", ButtonType.OK);
             alert.showAndWait();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: " + e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: " + e.getMessage(), e);
+                showAlert("Conexión interrumpida con la base de datos. Intenta más tarde.");
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: " + e.getMessage(), e);
+                showAlert("La base de datos no está disponible.");
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
+                showAlert("Acceso denegado a la base de datos.");
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                LOGGER.error("Violación de restricción de integridad: " + e.getMessage(), e);
+                showAlert("Violación de restricción de integridad. Verifica los datos ingresados.");
+            } else {
+                LOGGER.error("Error al guardar las calificaciones: " + e.getMessage(), e);
+                showAlert("Ocurrió un error al guardar las calificaciones.");
+            }
         } catch (Exception e) {
-            logger.error("Error al guardar las calificaciones.", e);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Ocurrió un error al guardar las calificaciones.", ButtonType.OK);
-            alert.showAndWait();
+            LOGGER.error("Error al guardar las calificaciones.", e);
+            showAlert("Ocurrió un error inesperado al guardar las calificaciones. Intenta más tarde.");
         }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+        alert.showAndWait();
     }
 }

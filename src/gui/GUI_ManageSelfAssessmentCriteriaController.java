@@ -47,7 +47,7 @@ public class GUI_ManageSelfAssessmentCriteriaController {
     private final SelfAssessmentCriteriaDAO criteriaDAO = new SelfAssessmentCriteriaDAO();
     private final ObservableList<SelfAssessmentCriteriaDTO> criteriaList = FXCollections.observableArrayList();
 
-    Logger logger = LogManager.getLogger(GUI_ManageSelfAssessmentCriteriaController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ManageSelfAssessmentCriteriaController.class);
 
     @FXML
     public void initialize() {
@@ -85,11 +85,29 @@ public class GUI_ManageSelfAssessmentCriteriaController {
                 setStatus("No se pudo registrar el criterio.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al registrar.", true);
-            logger.error("Error SQL al registrar criterio: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error al registrar el criterio: ",  true);
+                LOGGER.error("Error SQL al registrar criterio: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al registrar criterio: {}", e.getMessage(), e);
+            setStatus("Error inesperado al registrar criterio", true);
+            LOGGER.error("Error al registrar criterio: {}", e.getMessage(), e);
         }
     }
 
@@ -117,11 +135,29 @@ public class GUI_ManageSelfAssessmentCriteriaController {
                 setStatus("No se pudo eliminar el criterio.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al eliminar.", true);
-            logger.error("Error SQL al eliminar criterio: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error al eliminar el criterio: ", true);
+                LOGGER.error("Error SQL al eliminar criterio: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al eliminar criterio: {}", e.getMessage(), e);
+            setStatus("Error inesperado al eliminar criterio", true);
+            LOGGER.error("Error al eliminar criterio: {}", e.getMessage(), e);
         }
     }
 
@@ -145,11 +181,29 @@ public class GUI_ManageSelfAssessmentCriteriaController {
                 setStatus("No se pudo actualizar el criterio.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al actualizar.", true);
-            logger.error("Error SQL al actualizar criterio: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error al actualizar el criterio: ", true);
+                LOGGER.error("Error SQL al actualizar criterio: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al actualizar criterio: {}", e.getMessage(), e);
+            setStatus("Error inesperado al actualizar criterio ", true);
+            LOGGER.error("Error inesperado al actualizar criterio: {}", e.getMessage(), e);
         }
     }
 
@@ -158,8 +212,29 @@ public class GUI_ManageSelfAssessmentCriteriaController {
             List<SelfAssessmentCriteriaDTO> allCriteria = criteriaDAO.getAllSelfAssessmentCriteria();
             criteriaList.setAll(allCriteria);
         } catch (SQLException e) {
-            setStatus("Error al cargar los criterios.", true);
-            logger.error("Error al cargar los criterios: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error al cargar los criterios: ", true);
+                LOGGER.error("Error SQL al cargar criterios: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            setStatus("Error al cargar los criterios: " + e.getMessage(), true);
+            LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
         }
     }
 

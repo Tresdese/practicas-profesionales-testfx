@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class GUI_RegisterProjectController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterProjectController.class);
 
     private static final int MAX_NAME = 100;
     private static final int MAX_DESCRIPTION = 300;
@@ -109,9 +109,39 @@ public class GUI_RegisterProjectController {
             endDatePicker.getEditor().setDisable(true);
 
         } catch (SQLException e) {
-            logger.error("Error al inicializar servicios: {}", e.getMessage(), e);
-            statusLabel.setText("Error al inicializar servicios.");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)){
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            }
+            else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            }
+            else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            }
+            else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio: {}", e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar la vista.");
             statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al inicializar la vista: {}", e);
         }
     }
 
@@ -148,8 +178,36 @@ public class GUI_RegisterProjectController {
                 }
             });
         } catch (SQLException e) {
-            logger.error("Error al cargar académicos: {}", e.getMessage(), e);
-            statusLabel.setText("Error al cargar académicos.");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e);
+            } else {
+                statusLabel.setText("Error al cargar académicos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar académicos: {}", e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar académicos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar académicos: {}", e);
         }
     }
 
@@ -158,9 +216,36 @@ public class GUI_RegisterProjectController {
             List<LinkedOrganizationDTO> organizations = organizationService.getAllLinkedOrganizations();
             organizationBox.setItems(FXCollections.observableArrayList(organizations));
         } catch (SQLException e) {
-            logger.error("Error al cargar organizaciones: {}", e.getMessage(), e);
-            statusLabel.setText("Error al cargar organizaciones.");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e);
+            } else {
+                statusLabel.setText("Error al cargar organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar organizaciones: {}", e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar organizaciones.");
             statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar organizaciones: {}", e);
         }
     }
 
@@ -169,9 +254,36 @@ public class GUI_RegisterProjectController {
             List<DepartmentDTO> departments = departmentDAO.getAllDepartments();
             departmentBox.setItems(FXCollections.observableArrayList(departments));
         } catch (SQLException e) {
-            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
-            statusLabel.setText("Error al cargar departamentos.");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e);
+            } else {
+                statusLabel.setText("Error al cargar departamentos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar departamentos: {}", e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar departamentos.");
             statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar departamentos: {}", e);
         }
     }
 
@@ -212,15 +324,39 @@ public class GUI_RegisterProjectController {
                 statusLabel.setTextFill(Color.RED);
             }
         } catch (EmptyFields | InvalidData | RepeatedId e) {
-            logger.error("Error de validación al registrar proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error de validación al registrar proyecto: {}", e);
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
         } catch (SQLException e) {
-            logger.error("Error de base de datos al registrar proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos.");
-            statusLabel.setTextFill(Color.RED);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("08S01".equals(sqlState)) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42000".equals(sqlState)) {
+                LOGGER.error("Base de datos no encontrada: {}", e);
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("28000".equals(sqlState)) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("23000".equals(sqlState)) {
+                LOGGER.error("Violación de restricción de integridad: {}", e);
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+            }
+             else {
+                LOGGER.error("Error al registrar proyecto: {}", e);
+                statusLabel.setText("Error al registrar el proyecto.");
+                statusLabel.setTextFill(Color.RED);
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado al registrar proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al registrar proyecto: {}", e);
             statusLabel.setText("Error inesperado.");
             statusLabel.setTextFill(Color.RED);
         }

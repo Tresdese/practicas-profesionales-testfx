@@ -32,7 +32,7 @@ import java.util.List;
 
 public class GUI_CheckProjectListController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_CheckProjectListController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_CheckProjectListController.class);
 
     @FXML
     private Button registerProjectButton;
@@ -85,7 +85,32 @@ public class GUI_CheckProjectListController {
             serviceConfig = new ServiceConfig();
             projectService = serviceConfig.getProjectService();
         } catch (SQLException e) {
-            logger.error("Error al inicializar el servicio de proyectos: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio de proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio de proyectos: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar el servicio de proyectos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al inicializar el servicio de proyectos: {}", e.getMessage(), e);
         }
 
         setAllCellValueFactories();
@@ -173,11 +198,15 @@ public class GUI_CheckProjectListController {
 
             return (organization != null) ? organization.getName() : "Organización no encontrada";
         } catch (IllegalArgumentException e) {
-            logger.error("ID de organización inválido: {}", e.getMessage(), e);
+            LOGGER.error("ID de organización inválido: {}", e.getMessage(), e);
+            statusLabel.setText("ID de organización inválido");
+            statusLabel.setTextFill(Color.RED);
             return "ID inválido";
         } catch (Exception e) {
-            logger.error("Error inesperado al obtener organización: {}", e.getMessage(), e);
-            return "Error de sistema";
+            LOGGER.error("Error inesperado al obtener organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener organización");
+            statusLabel.setTextFill(Color.RED);
+            return "Error inesperado de sistema";
         }
     }
 
@@ -190,14 +219,43 @@ public class GUI_CheckProjectListController {
             UserDTO academic = serviceConfig.getUserService().searchUserById(academicId);
             return (academic != null) ? academic.getNames() + " " + academic.getSurnames() : "Académico no encontrado";
         }catch (SQLException e) {
-            logger.error("Error de base de datos al obtener academico: {}", e.getMessage(), e);
-            return "Error de conexión a BD";
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de conexión a la base de datos";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Conexión interrumpida a la base de datos";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida");
+                statusLabel.setTextFill(Color.RED);
+                return "Base de datos desconocida";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Acceso denegado a la base de datos";
+            } else {
+                LOGGER.error("Error de base de datos al obtener académico: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener académico");
+                statusLabel.setTextFill(Color.RED);
+                return "Error al obtener académico";
+            }
         } catch (IllegalArgumentException e) {
-            logger.error("ID de academico inválido: {}", e.getMessage(), e);
+            LOGGER.error("ID de academico inválido: {}", e.getMessage(), e);
+            statusLabel.setText("ID de académico inválido");
+            statusLabel.setTextFill(Color.RED);
             return "ID inválido";
         } catch (Exception e) {
-            logger.error("Error inesperado al obtener academico: {}", e.getMessage(), e);
-            return "Error de sistema";
+            LOGGER.error("Error inesperado al obtener academico: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener académico");
+            statusLabel.setTextFill(Color.RED);
+            return "Error inesperado de sistema";
         }
     }
 
@@ -209,14 +267,43 @@ public class GUI_CheckProjectListController {
             DepartmentDTO department = departmentDAO.searchDepartmentById(departmentId);
             return (department != null) ? department.getName() : "Departamento no encontrado";
         } catch (SQLException e) {
-            logger.error("Error de base de datos al obtener departamento: {}", e.getMessage(), e);
-            return "Error de conexión a BD";
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de conexión a la base de datos";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Conexión interrumpida a la base de datos";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida");
+                statusLabel.setTextFill(Color.RED);
+                return "Base de datos desconocida";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Acceso denegado a la base de datos";
+            } else {
+                LOGGER.error("Error de base de datos al obtener departamento: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener departamento");
+                statusLabel.setTextFill(Color.RED);
+                return "Error al obtener departamento";
+            }
         } catch (IllegalArgumentException e) {
-            logger.error("ID de departamento inválido: {}", e.getMessage(), e);
+            LOGGER.error("ID de departamento inválido: {}", e.getMessage(), e);
+            statusLabel.setText("ID de departamento inválido");
+            statusLabel.setTextFill(Color.RED);
             return "ID inválido";
         } catch (Exception e) {
-            logger.error("Error inesperado al obtener departamento: {}", e.getMessage(), e);
-            return "Error de sistema";
+            LOGGER.error("Error inesperado al obtener departamento: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener departamento");
+            statusLabel.setTextFill(Color.RED);
+            return "Error inesperado de sistema";
         }
     }
 
@@ -232,7 +319,13 @@ public class GUI_CheckProjectListController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de registro de proyectos: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de registro de proyectos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar la interfaz de registro de proyectos.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de registro de proyectos: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al abrir la ventana de registro de proyectos.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -244,8 +337,32 @@ public class GUI_CheckProjectListController {
             projectList.addAll(projects);
             statusLabel.setText("");
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los datos de los proyectos.");
-            logger.error("Error al cargar los datos de los proyectos: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar los proyectos: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar los proyectos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar los proyectos: {}", e.getMessage(), e);
         }
 
         tableView.setItems(projectList);
@@ -279,9 +396,32 @@ public class GUI_CheckProjectListController {
                 statusLabel.setText("");
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al buscar el proyecto.");
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al buscar proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al buscar proyectos: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al buscar proyectos.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error al buscar el proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al buscar proyectos: {}", e.getMessage(), e);
         }
 
         tableView.setItems(filteredList);
@@ -339,15 +479,15 @@ public class GUI_CheckProjectListController {
         } catch (IOException e) {
             statusLabel.setText("Error al cargar la interfaz de gestión de proyecto.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar el archivo FXML: {}", e.getMessage(), e);
         } catch (IllegalStateException e) {
             statusLabel.setText("Error de configuración en la ventana de gestión.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error de estado al configurar controlador: {}", e.getMessage(), e);
+            LOGGER.error("Error de estado al configurar controlador: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error al abrir la ventana de gestión de proyecto.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error inesperado al gestionar proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al gestionar proyecto: {}", e.getMessage(), e);
         }
     }
 }

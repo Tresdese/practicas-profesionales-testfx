@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GUI_RegisterStudentController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterStudentController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterStudentController.class);
 
     private static final int MAX_NAMES = 50;
     private static final int MAX_SURNAMES = 50;
@@ -154,10 +154,30 @@ public class GUI_RegisterStudentController {
         } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
         } catch (SQLException e) {
-            logger.warn("Error al registrar el estudiante: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos. Intente más tarde.");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000" .equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado: {}", e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
         }
     }
@@ -186,18 +206,19 @@ public class GUI_RegisterStudentController {
     }
 
     private StudentDTO buildStudentDTO() {
+        StudentDTO studentDTO = new StudentDTO("N/A", 1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0.0", 0.0);
         try {
             String tuition = tuitionField.getText();
             String password = isPasswordVisible ? passwordVisibleField.getText() : passwordField.getText();
-            return new StudentDTO(
+            studentDTO = new StudentDTO(
                     tuition, 1, namesField.getText(), surnamesField.getText(), phoneField.getText(), emailField.getText(),
                     userField.getText(), PasswordHasher.hashPassword(password), nrcChoiceBox.getValue(), creditAdvanceField.getText(), 0.0
             );
         } catch (Exception e) {
             statusLabel.setText("Error al construir los datos del estudiante.");
-            logger.error("Error al construir StudentDTO: {}", e.getMessage(), e);
-            return null;
+            LOGGER.error("Error al construir StudentDTO: {}", e.getMessage(), e);
         }
+        return studentDTO;
     }
 
     private void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
@@ -213,9 +234,30 @@ public class GUI_RegisterStudentController {
                 nrcChoiceBox.getItems().add(group.getNRC());
             }
         } catch (SQLException e) {
-            logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
         }
     }
 

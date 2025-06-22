@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import logic.DAO.ProjectDAO;
 import logic.DAO.SelfAssessmentDAO;
@@ -28,12 +29,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import gui.CriterionInput;
 
 public class GUI_RegisterSelfAssessmentController {
+
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterSelfAssessmentController.class);
 
     @FXML
     private ComboBox<ProjectDTO> projectComboBox;
@@ -53,7 +56,7 @@ public class GUI_RegisterSelfAssessmentController {
     private ProjectDTO assignedProject;
     private List<CriterionInput> criterionInputs = new ArrayList<>();
     private static final int MAX_COMMENTS_LENGTH = 500;
-    private static final Logger LOGGER = Logger.getLogger(GUI_RegisterSelfAssessmentController.class.getName());
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024;
 
     @FXML
     public void initialize() {
@@ -96,11 +99,31 @@ public class GUI_RegisterSelfAssessmentController {
             List<ProjectDTO> projects = projectDAO.getAllProjects();
             projectComboBox.getItems().setAll(projects);
         } catch (SQLException e){
-            showError("Error de base de datos al cargar proyectos.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al cargar proyectos", e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontradaL: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar proyectos: {}", e.getMessage(), e);
+            }
         }catch (Exception e) {
-            showError("Error al cargar proyectos.");
-            LOGGER.log(Level.SEVERE, "Error al cargar proyectos", e);
+            showError("Error inesperado al cargar proyectos.");
+            LOGGER.error("Error inesperado al cargar proyectos: {}", e.getMessage(), e);
         }
     }
 
@@ -108,14 +131,14 @@ public class GUI_RegisterSelfAssessmentController {
         for (CriterionInput input : criterionInputs) {
             input.gradeField.setTextFormatter(new TextFormatter<>(change -> {
                 String newText = change.getControlNewText();
-                if (newText.matches("\\d{1,2}")) { // Permite hasta dos dígitos
+                if (newText.matches("\\d{1,2}")) {
                     try {
                         int value = Integer.parseInt(newText);
-                        if (value >= 1 && value <= 10) { // Valida el rango
+                        if (value >= 1 && value <= 10) {
                             return change;
                         }
                     } catch (NumberFormatException e) {
-                        LOGGER.log(Level.WARNING, "Formato de calificación inválido", e);
+                        LOGGER.error("Error al parsear la calificación: {}", e.getMessage(), e);
                     }
                 }
                 change.setText("");
@@ -135,13 +158,33 @@ public class GUI_RegisterSelfAssessmentController {
                 criterionInputs.add(input);
                 criteriaVBox.getChildren().add(input.toHBox());
             }
-            configureCriterionInputs(); // Llamada al método después de cargar los criterios
+            configureCriterionInputs();
         } catch (SQLException e) {
-            showError("Error de base de datos al cargar criterios.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al cargar criterios", e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar criterios.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
             showError("Error al cargar criterios.");
-            LOGGER.log(Level.SEVERE, "Error al cargar criterios", e);
+            LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
         }
     }
 
@@ -159,6 +202,10 @@ public class GUI_RegisterSelfAssessmentController {
             if (!(fileName.endsWith(".pdf") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") ||
                     fileName.endsWith(".png") || fileName.endsWith(".docx"))) {
                 showError("Solo se permiten archivos PDF, imágenes (JPG, PNG) o documentos DOCX.");
+                return;
+            }
+            if (file.length() > MAX_FILE_SIZE) {
+                showError("El archivo no puede ser mayor a 20 MB.");
                 return;
             }
             selectedEvidenceFile = file;
@@ -222,10 +269,12 @@ public class GUI_RegisterSelfAssessmentController {
                 count++;
             } catch (NumberFormatException e){
                 showError("Calificación inválida para el criterio: " + input.idCriteria);
-                LOGGER.log(Level.WARNING, "Calificación inválida para el criterio: " + input.idCriteria);
+                LOGGER.error("Calificación inválida para el criterio: " + input.idCriteria, e);
                 return 0f;
             }catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Calificación inválida para el criterio: " + input.idCriteria);
+                showError("Error inesperado al calcular la calificación promedio.");
+                LOGGER.error("Error inesperado al calcular la calificación promedio", e);
+                return 0f;
             }
         }
         return count > 0 ? (float) Math.round((sum / count) * 100) / 100 : 0f;
@@ -248,12 +297,35 @@ public class GUI_RegisterSelfAssessmentController {
             EvidenceDAO evidenceDAO = new EvidenceDAO();
             return evidenceDAO.getNextEvidenceId();
         } catch (SQLException e) {
-            showError("Error de base de datos al obtener el ID de evidencia.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al obtener el ID de evidencia", e);
-            return -1;
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                return -1;
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                return -1;
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                return -1;
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                return -1;
+            } else {
+                showError("Error al obtener el ID de evidencia.");
+                LOGGER.error("Error al obtener el ID de evidencia: {}", e.getMessage(), e);
+                return -1;
+            }
         } catch (Exception e) {
             showError("Error al obtener el ID de evidencia.");
-            LOGGER.log(Level.SEVERE, "Error al obtener el ID de evidencia", e);
+            LOGGER.error("Error al obtener el ID de evidencia", e);
             return -1;
         }
     }
@@ -265,11 +337,11 @@ public class GUI_RegisterSelfAssessmentController {
             return uploadFile(file.getAbsolutePath(), parentId);
         } catch (IOException e) {
             showError("Error de acceso al archivo al subir a Google Drive.");
-            LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
+            LOGGER.error("IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
             showError("Error al conectar con Google Drive.");
-            LOGGER.log(Level.SEVERE, "GeneralSecurityException al subir archivo a Drive", e);
+            LOGGER.error("GeneralSecurityException al subir archivo a Drive", e);
             return null;
         }
     }
@@ -284,11 +356,11 @@ public class GUI_RegisterSelfAssessmentController {
             return parentId;
         } catch (IOException e) {
             showError("Error de acceso a las carpetas de Google Drive.");
-            LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
+            LOGGER.error("IOException al crear carpetas en Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
             showError("Error al conectar con Google Drive.");
-            LOGGER.log(Level.SEVERE, "GeneralSecurityException al crear carpeta en Drive", e);
+            LOGGER.error("GeneralSecurityException al crear carpetas en Drive", e);
             return null;
         }
     }
@@ -299,10 +371,30 @@ public class GUI_RegisterSelfAssessmentController {
             logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
             return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "Error en la base de datos", e);
-            return "PeriodoDesconocido";
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            } else {
+                showError("Error al obtener el periodo del grupo.");
+                LOGGER.error("Error al obtener el periodo del grupo: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            }
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);
+            showError("Error inesperado al obtener el periodo del grupo.");
+            LOGGER.error("Error inesperado al obtener el periodo del grupo: {}", e.getMessage(), e);
             return "PeriodoDesconocido";
         }
     }
@@ -314,8 +406,31 @@ public class GUI_RegisterSelfAssessmentController {
             evidenceDAO.insertEvidence(evidence);
             return true;
         } catch (SQLException e) {
-            showError("Error de base de datos al guardar la evidencia.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al guardar evidencia", e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                showError("Error al insertar evidencia en la base de datos.");
+                LOGGER.error("Error al insertar evidencia en la base de datos: {}", e.getMessage(), e);
+            }
+            return false;
+        } catch (Exception e) {
+            showError("Error al insertar evidencia en la base de datos.");
+            LOGGER.error("Error inesperado al insertar evidencia en la base de datos: {}", e.getMessage(), e);
             return false;
         }
     }
@@ -343,13 +458,32 @@ public class GUI_RegisterSelfAssessmentController {
             return selfAssessmentDAO.getLastSelfAssessmentId();
         } catch (NumberFormatException e) {
             showError("Error en el formato de los datos numéricos.");
-            LOGGER.log(Level.WARNING, "Formato numérico inválido", e);
+            LOGGER.error("Error en el formato de los datos numéricos al registrar autoevaluación: {}", e.getMessage(), e);
         } catch (SQLException e) {
-            showError("Error de base de datos al registrar la autoevaluación.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al registrar autoevaluación", e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                showError("Error al registrar la autoevaluación.");
+                LOGGER.error("Error al registrar autoevaluación: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
             showError("Ocurrió un error inesperado al registrar la autoevaluación.");
-            LOGGER.log(Level.SEVERE, "Error inesperado al registrar autoevaluación", e);
+            LOGGER.error("Error inesperado al registrar autoevaluación: {}", e.getMessage(), e);
         }
         return -1;
     }
@@ -368,14 +502,38 @@ public class GUI_RegisterSelfAssessmentController {
             }
             return true;
         } catch (SQLException e) {
-            showError("Error de base de datos al guardar los criterios.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al guardar criterios", e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar criterios.");
+                statusLabel.setTextFill(Color.RED);
+
+            }
+        } catch (NumberFormatException e){
+            showError("Formato numérico inválido en las calificaciones.");
+            LOGGER.error("Formato numérico inválido en las calificaciones: {}", e.getMessage(), e);
         } catch (Exception e) {
             showError("Ocurrió un error inesperado al guardar los criterios.");
-            LOGGER.log(Level.SEVERE, "Error inesperado al guardar criterios", e);
+            LOGGER.error("Error inesperado al guardar criterios: {}", e.getMessage(), e);
         }
         return false;
-    }
+     }
+
 
     private void clearForm() {
         evidenceFileTextField.clear();
@@ -390,5 +548,4 @@ public class GUI_RegisterSelfAssessmentController {
     private void showError(String message) {
         statusLabel.setText(message);
     }
-
 }

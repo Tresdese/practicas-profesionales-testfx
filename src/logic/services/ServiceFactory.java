@@ -25,7 +25,7 @@ public class ServiceFactory {
         if (userService == null) {
             try {
                 Connection connection = new ConnectionDataBase().connectDB();
-                userService = new UserService(connection);
+                userService = new UserService();
             } catch (Exception e) {
                 throw new RuntimeException("Error al inicializar UserService: " + e.getMessage(), e);
             }

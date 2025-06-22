@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import logic.DAO.EvaluationPresentationDAO;
 import logic.DTO.EvaluationPresentationDTO;
@@ -17,6 +18,7 @@ import logic.DTO.StudentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -40,7 +42,7 @@ public class GUI_CheckPresentationGradeController {
     @FXML
     private Label evaluationCountsLabel;
 
-    private static final Logger logger = LogManager.getLogger(GUI_CheckPresentationGradeController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_CheckPresentationGradeController.class);
 
     private StudentDTO student;
 
@@ -100,10 +102,12 @@ public class GUI_CheckPresentationGradeController {
             stage.setTitle("Detalles de la Evaluación");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de detalles de la presentación: {}", e.getMessage(), e);
+            showAlert("No se pudo cargar la ventana de detalles.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de detalles de la presentación: {}", e.getMessage(), e);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "No se pudo abrir la ventana de detalles.");
-            alert.showAndWait();
+            LOGGER.error("Error al abrir la ventana de detalles de la presentación: {}", e.getMessage(), e);
+            showAlert("No se pudo abrir la ventana de detalles.");
         }
     }
 
@@ -130,11 +134,34 @@ public class GUI_CheckPresentationGradeController {
             updateEvaluationCounts(data);
 
         } catch (SQLException e) {
-            logger.error("Error de base de datos al cargar las evaluaciones: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos al cargar las evaluaciones.");
-            updateEvaluationCounts(FXCollections.observableArrayList());
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else {
+                LOGGER.error("Error de base de datos al cargar las evaluaciones: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al cargar las evaluaciones.");
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado al cargar las evaluaciones: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al cargar las evaluaciones: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al cargar las evaluaciones.");
             updateEvaluationCounts(FXCollections.observableArrayList());
         }
@@ -143,5 +170,10 @@ public class GUI_CheckPresentationGradeController {
     private void updateEvaluationCounts(ObservableList<EvaluationPresentationDTO> list) {
         int total = list.size();
         evaluationCountsLabel.setText("Totales: " + total);
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.showAndWait();
     }
 }

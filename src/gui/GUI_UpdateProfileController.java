@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class GUI_UpdateProfileController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_UpdateProfileController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_UpdateProfileController.class);
 
     private static final int MAX_NAMES = 50;
     private static final int MAX_SURNAMES = 50;
@@ -65,14 +65,14 @@ public class GUI_UpdateProfileController {
     @FXML
     private void handleUpdateProfile() {
         if (studentService == null) {
-            logger.error("El servicio StudentService no ha sido inicializado.");
+            LOGGER.error("El servicio StudentService no ha sido inicializado.");
             statusLabel.setText("Error interno: Servicio no disponible.");
             statusLabel.setTextFill(Color.RED);
             return;
         }
 
         if (currentStudent == null) {
-            logger.error("El objeto currentStudent no ha sido inicializado.");
+            LOGGER.error("El objeto currentStudent no ha sido inicializado.");
             statusLabel.setText("Error: No se pudo cargar la información del estudiante.");
             statusLabel.setTextFill(Color.RED);
             return;
@@ -107,18 +107,49 @@ public class GUI_UpdateProfileController {
 
             statusLabel.setText("¡Perfil actualizado exitosamente!");
             statusLabel.setTextFill(Color.GREEN);
-        } catch (SQLException | RepeatedEmail | RepeatedPhone e) {
-            logger.warn("Error al actualizar el perfil: {}", e.getMessage(), e);
-            statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(Color.RED);
-        } catch (InvalidData e) {
-            logger.warn("Error de validación: {}", e.getMessage(), e);
-            statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(Color.RED);
-        } catch (Exception e) {
-            logger.error("Error inesperado: {}", e.getMessage(), e);
-            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setTextFill(Color.RED);
+        } catch (RepeatedEmail e) {
+        LOGGER.warn("Correo repetido: {}", e);
+        statusLabel.setText("El correo ingresado ya está registrado.");
+        statusLabel.setTextFill(Color.RED);
+    } catch (RepeatedPhone e) {
+        LOGGER.warn("Teléfono repetido: {}", e);
+        statusLabel.setText("El teléfono ingresado ya está registrado.");
+        statusLabel.setTextFill(Color.RED);
+    } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al actualizar el perfil.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al actualizar el perfil: {}", e.getMessage(), e);
+            }
+    } catch (InvalidData e) {
+        LOGGER.warn("Error de validación: {}", e.getMessage(), e);
+        statusLabel.setText(e.getMessage());
+        statusLabel.setTextFill(Color.RED);
+    } catch (Exception e) {
+        LOGGER.error("Error inesperado: {}", e);
+        statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+        statusLabel.setTextFill(Color.RED);
         }
     }
 

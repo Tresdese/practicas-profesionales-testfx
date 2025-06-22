@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 public class GUI_RegisterAcademicController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterAcademicController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterAcademicController.class);
 
     private static final int MAX_NUMBER_OFF_STAFF = 5;
     private static final int MAX_NAMES = 50;
@@ -66,9 +66,29 @@ public class GUI_RegisterAcademicController {
             ServiceConfig serviceConfig = new ServiceConfig();
             userService = serviceConfig.getUserService();
         } catch (SQLException e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: ", e.getMessage(), e);
+            }
+             else {
+                statusLabel.setText("Error al conectar a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al conectar a la base de datos: ", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar el servicio de usuario.");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error al inicializar el servicio de usuarios: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al inicializar el servicio de usuario: ", e.getMessage(), e);
         }
     }
 
@@ -183,20 +203,47 @@ public class GUI_RegisterAcademicController {
             } catch (RepeatedId e) {
                 statusLabel.setText(e.getMessage());
                 statusLabel.setTextFill(Color.RED);
-                logger.error("Error - ID repetido: {}", e.getMessage());
+                LOGGER.error("Error - ID repetido: {}", e.getMessage());
             } catch (RepeatedName e) {
                 statusLabel.setText(e.getMessage());
                 statusLabel.setTextFill(Color.RED);
-                logger.error("Error - Nombre de usuario repetido: {}", e.getMessage());
+                LOGGER.error("Error - Nombre de usuario repetido: {}", e.getMessage());
             } catch (SQLException e) {
-                statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de SQL al registrar el académico: {}", e.getMessage(), e);
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("23000".equals(sqlState)) {
+                    statusLabel.setText("Violación de restricción de integridad.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al registrar académico.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error al registrar académico: {}", e.getMessage(), e);
+                }
             }
         } catch (EmptyFields | InvalidData e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            LOGGER.error("Error: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado: " + e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al registrar académico: {}", e.getMessage(), e);
         }
     }
 

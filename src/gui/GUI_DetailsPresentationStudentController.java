@@ -3,6 +3,7 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import logic.DAO.AssessmentCriterionDAO;
 import logic.DAO.EvaluationDetailDAO;
 import logic.DTO.AssessmentCriterionDTO;
@@ -21,7 +22,7 @@ public class GUI_DetailsPresentationStudentController {
     @FXML
     private Label statusLabel;
 
-    private static final Logger logger = LogManager.getLogger(GUI_DetailsPresentationStudentController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_DetailsPresentationStudentController.class);
 
     public void setIdEvaluation(int idEvaluation) {
         detailsVBox.getChildren().clear();
@@ -39,11 +40,32 @@ public class GUI_DetailsPresentationStudentController {
                 statusLabel.setText("");
             }
         } catch (SQLException e) {
-            logger.error("Error de base de datos al cargar los detalles de la evaluación: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos al cargar los detalles.");
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                LOGGER.error("Error al cargar los detalles de la evaluación: {}", e.getMessage(), e);
+                statusLabel.setText("Error al cargar los detalles.");
+                statusLabel.setTextFill(Color.RED);
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado al cargar los detalles de la evaluación: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al cargar los detalles de la evaluación: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al cargar los detalles.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

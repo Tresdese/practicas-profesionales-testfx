@@ -16,7 +16,6 @@ public class LoginService {
     private final UserDAO userDAO;
 
     public LoginService() throws SQLException {
-        Connection connection = new ConnectionDataBase().connectDB();
         this.studentDAO = new StudentDAO();
         this.userDAO = new UserDAO();
     }

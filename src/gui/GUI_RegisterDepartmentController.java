@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DAO.DepartmentDAO;
 import logic.DTO.DepartmentDTO;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 
 public class GUI_RegisterDepartmentController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterDepartmentController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterDepartmentController.class);
 
     @FXML
     private TextField nameField;
@@ -70,19 +71,17 @@ public class GUI_RegisterDepartmentController {
         try {
             if (registerDepartment(department)) {
                 messageLabel.setText("Departamento registrado exitosamente.");
-                logger.info("Departamento '{}' registrado correctamente.", department.getName());
+                LOGGER.info("Departamento '{}' registrado correctamente.", department.getName());
                 nameField.clear();
                 descriptionArea.clear();
             } else {
                 messageLabel.setText("No se pudo registrar el departamento.");
-                logger.error("No se pudo registrar el departamento '{}'.", department.getName());
+                LOGGER.error("No se pudo registrar el departamento '{}'.", department.getName());
             }
-        } catch (SQLException e) {
-            messageLabel.setText("Error de base de datos: " + e.getMessage());
-            logger.error("Error SQL al registrar departamento: {}", e.getMessage(), e);
         } catch (Exception e) {
-            messageLabel.setText("Error al registrar: " + e.getMessage());
-            logger.error("Error inesperado al registrar departamento: {}", e.getMessage(), e);
+            messageLabel.setText("Error al registrar: ");
+            messageLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al registrar departamento: {}", e);
         }
     }
 
@@ -92,12 +91,14 @@ public class GUI_RegisterDepartmentController {
 
         if (name.isEmpty() || description.isEmpty()) {
             messageLabel.setText("Todos los campos son obligatorios.");
-            logger.warn("Campos vacíos al intentar registrar departamento.");
+            messageLabel.setTextFill(Color.RED);
+            LOGGER.warn("Campos vacíos al intentar registrar departamento.");
             return false;
         }
         if (organizationId <= 0) {
             messageLabel.setText("ID de organización no válido.");
-            logger.error("ID de organización no válido: {}", organizationId);
+            messageLabel.setTextFill(Color.RED);
+            LOGGER.error("ID de organización no válido: {}", organizationId);
             return false;
         }
         return true;
@@ -109,8 +110,53 @@ public class GUI_RegisterDepartmentController {
         return new DepartmentDTO(0, name, description, organizationId);
     }
 
-    private boolean registerDepartment(DepartmentDTO department) throws SQLException {
+    private boolean registerDepartment(DepartmentDTO department) {
         DepartmentDAO dao = new DepartmentDAO();
-        return dao.insertDepartment(department);
+        try {
+            return dao.insertDepartment(department);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                messageLabel.setText("Error de conexión con la base de datos.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("08S01".equals(sqlState)) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                messageLabel.setText("Conexión interrumpida con la base de datos.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("42000".equals(sqlState)){
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                messageLabel.setText("Base de datos desconocida.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("28000".equals(sqlState)) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                messageLabel.setText("Acceso denegado a la base de datos.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("23000".equals(sqlState)) {
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                messageLabel.setText("Violación de restricción de integridad.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else {
+                LOGGER.error("Error al registrar departamento: {}", e);
+                messageLabel.setText("Error al registrar el departamento: ");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            }
+        } catch (NullPointerException e) {
+            LOGGER.error("Referencia nula al registrar departamento: {}", e.getMessage(), e);
+            messageLabel.setText("Error interno al registrar el departamento.");
+            messageLabel.setTextFill(Color.RED);
+            return false;
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al registrar departamento: {}", e.getMessage(), e);
+            messageLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            messageLabel.setTextFill(Color.RED);
+            return false;
+        }
     }
 }

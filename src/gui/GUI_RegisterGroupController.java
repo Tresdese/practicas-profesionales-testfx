@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class GUI_RegisterGroupController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterGroupController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterGroupController.class);
 
     @FXML
     private Label statusLabel, nameCharCountLabel;
@@ -73,8 +73,26 @@ public class GUI_RegisterGroupController {
                 }
             });
         } catch (SQLException e) {
-            logger.error("Error al cargar académicos: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumída con la base de datos.");
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar académicos.");
+                LOGGER.error("Error al cargar académicos: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
             statusLabel.setText("Error al cargar académicos.");
+            LOGGER.error("Error al cargar académicos: {}", e.getMessage(), e);
         }
     }
 
@@ -95,10 +113,25 @@ public class GUI_RegisterGroupController {
                 }
             });
         } catch (SQLException e) {
-            logger.error("Error de base de datos al cargar periodos: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos al cargar periodos.");
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar periodos.");
+                LOGGER.error("Error al cargar periodos: {}", e);
+            }
         } catch (Exception e) {
-            logger.error("Error al cargar periodos: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar periodos: {}", e.getMessage(), e);
             statusLabel.setText("Error al cargar periodos.");
         }
     }
@@ -133,15 +166,34 @@ public class GUI_RegisterGroupController {
                 statusLabel.setTextFill(Color.RED);
             }
         } catch (SQLException e) {
-            logger.error("Error de base de datos al registrar el grupo: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos al registrar el grupo.");
-            statusLabel.setTextFill(Color.RED);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al registrar el grupo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al registrar el grupo: {}", e.getMessage(), e);
+            }
         } catch (NullPointerException e) {
-            logger.error("Referencia nula al registrar el grupo: {}", e.getMessage(), e);
+            LOGGER.error("Referencia nula al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Error interno al registrar el grupo.");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error al registrar el grupo: {}", e.getMessage(), e);
+            LOGGER.error("Error al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
         }

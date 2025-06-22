@@ -12,7 +12,7 @@ import java.util.List;
 public class UserService {
     private final UserDAO userDAO;
 
-    public UserService(Connection connection) {
+    public UserService() {
         this.userDAO = new UserDAO();
     }
 

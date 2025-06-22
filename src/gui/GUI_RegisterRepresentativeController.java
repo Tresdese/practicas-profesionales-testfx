@@ -25,7 +25,7 @@ import java.util.List;
 
 public class GUI_RegisterRepresentativeController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterRepresentativeController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterRepresentativeController.class);
 
     @FXML
     private Button registerUserButton;
@@ -94,7 +94,26 @@ public class GUI_RegisterRepresentativeController {
             });
 
         } catch (SQLException e) {
-            logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada. Por favor, verifique la configuración.");
+                LOGGER.error("Tabla no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada. Por favor, verifique la configuración.");
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error con la base de datos al inicializar los servicios.");
+                LOGGER.error("Error al inicializar los servicios: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar la ventana.");
+            LOGGER.error("Error inesperado al inicializar la ventana: {}", e.getMessage(), e);
         }
     }
 
@@ -108,7 +127,7 @@ public class GUI_RegisterRepresentativeController {
             departmentBox.setItems(FXCollections.observableArrayList(departments));
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar departamentos.");
-            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar departamentos: {}", e.getMessage(), e);
         }
     }
 
@@ -153,9 +172,37 @@ public class GUI_RegisterRepresentativeController {
                     statusLabel.setTextFill(javafx.scene.paint.Color.RED);
                 }
             } catch (SQLException e) {
-                statusLabel.setText("No se pudo conectar a la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-                logger.error("Error de SQL al registrar el representante: {}", e.getMessage(), e);
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else if ("23505".equals(sqlState)) {
+                    statusLabel.setText("El representante ya existe en la base de datos.");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                    LOGGER.error("El representante ya existe: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla no encontrada.");
+                    LOGGER.error("Tabla no encontrada: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada.");
+                    LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                }
+                 else {
+                    statusLabel.setText("Error al registrar el representante.");
+                    statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                    LOGGER.error("Error al registrar el representante: {}", e.getMessage(), e);
+                }
             }
 
             if (parentController != null) {
@@ -164,7 +211,11 @@ public class GUI_RegisterRepresentativeController {
         } catch (EmptyFields | InvalidData | RepeatedId e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            LOGGER.error("Error: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            LOGGER.error("Error inesperado al registrar representante: {}", e.getMessage(), e);
         }
     }
 
@@ -173,7 +224,7 @@ public class GUI_RegisterRepresentativeController {
             return linkedOrganizationService.getAllLinkedOrganizations();
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de las organizaciones.");
-            logger.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
             return List.of();
         }
     }

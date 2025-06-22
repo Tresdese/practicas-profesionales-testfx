@@ -3,57 +3,47 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #f4f6fb;"
-            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="gui.GUI_AssignedProjectController">
-    <VBox alignment="CENTER" layoutX="0" layoutY="0" maxWidth="740" prefWidth="700" spacing="22"
-          style="-fx-background-color: #fff; -fx-padding: 40 50 40 50; -fx-background-radius: 18; -fx-effect: dropshadow(gaussian, #b0b0b0, 12, 0.2, 0, 6);"
-          AnchorPane.bottomAnchor="60" AnchorPane.leftAnchor="80" AnchorPane.rightAnchor="80" AnchorPane.topAnchor="60">
-        <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C; -fx-padding: 0 0 14 0;"
-               text="Proyecto Asignado"/>
-        <Separator/>
+<AnchorPane prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #f4f6fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_AssignedProjectController">
+    <VBox alignment="CENTER" layoutX="0" layoutY="0" maxWidth="740" prefWidth="700" spacing="22" style="-fx-background-color: #fff; -fx-padding: 40 50 40 50; -fx-background-radius: 18; -fx-effect: dropshadow(gaussian, #b0b0b0, 12, 0.2, 0, 6);" AnchorPane.bottomAnchor="60" AnchorPane.leftAnchor="80" AnchorPane.rightAnchor="80" AnchorPane.topAnchor="60">
+        <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2A3E8C; -fx-padding: 0 0 14 0;" text="Proyecto Asignado" />
+        <Separator />
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Nombre:"/>
-            <Label fx:id="nameLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Nombre:" />
+            <Label fx:id="nameLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Descripción:"/>
-            <Label fx:id="descriptionLabel" maxWidth="500" style="-fx-text-fill: #333;" text="-" wrapText="true"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Descripción:" />
+            <Label fx:id="descriptionLabel" maxWidth="500" style="-fx-text-fill: #333;" text="-" wrapText="true" />
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Fecha Aproximada:"/>
-            <Label fx:id="approximateDateLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Fecha Aproximada:" />
+            <Label fx:id="approximateDateLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Fecha de Inicio:"/>
-            <Label fx:id="startDateLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Fecha de Inicio:" />
+            <Label fx:id="startDateLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="ID Usuario:"/>
-            <Label fx:id="userLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="ID Usuario:" />
+            <Label fx:id="userLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Departamento:"/>
-            <Label fx:id="departmentLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Departamento:" />
+            <Label fx:id="departmentLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
 
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Organizacion:"/>
-            <Label fx:id="organizationLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Organizacion:" />
+            <Label fx:id="organizationLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
         <HBox alignment="CENTER_LEFT" maxWidth="660" spacing="14">
-            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Representante:"/>
-            <Label fx:id="representativeLabel" style="-fx-text-fill: #333;" text="-"/>
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #1E90FF;" text="Representante:" />
+            <Label fx:id="representativeLabel" style="-fx-text-fill: #333;" text="-" />
         </HBox>
+      <Label fx:id="statusLabel" />
     </VBox>
-    <Button fx:id="checkPresentationGradeButton" layoutX="51.0" layoutY="22.0" onAction="#handleCheckPresentationGrade"
-            style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;"
-            text="Ver Calificación de Presentación"/>
-    <Button fx:id="registerSelfAssessmentButton" layoutX="413.0" layoutY="22.0" onAction="#handleOpenSelfAssessment"
-            style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;"
-            text="Registrar Autoevaluación"/>
-    <Button fx:id="openRegisterReportButton" layoutX="714.0" layoutY="22.0" onAction="#handleOpenRegisterReport"
-            style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;"
-            text="Registrar Informe"/>
+    <Button fx:id="checkPresentationGradeButton" layoutX="51.0" layoutY="22.0" onAction="#handleCheckPresentationGrade" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Ver Calificación de Presentación" />
+    <Button fx:id="registerSelfAssessmentButton" layoutX="413.0" layoutY="22.0" onAction="#handleOpenSelfAssessment" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Registrar Autoevaluación" />
+    <Button fx:id="openRegisterReportButton" layoutX="714.0" layoutY="22.0" onAction="#handleOpenRegisterReport" style="-fx-background-color: #1E90FF; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Registrar Informe" />
 </AnchorPane>

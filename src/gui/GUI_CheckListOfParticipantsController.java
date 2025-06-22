@@ -6,12 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.DAO.StudentProjectViewDAO;
 import logic.DTO.StudentProjectViewDTO;
@@ -83,9 +80,19 @@ public class GUI_CheckListOfParticipantsController {
                 logger.info("Datos cargados exitosamente en la tabla.");
             }
         } catch (SQLException e) {
-            logger.error("Error al cargar los datos de estudiantes y proyectos.", e);
-            participantsTableView.setItems(FXCollections.observableArrayList());
-            updateParticipantCounts(FXCollections.observableArrayList());
+            if (e.getMessage().contains("The driver has not received any packets from the server")){
+                logger.error("Error de conexión con la base de datos: " + e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                participantCountsLabel.setText("Error de conexión con la base de datos");
+            } else if (e.getMessage().contains("Unknown database")) {
+                logger.error("Base de datos desconocida: " + e.getMessage(), e);
+                showAlert("La base de datos no esta disponible.");
+                participantCountsLabel.setText("Base de datos no disponible");
+            } else {
+                logger.error("Error al cargar los datos de la presentación: " + e.getMessage(), e);
+                showAlert("Error al cargar los datos de la presentación. Por favor, intenta nuevamente.");
+                participantCountsLabel.setText("Error al cargar los datos");
+            }
         }
     }
 
@@ -137,5 +144,10 @@ public class GUI_CheckListOfParticipantsController {
         } catch (Exception e) {
             logger.error("Error inesperado al abrir la ventana de calificación.", e);
         }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.showAndWait();
     }
 }

@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class GUI_ReassignProjectController {
-    private static final Logger logger = LogManager.getLogger(GUI_ReassignProjectController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ReassignProjectController.class);
 
     @FXML
     private Label studentNameLabel;
@@ -55,8 +55,29 @@ public class GUI_ReassignProjectController {
             statusLabel.setText("Proyecto reasignado correctamente.");
             closeWindow();
         } catch (SQLException e) {
-            logger.error("Error al reasignar proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error al reasignar proyecto.");
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                statusLabel.setText("El proyecto ya está asignado a este estudiante.");
+                LOGGER.error("El proyecto ya está asignado a este estudiante: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al reasignar el proyecto.");
+                LOGGER.error("Error al reasignar el proyecto: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error al reasignar el proyecto.");
+            LOGGER.error("Error al reasignar el proyecto: {}", e.getMessage(), e);
         }
     }
 
@@ -77,8 +98,26 @@ public class GUI_ReassignProjectController {
             ObservableList<ProjectDTO> projectList = FXCollections.observableArrayList(allProjects);
             projectChoiceBox.setItems(projectList);
         } catch (SQLException e) {
-            logger.error("Error al cargar proyectos disponibles: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar proyectos.");
+                LOGGER.error("Error al cargar proyectos: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
             statusLabel.setText("Error al cargar proyectos.");
+            LOGGER.error("Error al cargar proyectos: {}", e.getMessage(), e);
         }
     }
 

@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import logic.DTO.LinkedOrganizationDTO;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class GUI_CheckListLinkedOrganizationController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_CheckListLinkedOrganizationController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_CheckListLinkedOrganizationController.class);
 
     @FXML
     private TableView<LinkedOrganizationDTO> tableView;
@@ -63,7 +64,33 @@ public class GUI_CheckListLinkedOrganizationController {
             ServiceConfig serviceConfig = new ServiceConfig();
             linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
         } catch (SQLException e) {
-            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Error de interrupcion de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de interrupcion de conexión con la base de datos: {}", e.getMessage(), e);
+            }
+            else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al inicializar el servicio de organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de base de datos al inicializar el servicio de organizaciones: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar el servicio de organizaciones.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al inicializar el servicio de organizaciones: {}", e.getMessage(), e);
         }
 
         organizationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -94,7 +121,13 @@ public class GUI_CheckListLinkedOrganizationController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de registro de organización: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir el fxml de la ventana de registro de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir eñ fxml de la ventana de registro de organización.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de registro de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -107,7 +140,7 @@ public class GUI_CheckListLinkedOrganizationController {
             statusLabel.setText("");
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de las organizaciones.");
-            logger.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
         }
 
         tableView.setItems(organizationList);
@@ -129,8 +162,32 @@ public class GUI_CheckListLinkedOrganizationController {
                 filteredList.add(organization);
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al buscar la organización.");
-            logger.error("Error al buscar la organización: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Error de interrupción de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de interrupción de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al buscar la organización.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al buscar la organización: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Ocurrió un error inesperado al buscar la organización.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al buscar la organización: {}", e.getMessage(), e);
         }
 
         tableView.setItems(filteredList);
@@ -168,8 +225,18 @@ public class GUI_CheckListLinkedOrganizationController {
             GUI_ManageLinkedOrganization manageOrganizationApp = new GUI_ManageLinkedOrganization();
             Stage stage = new Stage();
             manageOrganizationApp.start(stage);
+        } catch (IllegalStateException e) {
+            LOGGER.error("Error al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de gestión de organización.");
+            statusLabel.setTextFill(Color.RED);
         } catch (RuntimeException e) {
-            logger.error("Error al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
+            LOGGER.error("Error de tiempo de ejecucion al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error de tiempo de ejecución al abrir la ventana de gestión de organización.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de gestión de organización: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado al abrir la ventana de gestión de organización.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

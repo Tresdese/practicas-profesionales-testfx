@@ -93,8 +93,16 @@ public class GUI_CheckListOfPeriodsController {
             periodList.addAll(periods);
             statusLabel.setText("");
         } catch (SQLException e) {
-            statusLabel.setText("Error al conectar a la base de datos.");
-            logger.error("Error al cargar los periodos: {}", e.getMessage(), e);
+            if (e.getMessage().contains("The driver has not received any packets from the server")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (e.getMessage().contains("Unknown database")) {
+                statusLabel.setText("La base de datos no está disponible.");
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los periodos.");
+                logger.error("Error al cargar los periodos: {}", e.getMessage(), e);
+            }
         }
         periodsTableView.setItems(periodList);
         updatePeriodCounts(periodList);
@@ -115,8 +123,16 @@ public class GUI_CheckListOfPeriodsController {
                 filteredList.add(period);
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al buscar periodos.");
-            logger.error("Error al buscar periodos: {}", e.getMessage(), e);
+            if (e.getMessage().contains("The driver has not received any packets from the server")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (e.getMessage().contains("Unknown database")) {
+                statusLabel.setText("La base de datos no está disponible.");
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al buscar periodos.");
+                logger.error("Error al buscar periodos: {}", e.getMessage(), e);
+            }
         }
 
         periodsTableView.setItems(filteredList);

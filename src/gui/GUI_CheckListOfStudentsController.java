@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 import logic.DTO.ProjectDTO;
@@ -94,6 +95,12 @@ public class GUI_CheckListOfStudentsController {
         } catch (RuntimeException e) {
             logger.error("Error al inicializar StudentService: {}", e.getMessage(), e);
             statusLabel.setText("Error interno. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
+            return;
+        } catch (Exception e) {
+            logger.error("Error inesperado al inicializar StudentService: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al inicializar.");
+            statusLabel.setTextFill(Color.RED);
             return;
         }
 
@@ -176,10 +183,16 @@ public class GUI_CheckListOfStudentsController {
             stage.show();
         } catch (IOException e) {
             logger.error("No se pudo cargar el archivo FXML: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar el fxml al abrir la ventana de registro de estudiante.");
+            statusLabel.setTextFill(Color.RED);
         } catch (NullPointerException e) {
             logger.error("No se encontró el recurso FXML: {}", e.getMessage(), e);
+            statusLabel.setText("Recurso no encontrado al abrir la ventana de registro de estudiante.");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
+            logger.error("Error inesperado al abrir la ventana de registro de estudiante: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al abrir la ventana de registro de estudiante.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -197,12 +210,15 @@ public class GUI_CheckListOfStudentsController {
         } catch (NullPointerException e) {
             logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
             statusLabel.setText("Error interno: recurso no encontrado");
+            statusLabel.setTextFill(Color.RED);
         } catch (IllegalStateException e) {
             logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
             statusLabel.setText("Error de estado al abrir la ventana");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir la ventana de asignación de proyecto");
+            logger.error("Error inesperado al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al abrir la ventana de asignación de proyecto");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -222,17 +238,40 @@ public class GUI_CheckListOfStudentsController {
             Stage stage = new Stage();
             reassignProjectApp.start(stage);
         } catch (SQLException e) {
-            logger.error("Error de base de datos al reasignar proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error de base de datos al reasignar proyecto");
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("08S01".equals(sqlState)) {
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42000".equals(sqlState)) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("28000".equals(sqlState)) {
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                logger.error("Error de base de datos al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al abrir la ventana de reasignación de proyecto");
+                statusLabel.setTextFill(Color.RED);
+            }
         } catch (NullPointerException e) {
             logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
             statusLabel.setText("Error interno: recurso no encontrado");
+            statusLabel.setTextFill(Color.RED);
         } catch (IllegalStateException e) {
             logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
             statusLabel.setText("Error de estado al abrir la ventana");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir la ventana de reasignación de proyecto");
+            logger.error("Error inesperado al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al abrir la ventana de reasignación de proyecto");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -263,8 +302,32 @@ public class GUI_CheckListOfStudentsController {
             }
             statusLabel.setText("");
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los datos de los estudiantes.");
-            logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al cargar los estudiantes.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de base de datos al cargar los estudiantes: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar los estudiantes.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al cargar los estudiantes: {}", e.getMessage(), e);
         }
         tableView.setItems(studentList);
         updateStudentCounts();
@@ -300,8 +363,32 @@ public class GUI_CheckListOfStudentsController {
                 filteredList.add(student);
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al buscar el estudiante.");
-            logger.error("Error al buscar el estudiante: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al buscar estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de base de datos al buscar estudiante: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al buscar estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al buscar estudiante: {}", e.getMessage(), e);
         }
 
         tableView.setItems(filteredList);
@@ -326,8 +413,32 @@ public class GUI_CheckListOfStudentsController {
             }
             studentCountsLabel.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
         } catch (SQLException e) {
-            studentCountsLabel.setText("Error al contar estudiantes");
-            logger.error("Error al contar estudiantes: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                studentCountsLabel.setText("Error de conexión con la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                studentCountsLabel.setText("Conexión interrumpida con la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                studentCountsLabel.setText("Base de datos desconocida.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                studentCountsLabel.setText("Acceso denegado a la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                studentCountsLabel.setText("Error de base de datos al actualizar conteos de estudiantes.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Error de base de datos al actualizar conteos de estudiantes: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            studentCountsLabel.setText("Error inesperado al actualizar conteos de estudiantes.");
+            studentCountsLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al actualizar conteos de estudiantes: {}", e.getMessage(), e);
         }
     }
 
@@ -367,7 +478,21 @@ public class GUI_CheckListOfStudentsController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("No se pudo cargar la ventana de detalles: {}", e.getMessage(), e);
+            statusLabel.setText("Error de fxml al cargar la ventana de detalles del estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de fxml al cargar la ventana de detalles del estudiante: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            statusLabel.setText("Recurso no encontrado al abrir la ventana de detalles del estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Recurso nulo al abrir la ventana de detalles: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            statusLabel.setText("Error de estado al abrir la ventana de detalles del estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Estado ilegal al abrir la ventana de detalles: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al abrir la ventana de detalles del estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al abrir la ventana de detalles: {}", e.getMessage(), e);
         }
     }
 
@@ -408,13 +533,40 @@ public class GUI_CheckListOfStudentsController {
             Stage stage = new Stage();
             manageStudentApp.start(stage);
         } catch (SQLException e) {
-            logger.error("Error de base de datos al gestionar estudiante: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al abrir la ventana de gestión de estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de base de datos al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+            }
         } catch (NullPointerException e) {
+            statusLabel.setText("Recurso no encontrado al abrir la ventana de gestión de estudiante.");
+            statusLabel.setTextFill(Color.RED);
             logger.error("Recurso nulo al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         } catch (IllegalStateException e) {
+            statusLabel.setText("Error de estado al abrir la ventana de gestión de estudiante.");
+            statusLabel.setTextFill(Color.RED);
             logger.error("Estado ilegal al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al abrir la ventana de gestión de estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         }
     }
 }

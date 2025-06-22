@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import logic.DAO.GroupDAO;
 import logic.DTO.GroupDTO;
 import logic.DTO.ProjectDTO;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class GUI_ManageStudentController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_ManageStudentController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ManageStudentController.class);
 
     private static final int MAX_NAMES = 50;
     private static final int MAX_SURNAMES = 50;
@@ -76,9 +77,9 @@ public class GUI_ManageStudentController {
         try {
             this.studentService = ServiceFactory.getStudentService();
         } catch (Exception e) {
-            logger.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
+            LOGGER.error("Error al obtener StudentService desde ServiceFactory: {}", e.getMessage(), e);
             statusLabel.setText("Error al conectar con la base de datos.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -90,15 +91,38 @@ public class GUI_ManageStudentController {
                 nrcChoiceBox.getItems().add(group.getNRC());
             }
         } catch (SQLException e) {
-            logger.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los NRCs.");
+                LOGGER.error("Error al cargar los NRCs: {}", e.getMessage(), e);
+                statusLabel.setTextFill(Color.RED);
+            }
         } catch (Exception e) {
-            logger.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al cargar los NRCs.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
     public void setStudentData(StudentDTO student, ProjectDTO currentProject) {
         if (student == null) {
-            logger.error("El objeto StudentDTO es nulo.");
+            LOGGER.error("El objeto StudentDTO es nulo.");
             return;
         }
 
@@ -114,7 +138,7 @@ public class GUI_ManageStudentController {
     @FXML
     private void handleSaveChanges() {
         if (studentService == null) {
-            logger.error("StudentService no ha sido inicializado.");
+            LOGGER.error("StudentService no ha sido inicializado.");
             statusLabel.setText("Error interno. Intente más tarde.");
             statusLabel.setTextFill(javafx.scene.paint.Color.RED);
             return;
@@ -140,13 +164,36 @@ public class GUI_ManageStudentController {
             statusLabel.setText("¡Estudiante actualizado exitosamente!");
             statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
         } catch (SQLException e) {
-            statusLabel.setText("Error al actualizar en la base de datos.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error al actualizar el estudiante en la base de datos: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Error de integridad .");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.warn("Error de integridad: {}", e.getMessage());
+            } else {
+                statusLabel.setText("Error al actualizar el estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al actualizar el estudiante: {}", e);
+            }
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error: {}", e);
         }
     }
 
@@ -161,7 +208,7 @@ public class GUI_ManageStudentController {
     private void handleAssignFinalGrade() {
         if (student == null) {
             statusLabel.setText("No hay un estudiante seleccionado.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
             return;
         }
 
@@ -177,9 +224,13 @@ public class GUI_ManageStudentController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al cargar la interfaz GUI_RecordFinalGrade.fxml: {}", e.getMessage(), e);
+            LOGGER.error("Error al cargar la interfaz GUI_RecordFinalGrade.fxml: {}", e);
             statusLabel.setText("Error al abrir la ventana de calificación.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de calificación: {}", e);
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 }

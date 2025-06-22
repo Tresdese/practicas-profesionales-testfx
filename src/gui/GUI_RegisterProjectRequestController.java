@@ -16,12 +16,11 @@ import logic.DTO.ProjectStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 public class GUI_RegisterProjectRequestController {
-    private static final Logger logger = LogManager.getLogger(GUI_RegisterProjectRequestController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterProjectRequestController.class);
 
     @FXML
     private ComboBox<LinkedOrganizationDTO> organizationComboBox;
@@ -85,6 +84,8 @@ public class GUI_RegisterProjectRequestController {
     private Label responsibilitiesCharCountLabel;
     @FXML
     private TextField durationField;
+    @FXML
+    private Button registerButton;
 
     private static final int MAX_CARACTER_LIMIT = 300;
     private static final String REGEX_SCHEDULE_TIME = "^([01]?\\d|2[0-3])?(:[0-5]?\\d)?(-([01]?\\d|2[0-3])?(:[0-5]?\\d)?)?$";
@@ -108,8 +109,11 @@ public class GUI_RegisterProjectRequestController {
                 loadProjects();
             });
         } catch (NullPointerException e) {
-            logger.error("Error al inicializar el controlador: {}", e.getMessage(), e);
+            LOGGER.error("Error al inicializar el controlador: {}", e.getMessage(), e);
             setStatus("Error al inicializar la interfaz.", true);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al inicializar el controlador: {}", e.getMessage(), e);
+            setStatus("Error inesperado al cargar la interfaz.", true);
         }
         durationField.setText("420");
         durationField.setDisable(true);
@@ -166,10 +170,28 @@ public class GUI_RegisterProjectRequestController {
             LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO();
             List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
             organizationComboBox.setItems(FXCollections.observableArrayList(orgs));
-            logger.info("Organizaciones cargadas correctamente.");
+            LOGGER.info("Organizaciones cargadas correctamente.");
         } catch (SQLException e) {
-            logger.error("Error cargando organizaciones: {}", e.getMessage(), e);
-            setStatus("Error cargando organizaciones.", true);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                setStatus("Error de conexión con la base de datos.", true);
+            } else if ("08S01".equals(sqlState)) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                setStatus("Conexión interrumpida con la base de datos.", true);
+            } else if ("42000".equals(sqlState)) {
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                setStatus("Base de datos no encontrada.", true);
+            } else if ("28000".equals(sqlState)) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                setStatus("Acceso denegado a la base de datos.", true);
+            } else {
+                LOGGER.error("Error al cargar organizaciones: {}", e.getMessage(), e);
+                setStatus("Error al cargar organizaciones.", true);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al cargar organizaciones: {}", e.getMessage(), e);
+            setStatus("Error inesperado al cargar organizaciones.", true);
         }
     }
 
@@ -187,10 +209,27 @@ public class GUI_RegisterProjectRequestController {
                     allReps.addAll(reps);
                 }
                 representativeComboBox.setItems(FXCollections.observableArrayList(allReps));
-                logger.info("Representantes cargados para la organización {}", org.getName());
+                LOGGER.info("Representantes cargados para la organización {}", org.getName());
             } catch (SQLException e) {
-                logger.error("Error cargando representantes: {}", e.getMessage(), e);
-                setStatus("Error cargando representantes.", true);
+                if ("08001".equals(e.getSQLState())) {
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    setStatus("Error de conexión con la base de datos.", true);
+                } else if ("08S01".equals(e.getSQLState())) {
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                    setStatus("Conexión interrumpida con la base de datos.", true);
+                } else if ("42000".equals(e.getSQLState())) {
+                    LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                    setStatus("Base de datos no encontrada.", true);
+                } else if ("28000".equals(e.getSQLState())) {
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                    setStatus("Acceso denegado a la base de datos.", true);
+                } else {
+                    LOGGER.error("Error al cargar representantes: {}", e.getMessage(), e);
+                    setStatus("Error al cargar representantes.", true);
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error inesperado al cargar representantes: {}", e.getMessage(), e);
+                setStatus("Error inesperado al cargar representantes.", true);
             }
         }
     }
@@ -237,9 +276,27 @@ public class GUI_RegisterProjectRequestController {
                         return null;
                     }
                 });
-                logger.info("Proyectos cargados para la organización {}", org.getName());
+                LOGGER.info("Proyectos cargados para la organización {}", org.getName());
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    setStatus("Error de conexión con la base de datos.", true);
+                } else if ("08S01".equals(sqlState)) {
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                    setStatus("Conexión interrumpida con la base de datos.", true);
+                } else if ("42000".equals(sqlState)) {
+                    LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                    setStatus("Base de datos no encontrada.", true);
+                } else if ("28000".equals(sqlState)) {
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                    setStatus("Acceso denegado a la base de datos.", true);
+                } else {
+                    LOGGER.error("Error cargando proyectos: {}", e.getMessage(), e);
+                    setStatus("Error cargando proyectos.", true);
+                }
             } catch (Exception e) {
-                logger.error("Error cargando proyectos: {}", e.getMessage(), e);
+                LOGGER.error("Error cargando proyectos: {}", e.getMessage(), e);
                 setStatus("Error cargando proyectos.", true);
             }
         }
@@ -280,15 +337,36 @@ public class GUI_RegisterProjectRequestController {
             boolean success = dao.insertProjectRequest(request);
 
             if (success) {
-                logger.info("Solicitud de proyecto registrada correctamente para el estudiante {}", student.getTuition());
+                LOGGER.info("Solicitud de proyecto registrada correctamente para el estudiante {}", student.getTuition());
                 statusLabel.setText("Solicitud registrada correctamente.");
                 clearFields();
             } else {
-                logger.warn("Error al registrar la solicitud de proyecto para el estudiante {}", student.getTuition());
-                statusLabel.setText("Error al registrar la solicitud.");
+                LOGGER.warn("Error al registrar la solicitud de proyecto en la base de datos {}", student.getTuition());
+                statusLabel.setText("Error al registrar la solicitud en la base de datos.");
+            }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                setStatus("Error de conexión con la base de datos.", true);
+            } else if ("08S01".equals(sqlState)) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                setStatus("Conexión interrumpida con la base de datos.", true);
+            } else if ("42000".equals(sqlState)) {
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                setStatus("Base de datos no encontrada.", true);
+            } else if ("28000".equals(sqlState)) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                setStatus("Acceso denegado a la base de datos.", true);
+            } else if ("23000".equals(sqlState)) {
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                setStatus("Violación de restricción de integridad.", true);
+            } else {
+                LOGGER.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
+                setStatus("Error al registrar la solicitud.", true);
             }
         } catch (Exception e) {
-            logger.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
             setStatus("Error al registrar la solicitud.", true);
         }
     }
@@ -324,7 +402,7 @@ public class GUI_RegisterProjectRequestController {
                 directUsersField.getText().isEmpty() ||
                 indirectUsersField.getText().isEmpty()) {
             setStatus("Completa todos los campos obligatorios.", true);
-            logger.warn("Validación fallida: campos obligatorios incompletos.");
+            LOGGER.warn("Validación fallida: campos obligatorios incompletos.");
             return false;
         }
         return true;
@@ -358,6 +436,6 @@ public class GUI_RegisterProjectRequestController {
         representativeComboBox.getItems().clear();
         projectComboBox.getItems().clear();
         durationField.setText("420");
-        logger.info("Campos del formulario limpiados.");
+        LOGGER.info("Campos del formulario limpiados.");
     }
 }

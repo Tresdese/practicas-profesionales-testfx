@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GUI_ManageRepresentativeController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_ManageRepresentativeController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ManageRepresentativeController.class);
 
     @FXML
     private TextField namesField, surnamesField, emailField;
@@ -62,7 +62,34 @@ public class GUI_ManageRepresentativeController {
                 loadDepartmentsForSelectedOrganization();
             });
         } catch (SQLException e) {
-            logger.error("Error al inicializar los servicios: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            }
+            else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            }
+             else {
+                statusLabel.setText("Error en la base de datos al inicializar el servicio.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error en la base de datos al inicializar el servicio: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar el servicio.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al inicializar el servicio: {}", e.getMessage(), e);
         }
     }
 
@@ -76,8 +103,32 @@ public class GUI_ManageRepresentativeController {
             organizationBox.getItems().clear();
             organizationBox.getItems().addAll(organizationNames);
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar las organizaciones.");
-            logger.error("Error al cargar las organizaciones: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar organizaciones: {}", e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error al cargar organizaciones.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar organizaciones: {}", e);
         }
     }
 
@@ -95,14 +146,40 @@ public class GUI_ManageRepresentativeController {
                         .toList();
                 departmentBox.getItems().setAll(departmentNames);
             }
-        } catch (Exception e) {
-            logger.error("Error al cargar departamentos: {}", e.getMessage(), e);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar departamentos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar departamentos: {}", e.getMessage(), e);
+            }
+        }
+        catch (Exception e) {
+            statusLabel.setText("Error al cargar departamentos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar departamentos: {}", e.getMessage(), e);
         }
     }
 
     public void setRepresentativeData(RepresentativeDTO representative) {
         if (representative == null) {
-            logger.error("El objeto RepresentativeDTO es nulo.");
+            LOGGER.error("El objeto RepresentativeDTO es nulo.");
             return;
         }
 
@@ -117,7 +194,6 @@ public class GUI_ManageRepresentativeController {
             if (deptId != null && !deptId.isEmpty()) {
                 DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(deptId));
                 if (department != null) {
-                    // Selecciona la organización y carga los departamentos
                     LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
                     if (org != null) {
                         organizationBox.setValue(org.getName());
@@ -127,7 +203,32 @@ public class GUI_ManageRepresentativeController {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error al obtener el departamento del representante: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los datos del representante.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al cargar los datos del representante: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar los datos del representante.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar los datos del representante: {}", e.getMessage(), e);
         }
     }
 
@@ -147,7 +248,6 @@ public class GUI_ManageRepresentativeController {
             representative.setSurnames(surname);
             representative.setEmail(email);
 
-            // Buscar el departamento por nombre y organización seleccionada
             String orgName = organizationBox.getValue();
             LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
             if (org == null) {
@@ -179,9 +279,39 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setTextFill(Color.RED);
             }
         } catch (SQLException e) {
-            statusLabel.setText(e.getMessage());
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al actualizar el representante.");
+                LOGGER.error("Error al actualizar el representante: {}", e);
+            }
+        } catch (IllegalArgumentException e) {
+            statusLabel.setText("Argumento inválido:");
             statusLabel.setTextFill(Color.RED);
-            logger.error("Error: {}", e.getMessage(), e);
+            LOGGER.warn("Error al guardar cambios: {}", e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al guardar cambios.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al guardar cambios: {}", e);
         }
     }
 

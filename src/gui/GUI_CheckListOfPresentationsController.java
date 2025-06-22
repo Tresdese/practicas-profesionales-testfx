@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import logic.DAO.ProjectPresentationDAO;
 import logic.DTO.ProjectPresentationDTO;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class GUI_CheckListOfPresentationsController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_CheckListOfPresentationsController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_CheckListOfPresentationsController.class);
 
     @FXML
     private TableView<ProjectPresentationDTO> presentationsTableView;
@@ -88,27 +89,47 @@ public class GUI_CheckListOfPresentationsController {
     private void loadUpcomingPresentations() {
         try {
             List<ProjectPresentationDTO> upcomingPresentations = projectPresentationDAO.getUpcomingPresentations();
-            logger.info("Cantidad de presentaciones obtenidas: " + upcomingPresentations.size());
+            LOGGER.info("Cantidad de presentaciones obtenidas: " + upcomingPresentations.size());
 
             ObservableList<ProjectPresentationDTO> data = FXCollections.observableArrayList(upcomingPresentations);
             presentationsTableView.setItems(data);
             updatePresentationCounts(data);
 
             if (upcomingPresentations.isEmpty()) {
-                logger.info("No hay presentaciones próximas para mostrar.");
+                LOGGER.info("No hay presentaciones próximas para mostrar.");
+                statusLabel.setText("No hay presentaciones próximas para mostrar.");
             } else {
                 for (ProjectPresentationDTO presentation : upcomingPresentations) {
-                    logger.info("Presentación obtenida: ID=" + presentation.getIdPresentation() +
+                    LOGGER.info("Presentación obtenida: ID=" + presentation.getIdPresentation() +
                             ", Proyecto=" + presentation.getIdProject() +
                             ", Fecha=" + presentation.getDate() +
                             ", Tipo=" + presentation.getTipe());
                 }
-                logger.info("Próximas presentaciones cargadas exitosamente.");
+                LOGGER.info("Próximas presentaciones cargadas exitosamente.");
             }
         } catch (SQLException e) {
-            logger.error("Error al cargar las próximas presentaciones.", e);
-            presentationsTableView.setItems(FXCollections.observableArrayList());
-            updatePresentationCounts(FXCollections.observableArrayList());
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al cargar las presentaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de base de datos al cargar las presentaciones: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar las presentaciones.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar las presentaciones: {}", e.getMessage(), e);
         }
     }
 
@@ -133,8 +154,28 @@ public class GUI_CheckListOfPresentationsController {
                 filteredList.addAll(presentations);
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al buscar presentaciones.");
-            logger.error("Error al buscar presentaciones: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al buscar presentaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de base de datos al buscar presentaciones: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al buscar presentaciones.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al buscar presentaciones: {}", e.getMessage(), e);
         }
 
         presentationsTableView.setItems(filteredList);
@@ -178,7 +219,7 @@ public class GUI_CheckListOfPresentationsController {
 
             GUI_CheckListOfParticipantsController controller = loader.getController();
             int presentationId = presentation.getIdPresentation();
-            logger.info("Abriendo ventana de Lista de Participantes para la presentación con ID: " + presentationId);
+            LOGGER.info("Abriendo ventana de Lista de Participantes para la presentación con ID: " + presentationId);
             controller.setPresentationId(presentationId);
 
             Stage stage = new Stage();
@@ -186,11 +227,15 @@ public class GUI_CheckListOfPresentationsController {
             stage.setTitle("Lista de Participantes");
             stage.show();
 
-            logger.info("Ventana de Lista de Participantes abierta correctamente.");
+            LOGGER.info("Ventana de Lista de Participantes abierta correctamente.");
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de Lista de Participantes.", e);
+            LOGGER.error("Error al abrir el fxml de la ventana de Lista de Participantes.", e);
+            statusLabel.setText("Error al abrir el fxml de la ventana de Lista de Participantes.");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de Lista de Participantes.", e);
+            LOGGER.error("Error inesperado al abrir la ventana de Lista de Participantes.", e);
+            statusLabel.setText("Error inesperado al abrir la ventana de Lista de Participantes.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -207,9 +252,15 @@ public class GUI_CheckListOfPresentationsController {
             stage.setTitle("Registrar Presentación");
             stage.show();
 
-            logger.info("Ventana de Registrar Presentación abierta correctamente.");
+            LOGGER.info("Ventana de Registrar Presentación abierta correctamente.");
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de Registrar Presentación.", e);
+            LOGGER.error("Error al abrir el fxml de la ventana de Registrar Presentación.", e);
+            statusLabel.setText("Error al abrir el fxmk de la ventana de Registrar Presentación.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de Registrar Presentación.", e);
+            statusLabel.setText("Error inesperado al abrir la ventana de Registrar Presentación.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

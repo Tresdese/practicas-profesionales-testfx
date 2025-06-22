@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 import logic.DTO.Role;
 import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
@@ -16,9 +17,11 @@ import logic.services.LoginService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.SQLException;
+
 public class GUI_LoginController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_LoginController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_LoginController.class);
 
     @FXML
     private TextField usernameField;
@@ -46,10 +49,33 @@ public class GUI_LoginController {
     private void initialize() {
         try {
             this.loginService = new LoginService();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Error de conexión interrumpida a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión interrumpida a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                LOGGER.error("Error de base de datos al inicializar LoginService: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al inicializar el servicio de inicio de sesión.");
+                statusLabel.setTextFill(Color.RED);
+            }
         } catch (Exception e) {
-            logger.error("Error al inicializar LoginService: {}", e.getMessage(), e);
-            statusLabel.setText("Error al conectar con la base de datos.");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            LOGGER.error("Error inesperado al inicializar LoginService: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al conectar con la base de datos.");
+            statusLabel.setTextFill(Color.RED);
         }
         configurePasswordVisibility();
     }
@@ -82,7 +108,7 @@ public class GUI_LoginController {
     @FXML
     private void handleLogin() {
         if (loginService == null) {
-            logger.error("LoginService no ha sido inicializado.");
+            LOGGER.error("LoginService no ha sido inicializado.");
             statusLabel.setText("Error interno. Intente más tarde.");
             statusLabel.setStyle("-fx-text-fill: red;");
             return;
@@ -135,13 +161,37 @@ public class GUI_LoginController {
                 stage.show();
             }
         } catch (InvalidCredential e) {
-            logger.warn("Credenciales inválidas: {}", e.getMessage());
+            LOGGER.warn("Credenciales inválidas: {}", e.getMessage());
             statusLabel.setText(e.getMessage());
-            statusLabel.setStyle("-fx-text-fill: red;");
-        } catch (Exception e) {
-            logger.error("Error inesperado: {}", e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Error de conexión interrumpida a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión interrumpida a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                LOGGER.error("Error de base de datos al iniciar sesión: {}", e.getMessage(), e);
+                statusLabel.setText("Error al iniciar sesión. Intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+            }
+        }
+        catch (Exception e) {
+            LOGGER.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-            statusLabel.setStyle("-fx-text-fill: red;");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -157,7 +207,7 @@ public class GUI_LoginController {
             stage.setTitle("Registrar Solicitud de Proyecto");
             stage.show();
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
             statusLabel.setText("No se pudo abrir la ventana de registro.");
             statusLabel.setStyle("-fx-text-fill: red;");
         }

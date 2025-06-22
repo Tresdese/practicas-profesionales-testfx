@@ -4,23 +4,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.DAO.*;
-import logic.DTO.DepartmentDTO;
-import logic.DTO.LinkedOrganizationDTO;
-import logic.DTO.ProjectDTO;
-import logic.DTO.RepresentativeDTO;
-import logic.DTO.StudentDTO;
-import logic.DTO.StudentProjectDTO;
+import logic.DTO.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import logic.exceptions.ProjectNotFound;
 
 public class GUI_AssignedProjectController {
+
+    @FXML
+    private Label statusLabel;
 
     @FXML
     private Label nameLabel;
@@ -77,14 +79,16 @@ public class GUI_AssignedProjectController {
 
             checkIfSelfAssessmentExists(student.getTuition(), Integer.parseInt(studentProject.getIdProject()));
 
-        } catch (ProjectNotFound e) {
-            logger.warn("Proyecto no encontrado: {}", e.getMessage());
-            showProjectNotFound();
-        } catch (SQLException e) {
-            logger.error("Error de base de datos al buscar el proyecto asignado: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            logger.error("IllegalStateException al buscar el proyecto asignado: {}", e.getMessage(), e);
+            statusLabel.setText("Error de estado al buscar el proyecto asignado.");
+            statusLabel.setTextFill(Color.RED);
             showErrorLoadingProject();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("Error inesperado al buscar el proyecto asignado: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al buscar el proyecto asignado.");
+            statusLabel.setTextFill(Color.RED);
             showErrorLoadingProject();
         }
     }
@@ -94,17 +98,78 @@ public class GUI_AssignedProjectController {
             SelfAssessmentDAO dao = new SelfAssessmentDAO();
             boolean exists = dao.existsSelfAssessment(matricula, idProyecto);
             registerSelfAssessmentButton.setDisable(exists);
-        } catch (Exception e) {
-            registerSelfAssessmentButton.setDisable(false);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                showAlert("Conexión interrumpida con la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                showAlert("Base de datos desconocida.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                showAlert("Acceso denegado a la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else {
+                logger.error("Error al verificar autoevaluación: {}", e.getMessage(), e);
+                showAlert("Error al verificar autoevaluación.");
+                registerSelfAssessmentButton.setDisable(true);
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error inesperado al verificar autoevaluación: {}", e.getMessage(), e);
+            showAlert("Error inesperado al verificar autoevaluación.");
+            registerSelfAssessmentButton.setDisable(true);
         }
     }
 
-    private StudentProjectDTO getStudentProject(String tuiton) throws Exception {
-        StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
-        for (StudentProjectDTO sp : studentProjectDAO.getAllStudentProjects()) {
-            if (sp.getTuition().equals(tuiton)) {
-                return sp;
+    private StudentProjectDTO getStudentProject(String tuition) {
+        try {
+            StudentProjectDAO studentProjectDAO = new StudentProjectDAO();
+            for (StudentProjectDTO studentProject : studentProjectDAO.getAllStudentProjects()) {
+                if (studentProject.getTuition().equals(tuition)) {
+                    return studentProject;
+                }
             }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Error de conexión con la base de datos.");
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Conexión interrumpida con la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Base de datos desconocida.");
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Acceso denegado a la base de datos.");
+            } else {
+                logger.error("Error al obtener el proyecto del estudiante de base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al obtener el proyecto del estudiante de base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Error al obtener el proyecto del estudiante de base de datos.");
+            }
+        } catch (Exception e) {
+            logger.error("Error inesperado al obtener el proyecto del estudiante: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener el proyecto del estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            showAlert("Error inesperado al obtener el proyecto del estudiante.");
         }
         return new StudentProjectDTO("N/A", "N/A");
     }
@@ -113,13 +178,55 @@ public class GUI_AssignedProjectController {
         return sp == null || "N/A".equals(sp.getIdProject()) || "N/A".equals(sp.getTuition());
     }
 
-    private ProjectDTO getProject(String idProject) throws Exception {
-        ProjectDAO projectDAO = new ProjectDAO();
-        ProjectDTO project = projectDAO.searchProjectById(idProject);
-        if (project == null) {
+    private ProjectDTO getProject(String idProject) {
+        try {
+            ProjectDAO projectDAO = new ProjectDAO();
+            ProjectDTO project = projectDAO.searchProjectById(idProject);
+            if (project == null) {
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            }
+            return project;
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos.");
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                showAlert("Conexión interrumpida con la base de datos.");
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                showAlert("Base de datos desconocida.");
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                showAlert("Acceso denegado a la base de datos.");
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else {
+                logger.error("Error al obtener el proyecto de base de datos: {}", e.getMessage(), e);
+                showAlert("Error al obtener el proyecto de base de datos.");
+                statusLabel.setText("Error al obtener el proyecto de base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            }
+        }
+        catch (Exception e) {
+            logger.error("Error inesperado al obtener el proyecto: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener el proyecto.");
+            statusLabel.setTextFill(Color.RED);
+            showAlert("Error inesperado al obtener el proyecto.");
             return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
         }
-        return project;
     }
 
     private boolean isProjectNA(ProjectDTO project) {
@@ -152,12 +259,31 @@ public class GUI_AssignedProjectController {
                 representativeLabel.setText(rep.getNames() + " " + rep.getSurnames());
             }
         } catch (SQLException e) {
-            organizationLabel.setText("Error");
-            representativeLabel.setText("Error");
-            logger.error("Error de base de datos al obtener organización o representante: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                organizationLabel.setText("Error de conexión de base de datos");
+                representativeLabel.setText("Error de conexión de base de datos");
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                organizationLabel.setText("Conexión interrumpida a la base de datos");
+                representativeLabel.setText("Conexión interrumpida a la base de datos");
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                organizationLabel.setText("Base de datos desconocida");
+                representativeLabel.setText("Base de datos desconocida");
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                organizationLabel.setText("Acceso denegado a la base de datos");
+                representativeLabel.setText("Acceso denegado a la base de datos");
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                organizationLabel.setText("Error de base de datos al obtener organización");
+                representativeLabel.setText("Error de base de datos al obtener representante");
+                logger.error("Error de base de datos al obtener organización o representante: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            organizationLabel.setText("Error");
-            representativeLabel.setText("Error");
+            organizationLabel.setText("Error inesperado al obtener organización");
+            representativeLabel.setText("Error inesperado al obtener representante");
             logger.error("Error inesperado al obtener organización o representante: {}", e.getMessage(), e);
         }
     }
@@ -166,15 +292,47 @@ public class GUI_AssignedProjectController {
         return org == null || "N/A".equals(org.getIdOrganization());
     }
 
-    private RepresentativeDTO getRepresentativeByDepartment(RepresentativeDAO repDAO, int idDepartment) throws Exception {
-        for (RepresentativeDTO r : repDAO.getAllRepresentatives()) {
-            if (r.getIdDepartment() != null && !r.getIdDepartment().isEmpty()) {
-                try {
-                    if (Integer.parseInt(r.getIdDepartment()) == idDepartment) {
-                        return r;
+    private RepresentativeDTO getRepresentativeByDepartment(RepresentativeDAO repDAO, int idDepartment) {
+        try {
+            for (RepresentativeDTO representativeDTO : repDAO.getAllRepresentatives()) {
+                if (representativeDTO.getIdDepartment() != null && !representativeDTO.getIdDepartment().isEmpty()) {
+                    try {
+                        if (Integer.parseInt(representativeDTO.getIdDepartment()) == idDepartment) {
+                            return representativeDTO;
+                        }
+                    } catch (NumberFormatException ignored) {
+                        logger.warn("Error al convertir el ID del departamento a entero: {}", representativeDTO.getIdDepartment());
+                        showAlert("Error al convertir el ID del departamento a entero.");
                     }
-                } catch (NumberFormatException ignored) {}
+                }
             }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                logger.error("Error de base de datos al obtener representante por departamento: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener representante por departamento.");
+                statusLabel.setTextFill(Color.RED);
+            }
+        } catch (Exception e) {
+            logger.error("Error inesperado al obtener representante por departamento: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener representante por departamento.");
+            statusLabel.setTextFill(Color.RED);
         }
         return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");
     }
@@ -202,6 +360,9 @@ public class GUI_AssignedProjectController {
         nameLabel.setText("Error al cargar el proyecto.");
         nameLabel.setStyle("-fx-text-fill: #D32F2F; -fx-font-size: 18px; -fx-font-weight: bold;");
         setOtherLabels("-", "-fx-text-fill: #B0B0B0;");
+        checkPresentationGradeButton.setDisable(true);
+        registerSelfAssessmentButton.setDisable(true);
+        openRegisterReportButton.setDisable(true);
     }
 
     private void setOtherLabels(String text, String style) {
@@ -243,10 +404,15 @@ public class GUI_AssignedProjectController {
             stage.setTitle("Calificación de Presentación");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            logger.error("IOException al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+            showAlert("Error al abrir el fxml de la ventana de calificación de presentación.");
         } catch (NullPointerException e) {
             logger.error("NullPointerException al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+            showAlert("Recurso nulo al abrir la ventana de calificación de presentación.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+            logger.error("Error inesperado al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+            showAlert("Error inesperado al abrir la ventana de calificación de presentación.");
         }
     }
 
@@ -266,22 +432,54 @@ public class GUI_AssignedProjectController {
             stage.setTitle("Registrar Autoevaluación");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            logger.error("IOException al abrir la ventana de registrar autoevaluación: {}", e.getMessage(), e);
+            showAlert("Error al abrir el fxml de la ventana de registrar autoevaluación.");
         } catch (NullPointerException e) {
             logger.error("NullPointerException al abrir la ventana de calificación de presentación: {}", e.getMessage(), e);
+            showAlert("Recurso nulo al abrir la ventana de registrar autoevaluación.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de registrar autoevaluacion: {}", e.getMessage(), e);
+            logger.error("Error inesperado al abrir la ventana de registrar autoevaluacion: {}", e.getMessage(), e);
+            showAlert("Error inesperado al abrir la ventana de registrar autoevaluación.");
         }
     }
 
     private String[] getProfessorAndPeriod(String nrc) {
         try {
-            logic.DAO.GroupDAO groupDAO = new logic.DAO.GroupDAO();
-            logic.DTO.GroupDTO group = groupDAO.searchGroupById(nrc);
+            GroupDAO groupDAO = new GroupDAO();
+            GroupDTO group = groupDAO.searchGroupById(nrc);
             if (group != null) {
                 return new String[]{group.getIdUser(), group.getIdPeriod()};
             }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.warn("Error de conexión con la base de datos al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.warn("Conexión interrumpida con la base de datos al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.warn("Base de datos desconocida al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.warn("Acceso denegado a la base de datos al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                logger.warn("Error de base de datos al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            }
+        } catch (NullPointerException e) {
+            logger.warn("NRC nulo al obtener el periodo o profesor: {}", e.getMessage(), e);
+            showAlert("Error al obtener el periodo o profesor.");
         } catch (Exception e) {
-            logger.warn("No se pudo obtener el periodo o profesor: {}", e.getMessage());
+            logger.warn("Error inesperado al obtener periodo o profesor: {}", e.getMessage(), e);
+            showAlert("Error inesperado al obtener el periodo o profesor.");
         }
         return new String[]{"N/A", "N/A"};
     }
@@ -292,8 +490,43 @@ public class GUI_AssignedProjectController {
             logic.DTO.LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(idOrganization));
             return org != null ? org.getName() : "N/A";
         } catch (SQLException e) {
-            logger.warn("No se pudo obtener la organización: {}", e.getMessage());
-            return "N/A";
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.warn("Error de conexión con la base de datos al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de conexión con la base de datos.";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.warn("Conexión interrumpida con la base de datos al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Conexión interrumpida con la base de datos.";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.warn("Base de datos desconocida al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return "Base de datos desconocida.";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.warn("Acceso denegado a la base de datos al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Acceso denegado a la base de datos.";
+            } else {
+                logger.warn("Error de base de datos al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de base de datos.";
+            }
+        } catch (NullPointerException e) {
+            logger.warn("ID de organización nulo al obtener la organización: {}", e.getMessage(), e);
+            statusLabel.setText("ID de organización nulo.");
+            statusLabel.setTextFill(Color.RED);
+            return "ID de organización nulo.";
+        } catch (Exception e) {
+            logger.warn("Error inesperado al obtener la organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener la organización.");
+            statusLabel.setTextFill(Color.RED);
+            return "Error inesperado al obtener la organización.";
         }
     }
 
@@ -305,7 +538,42 @@ public class GUI_AssignedProjectController {
                 return user.getNames() + " " + user.getSurnames();
             }
         } catch (SQLException e) {
-            logger.warn("No se pudo obtener el nombre del profesor: {}", e.getMessage());
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                logger.warn("Error de conexión con la base de datos al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de conexión con la base de datos.";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                logger.warn("Conexión interrumpida con la base de datos al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Conexión interrumpida con la base de datos.";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.warn("Base de datos desconocida al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return "Base de datos desconocida.";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                logger.warn("Acceso denegado a la base de datos al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Acceso denegado a la base de datos.";
+            } else {
+                logger.warn("Error de base de datos al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de base de datos.";
+            }
+        } catch (NullPointerException e) {
+            logger.warn("ID de usuario nulo al obtener el profesor: {}", e.getMessage(), e);
+            statusLabel.setText("ID de usuario nulo.");
+            statusLabel.setTextFill(Color.RED);
+            return "ID de usuario nulo.";
+        } catch (Exception e) {
+            logger.warn("Error inesperado al obtener el profesor: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener el profesor.");
+            statusLabel.setTextFill(Color.RED);
         }
         return "N/A";
     }
@@ -327,10 +595,15 @@ public class GUI_AssignedProjectController {
             stage.setScene(new Scene(root));
             stage.show();
             controller.setStudent(this.student);
+        } catch (IOException e) {
+            logger.error("IOException al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+            showAlert("Error al abrir el fxml de la ventana de registrar informe.");
         } catch (NullPointerException e) {
             logger.error("NullPointerException al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+            showAlert("Recurso nulo al abrir la ventana de registrar informe.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+            logger.error("Error inesperado al abrir la ventana de registrar informe: {}", e.getMessage(), e);
+            showAlert("Error inesperado al abrir la ventana de registrar informe.");
         }
     }
 
@@ -344,10 +617,17 @@ public class GUI_AssignedProjectController {
             String organization = getOrganizationName(project.getIdOrganization());
             String studentName = student.getNames() + " " + student.getSurnames();
             showRegisterReportWindow(project, profAndPeriod[0], nrc, profAndPeriod[1], studentName, organization);
-        } catch (SQLException e) {
-            logger.error("Error al abrir la ventana de informe: {}", e.getMessage(), e);
+        } catch (NullPointerException e) {
+            logger.error("Recurso nul al abrir la ventana de informe: {}", e.getMessage(), e);
+            showAlert("Recurso nulo al abrir la ventana de informe.");
         } catch (Exception e) {
             logger.error("Error inesperado al abrir la ventana de informe: {}", e.getMessage(), e);
+            showAlert("Error inesperado al abrir la ventana de informe.");
         }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+        alert.showAndWait();
     }
 }

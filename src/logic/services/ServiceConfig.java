@@ -18,7 +18,7 @@ public class ServiceConfig {
 
     public UserService getUserService() throws SQLException {
         Connection connection = connectionDB.connectDB();
-        return new UserService(connection);
+        return new UserService();
     }
 
     public LinkedOrganizationService getLinkedOrganizationService() throws SQLException {

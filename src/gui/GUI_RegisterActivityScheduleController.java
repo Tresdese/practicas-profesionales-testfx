@@ -3,6 +3,7 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
 import logic.DAO.EvidenceDAO;
 import logic.DAO.ScheduleOfActivitiesDAO;
 import logic.DTO.EvidenceDTO;
@@ -43,6 +44,7 @@ public class GUI_RegisterActivityScheduleController {
     private File selectedEvidenceFile;
 
     private static final Logger LOGGER = Logger.getLogger(GUI_RegisterActivityScheduleController.class.getName());
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024;
 
     public void setStudent(StudentDTO student) {
         this.student = student;
@@ -64,6 +66,10 @@ public class GUI_RegisterActivityScheduleController {
             if (!(fileName.endsWith(".pdf") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") ||
                     fileName.endsWith(".png") || fileName.endsWith(".docx"))) {
                 showAlert("Solo se permiten archivos PDF, imágenes (JPG, PNG) o documentos DOCX.");
+                return;
+            }
+            if (file.length() > MAX_FILE_SIZE) {
+                showAlert("El archivo seleccionado es demasiado grande. El tamaño máximo permitido es 20 MB.");
                 return;
             }
             selectedEvidenceFile = file;
@@ -118,9 +124,35 @@ public class GUI_RegisterActivityScheduleController {
             }
             return nextId;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al registrar la evidencia", e);
-            statusLabel.setText("Error de base de datos al registrar la evidencia.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("Base de datos desconocida.");
+                LOGGER.log(Level.SEVERE, "Base de datos desconocida", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                showAlert("Violación de restricción de integridad.");
+                LOGGER.log(Level.SEVERE, "Violación de restricción de integridad", e);
+                return -1;
+            } else {
+                showAlert("Error al registrar la evidencia.");
+                LOGGER.log(Level.SEVERE, "Error al registrar la evidencia", e);
+                return -1;
+            }
+        } catch (Exception e) {
+            showAlert("Ocurrió un error inesperado al registrar la evidencia.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al registrar la evidencia", e);
             return -1;
         }
     }
@@ -173,9 +205,36 @@ public class GUI_RegisterActivityScheduleController {
             );
             return scheduleDAO.insertScheduleOfActivities(schedule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error al registrar el cronograma", e);
-            statusLabel.setText("Error de base de datos al registrar el cronograma.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("Base de datos desconocida.");
+                LOGGER.log(Level.SEVERE, "Base de datos desconocida", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                showAlert("Violación de restricción de integridad.");
+                LOGGER.log(Level.SEVERE, "Violación de restricción de integridad", e);
+                return false;
+            }
+             else {
+                showAlert("Error al registrar el cronograma de actividades.");
+                LOGGER.log(Level.SEVERE, "Error al registrar el cronograma de actividades", e);
+                return false;
+            }
+        } catch (Exception e) {
+            showAlert("Ocurrió un error inesperado al registrar el cronograma de actividades.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al registrar el cronograma de actividades", e);
             return false;
         }
     }
@@ -186,10 +245,37 @@ public class GUI_RegisterActivityScheduleController {
             logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
             return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "Error en la base de datos", e);
-            return "PeriodoDesconocido";
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.log(Level.WARNING, "Error de conexión con la base de datos", e);
+                statusLabel.setText("Error de conexión con la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.log(Level.WARNING, "Conexión interrumpida con la base de datos", e);
+                statusLabel.setText("Conexión interrumpida con la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.log(Level.WARNING, "Base de datos desconocida", e);
+                statusLabel.setText("Base de datos desconocida");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.log(Level.WARNING, "Acceso denegado a la base de datos", e);
+                statusLabel.setText("Acceso denegado a la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else {
+                LOGGER.log(Level.WARNING, "Error al obtener el periodo del grupo", e);
+                statusLabel.setText("Error al obtener el periodo del grupo");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            }
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);
+            statusLabel.setText("Error al obtener el periodo del grupo");
+            statusLabel.setTextFill(Color.RED);
             return "PeriodoDesconocido";
         }
     }

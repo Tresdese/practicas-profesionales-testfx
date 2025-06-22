@@ -16,12 +16,14 @@ import org.apache.logging.log4j.Logger;
 
 import logic.services.StudentService;
 
+import java.io.IOException;
+
 public class GUI_MenuStudentController {
 
     private StudentDTO student;
     private StudentService studentService;
 
-    private static final Logger logger = LogManager.getLogger(GUI_MenuStudentController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_MenuStudentController.class);
 
     @FXML
     private Label welcomeLabel;
@@ -47,14 +49,17 @@ public class GUI_MenuStudentController {
         try {
             Image image = new Image(imageUrl, true);
             if (image.isError()) {
-                logger.error("No se pudo cargar la imagen desde la URL: {}", imageUrl);
+                LOGGER.error("No se pudo cargar la imagen desde la URL: {}", imageUrl);
                 showAlert("Error", "No se pudo cargar la imagen de perfil. Intente más tarde.");
                 return;
             }
             profileImageView.setImage(image);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("URL de imagen no válida: {}", imageUrl, e);
+            showAlert("Error", "La URL de la imagen de perfil no es válida.");
         } catch (Exception e) {
             profileImageView.setImage(null);
-            logger.error("Error inesperado al cargar la imagen: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al cargar la imagen: {}", e.getMessage(), e);
             showAlert("Error", "Ocurrió un error inesperado al cargar la imagen.");
         }
     }
@@ -80,8 +85,11 @@ public class GUI_MenuStudentController {
             stage.setTitle("Modificar Perfil");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de actualización de perfil: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de actualización de perfil.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de actualización de perfil: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de actualización de perfil: {}", e.getMessage(), e);
             showAlert("Error", "No se pudo abrir la ventana de actualización de perfil.");
         }
     }
@@ -89,7 +97,7 @@ public class GUI_MenuStudentController {
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+        alert.setHeaderText("Error al interactuar con la interfaz");
         alert.setContentText(content);
         alert.showAndWait();
     }
@@ -107,8 +115,11 @@ public class GUI_MenuStudentController {
             stage.setTitle("Proyecto Asignado");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de proyecto asignado: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de proyecto asignado.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de proyecto asignado: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de proyecto asignado: {}", e.getMessage(), e);
             showAlert("Error", "No se pudo abrir la ventana de proyecto asignado.");
         }
     }
@@ -126,8 +137,11 @@ public class GUI_MenuStudentController {
             stage.setTitle("Registrar Solicitud de Proyecto");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de registro.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
             showAlert("Error", "No se pudo abrir la ventana de registro.");
         }
     }
@@ -145,8 +159,12 @@ public class GUI_MenuStudentController {
             stage.setTitle("Registrar Evidencia y Cronograma");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de registro de evidencia y cronograma: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de registro de evidencia y cronograma.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de evidencia: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de evidencia: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo abrir la ventana de registro de evidencia y cronograma.");
         }
     }
 
@@ -158,8 +176,12 @@ public class GUI_MenuStudentController {
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("Inicio de Sesión");
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de inicio de sesión: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de inicio de sesión.");
         } catch (Exception e) {
-            logger.error("Error al cerrar sesión: {}", e.getMessage(), e);
+            LOGGER.error("Error al cerrar sesión: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cerrar sesión correctamente.");
         }
     }
 
@@ -173,8 +195,11 @@ public class GUI_MenuStudentController {
             stage.setTitle("Vincular Actividad a Cronograma");
             stage.setScene(new Scene(root));
             stage.show();
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la ventana de vinculación: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo cargar la ventana de vinculación.");
         } catch (Exception e) {
-            logger.error("Error al abrir la ventana de vinculación: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de vinculación: {}", e.getMessage(), e);
             showAlert("Error", "No se pudo abrir la ventana de vinculación.");
         }
     }

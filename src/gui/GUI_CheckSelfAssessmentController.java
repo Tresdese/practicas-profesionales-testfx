@@ -14,7 +14,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -53,17 +55,29 @@ public class GUI_CheckSelfAssessmentController {
                 viewEvidenceButton.setDisable(true);
             }
         } catch (SQLException e) {
-            LOGGER.error("Error de base de datos al obtener la autoevaluación: {}", e.getMessage(), e);
-            clearInterface("Error BD", "Error BD", "Error BD");
-            noSelfAssessmentLabel.setVisible(true);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de conexion con la base de datos", "Error de conexion con la base de datos", "Error de conexion con la base de datos");
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                clearInterface("Error de Base de datos desconocida", "Error de Base de datos desconocida", "Error de Base de datos desconocida");
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de Acceso denegado", "Error de Acceso denegado", "Error de Acceso denegado");
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de Conexión interrumpida", "Error de Conexión interrumpida", "Error de Conexión interrumpida");
+            } else {
+                LOGGER.error("Error al obtener la autoevaluación: {}", e.getMessage(), e);
+                clearInterface("Error de obtener la autoevaluacion de la base de datos", "Error de obtener la autoevalaucion de la base de datos", "Error de obtener la autoevaluacion de la base de datos");
+            }
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al obtener la autoevaluación: {}", e.getMessage(), e);
-            clearInterface("Error", "Error", "Error");
-            noSelfAssessmentLabel.setVisible(true);
+            clearInterface("Error de referendia nula", "Error de referencia nula", "Error de referencia nula");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener la autoevaluación: {}", e.getMessage(), e);
-            clearInterface("Error", "Error", "Error");
-            noSelfAssessmentLabel.setVisible(true);
+            clearInterface("Error inesperado", "Error inesperado", "Error inesperado");
         }
     }
 
@@ -137,11 +151,35 @@ public class GUI_CheckSelfAssessmentController {
                 LOGGER.warn("No se encontró URL de evidencia para el id: {}", evidenceId);
             }
         } catch (SQLException e) {
-            LOGGER.error("Error de base de datos al buscar evidencia: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de conexion con la base de datos", "Error de conexion con la base de datos", "Error de conexion con la base de datos");
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                clearInterface("Error de Base de datos desconocida", "Error de Base de datos desconocida", "Error de Base de datos desconocida");
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de Acceso denegado", "Error de Acceso denegado", "Error de Acceso denegado");
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                clearInterface("Error de Conexión interrumpida", "Error de Conexión interrumpida", "Error de Conexión interrumpida");
+            } else {
+                LOGGER.error("No se pudo abrir la evidencia: {}", e.getMessage(), e);
+                clearInterface("Error de base de datos al abrir evidencia", "Error de base de datos al abrir evidencia", "Error de base de datos al abrir evidencia");
+            }
         } catch (NullPointerException e) {
             LOGGER.error("No se encontró evidencia para el id proporcionado: {} - {}", evidenceId, e.getMessage(), e);
+            clearInterface("Evidencia no encontrada", "Evidencia no encontrada", "Evidencia no encontrada");
+        } catch (URISyntaxException e) {
+            LOGGER.error("URL inválida para abrir evidencia: {}", e.getMessage(), e);
+            clearInterface("URL inválida al abrir evidencia", "URL inválida al abrir evidencia", "URL inválida al abrir evidencia");
+        } catch (IOException e) {
+            LOGGER.error("Error al intentar abrir la evidencia: {}", e.getMessage(), e);
+            clearInterface("Error al abrir evidencia", "Error al abrir evidencia", "Error al abrir evidencia");
         } catch (Exception e) {
             LOGGER.error("No se pudo abrir la evidencia: {}", e.getMessage(), e);
+            clearInterface("Error inesperado al abrir evidencia", "Error inesperado al abrir evidencia", "Error inesperado al abrir evidencia");
         }
     }
 }

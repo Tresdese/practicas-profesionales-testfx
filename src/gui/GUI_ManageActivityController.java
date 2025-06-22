@@ -4,17 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import logic.DAO.ActivityDAO;
 import logic.DTO.ActivityDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class GUI_ManageActivityController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_ManageActivityController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ManageActivityController.class);
 
     @FXML
     private TextField idActivityField;
@@ -53,9 +53,26 @@ public class GUI_ManageActivityController {
         try {
             activityList.setAll(activityDAO.getAllActivities());
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar actividades.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error al cargar actividades: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                setStatus("Error de conexión interrumpida con la base de datos.", true);
+                LOGGER.error("Error de conexion interrumpida  con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error al cargar actividades: ", true);
+                LOGGER.error("Error al cargar actividades: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            setStatus("Error al cargar actividades: ", true);
+            LOGGER.error("Error al cargar actividades: {}", e.getMessage(), e);
         }
     }
 
@@ -84,11 +101,29 @@ public class GUI_ManageActivityController {
                 setStatus("No se pudo registrar la actividad.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al registrar.", true);
-            logger.error("Error SQL al registrar actividad: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                setStatus("Error de conexión interrumpida con la base de datos.", true);
+                LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error de base de datos al registrar.", true);
+                LOGGER.error("Error SQL al registrar actividad: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al registrar actividad: {}", e.getMessage(), e);
+            setStatus("Error inesperado al registrar actividad", true);
+            LOGGER.error("Error al registrar actividad: {}", e.getMessage(), e);
         }
     }
 
@@ -119,11 +154,29 @@ public class GUI_ManageActivityController {
                 setStatus("No se pudo eliminar la actividad.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al eliminar.", true);
-            logger.error("Error SQL al eliminar actividad: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                setStatus("Error de conexión interrumpida con la base de datos.", true);
+                LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error de base de datos al eliminar.", true);
+                LOGGER.error("Error SQL al eliminar actividad: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al eliminar actividad: {}", e.getMessage(), e);
+            setStatus("Error inesperado al eliminar actividad", true);
+            LOGGER.error("Error al eliminar actividad: {}", e.getMessage(), e);
         }
     }
 
@@ -144,11 +197,29 @@ public class GUI_ManageActivityController {
                 setStatus("No se pudo actualizar la actividad.", true);
             }
         } catch (SQLException e) {
-            setStatus("Error de base de datos al actualizar.", true);
-            logger.error("Error SQL al actualizar actividad: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                setStatus("Error de conexión con la base de datos.", true);
+                LOGGER.error("Error de conexion con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                setStatus("Error de conexión interrumpida con la base de datos.", true);
+                LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                setStatus("Base de datos desconocida.", true);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                setStatus("Acceso denegado a la base de datos.", true);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                setStatus("Violación de restricción de integridad.", true);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                setStatus("Error de base de datos al actualizar.", true);
+                LOGGER.error("Error SQL al actualizar actividad: {}", e.getMessage(), e);
+            }
         } catch (Exception e) {
-            setStatus(e.getMessage(), true);
-            logger.error("Error al actualizar actividad: {}", e.getMessage(), e);
+            setStatus("Error inesperado al actualizar actividad", true);
+            LOGGER.error("Error al actualizar actividad: {}", e.getMessage(), e);
         }
     }
 
@@ -158,7 +229,7 @@ public class GUI_ManageActivityController {
 
     private void setStatus(String message, boolean isError) {
         statusLabel.setText(message);
-        statusLabel.setTextFill(isError ? javafx.scene.paint.Color.RED : javafx.scene.paint.Color.GREEN);
+        statusLabel.setTextFill(isError ? Color.RED : Color.GREEN);
     }
 
     private void clearStatus() {

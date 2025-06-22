@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 import javafx.stage.Stage;
 import logic.DTO.LinkedOrganizationDTO;
@@ -21,7 +22,7 @@ import java.io.IOException;
 
 public class GUI_ManageLinkedOrganizationController {
 
-    private static final Logger logger = LogManager.getLogger(GUI_ManageLinkedOrganizationController.class);
+    private static final Logger LOGGER = LogManager.getLogger(GUI_ManageLinkedOrganizationController.class);
 
     @FXML
     private TextField nameField, addressField;
@@ -51,13 +52,34 @@ public class GUI_ManageLinkedOrganizationController {
             ServiceConfig serviceConfig = new ServiceConfig();
             organizationService = serviceConfig.getLinkedOrganizationService();
         } catch (SQLException e) {
-            logger.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio de organización.");
+                LOGGER.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
+                statusLabel.setTextFill(Color.RED);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al inicializar el servicio de organización.");
+            LOGGER.error("Error inesperado al inicializar el servicio de organización:0 {}", e.getMessage(), e);
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
     public void setOrganizationData(LinkedOrganizationDTO organization) {
         if (organization == null) {
-            logger.error("El objeto LinkedOrganizationDTO es nulo.");
+            LOGGER.error("El objeto LinkedOrganizationDTO es nulo.");
             return;
         }
 
@@ -90,9 +112,40 @@ public class GUI_ManageLinkedOrganizationController {
             }
 
         } catch (SQLException e) {
-            statusLabel.setText("Error al actualizar la organización en la base de datos.");
-            statusLabel.setTextFill(javafx.scene.paint.Color.RED);
-            logger.error("Error SQL: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad. Verifique los datos ingresados.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al actualizar la organización vinculada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al actualizar la organización vinculada: {}", e);
+            }
+        } catch (IllegalArgumentException e) {
+            statusLabel.setText("Error de validación");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al guardar cambios: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al guardar cambios: {}", e.getMessage(), e);
         }
     }
 
@@ -108,7 +161,7 @@ public class GUI_ManageLinkedOrganizationController {
                     int orgId = Integer.parseInt(organization.getIdOrganization());
                     controller.setOrganizationId(orgId);
                 } catch (NumberFormatException e) {
-                    logger.error("ID de organización no es un número válido: {}", organization.getIdOrganization());
+                    LOGGER.error("ID de organización no es un número válido: {}", organization.getIdOrganization());
                 }
             }
             Stage stage = new Stage();
@@ -116,7 +169,13 @@ public class GUI_ManageLinkedOrganizationController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            logger.error("Error al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
+            LOGGER.error("Error al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir la ventana de registro de departamento.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

@@ -122,6 +122,8 @@ public class GUI_RegisterReportController {
 
     private static final int MAX_DIGITS = 3;
 
+    private static final long MAX_FILE_SIZE = 20 * 1024 * 1024;
+
     private File selectedEvidenceFile;
 
     private StudentDTO student;
@@ -197,7 +199,17 @@ public class GUI_RegisterReportController {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "Error de SQL al cargar actividades", e);
+                if (e.getMessage().contains("The driver has not received any packets from the server")) {
+                    LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos", e);
+                    showAlert("Error de conexión con la base de datos al cargar actividades.");
+                } else if (e.getMessage().contains("Unknown database")) {
+                    LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+                    showAlert("La base de datos no está disponible al cargar actividades.");
+                } else {
+                    LOGGER.log(Level.SEVERE, "Error de SQL al cargar actividades", e);
+                    showAlert("Error de base de datos al cargar actividades.");
+                }
+                showAlert("Error de base de datos al cargar actividades.");
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Error inesperado al cargar actividades", e);
             }
@@ -227,8 +239,26 @@ public class GUI_RegisterReportController {
             ActivityDAO activityDAO = new ActivityDAO();
             activityComboBox.setItems(FXCollections.observableArrayList(activityDAO.getAllActivities()));
         } catch (SQLException e) {
-            showAlert("Error de base de datos al cargar actividades.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al cargar actividades", e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de actividades encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+            } else {
+                showAlert("Error de base de datos al cargar actividades.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al cargar actividades", e);
+            }
         } catch (Exception e) {
             showAlert("Error inesperado al cargar actividades.");
             LOGGER.log(Level.SEVERE, "Error inesperado al cargar actividades", e);
@@ -305,6 +335,10 @@ public class GUI_RegisterReportController {
                 showAlert("Solo se permiten archivos PDF, imágenes (JPG, PNG) o documentos DOCX.");
                 return;
             }
+            if (file.length() > MAX_FILE_SIZE) {
+                showAlert("El archivo no debe superar los 20 MB.");
+                return;
+            }
             selectedEvidenceFile = file;
             evidenceFileTextField.setText(file.getAbsolutePath());
         }
@@ -350,11 +384,35 @@ public class GUI_RegisterReportController {
             EvidenceDAO evidenceDAO = new EvidenceDAO();
             return evidenceDAO.getNextEvidenceId();
         } catch (SQLException e) {
-            showAlert("Error de base de datos al obtener el ID de evidencia.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al obtener el ID de evidencia", e);
-            return -1;
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+                return -1;
+            }
+            else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de evidencias no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+                return -1;
+            } else {
+                showAlert("Error de base de datos al obtener el ID de evidencia.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al obtener el ID de evidencia", e);
+                return -1;
+            }
         } catch (Exception e) {
-            showAlert("Error al obtener el ID de evidencia.");
+            showAlert("Error inesperado al obtener el ID de evidencia.");
             LOGGER.log(Level.SEVERE, "Error al obtener el ID de evidencia", e);
             return -1;
         }
@@ -367,8 +425,39 @@ public class GUI_RegisterReportController {
             evidenceDAO.insertEvidence(evidence);
             return true;
         } catch (SQLException e) {
-            showAlert("Error de base de datos al guardar la evidencia.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al guardar evidencia", e);
+           String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de evidencias no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                showAlert("Ya existe una evidencia con el mismo ID.");
+                LOGGER.log(Level.WARNING, "Evidencia con ID ya existe", e);
+                return false;
+            } else {
+                showAlert("Error de base de datos al insertar evidencia.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al insertar evidencia", e);
+                return false;
+            }
+        } catch (Exception e) {
+            showAlert("Error inesperado al insertar evidencia.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al insertar evidencia", e);
             return false;
         }
     }
@@ -399,9 +488,32 @@ public class GUI_RegisterReportController {
                 return;
             }
         } catch (SQLException e) {
-            showAlert("Error de base de datos al verificar horas reportadas.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
-            return;
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+                return;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                return;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                return;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+                return;
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de reportes no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+                return;
+            } else {
+                showAlert("Error de base de datos al verificar horas reportadas.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
+                return;
+            }
         } catch (Exception e) {
             showAlert("Error inesperado al verificar horas reportadas.");
             LOGGER.log(Level.SEVERE, "Error inesperado al verificar horas reportadas", e);
@@ -456,8 +568,26 @@ public class GUI_RegisterReportController {
             showAlert("Las horas totales deben ser un número.");
             LOGGER.log(Level.WARNING, "Formato inválido en horas totales", e);
         } catch (SQLException e) {
-            showAlert("Error de base de datos al registrar el informe.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al registrar informe", e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de reportes no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+            } else {
+                showAlert("Error de base de datos al Registrar el Reporte.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al Registrar el Reporte", e);
+            }
         } catch (Exception e) {
             showAlert("Error inesperado al registrar el informe.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar informe", e);
@@ -476,8 +606,12 @@ public class GUI_RegisterReportController {
                 reloadActivitiesComboBox();
             });
             stage.show();
+        } catch  (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error al cargar la ventana de actividades: {}", e);
+            showAlert("Error al abrir la ventana de actividades.");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al abrir la ventana de actividades: {}", e);
+            showAlert("Error al abrir la ventana de actividades.");
         }
     }
 
@@ -486,8 +620,26 @@ public class GUI_RegisterReportController {
             ActivityDAO activityDAO = new ActivityDAO();
             activityComboBox.setItems(FXCollections.observableArrayList(activityDAO.getAllActivities()));
         } catch (SQLException e) {
-            showAlert("Error de base de datos al recargar actividades.");
-            LOGGER.log(Level.SEVERE, "Error de SQL al recargar actividades", e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de actividades no encontrada al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+            } else {
+                showAlert("Error de base de datos al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al recargar las actividades", e);
+            }
         } catch (Exception e) {
             showAlert("Error inesperado al recargar actividades.");
             LOGGER.log(Level.SEVERE, "Error inesperado al recargar actividades", e);
@@ -514,9 +666,34 @@ public class GUI_RegisterReportController {
             logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
             return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "Error en la base de datos", e);
-            return "PeriodoDesconocido";
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                showAlert("Error de conexión con la base de datos al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                showAlert("Conexión interrumpida con la base de datos al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                showAlert("Acceso denegado a la base de datos al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                showAlert("La base de datos no está disponible al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "La base de datos no está disponible al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de grupos no encontrada al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Tabla de grupos no encontrada al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else {
+                showAlert("Error de base de datos al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Error de SQL al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            }
         } catch (Exception e) {
+            showAlert("Error inesperado al obtener el periodo del grupo.");
             LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);
             return "PeriodoDesconocido";
         }
