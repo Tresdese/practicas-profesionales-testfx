@@ -15,12 +15,12 @@ public class DepartmentDTO {
         this.status = 1;
     }
 
-    public DepartmentDTO(int departmentId, String name, String description, int organizationId) {
+    public DepartmentDTO(int departmentId, String name, String description, int organizationId, int status) {
         this.departmentId = departmentId;
         this.name = name;
         this.description = description;
         this.organizationId = organizationId;
-        this.status = 1;
+        this.status = status;
     }
 
     public int getDepartmentId() {

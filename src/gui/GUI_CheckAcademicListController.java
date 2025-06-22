@@ -3,6 +3,9 @@ package gui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
@@ -15,6 +18,7 @@ import logic.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -47,16 +51,13 @@ public class GUI_CheckAcademicListController {
     private TextField searchField;
 
     @FXML
-    private Button searchButton;
+    private ChoiceBox<String> filterChoiceBox;
 
     @FXML
-    private Button registerAcademicButton;
+    private Button searchButton, registerAcademicButton, deleteAcademicButton;
 
     @FXML
-    private Label statusLabel;
-
-    @FXML
-    private Label academicCountsLabel;
+    private Label statusLabel, academicCountsLabel;
 
     private UserDTO selectedAcademic;
     private UserService userService;
@@ -76,23 +77,34 @@ public class GUI_CheckAcademicListController {
             return;
         }
 
+        filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
+        filterChoiceBox.setValue("Todos");
+            filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadAcademicData());
+
+        setColumns();
+        addManagementButtonToTable();
+        loadAcademicData();
+        setButtons();
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedAcademic = newValue;
+            deleteAcademicButton.setDisable(selectedAcademic == null);
+            tableView.refresh();
+        });
+    }
+
+    private void setColumns() {
         staffNumberColumn.setCellValueFactory(new PropertyValueFactory<>("staffNumber"));
         namesColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
         surnamesColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
         userNamesColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
         roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
+    }
 
-        addManagementButtonToTable();
-
-        loadAcademicData();
-
+    private void setButtons() {
         searchButton.setOnAction(event -> searchAcademic());
         registerAcademicButton.setOnAction(event -> openRegisterAcademicWindow());
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedAcademic = newValue;
-            tableView.refresh();
-        });
+        deleteAcademicButton.setOnAction(event -> handleDeleteOrganization());
     }
 
     private void openRegisterAcademicWindow() {
@@ -118,8 +130,12 @@ public class GUI_CheckAcademicListController {
         ObservableList<UserDTO> userList = FXCollections.observableArrayList();
         try {
             List<UserDTO> users = userService.getAllUsers();
-            userList.addAll(users);
-            statusLabel.setText("");
+            String filter = filterChoiceBox != null ? filterChoiceBox.getValue() : "Todos";
+            for (UserDTO user : users) {
+                if (filterUserByChoice(user, filter)) {
+                    userList.add(user);
+                }
+            }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -150,6 +166,15 @@ public class GUI_CheckAcademicListController {
         }
         tableView.setItems(userList);
         updateAcademicCounts();
+    }
+
+    private boolean filterUserByChoice(UserDTO user, String filter) {
+        return switch (filter) {
+            case "Todos" -> true;
+            case "Activos" -> user.getStatus() == 1;
+            case "Inactivos" -> user.getStatus() == 0;
+            case null, default -> false;
+        };
     }
 
     public void searchAcademic() {
@@ -196,7 +221,7 @@ public class GUI_CheckAcademicListController {
         }
 
         tableView.setItems(filteredList);
-        updateAcademicCounts(filteredList);
+        updateAcademicCounts();
     }
 
     private void addManagementButtonToTable() {
@@ -248,8 +273,20 @@ public class GUI_CheckAcademicListController {
     private void updateAcademicCounts() {
         try {
             List<UserDTO> users = userService.getAllUsers();
-            int total = users.size();
-            academicCountsLabel.setText("Totales: " + total);
+            int total = 0;
+            int active = 0;
+            int inactive = 0;
+            for (UserDTO user : users) {
+                if (user.getIdUser() != null && !user.getIdUser().isEmpty()) {
+                    total++;
+                    if (user.getStatus() == 1) {
+                        active++;
+                    } else {
+                        inactive++;
+                    }
+                }
+            }
+            academicCountsLabel.setText("Totales: " + total + " | Activos: " + active + " | Inactivos: " + inactive);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -280,8 +317,39 @@ public class GUI_CheckAcademicListController {
         }
     }
 
-    private void updateAcademicCounts(ObservableList<UserDTO> list) {
-        int total = list.size();
-        academicCountsLabel.setText("Totales: " + total);
+    private void handleDeleteOrganization() {
+        if (selectedAcademic == null) {
+            statusLabel.setText("Debe seleccionar una organización para eliminar");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+            Parent root = loader.load();
+            GUI_ConfirmDialogController confirmController = loader.getController();
+            confirmController.setInformationMessage("Al borrar un académico, no podrá volver a realizar ninguna actividad relacionada con el sistema.");
+            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar al academico " + selectedAcademic.getNames() + selectedAcademic.getSurnames() + "?");
+            Stage confirmStage = new Stage();
+            confirmStage.setTitle("Confirmar eliminación");
+            confirmStage.setScene(new Scene(root));
+            confirmStage.showAndWait();
+            if (confirmController.isConfirmed()) {
+                userService.updateUserStatus(selectedAcademic.getIdUser(), 0);
+                statusLabel.setText("Organizacion eliminada correctamente.");
+                loadAcademicData();
+                updateAcademicCounts();
+            } else {
+                statusLabel.setText("Eliminación cancelada.");
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error al eliminar la organización.");
+            logger.error("Error al eliminar la organización: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el diálogo de confirmación.");
+            logger.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");
+            logger.error("Error inesperado al eliminar la organización: {}", e.getMessage(), e);
+        }
     }
 }

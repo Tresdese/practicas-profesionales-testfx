@@ -41,6 +41,14 @@ public class UserService {
         }
     }
 
+    public boolean updateUserStatus(String idUser, int status) throws SQLException {
+        boolean success = userDAO.updateUserStatus(idUser, status);
+        if (!success) {
+            throw new SQLException("No se pudo actualizar el estado del usuario.");
+        }
+        return success;
+    }
+
     public UserDTO searchUserById(String id) throws SQLException {
         return userDAO.searchUserById(id);
     }

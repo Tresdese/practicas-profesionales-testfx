@@ -11,6 +11,8 @@ public interface IUserDAO {
 
     boolean updateUser(UserDTO user) throws SQLException;
 
+    boolean updateUserStatus(String idUser, int status) throws SQLException;
+
     boolean deleteUser(String idUser) throws SQLException;
 
     UserDTO searchUserById(String idUser) throws SQLException;

@@ -186,7 +186,7 @@ public class GUI_RegisterAcademicController {
             String userName = userField.getText();
             String hashedPassword = PasswordHasher.hashPassword(password);
 
-            UserDTO academic = new UserDTO("0", numberOffStaff, names, surname, userName, hashedPassword, role);
+            UserDTO academic = new UserDTO("0", 1, numberOffStaff, names, surname, userName, hashedPassword, role);
 
             try {
                 boolean success = userService.registerUser(academic);

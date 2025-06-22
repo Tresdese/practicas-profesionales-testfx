@@ -13,12 +13,12 @@ import logic.interfaces.IDeparmentDAO;
 
 public class DepartmentDAO implements IDeparmentDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO departamento (nombre, descripcion, idOrganizacion, estado) VALUES (?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE departamento SET nombre = ?, descripcion = ?, idOrganizacion = ? WHERE idDepartamento = ?";
     private static final String SQL_UPDATE_STATUS = "UPDATE departamento SET estado = ? WHERE idDepartamento = ?";
     private static final String SQL_DELETE = "DELETE FROM departamento WHERE idDepartamento = ?";
     private static final String SQL_SELECT = "SELECT * FROM departamento WHERE idDepartamento = ?";
-    private static final String SQL_SELECT_ORGANIZACION_ID_BY_DEPARTMENT_ID = "SELECT idOrganizacion FROM departamento WHERE idDepartamento = ?";
+    private static final String SQL_SELECT_ORGANIZATION_ID_BY_DEPARTMENT_ID = "SELECT idOrganizacion FROM departamento WHERE idDepartamento = ?";
     private static final String SQL_SELECT_BY_ORGANIZATION_ID = "SELECT * FROM departamento WHERE idOrganizacion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM departamento";
 
@@ -29,6 +29,7 @@ public class DepartmentDAO implements IDeparmentDAO {
             statement.setString(1, department.getName());
             statement.setString(2, department.getDescription());
             statement.setInt(3, department.getOrganizationId());
+            statement.setInt(4, department.getStatus());
             return statement.executeUpdate() > 0;
         }
     }
@@ -65,7 +66,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     }
 
     public DepartmentDTO searchDepartmentById(int departmentId) throws SQLException {
-        DepartmentDTO department = new DepartmentDTO(-1, "N/A", "N/A", -1);
+        DepartmentDTO department = new DepartmentDTO(-1, "N/A", "N/A", -1, 0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
@@ -76,7 +77,8 @@ public class DepartmentDAO implements IDeparmentDAO {
                             resultSet.getInt("idDepartamento"),
                             resultSet.getString("nombre"),
                             resultSet.getString("descripcion"),
-                            resultSet.getInt("idOrganizacion")
+                            resultSet.getInt("idOrganizacion"),
+                            resultSet.getInt("estado")
                     );
                 }
             }
@@ -88,7 +90,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         int organizationId = -1; // Default value if not found
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORGANIZACION_ID_BY_DEPARTMENT_ID)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORGANIZATION_ID_BY_DEPARTMENT_ID)) {
             statement.setInt(1, departmentId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -111,7 +113,8 @@ public class DepartmentDAO implements IDeparmentDAO {
                             resultSet.getInt("idDepartamento"),
                             resultSet.getString("nombre"),
                             resultSet.getString("descripcion"),
-                            resultSet.getInt("idOrganizacion")
+                            resultSet.getInt("idOrganizacion"),
+                            resultSet.getInt("estado")
                     ));
                 }
             }
@@ -130,7 +133,8 @@ public class DepartmentDAO implements IDeparmentDAO {
                         resultSet.getInt("idDepartamento"),
                         resultSet.getString("nombre"),
                         resultSet.getString("descripcion"),
-                        resultSet.getInt("idOrganizacion")
+                        resultSet.getInt("idOrganizacion"),
+                        resultSet.getInt("estado")
                 ));
             }
         }

@@ -14,7 +14,7 @@ import logic.interfaces.IUserDAO;
 
 public class UserDAO implements IUserDAO {
 
-    private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
     private static final String SQL_UPDATE_STATUS = "UPDATE usuario SET estado = ? WHERE idUsuario = ?";
     private static final String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";
@@ -24,7 +24,7 @@ public class UserDAO implements IUserDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM usuario";
 
     public boolean insertUser(UserDTO user) throws SQLException {
-        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();) {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
             statement.setString(1, user.getIdUser());
@@ -34,6 +34,7 @@ public class UserDAO implements IUserDAO {
             statement.setString(5, user.getUserName());
             statement.setString(6, user.getPassword());
             statement.setString(7, user.getRole().toString());
+            statement.setInt(8, user.getStatus());
             return statement.executeUpdate() > 0;
         }
     }
@@ -73,7 +74,7 @@ public class UserDAO implements IUserDAO {
     }
 
     public UserDTO searchUserById(String idUser) throws SQLException {
-        UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
+        UserDTO user = new UserDTO("INVALID", 0, "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
@@ -82,6 +83,7 @@ public class UserDAO implements IUserDAO {
                 if (resultSet.next()) {
                     user = new UserDTO(
                             resultSet.getString("idUsuario"),
+                            resultSet.getInt("estado"),
                             resultSet.getString("numeroDePersonal"),
                             resultSet.getString("nombres"),
                             resultSet.getString("apellidos"),
@@ -96,7 +98,7 @@ public class UserDAO implements IUserDAO {
     }
 
     public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException {
-        UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
+        UserDTO user = new UserDTO("INVALID", 0, "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD);
@@ -106,6 +108,7 @@ public class UserDAO implements IUserDAO {
                 if (resultSet.next()) {
                     user = new UserDTO(
                             resultSet.getString("idUsuario"),
+                            resultSet.getInt("estado"),
                             resultSet.getString("numeroDePersonal"),
                             resultSet.getString("nombres"),
                             resultSet.getString("apellidos"),
@@ -165,6 +168,7 @@ public class UserDAO implements IUserDAO {
             while (resultSet.next()) {
                 users.add(new UserDTO(
                         resultSet.getString("idUsuario"),
+                        resultSet.getInt("estado"),
                         resultSet.getString("numeroDePersonal"),
                         resultSet.getString("nombres"),
                         resultSet.getString("apellidos"),

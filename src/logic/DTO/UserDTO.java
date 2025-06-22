@@ -21,9 +21,9 @@ public class UserDTO {
         this.role = null;
     }
 
-    public UserDTO(String idUser, String staffNumber, String names, String surnames, String userName, String password, Role role) {
+    public UserDTO(String idUser, int state, String staffNumber, String names, String surnames, String userName, String password, Role role) {
         this.idUser = idUser;
-        this.state = 1;
+        this.state = state;
         this.staffNumber = staffNumber;
         this.names = names;
         this.surnames = surnames;
@@ -40,11 +40,11 @@ public class UserDTO {
         this.idUser = idUser;
     }
 
-    public int getState() {
+    public int getStatus() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setStatus(int state) {
         this.state = state;
     }
 
