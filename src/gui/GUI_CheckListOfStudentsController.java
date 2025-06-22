@@ -94,6 +94,11 @@ public class GUI_CheckListOfStudentsController {
         this.idUserAcademic = idUsuario;
     }
 
+    public void setUserRole(Role userRole) {
+        this.userRole = userRole;
+        applyRoleRestrictions();
+    }
+
     public void initialize() {
         try {
             this.studentService = ServiceFactory.getStudentService();
@@ -131,11 +136,6 @@ public class GUI_CheckListOfStudentsController {
             deleteStudentButton.setDisable(selectedStudent == null);
             tableView.refresh();
         });
-    }
-
-    public void setUserRole(Role userRole) {
-        this.userRole = userRole;
-        applyRoleRestrictions();
     }
 
     private void setColumns() {
@@ -336,18 +336,13 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private boolean filterStudentByChoice(UserStudentViewDTO userStudentView, String filter) {
-        boolean isFromAcademic = (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic);
-        if ("Todos".equals(filter)) {
-            return isFromAcademic;
-        } else if ("Activos".equals(filter)) {
-            return userStudentView.isStatus() == 1 && isFromAcademic;
-        } else if ("Inactivos".equals(filter)) {
-            return userStudentView.isStatus() == 0 && isFromAcademic;
-        } else if ("Mis estudiantes".equals(filter)) {
-            return userStudentView.isStatus() == 1 && userStudentView.getUserId() == idUserAcademic;
-        } else {
-            return false;
-        }
+        return switch (filter) {
+            case "Todos" -> true;
+            case "Activos" -> userStudentView.isStatus() == 1;
+            case "Inactivos" -> userStudentView.isStatus() == 0;
+            case "Mis estudiantes" -> userStudentView.isStatus() == 1 && userStudentView.getUserId() == idUserAcademic;
+            default -> false;
+        };
     }
 
     private StudentDTO buildStudent(UserStudentViewDTO userStudentView) {
@@ -380,20 +375,7 @@ public class GUI_CheckListOfStudentsController {
             UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
             if (userStudentView != null && userStudentView.isStatus() == 1 &&
                     (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
-                StudentDTO student = new StudentDTO(
-                        userStudentView.getTuition(),
-                        userStudentView.isStatus() == 1 ? 1 : 0,
-                        userStudentView.getStudentNames(),
-                        userStudentView.getStudentSurnames(),
-                        userStudentView.getPhoneNumber(),
-                        userStudentView.getEmail(),
-                        userStudentView.getStudentUsername(),
-                        "",
-                        String.valueOf(userStudentView.getNrc()),
-                        userStudentView.getCreditProgress() != null ? String.valueOf(userStudentView.getCreditProgress()) : "",
-                        userStudentView.getFinalGrade() != null ? userStudentView.getFinalGrade().doubleValue() : 0.0
-                );
-                filteredList.add(student);
+                filteredList.add(buildStudent(userStudentView));
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
@@ -603,7 +585,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    public void handleDeleteStudent() {
+    private void handleDeleteStudent() {
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para eliminar");
             return;
@@ -620,7 +602,7 @@ public class GUI_CheckListOfStudentsController {
             confirmStage.setScene(new Scene(root));
             confirmStage.showAndWait();
             if (confirmController.isConfirmed()) {
-                studentService.updateStudentState(selectedStudent.getTuition(), 0);
+                studentService.updateStudentStatus(selectedStudent.getTuition(), 0);
                 statusLabel.setText("Estudiante eliminado correctamente.");
                 loadStudentData();
                 updateStudentCounts();

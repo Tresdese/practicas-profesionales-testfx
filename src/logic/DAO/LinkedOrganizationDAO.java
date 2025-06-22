@@ -72,7 +72,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A", 1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -82,7 +82,9 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                     organization = new LinkedOrganizationDTO(
                             resultSet.getString("idOrganizacion"),
                             resultSet.getString("nombre"),
-                            resultSet.getString("direccion")
+                            resultSet.getString("direccion"),
+                            resultSet.getInt("estado")
+
                     );
                 }
             }
@@ -91,7 +93,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A", 1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
@@ -101,7 +103,8 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                     organization = new LinkedOrganizationDTO(
                             resultSet.getString("idOrganizacion"),
                             resultSet.getString("nombre"),
-                            resultSet.getString("direccion")
+                            resultSet.getString("direccion"),
+                            resultSet.getInt("estado")
                     );
                 }
             }
@@ -167,7 +170,8 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
                 organizations.add(new LinkedOrganizationDTO(
                         resultSet.getString("idOrganizacion"),
                         resultSet.getString("nombre"),
-                        resultSet.getString("direccion")
+                        resultSet.getString("direccion"),
+                        resultSet.getInt("estado")
                 ));
             }
         }

@@ -38,13 +38,16 @@ public class GUI_CheckListLinkedOrganizationController {
     private TableColumn<LinkedOrganizationDTO, Void> managementColumn;
 
     @FXML
+    private ChoiceBox<String> filterChoiceBox;
+
+    @FXML
     private TextField searchField;
 
     @FXML
     private Button searchButton;
 
     @FXML
-    private Button registerOrganizationButton;
+    private Button registerOrganizationButton, deleteOrganizationButton;
 
     @FXML
     private Label statusLabel;
@@ -93,20 +96,35 @@ public class GUI_CheckListLinkedOrganizationController {
             LOGGER.error("Error inesperado al inicializar el servicio de organizaciones: {}", e.getMessage(), e);
         }
 
-        organizationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        organizationAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+        filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
+        filterChoiceBox.setValue("Todos");
+        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadOrganizationData());
 
+        setColumns();
         addManagementButtonToTable();
 
         loadOrganizationData();
+        updateOrganizationCounts();
 
-        searchButton.setOnAction(event -> searchOrganization());
-        registerOrganizationButton.setOnAction(event -> openRegisterOrganizationWindow());
+        setButtons();
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedLinkedOrganization = newValue;
+            deleteOrganizationButton.setDisable(selectedLinkedOrganization == null);
             tableView.refresh();
         });
+    }
+
+    private void setColumns() {
+        organizationNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        organizationAddressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
+    }
+
+    private void setButtons() {
+        searchButton.setOnAction(event -> searchOrganization());
+        registerOrganizationButton.setOnAction(event -> openRegisterOrganizationWindow());
+        deleteOrganizationButton.setOnAction(event -> handleDeleteOrganization());
+        deleteOrganizationButton.setDisable(true);
     }
 
     private void openRegisterOrganizationWindow() {
@@ -136,15 +154,28 @@ public class GUI_CheckListLinkedOrganizationController {
 
         try {
             List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
-            organizationList.addAll(organizations);
-            statusLabel.setText("");
+            String filter = filterChoiceBox != null ? filterChoiceBox.getValue() : "Todos";
+            for (LinkedOrganizationDTO organization : organizations) {
+                if (filterOrganizationByChoice(organization, filter)) {
+                    organizationList.add(organization);
+                }
+            }
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de las organizaciones.");
             LOGGER.error("Error al cargar los datos de las organizaciones: {}", e.getMessage(), e);
         }
 
         tableView.setItems(organizationList);
-        updateOrganizationCounts(organizationList);
+        updateOrganizationCounts();
+    }
+
+    private boolean filterOrganizationByChoice(LinkedOrganizationDTO organization, String filter) {
+        return switch (filter) {
+            case "Todos" -> true;
+            case "Activos" -> organization.getStatus() == 1;
+            case "Inactivos" -> organization.getStatus() == 0;
+            case null, default -> false;
+        };
     }
 
     private void searchOrganization() {
@@ -191,7 +222,30 @@ public class GUI_CheckListLinkedOrganizationController {
         }
 
         tableView.setItems(filteredList);
-        updateOrganizationCounts(filteredList);
+        updateOrganizationCounts();
+    }
+
+    private void updateOrganizationCounts() {
+        try {
+            List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
+            int total = 0;
+            int active = 0;
+            int inactive = 0;
+            for (LinkedOrganizationDTO organization : organizations) {
+                if (organization.getIdOrganization() != null && !organization.getIdOrganization().isEmpty()) {
+                    total++;
+                    if (organization.getStatus() == 1) {
+                        active++;
+                    } else {
+                        inactive++;
+                    }
+                }
+            }
+            organizationCountsLabel.setText("Totales: " + total + " | Activos: " + active + " | Inactivos: " + inactive);
+        } catch (SQLException e) {
+            organizationCountsLabel.setText("Error al contar estudiantes");
+            LOGGER.error("Error al contar estudiantes: {}", e.getMessage(), e);
+        }
     }
 
     private void addManagementButtonToTable() {
@@ -240,8 +294,39 @@ public class GUI_CheckListLinkedOrganizationController {
         }
     }
 
-    private void updateOrganizationCounts(ObservableList<LinkedOrganizationDTO> list) {
-        int total = list.size();
-        organizationCountsLabel.setText("Totales: " + total);
+    private void handleDeleteOrganization() {
+        if (selectedLinkedOrganization == null) {
+            statusLabel.setText("Debe seleccionar una organización para eliminar");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+            Parent root = loader.load();
+            GUI_ConfirmDialogController confirmController = loader.getController();
+            confirmController.setInformationMessage("Al borrar una organizacion, se eliminarán los departamentos y representantes asociados a ella.");
+            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar la organizacion " + selectedLinkedOrganization.getName() + "?");
+            Stage confirmStage = new Stage();
+            confirmStage.setTitle("Confirmar Eliminación");
+            confirmStage.setScene(new Scene(root));
+            confirmStage.showAndWait();
+            if (confirmController.isConfirmed()) {
+                linkedOrganizationService.updateLinkedOrganizationStatus(selectedLinkedOrganization.getIdOrganization(), 0);
+                statusLabel.setText("Organizacion eliminada correctamente.");
+                loadOrganizationData();
+                updateOrganizationCounts();
+            } else {
+                statusLabel.setText("Eliminación cancelada.");
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error al eliminar la organización.");
+            LOGGER.error("Error al eliminar la organización: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el diálogo de confirmación.");
+            LOGGER.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");
+            LOGGER.error("Error inesperado al eliminar la organización: {}", e.getMessage(), e);
+        }
     }
 }

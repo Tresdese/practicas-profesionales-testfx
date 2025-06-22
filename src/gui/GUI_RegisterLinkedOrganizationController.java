@@ -100,7 +100,7 @@ public class GUI_RegisterLinkedOrganizationController {
             String name = nameField.getText();
             String address = addressField.getText();
 
-            LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address);
+            LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, name, address, 1);
             String generatedId = organizationService.registerOrganization(organization);
             organization.setIdOrganization(generatedId);
 

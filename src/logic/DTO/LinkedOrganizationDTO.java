@@ -13,11 +13,11 @@ public class LinkedOrganizationDTO {
         this.status = 1;
     }
 
-    public LinkedOrganizationDTO(String idOrganization, String name, String address) {
+    public LinkedOrganizationDTO(String idOrganization, String name, String address, int status) {
         this.idOrganization = idOrganization;
         this.name = name;
         this.address = address;
-        this.status = 1;
+        this.status = status;
     }
 
     public String getIdOrganization() {

@@ -51,6 +51,17 @@ public class LinkedOrganizationService {
         }
     }
 
+    public void updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException {
+        if (idOrganization == null || idOrganization.isEmpty()) {
+            throw new IllegalArgumentException("El ID de la organización no puede ser nulo o vacío.");
+        }
+
+        boolean success = organizationDAO.updateLinkedOrganizationStatus(idOrganization, status);
+        if (!success) {
+            throw new SQLException("No se pudo actualizar el estado de la organización.");
+        }
+    }
+
     public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException {
         return organizationDAO.getAllLinkedOrganizations();
     }
