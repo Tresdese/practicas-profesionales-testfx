@@ -11,6 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import logic.DAO.ProjectDAO;
+import logic.DAO.StudentProjectDAO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.StudentProjectDTO;
@@ -74,12 +76,15 @@ public class GUI_CheckListOfStudentsController {
     private Button reassignProjectButton;
 
     @FXML
+    private Button deleteStudentButton;
+
+    @FXML
     private Label statusLabel, studentCountsLabel;
 
     private StudentDTO selectedStudent;
     private StudentService studentService;
     private StudentProjectDTO studentProject;
-    private ProjectDTO currentProject;
+    private ProjectDTO currentProject = null;
     private Role userRole;
 
     private int idUserAcademic = -1;
@@ -97,7 +102,7 @@ public class GUI_CheckListOfStudentsController {
             return;
         }
 
-        filterChoiceBox.getItems().addAll("Todos", "Mis estudiantes");
+        filterChoiceBox.getItems().addAll("Todos", "Mis estudiantes", "Activos", "Inactivos");
         filterChoiceBox.setValue("Todos");
         filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadStudentData());
 
@@ -109,17 +114,14 @@ public class GUI_CheckListOfStudentsController {
         loadStudentData();
         updateStudentCounts();
 
-        searchButton.setOnAction(event -> searchStudent());
-        registerStudentButton.setOnAction(event -> openRegisterStudentWindow());
-        assignProjectButton.setOnAction(event -> openAssignProjectWindow());
-        reassignProjectButton.setOnAction(event -> openReassignProjectWindow());
+        setButtons();
 
-        assignProjectButton.setDisable(true);
 
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectedStudent = newValue;
             assignProjectButton.setDisable(selectedStudent == null);
             reassignProjectButton.setDisable(selectedStudent == null);
+            deleteStudentButton.setDisable(selectedStudent == null);
             tableView.refresh();
         });
     }
@@ -129,7 +131,7 @@ public class GUI_CheckListOfStudentsController {
         applyRoleRestrictions();
     }
 
-    public void setColumns () {
+    private void setColumns() {
         tuitionColumn.setCellValueFactory(new PropertyValueFactory<>("tuition"));
         namesColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
         surnamesColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
@@ -137,33 +139,48 @@ public class GUI_CheckListOfStudentsController {
         nrcColumn.setCellValueFactory(new PropertyValueFactory<>("NRC"));
     }
 
-    public void setButtonVisibility(Button btn, boolean visible) {
+    private void setButtons() {
+        searchButton.setOnAction(event -> searchStudent());
+        registerStudentButton.setOnAction(event -> openRegisterStudentWindow());
+        assignProjectButton.setOnAction(event -> openAssignProjectWindow());
+        reassignProjectButton.setOnAction(event -> openReassignProjectWindow());
+        deleteStudentButton.setOnAction(event -> handleDeleteStudent());
+        setDisableButtons();
+    }
+
+    private void setDisableButtons() {
+        assignProjectButton.setDisable(true);
+        reassignProjectButton.setDisable(true);
+        deleteStudentButton.setDisable(true);
+    }
+
+    private void setButtonVisibilityByRole(Button btn, boolean visible) {
         if (btn != null) {
             btn.setVisible(visible);
             btn.setManaged(visible);
         }
     }
 
-    public void applyRoleRestrictions() {
+    private void applyRoleRestrictions() {
         if (userRole == Role.ACADEMICO_EVALUADOR) {
-            setButtonVisibility(registerStudentButton, false);
-            setButtonVisibility(assignProjectButton, false);
-            setButtonVisibility(reassignProjectButton, false);
+            setButtonVisibilityByRole(registerStudentButton, false);
+            setButtonVisibilityByRole(assignProjectButton, false);
+            setButtonVisibilityByRole(reassignProjectButton, false);
             managementColumn.setVisible(false);
         } else if (userRole == Role.ACADEMICO) {
-            setButtonVisibility(registerStudentButton, true);
-            setButtonVisibility(assignProjectButton, false);
-            setButtonVisibility(reassignProjectButton, false);
+            setButtonVisibilityByRole(registerStudentButton, true);
+            setButtonVisibilityByRole(assignProjectButton, false);
+            setButtonVisibilityByRole(reassignProjectButton, false);
             managementColumn.setVisible(true);
         } else if (userRole == Role.COORDINADOR) {
-            setButtonVisibility(registerStudentButton, false);
-            setButtonVisibility(assignProjectButton, true);
-            setButtonVisibility(reassignProjectButton, true);
+            setButtonVisibilityByRole(registerStudentButton, false);
+            setButtonVisibilityByRole(assignProjectButton, true);
+            setButtonVisibilityByRole(reassignProjectButton, true);
             managementColumn.setVisible(false);
         }
     }
 
-    public void openRegisterStudentWindow() {
+    private void openRegisterStudentWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterStudent.fxml"));
             Parent root = loader.load();
@@ -183,7 +200,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    public void openAssignProjectWindow() {
+    private void openAssignProjectWindow() {
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para asignar un proyecto");
             return;
@@ -206,16 +223,15 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    public void openReassignProjectWindow() {
+    private void openReassignProjectWindow() {
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para reasignar proyecto");
             return;
         }
-        ProjectDTO currentProject = null;
         try {
-            StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuition());
+            StudentProjectDTO studentProjectDTO = new StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuition());
             if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
-                currentProject = new logic.DAO.ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
+                currentProject = new ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
             }
             gui.GUI_ReassignProject.setProjectStudent(selectedStudent, currentProject);
             gui.GUI_ReassignProject reassignProjectApp = new gui.GUI_ReassignProject();
@@ -242,26 +258,12 @@ public class GUI_CheckListOfStudentsController {
         try {
             UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
             List<UserStudentViewDTO> userStudentViews = userStudentViewDAO.getAllUserStudentViews();
-            boolean verTodos = filterChoiceBox != null && "Todos".equals(filterChoiceBox.getValue());
+            String filter = filterChoiceBox != null ? filterChoiceBox.getValue() : "Todos";
             for (UserStudentViewDTO userStudentView : userStudentViews) {
-                if (userStudentView.isStatus() && (verTodos || userStudentView.getUserId() == idUserAcademic)) {
-                    StudentDTO student = new StudentDTO(
-                            userStudentView.getTuition(),
-                            userStudentView.isStatus() ? 1 : 0,
-                            userStudentView.getStudentNames(),
-                            userStudentView.getStudentSurnames(),
-                            userStudentView.getPhoneNumber(),
-                            userStudentView.getEmail(),
-                            userStudentView.getStudentUsername(),
-                            "",
-                            String.valueOf(userStudentView.getNrc()),
-                            userStudentView.getCreditProgress() != null ? String.valueOf(userStudentView.getCreditProgress()) : "",
-                            userStudentView.getFinalGrade() != null ? userStudentView.getFinalGrade().doubleValue() : 0.0
-                    );
-                    studentList.add(student);
+                if (filterStudentByChoice(userStudentView, filter)) {
+                    studentList.add(buildStudent(userStudentView));
                 }
             }
-            statusLabel.setText("");
         } catch (SQLException e) {
             statusLabel.setText("Error al cargar los datos de los estudiantes.");
             logger.error("Error al cargar los datos de los estudiantes: {}", e.getMessage(), e);
@@ -270,7 +272,38 @@ public class GUI_CheckListOfStudentsController {
         updateStudentCounts();
     }
 
-    public void searchStudent() {
+    private boolean filterStudentByChoice(UserStudentViewDTO userStudentView, String filter) {
+        boolean isFromAcademic = (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic);
+        if ("Todos".equals(filter)) {
+            return isFromAcademic;
+        } else if ("Activos".equals(filter)) {
+            return userStudentView.isStatus() == 1 && isFromAcademic;
+        } else if ("Inactivos".equals(filter)) {
+            return userStudentView.isStatus() == 0 && isFromAcademic;
+        } else if ("Mis estudiantes".equals(filter)) {
+            return userStudentView.isStatus() == 1 && userStudentView.getUserId() == idUserAcademic;
+        } else {
+            return false;
+        }
+    }
+
+    private StudentDTO buildStudent(UserStudentViewDTO userStudentView) {
+        return new StudentDTO(
+                userStudentView.getTuition(),
+                userStudentView.isStatus(),
+                userStudentView.getStudentNames(),
+                userStudentView.getStudentSurnames(),
+                userStudentView.getPhoneNumber(),
+                userStudentView.getEmail(),
+                userStudentView.getStudentUsername(),
+                "",
+                String.valueOf(userStudentView.getNrc()),
+                userStudentView.getCreditProgress() != null ? String.valueOf(userStudentView.getCreditProgress()) : "",
+                userStudentView.getFinalGrade() != null ? userStudentView.getFinalGrade().doubleValue() : 0.0
+        );
+    }
+
+    private void searchStudent() {
         String searchQuery = searchField.getText().trim();
         if (searchQuery.isEmpty()) {
             loadStudentData();
@@ -282,11 +315,11 @@ public class GUI_CheckListOfStudentsController {
         try {
             UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
             UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
-            if (userStudentView != null && userStudentView.isStatus() &&
+            if (userStudentView != null && userStudentView.isStatus() == 1 &&
                     (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
                 StudentDTO student = new StudentDTO(
                         userStudentView.getTuition(),
-                        userStudentView.isStatus() ? 1 : 0,
+                        userStudentView.isStatus() == 1 ? 1 : 0,
                         userStudentView.getStudentNames(),
                         userStudentView.getStudentSurnames(),
                         userStudentView.getPhoneNumber(),
@@ -317,7 +350,7 @@ public class GUI_CheckListOfStudentsController {
             for (UserStudentViewDTO userStudentView : userStudentViews) {
                 if (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic) {
                     total++;
-                    if (userStudentView.isStatus()) {
+                    if (userStudentView.isStatus() == 1) {
                         activos++;
                     } else {
                         inactivos++;
@@ -331,7 +364,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    public void addDetailsButtonToTable() {
+    private void addDetailsButtonToTable() {
         Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
             private final Button detailsButton = new Button("Ver detalles");
 
@@ -356,7 +389,7 @@ public class GUI_CheckListOfStudentsController {
         detailsColumn.setCellFactory(cellFactory);
     }
 
-    public void openDetailsStudentWindow(StudentDTO student) {
+    private void openDetailsStudentWindow(StudentDTO student) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DetailsStudent.fxml"));
             Parent root = loader.load();
@@ -371,7 +404,7 @@ public class GUI_CheckListOfStudentsController {
         }
     }
 
-    public void addManagementButtonToTable() {
+    private void addManagementButtonToTable() {
         Callback<TableColumn<StudentDTO, Void>, TableCell<StudentDTO, Void>> cellFactory = param -> new TableCell<>() {
             private final Button manageButton = new Button("Gestionar Estudiante");
 
@@ -396,7 +429,7 @@ public class GUI_CheckListOfStudentsController {
         managementColumn.setCellFactory(cellFactory);
     }
 
-    public void openManageStudentWindow(StudentDTO student) {
+    private void openManageStudentWindow(StudentDTO student) {
         ProjectDTO currentProject = null;
         try {
             StudentProjectDTO studentProjectDTO = new logic.DAO.StudentProjectDAO().searchStudentProjectByIdTuiton(student.getTuition());
@@ -415,6 +448,39 @@ public class GUI_CheckListOfStudentsController {
             logger.error("Estado ilegal al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
         } catch (Exception e) {
             logger.error("Error al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+        }
+    }
+
+    public void handleDeleteStudent() {
+        if (selectedStudent == null) {
+            statusLabel.setText("Debe seleccionar un estudiante para eliminar");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+            Parent root = loader.load();
+            GUI_ConfirmDialogController confirmController = loader.getController();
+            confirmController.setInformationMessage("Al borrar un estudiante, se cambiará su estado a inactivo y no podrá realizar ninguna actividad.");
+            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar al estudiante " + selectedStudent.getNames() + " " + selectedStudent.getSurnames() + "?");
+            Stage confirmStage = new Stage();
+            confirmStage.setTitle("Confirmar Eliminación");
+            confirmStage.setScene(new Scene(root));
+            confirmStage.showAndWait();
+            if (confirmController.isConfirmed()) {
+                studentService.updateStudentState(selectedStudent.getTuition(), 0);
+                statusLabel.setText("Estudiante eliminado correctamente.");
+                loadStudentData();
+                updateStudentCounts();
+            } else {
+                statusLabel.setText("Eliminación cancelada.");
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error al eliminar el estudiante.");
+            logger.error("Error al eliminar el estudiante: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la ventana de confirmación.");
+            logger.error("Error al cargar la ventana de confirmación: {}", e.getMessage(), e);
         }
     }
 }
