@@ -1,25 +1,27 @@
 package logic.interfaces;
 
-import java.sql.Connection;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import logic.DTO.UserDTO;
 
 
 public interface IUserDAO {
-    boolean insertUser(UserDTO user) throws SQLException;
+    boolean insertUser(UserDTO user) throws SQLException, IOException;
 
-    boolean updateUser(UserDTO user) throws SQLException;
+    boolean updateUser(UserDTO user) throws SQLException, IOException;
 
-    boolean deleteUser(String idUser) throws SQLException;
+    boolean deleteUser(String idUser) throws SQLException, IOException;
 
-    UserDTO searchUserById(String idUser) throws SQLException;
+    String getUserIdByUsername(String username) throws SQLException, IOException;
 
-    UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException;
+    UserDTO searchUserById(String idUser) throws SQLException, IOException;
 
-    boolean isUserRegistered(String idUser) throws SQLException;
+    UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException, IOException;
 
-    boolean isNameRegistered(String username) throws SQLException;
+    boolean isUserRegistered(String idUser) throws SQLException, IOException;
 
-    List<UserDTO> getAllUsers() throws SQLException;
+    boolean isNameRegistered(String username) throws SQLException, IOException;
+
+    List<UserDTO> getAllUsers() throws SQLException, IOException;
 }

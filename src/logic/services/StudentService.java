@@ -49,4 +49,11 @@ public class StudentService {
     public StudentDTO searchStudentByTuition(String tuition) throws SQLException {
         return studentDAO.searchStudentByTuition(tuition);
     }
+
+    public void updateStudentStatus(String tuition, int state) throws SQLException {
+        boolean success = studentDAO.updateStudentStatus(tuition, state);
+        if (!success) {
+            throw new SQLException("No se pudo eliminar el estudiante.");
+        }
+    }
 }

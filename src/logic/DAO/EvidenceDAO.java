@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class EvidenceDAO implements IEvidenceDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM evidencia";
     private final static String SQL_NEXT_ID = "SELECT MAX(idEvidencia) FROM evidencia";
 
-    public boolean insertEvidence(EvidenceDTO evidence) throws SQLException {
+    public boolean insertEvidence(EvidenceDTO evidence) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -28,7 +29,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         }
     }
 
-    public boolean updateEvidence(EvidenceDTO evidence) throws SQLException {
+    public boolean updateEvidence(EvidenceDTO evidence) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -40,7 +41,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         }
     }
 
-    public boolean deleteEvidence(int idEvidence) throws SQLException {
+    public boolean deleteEvidence(int idEvidence) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -49,7 +50,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         }
     }
 
-    public EvidenceDTO searchEvidenceById(int idEvidence) throws SQLException {
+    public EvidenceDTO searchEvidenceById(int idEvidence) throws SQLException, IOException {
         EvidenceDTO evidence = new EvidenceDTO(-1, "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -64,7 +65,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         return evidence;
     }
 
-    public List<EvidenceDTO> getAllEvidences() throws SQLException {
+    public List<EvidenceDTO> getAllEvidences() throws SQLException, IOException {
         List<EvidenceDTO> evidences = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -78,7 +79,7 @@ public class EvidenceDAO implements IEvidenceDAO {
         return evidences;
     }
 
-    public int getNextEvidenceId() throws SQLException {
+    public int getNextEvidenceId() throws SQLException, IOException {
         int nextId = 1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

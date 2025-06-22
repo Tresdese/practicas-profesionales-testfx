@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     private final static String SQL_SELECT_REGISTERED_ID = "SELECT 1 FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
-    public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException {
+    public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
@@ -52,7 +53,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         }
     }
 
-    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException {
+    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -74,7 +75,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         }
     }
 
-    public boolean updateRepresentativeStatus(String idRepresentative, int status) throws SQLException {
+    public boolean updateRepresentativeStatus(String idRepresentative, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
@@ -84,7 +85,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         }
     }
 
-    public boolean deleteRepresentative(String idRepresentative) throws SQLException {
+    public boolean deleteRepresentative(String idRepresentative) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -94,7 +95,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException {
+    public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException, IOException {
         RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -115,7 +116,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public boolean isRepresentativeRegistered(String idRepresentative) throws SQLException {
+    public boolean isRepresentativeRegistered(String idRepresentative) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM representante WHERE idRepresentante = ?")) {
@@ -127,7 +128,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public boolean isRepresentativeEmailRegistered(String email) throws SQLException {
+    public boolean isRepresentativeEmailRegistered(String email) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_REGISTERED_ID)) {
@@ -139,7 +140,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException {
+    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException, IOException {
         RepresentativeDTO representative = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -163,7 +164,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public String getRepresentativeNameById(String idRepresentative) throws SQLException {
+    public String getRepresentativeNameById(String idRepresentative) throws SQLException, IOException {
         String name = "";
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -179,7 +180,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException {
+    public List<RepresentativeDTO> getRepresentativesByDepartment(String idDepartment) throws SQLException, IOException {
         List<RepresentativeDTO> representatives = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -201,7 +202,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
         return representatives;
     }
 
-    public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException {
+    public List<RepresentativeDTO> getRepresentativesByOrganization(String idOrganization) throws SQLException, IOException {
         List<RepresentativeDTO> representatives = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -224,7 +225,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     }
 
     @Override
-    public List<RepresentativeDTO> getAllRepresentatives() throws SQLException {
+    public List<RepresentativeDTO> getAllRepresentatives() throws SQLException, IOException {
         List<RepresentativeDTO> representatives = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

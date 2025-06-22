@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
     private final static String SQL_SELECT = "SELECT * FROM cronograma_de_actividades WHERE idCronograma = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_de_actividades";
 
-    public boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException {
+    public boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -31,7 +32,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         }
     }
 
-    public boolean updateScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException {
+    public boolean updateScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -44,7 +45,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         }
     }
 
-    public boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException {
+    public boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -53,7 +54,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         }
     }
 
-    public ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule) throws SQLException {
+    public ScheduleOfActivitiesDTO searchScheduleOfActivitiesById(String idSchedule) throws SQLException, IOException {
         ScheduleOfActivitiesDTO schedule = new ScheduleOfActivitiesDTO(
                 "N/A",
                 "N/A",
@@ -80,7 +81,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
         return schedule;
     }
 
-    public List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities() throws SQLException {
+    public List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities() throws SQLException, IOException {
         List<ScheduleOfActivitiesDTO> schedules = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

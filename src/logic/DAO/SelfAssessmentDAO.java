@@ -4,6 +4,7 @@ import data_access.ConnectionDataBase;
 import logic.DTO.SelfAssessmentDTO;
 import logic.interfaces.ISelfAssessmentDAO;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     private final static String SQL_EXISTS = "SELECT COUNT(*) FROM autoevaluacion WHERE matricula = ? AND idProyecto = ?";
 
     @Override
-    public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+    public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -39,7 +40,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     }
 
     @Override
-    public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+    public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -61,7 +62,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     }
 
     @Override
-    public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException {
+    public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -71,7 +72,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     }
 
     @Override
-    public SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId) throws SQLException {
+    public SelfAssessmentDTO searchSelfAssessmentById(String selfAssessmentId) throws SQLException, IOException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0,
                 "N/A",
@@ -97,7 +98,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     }
 
     @Override
-    public List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException {
+    public List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException, IOException {
         List<SelfAssessmentDTO> selfAssessments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -110,7 +111,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         return selfAssessments;
     }
 
-    public int getLastSelfAssessmentId() throws Exception {
+    public int getLastSelfAssessmentId() throws Exception, SQLException, IOException {
         int lastId = -1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -121,12 +122,12 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
             }
         }
         if (lastId == -1) {
-            throw new Exception("No se pudo obtener el id de la autoevaluación.");
+            throw new SQLException("No se pudo obtener el id de la autoevaluación.");
         }
         return lastId;
     }
 
-    public SelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+    public SelfAssessmentDTO mapResultSetToDTO(ResultSet rs) throws SQLException, IOException {
         int id = rs.getInt("idAutoevaluacion");
         String comments = rs.getString("comentarios");
         float grade = rs.getFloat("calificacion");
@@ -149,7 +150,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
         );
     }
 
-    public boolean existsSelfAssessment(String matricula, int idProyecto) throws SQLException {
+    public boolean existsSelfAssessment(String matricula, int idProyecto) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_EXISTS)) {

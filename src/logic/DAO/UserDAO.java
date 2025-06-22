@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class UserDAO implements IUserDAO {
     private static final String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM usuario WHERE nombreUsuario = ? AND contraseña = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM usuario";
 
-    public boolean insertUser(UserDTO user) throws SQLException {
+    public boolean insertUser(UserDTO user) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
@@ -38,7 +39,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public boolean updateUser(UserDTO user) throws SQLException {
+    public boolean updateUser(UserDTO user) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
@@ -53,7 +54,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public boolean updateUserStatus(String idUser, int status) throws SQLException {
+    public boolean updateUserStatus(String idUser, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS);
@@ -63,7 +64,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public boolean deleteUser(String idUser) throws SQLException {
+    public boolean deleteUser(String idUser) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE);
@@ -72,7 +73,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public UserDTO searchUserById(String idUser) throws SQLException {
+    public UserDTO searchUserById(String idUser) throws SQLException, IOException {
         UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
@@ -95,7 +96,7 @@ public class UserDAO implements IUserDAO {
         return user;
     }
 
-    public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException {
+    public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException, IOException {
         UserDTO user = new UserDTO("INVALID", "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
@@ -119,7 +120,7 @@ public class UserDAO implements IUserDAO {
         return user;
     }
 
-    public boolean isUserRegistered(String idUser) throws SQLException {
+    public boolean isUserRegistered(String idUser) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
@@ -130,7 +131,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public boolean isNameRegistered(String username) throws SQLException {
+    public boolean isNameRegistered(String username) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME);
@@ -141,7 +142,7 @@ public class UserDAO implements IUserDAO {
         }
     }
 
-    public String getUserIdByUsername(String username) throws SQLException {
+    public String getUserIdByUsername(String username) throws SQLException, IOException {
         String userId = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
@@ -156,7 +157,7 @@ public class UserDAO implements IUserDAO {
         return userId;
     }
 
-    public List<UserDTO> getAllUsers() throws SQLException {
+    public List<UserDTO> getAllUsers() throws SQLException, IOException {
         List<UserDTO> users = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();

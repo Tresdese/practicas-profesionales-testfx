@@ -620,7 +620,7 @@ public class GUI_CheckListOfStudentsController {
             confirmStage.setScene(new Scene(root));
             confirmStage.showAndWait();
             if (confirmController.isConfirmed()) {
-                studentService.updateStudentState(selectedStudent.getTuition(), 0);
+                studentService.updateStudentStatus(selectedStudent.getTuition(), 0);
                 statusLabel.setText("Estudiante eliminado correctamente.");
                 loadStudentData();
                 updateStudentCounts();

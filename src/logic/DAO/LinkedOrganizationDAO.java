@@ -4,6 +4,7 @@ import data_access.ConnectionDataBase;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.interfaces.ILinkedOrganizationDAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM organizacion_vinculada";
 
 
-    public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException {
+    public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -41,7 +42,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean updateLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException {
+    public boolean updateLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -52,7 +53,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException {
+    public boolean updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
@@ -62,7 +63,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean deleteLinkedOrganization(String idOrganization) throws SQLException {
+    public boolean deleteLinkedOrganization(String idOrganization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -71,7 +72,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException, IOException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -90,7 +91,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         return organization;
     }
 
-    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException, IOException {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -109,7 +110,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         return organization;
     }
 
-    public boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException {
+    public boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -120,7 +121,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean isNameRegistered(String name) throws SQLException {
+    public boolean isNameRegistered(String name) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
@@ -131,7 +132,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public boolean isAddressRegistered(String address) throws SQLException {
+    public boolean isAddressRegistered(String address) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ADDRESS)) {
@@ -142,7 +143,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         }
     }
 
-    public String getOrganizationNameById(String idOrganization) throws SQLException {
+    public String getOrganizationNameById(String idOrganization) throws SQLException, IOException {
         String organizationName = "N/A";
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -157,7 +158,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
         return organizationName;
     }
 
-    public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException {
+    public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException, IOException {
         List<LinkedOrganizationDTO> organizations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
