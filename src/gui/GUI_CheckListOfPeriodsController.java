@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.DTO.PeriodDTO;
 import logic.DAO.PeriodDAO;
@@ -12,6 +13,7 @@ import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -93,16 +95,36 @@ public class GUI_CheckListOfPeriodsController {
             periodList.addAll(periods);
             statusLabel.setText("");
         } catch (SQLException e) {
-            if (e.getMessage().contains("The driver has not received any packets from the server")) {
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (e.getMessage().contains("Unknown database")) {
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("La base de datos no está disponible.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
             } else {
                 statusLabel.setText("Error al cargar los periodos.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error al cargar los periodos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar los periodos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al cargar los periodos: {}", e.getMessage(), e);
         }
         periodsTableView.setItems(periodList);
         updatePeriodCounts(periodList);
@@ -123,16 +145,36 @@ public class GUI_CheckListOfPeriodsController {
                 filteredList.add(period);
             }
         } catch (SQLException e) {
-            if (e.getMessage().contains("The driver has not received any packets from the server")) {
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (e.getMessage().contains("Unknown database")) {
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("La base de datos no está disponible.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al buscar periodos.");
-                logger.error("Error al buscar periodos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al buscar el periodo.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al buscar el periodo: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al buscar el periodo.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al buscar el periodo: {}", e.getMessage(), e);
         }
 
         periodsTableView.setItems(filteredList);

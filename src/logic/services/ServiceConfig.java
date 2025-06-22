@@ -4,6 +4,7 @@ import data_access.ConnectionDataBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -12,7 +13,7 @@ public class ServiceConfig {
 
     private final ConnectionDataBase connectionDB;
 
-    public ServiceConfig() {
+    public ServiceConfig() throws SQLException, IOException {
         this.connectionDB = new ConnectionDataBase();
     }
 

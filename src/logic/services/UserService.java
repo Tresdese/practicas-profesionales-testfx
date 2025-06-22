@@ -5,6 +5,7 @@ import logic.DAO.UserDAO;
 import logic.exceptions.RepeatedId;
 import logic.exceptions.RepeatedName;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,7 +17,7 @@ public class UserService {
         this.userDAO = new UserDAO();
     }
 
-    public boolean registerUser(UserDTO user) throws SQLException, RepeatedId, RepeatedName {
+    public boolean registerUser(UserDTO user) throws SQLException, IOException, RepeatedId, RepeatedName {
 
         if (userDAO.isUserRegistered(user.getIdUser())) {
             throw new RepeatedId("El ID del usuario ya está registrado.");
@@ -34,22 +35,22 @@ public class UserService {
         return success;
     }
 
-    public void updateUser(UserDTO user) throws SQLException {
+    public void updateUser(UserDTO user) throws SQLException, IOException, RepeatedId, RepeatedName {
         boolean success = userDAO.updateUser(user);
         if (!success) {
             throw new SQLException("No se pudo actualizar la organizacion.");
         }
     }
 
-    public UserDTO searchUserById(String id) throws SQLException {
+    public UserDTO searchUserById(String id) throws SQLException, IOException {
         return userDAO.searchUserById(id);
     }
 
-    public String getUserIdByUsername(String username) throws SQLException {
+    public String getUserIdByUsername(String username) throws SQLException, IOException {
         return userDAO.getUserIdByUsername(username);
     }
 
-    public List<UserDTO> getAllUsers() throws SQLException {
+    public List<UserDTO> getAllUsers() throws SQLException, IOException {
         return userDAO.getAllUsers();
     }
 }

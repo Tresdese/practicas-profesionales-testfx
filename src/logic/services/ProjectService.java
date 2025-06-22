@@ -4,6 +4,7 @@ import logic.DAO.ProjectDAO;
 import logic.DTO.ProjectDTO;
 import logic.exceptions.RepeatedId;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,7 +16,7 @@ public class ProjectService {
         this.projectDAO = new ProjectDAO();
     }
 
-    public boolean registerProject(ProjectDTO project) throws SQLException, RepeatedId {
+    public boolean registerProject(ProjectDTO project) throws SQLException, IOException, RepeatedId {
 
         boolean success = projectDAO.insertProject(project);
         if (!success) {
@@ -24,7 +25,7 @@ public class ProjectService {
         return success;
     }
 
-    public boolean updateProject(ProjectDTO project) throws SQLException {
+    public boolean updateProject(ProjectDTO project) throws SQLException, IOException, RepeatedId {
         boolean success = projectDAO.updateProject(project);
         if (!success) {
             throw new SQLException("No se pudo actualizar el proyecto.");
@@ -32,15 +33,15 @@ public class ProjectService {
         return success;
     }
 
-    public List<ProjectDTO> getAllProjects() throws SQLException {
+    public List<ProjectDTO> getAllProjects() throws SQLException, IOException {
         return projectDAO.getAllProjects();
     }
 
-    public ProjectDTO searchProjectById(String id) throws SQLException {
+    public ProjectDTO searchProjectById(String id) throws SQLException, IOException {
         return projectDAO.searchProjectById(id);
     }
 
-    public ProjectDTO searchProjectByName(String name) throws SQLException {
+    public ProjectDTO searchProjectByName(String name) throws SQLException, IOException {
         return projectDAO.searchProjectByName(name);
     }
 

@@ -5,6 +5,7 @@ import logic.DTO.RepresentativeDTO;
 import logic.exceptions.RepeatedEmail;
 import logic.exceptions.RepeatedId;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,7 +17,7 @@ public class RepresentativeService {
         this.representativeDAO = new RepresentativeDAO();
     }
 
-    public boolean registerRepresentative(RepresentativeDTO representative) throws SQLException, RepeatedEmail {
+    public boolean registerRepresentative(RepresentativeDTO representative) throws SQLException, IOException, RepeatedEmail {
 
         if (representativeDAO.isRepresentativeRegistered(representative.getIdRepresentative())) {
             throw new RepeatedId("La ID ya está registrada.");
@@ -34,7 +35,7 @@ public class RepresentativeService {
         return success;
     }
 
-    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException {
+    public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException, IOException, RepeatedEmail {
         boolean success = representativeDAO.updateRepresentative(representative);
         if (!success) {
             throw new SQLException("No se pudo actualizar al representante.");
@@ -43,15 +44,15 @@ public class RepresentativeService {
         return success;
     }
 
-    public List<RepresentativeDTO> getAllRepresentatives() throws SQLException {
+    public List<RepresentativeDTO> getAllRepresentatives() throws SQLException, IOException {
         return representativeDAO.getAllRepresentatives();
     }
 
-    public RepresentativeDTO searchRepresentativeById(String id) throws SQLException {
+    public RepresentativeDTO searchRepresentativeById(String id) throws SQLException, IOException {
         return representativeDAO.searchRepresentativeById(id);
     }
 
-    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException {
+    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException, IOException {
         return representativeDAO.searchRepresentativeByFullname(names, surnames);
     }
 }

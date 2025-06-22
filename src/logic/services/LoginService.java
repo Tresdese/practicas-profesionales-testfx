@@ -8,6 +8,7 @@ import logic.DTO.UserDTO;
 import logic.exceptions.InvalidCredential;
 import logic.utils.PasswordHasher;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -20,7 +21,7 @@ public class LoginService {
         this.userDAO = new UserDAO();
     }
 
-    public Object login(String username, String plainPassword) throws SQLException, InvalidCredential {
+    public Object login(String username, String plainPassword) throws SQLException, IOException,  InvalidCredential {
         String hashedPassword = PasswordHasher.hashPassword(plainPassword);
 
         StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword);

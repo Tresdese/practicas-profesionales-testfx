@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 public class GUI_DetailsPresentationStudentController {
 
@@ -39,29 +40,6 @@ public class GUI_DetailsPresentationStudentController {
                 }
                 statusLabel.setText("");
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else {
-                LOGGER.error("Error al cargar los detalles de la evaluación: {}", e.getMessage(), e);
-                statusLabel.setText("Error al cargar los detalles.");
-                statusLabel.setTextFill(Color.RED);
-            }
         } catch (Exception e) {
             LOGGER.error("Error inesperado al cargar los detalles de la evaluación: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al cargar los detalles.");
@@ -69,17 +47,88 @@ public class GUI_DetailsPresentationStudentController {
         }
     }
 
-    private List<EvaluationDetailDTO> getDetailsByEvaluation(int idEvaluation) throws SQLException {
-        EvaluationDetailDAO detailDAO = new EvaluationDetailDAO();
-        return detailDAO.getAllEvaluationDetails()
-                .stream()
-                .filter(d -> d.getIdEvaluation() == idEvaluation)
-                .collect(Collectors.toList());
+    private List<EvaluationDetailDTO> getDetailsByEvaluation(int idEvaluation) {
+        try {
+            EvaluationDetailDAO detailDAO = new EvaluationDetailDAO();
+            return detailDAO.getAllEvaluationDetails()
+                    .stream()
+                    .filter(d -> d.getIdEvaluation() == idEvaluation)
+                    .collect(Collectors.toList());
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else {
+                LOGGER.error("Error de base de datos al obtener los detalles de la evaluación: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener los detalles.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            }
+        }
+        catch (Exception e) {
+            LOGGER.error("Error inesperado al obtener los detalles de la evaluación: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener los detalles.");
+            statusLabel.setTextFill(Color.RED);
+            return Collections.emptyList();
+        }
     }
 
-    private String getCriterionName(int idCriterion) throws SQLException {
-        AssessmentCriterionDAO criterionDAO = new AssessmentCriterionDAO();
-        AssessmentCriterionDTO criterion = criterionDAO.searchAssessmentCriterionById(String.valueOf(idCriterion));
-        return criterion != null ? criterion.getNameCriterion() : "Desconocido";
+    private String getCriterionName(int idCriterion) {
+        try {
+            AssessmentCriterionDAO criterionDAO = new AssessmentCriterionDAO();
+            AssessmentCriterionDTO criterion = criterionDAO.searchAssessmentCriterionById(String.valueOf(idCriterion));
+            return criterion != null ? criterion.getNameCriterion() : "Desconocido";
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos al obtener el criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de conexión";
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida al obtener el criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return "Base de datos desconocida";
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos al obtener el criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Acceso denegado";
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos al obtener el criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Conexión interrumpida";
+            } else {
+                LOGGER.error("Error de base de datos al obtener el nombre del criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener el criterio.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error de base de datos";
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al obtener el nombre del criterio: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener el criterio.");
+            statusLabel.setTextFill(Color.RED);
+            return "Desconocido";
+        }
     }
 }

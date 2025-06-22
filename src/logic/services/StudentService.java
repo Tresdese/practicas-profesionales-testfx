@@ -6,6 +6,7 @@ import logic.exceptions.RepeatedEmail;
 import logic.exceptions.RepeatedPhone;
 import logic.exceptions.RepeatedTuition;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class StudentService {
         this.studentDAO = new StudentDAO();
     }
 
-    public void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
+    public void registerStudent(StudentDTO student) throws SQLException, IOException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
         if (studentDAO.isTuitonRegistered(student.getTuition())) {
             throw new RepeatedTuition("La matrícula ya está registrada.");
         }
@@ -35,22 +36,22 @@ public class StudentService {
         }
     }
 
-    public void updateStudent(StudentDTO student) throws SQLException {
+    public void updateStudent(StudentDTO student) throws SQLException, IOException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
         boolean success = studentDAO.updateStudent(student);
         if (!success) {
             throw new SQLException("No se pudo actualizar el estudiante.");
         }
     }
 
-    public List<StudentDTO> getAllStudents() throws SQLException {
+    public List<StudentDTO> getAllStudents() throws SQLException, IOException {
         return studentDAO.getAllStudents();
     }
 
-    public StudentDTO searchStudentByTuition(String tuition) throws SQLException {
+    public StudentDTO searchStudentByTuition(String tuition) throws SQLException, IOException {
         return studentDAO.searchStudentByTuition(tuition);
     }
 
-    public void updateStudentStatus(String tuition, int state) throws SQLException {
+    public void updateStudentStatus(String tuition, int state) throws SQLException, IOException {
         boolean success = studentDAO.updateStudentStatus(tuition, state);
         if (!success) {
             throw new SQLException("No se pudo eliminar el estudiante.");
