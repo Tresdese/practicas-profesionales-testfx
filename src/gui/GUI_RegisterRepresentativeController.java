@@ -181,7 +181,7 @@ public class GUI_RegisterRepresentativeController {
             String organizationId = selectedOrg.getIdOrganization();
 
             RepresentativeDTO representative = new RepresentativeDTO(
-                    "0", names, surname, email, organizationId, departmentId
+                    "0", names, surname, email, organizationId, departmentId, 1
             );
 
             try {

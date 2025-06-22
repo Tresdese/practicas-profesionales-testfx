@@ -20,14 +20,14 @@ public class RepresentativeDTO {
         this.status = 1;
     }
 
-    public RepresentativeDTO(String idRepresentative, String names, String surnames, String email, String idOrganization, String idDepartment) {
+    public RepresentativeDTO(String idRepresentative, String names, String surnames, String email, String idOrganization, String idDepartment, int status) {
         this.idRepresentative = idRepresentative;
         this.names = names;
         this.surnames = surnames;
         this.email = email;
         this.idOrganization = idOrganization;
         this.idDepartment = idDepartment;
-        this.status = 1;
+        this.status = status;
     }
 
     public String getIdRepresentative() { return idRepresentative; }

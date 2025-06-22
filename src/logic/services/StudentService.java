@@ -6,6 +6,7 @@ import logic.exceptions.RepeatedEmail;
 import logic.exceptions.RepeatedPhone;
 import logic.exceptions.RepeatedTuition;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class StudentService {
         }
     }
 
-    public void updateStudentStatus(String tuition, int state) throws SQLException {
+    public void updateStudentStatus(String tuition, int state) throws SQLException, IOException {
         boolean success = studentDAO.updateStudentStatus(tuition, state);
         if (!success) {
             throw new SQLException("No se pudo eliminar el estudiante.");

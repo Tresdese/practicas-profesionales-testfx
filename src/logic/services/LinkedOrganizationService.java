@@ -20,7 +20,7 @@ public class LinkedOrganizationService {
         this.organizationDAO = new LinkedOrganizationDAO();
     }
 
-    public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, RepeatedId, RepeatedName {
+    public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, IOException, RepeatedId, RepeatedName {
         if (organization == null) {
             throw new IllegalArgumentException("La organización no puede ser nula.");
         }
@@ -52,7 +52,7 @@ public class LinkedOrganizationService {
         }
     }
 
-    public void updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException {
+    public void updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException, IOException {
         if (idOrganization == null || idOrganization.isEmpty()) {
             throw new IllegalArgumentException("El ID de la organización no puede ser nulo o vacío.");
         }

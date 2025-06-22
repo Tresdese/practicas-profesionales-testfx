@@ -273,6 +273,12 @@ public class GUI_CheckListLinkedOrganizationController {
         } catch (SQLException e) {
             organizationCountsLabel.setText("Error al contar estudiantes");
             LOGGER.error("Error al contar estudiantes: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            organizationCountsLabel.setText("Error de entrada/salida al contar estudiantes");
+            LOGGER.error("Error de entrada/salida al contar estudiantes: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            organizationCountsLabel.setText("Ocurrió un error inesperado al contar estudiantes.");
+            LOGGER.error("Error inesperado al contar estudiantes: {}", e.getMessage(), e);
         }
     }
 

@@ -200,7 +200,7 @@ public class GUI_AssignProjectController {
                     })
                     .toList();
             RepresentativeDTO rep = representatives.isEmpty()
-                    ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A")
+                    ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0)
                     : representatives.get(0);
 
             AssignmentData data = new AssignmentData();

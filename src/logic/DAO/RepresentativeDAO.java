@@ -11,7 +11,7 @@ import logic.interfaces.IRepresentativeDAO;
 
 public class RepresentativeDAO implements IRepresentativeDAO {
 
-    private final static String SQL_INSERT = "INSERT INTO representante (nombres, apellidos, correo, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?)";
+    private final static String SQL_INSERT = "INSERT INTO representante (nombres, apellidos, correo, idOrganizacion, idDepartamento, estado) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ?, idDepartamento = ? WHERE idRepresentante = ?";
     private final static String SQL_UPDATE_STATUS = "UPDATE representante SET estado = ? WHERE idRepresentante = ?";
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
@@ -40,6 +40,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
             } else {
                 statement.setNull(5, Types.INTEGER);
             }
+            statement.setInt(6, representative.getStatus());
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -96,7 +97,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
 
     @Override
     public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException, IOException {
-        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0);        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, Integer.parseInt(idRepresentative));
@@ -108,7 +109,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                         resultSet.getString("apellidos"),
                         resultSet.getString("correo"),
                         resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                        resultSet.getInt("estado")
                 );
             }
         }
@@ -155,7 +157,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("correo"),
                             resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                            resultSet.getInt("estado")
                     );
                 }
             }
@@ -194,7 +197,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("correo"),
                             resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                            resultSet.getInt("estado")
                     ));
                 }
             }
@@ -216,7 +220,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("correo"),
                             resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                            resultSet.getInt("estado")
                     ));
                 }
             }
@@ -238,7 +243,8 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                         resultSet.getString("apellidos"),
                         resultSet.getString("correo"),
                         resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : ""
+                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                        resultSet.getInt("estado")
                 );
                 representatives.add(representative);
             }

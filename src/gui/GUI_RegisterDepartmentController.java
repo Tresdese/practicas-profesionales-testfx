@@ -107,7 +107,7 @@ public class GUI_RegisterDepartmentController {
     private DepartmentDTO createDepartmentDTO() {
         String name = nameField.getText().trim();
         String description = descriptionArea.getText().trim();
-        return new DepartmentDTO(0, name, description, organizationId);
+        return new DepartmentDTO(0, name, description, organizationId, 1);
     }
 
     private boolean registerDepartment(DepartmentDTO department) {

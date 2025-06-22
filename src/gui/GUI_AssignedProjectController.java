@@ -334,7 +334,7 @@ public class GUI_AssignedProjectController {
             statusLabel.setText("Error inesperado al obtener representante por departamento.");
             statusLabel.setTextFill(Color.RED);
         }
-        return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A");
+        return new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0);
     }
 
     private boolean isRepresentativeNA(RepresentativeDTO rep) {

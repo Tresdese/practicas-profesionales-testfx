@@ -50,7 +50,7 @@ public class UserService {
         return success;
     }
 
-    public UserDTO searchUserById(String id) throws SQLException {
+    public UserDTO searchUserById(String id) throws SQLException, IOException {
         return userDAO.searchUserById(id);
     }
 
