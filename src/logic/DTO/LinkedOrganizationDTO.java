@@ -4,17 +4,20 @@ public class LinkedOrganizationDTO {
     private String idOrganization;
     private String name;
     private String address;
+    private int status;
 
     public LinkedOrganizationDTO() {
         this.idOrganization = "";
         this.name = "";
         this.address = "";
+        this.status = 1;
     }
 
     public LinkedOrganizationDTO(String idOrganization, String name, String address) {
         this.idOrganization = idOrganization;
         this.name = name;
         this.address = address;
+        this.status = 1;
     }
 
     public String getIdOrganization() {
@@ -41,9 +44,13 @@ public class LinkedOrganizationDTO {
         this.address = adddress;
     }
 
+    public int getStatus() { return status; }
+
+    public void setStatus(int status) { this.status = status; }
+
     @Override
     public String toString() {
-        return name; // Solo muestra el nombre en el ComboBox
+        return name;
     }
 
     @Override

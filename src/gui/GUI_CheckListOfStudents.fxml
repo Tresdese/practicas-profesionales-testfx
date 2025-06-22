@@ -15,7 +15,7 @@
     <children>
         <BorderPane layoutX="35.0" layoutY="71.0" prefHeight="500.0" prefWidth="950.0">
             <center>
-                <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="950.0" BorderPane.alignment="CENTER">
+                <TableView fx:id="tableView" editable="true" prefHeight="500.0" prefWidth="929.0" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="tuitionColumn" prefWidth="120.0" text="Matricula" />
                         <TableColumn fx:id="namesColumn" prefWidth="150.0" text="Nombres" />
@@ -40,11 +40,12 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <HBox alignment="CENTER" layoutX="0.0" layoutY="600.0" prefWidth="1000.0" spacing="100.0">
+        <HBox alignment="CENTER" layoutX="55.0" layoutY="597.0" prefHeight="40.0" prefWidth="892.0" spacing="70.0">
             <children>
                 <Button fx:id="registerStudentButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Estudiante" textFill="WHITE" />
                 <Button fx:id="assignProjectButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Asignar Proyecto" textFill="WHITE" />
                 <Button fx:id="reassignProjectButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Reasignar Proyecto" textFill="WHITE" />
+                <Button fx:id="deleteStudentButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Eliminar Estudiante" textFill="WHITE" />
             </children>
         </HBox>
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class UserStudentViewDTO {
 
     private String tuition;
-    private boolean status;
+    private int status;
     private String studentNames;
     private String studentSurnames;
     private String phoneNumber;
@@ -22,7 +22,7 @@ public class UserStudentViewDTO {
     private String username;
     private String role;
 
-    public UserStudentViewDTO(String tuition, boolean status, String studentNames, String studentSurnames,
+    public UserStudentViewDTO(String tuition, int status, String studentNames, String studentSurnames,
                               String phoneNumber, String email, String studentUsername, Integer creditProgress,
                               BigDecimal finalGrade, int nrc, String groupName, int userId,
                               int staffNumber, String userNames, String userSurnames,
@@ -48,7 +48,7 @@ public class UserStudentViewDTO {
 
     public UserStudentViewDTO() {
         this.tuition = "";
-        this.status = false;
+        this.status = 1;
         this.studentNames = "";
         this.studentSurnames = "";
         this.phoneNumber = "";
@@ -74,11 +74,11 @@ public class UserStudentViewDTO {
         this.tuition = tuition;
     }
 
-    public boolean isStatus() {
+    public int isStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

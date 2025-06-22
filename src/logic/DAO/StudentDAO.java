@@ -15,7 +15,7 @@ public class StudentDAO implements IStudentDAO {
 
     private static final String SQL_INSERT = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE estudiante SET estado = ?, nombres = ?, apellidos = ?, telefono = ?, correo = ?, usuario = ?, contraseña = ?, NRC = ?, avanceCrediticio = ?, calificacionFinal = ? WHERE matricula = ?";
-    private static final String SQL_UPDATE_STATE = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE estudiante SET estado = ? WHERE matricula = ?";
     private static final String SQL_DELETE = "DELETE FROM estudiante WHERE matricula = ?";
     private static final String SQL_SELECT = "SELECT * FROM estudiante WHERE matricula = ?";
     private static final String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM estudiante WHERE usuario = ? AND contraseña = ?";
@@ -62,10 +62,10 @@ public class StudentDAO implements IStudentDAO {
         }
     }
 
-    public boolean updateStudentState(String tuiton, int state) throws SQLException {
+    public boolean updateStudentStatus(String tuiton, int state) throws SQLException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
-             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATE)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
             statement.setInt(1, state);
             statement.setString(2, tuiton);
             return statement.executeUpdate() > 0;
