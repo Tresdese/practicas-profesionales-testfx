@@ -5,6 +5,7 @@ import logic.DTO.ProjectPresentationDTO;
 import logic.DTO.Tipe;
 import logic.interfaces.IProjectPresentationDAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM presentacion_proyecto";
     private static final String SQL_SELECT_UPCOMING = "SELECT * FROM presentacion_proyecto WHERE fecha > NOW() ORDER BY fecha ASC";
 
-    public boolean insertProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException {
+    public boolean insertProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -34,7 +35,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         }
     }
 
-    public boolean updateProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException {
+    public boolean updateProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -46,7 +47,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         }
     }
 
-    public boolean deleteProjectPresentation(int idPresentation) throws SQLException {
+    public boolean deleteProjectPresentation(int idPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -55,7 +56,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         }
     }
 
-    public ProjectPresentationDTO searchProjectPresentationById(int idPresentation) throws SQLException {
+    public ProjectPresentationDTO searchProjectPresentationById(int idPresentation) throws SQLException, IOException {
         ProjectPresentationDTO projectPresentation = new ProjectPresentationDTO(-1, "N/A", null, null);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -75,7 +76,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         return projectPresentation;
     }
 
-    public List<ProjectPresentationDTO> searchProjectPresentationsByProjectId(String idProject) throws SQLException {
+    public List<ProjectPresentationDTO> searchProjectPresentationsByProjectId(String idProject) throws SQLException, IOException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -95,7 +96,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         return presentations;
     }
 
-    public List<ProjectPresentationDTO> getAllProjectPresentations() throws SQLException {
+    public List<ProjectPresentationDTO> getAllProjectPresentations() throws SQLException, IOException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -113,7 +114,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         return presentations;
     }
 
-    public List<ProjectPresentationDTO> getUpcomingPresentations() throws SQLException {
+    public List<ProjectPresentationDTO> getUpcomingPresentations() throws SQLException, IOException {
         List<ProjectPresentationDTO> upcomingPresentations = new ArrayList<>();
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();

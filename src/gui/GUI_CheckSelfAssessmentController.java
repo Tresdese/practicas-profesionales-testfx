@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.paint.Color;
 import logic.DAO.CriterionSelfAssessmentDAO;
 import logic.DAO.EvidenceDAO;
 import logic.DAO.SelfAssessmentCriteriaDAO;
@@ -19,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Collections;
 
 public class GUI_CheckSelfAssessmentController {
 
@@ -54,24 +56,6 @@ public class GUI_CheckSelfAssessmentController {
                 noSelfAssessmentLabel.setVisible(true);
                 viewEvidenceButton.setDisable(true);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-                clearInterface("Error de conexion con la base de datos", "Error de conexion con la base de datos", "Error de conexion con la base de datos");
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-                clearInterface("Error de Base de datos desconocida", "Error de Base de datos desconocida", "Error de Base de datos desconocida");
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-                clearInterface("Error de Acceso denegado", "Error de Acceso denegado", "Error de Acceso denegado");
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-                clearInterface("Error de Conexión interrumpida", "Error de Conexión interrumpida", "Error de Conexión interrumpida");
-            } else {
-                LOGGER.error("Error al obtener la autoevaluación: {}", e.getMessage(), e);
-                clearInterface("Error de obtener la autoevaluacion de la base de datos", "Error de obtener la autoevalaucion de la base de datos", "Error de obtener la autoevaluacion de la base de datos");
-            }
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al obtener la autoevaluación: {}", e.getMessage(), e);
             clearInterface("Error de referendia nula", "Error de referencia nula", "Error de referencia nula");
@@ -81,21 +65,101 @@ public class GUI_CheckSelfAssessmentController {
         }
     }
 
-    private SelfAssessmentDTO getSelfAssessmentByTuition(String tuition) throws SQLException {
-        SelfAssessmentDAO dao = new SelfAssessmentDAO();
-        return dao.getAllSelfAssessments()
-                .stream()
-                .filter(sa -> sa.getRegistration().equalsIgnoreCase(tuition))
-                .findFirst()
-                .orElse(null);
+    private SelfAssessmentDTO getSelfAssessmentByTuition(String tuition) {
+        try {
+            SelfAssessmentDAO dao = new SelfAssessmentDAO();
+            return dao.getAllSelfAssessments()
+                    .stream()
+                    .filter(sa -> sa.getRegistration().equalsIgnoreCase(tuition))
+                    .findFirst()
+                    .orElse(null);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return null;
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return null;
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return null;
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return null;
+            } else {
+                LOGGER.error("Error de base de datos al buscar la autoevaluación por matrícula: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al buscar la autoevaluación.");
+                statusLabel.setTextFill(Color.RED);
+                return null;
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al buscar la autoevaluación por matrícula: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al buscar la autoevaluación.");
+            statusLabel.setTextFill(Color.RED);
+            return null;
+        }
     }
 
-    private List<CriterionSelfAssessmentDTO> getCriteriaBySelfAssessmentId(int selfAssessmentId) throws SQLException {
-        CriterionSelfAssessmentDAO criterionDAO = new CriterionSelfAssessmentDAO();
-        return criterionDAO.getAllCriterionSelfAssessments()
-                .stream()
-                .filter(c -> c.getIdSelfAssessment() == selfAssessmentId)
-                .toList();
+    private List<CriterionSelfAssessmentDTO> getCriteriaBySelfAssessmentId(int selfAssessmentId) {
+        try {
+            CriterionSelfAssessmentDAO criterionDAO = new CriterionSelfAssessmentDAO();
+            return criterionDAO.getAllCriterionSelfAssessments()
+                    .stream()
+                    .filter(c -> c.getIdSelfAssessment() == selfAssessmentId)
+                    .toList();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            } else {
+                LOGGER.error("Error de base de datos al obtener los criterios de autoevaluación: {}", e.getMessage(), e);
+                statusLabel.setText("Error de base de datos al obtener los criterios.");
+                statusLabel.setTextFill(Color.RED);
+                return Collections.emptyList();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return java.util.Collections.emptyList();
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al obtener los criterios de autoevaluación: {}", e.getMessage(), e);
+            statusLabel.setText("Error inesperado al obtener los criterios.");
+            statusLabel.setTextFill(Color.RED);
+            return java.util.Collections.emptyList();
+        }
     }
 
     private void updateSelfAssessmentLabels(SelfAssessmentDTO selfAssessment) {
@@ -114,7 +178,36 @@ public class GUI_CheckSelfAssessmentController {
                 var dto = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById(idCriterio);
                 nombreCriterio = dto.getNameCriteria();
             } catch (SQLException e) {
-                LOGGER.error("Error al obtener el nombre del criterio: {}", e.getMessage(), e);
+                String sqlState = e.getSQLState();
+                if (sqlState != null && sqlState.equals("08001")) {
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if (sqlState != null && sqlState.equals("42000")) {
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if (sqlState != null && sqlState.equals("28000")) {
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if (sqlState != null && sqlState.equals("08S01")) {
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else {
+                    LOGGER.error("Error de base de datos al obtener el nombre del criterio: {}", e.getMessage(), e);
+                    statusLabel.setText("Error de base de datos al obtener el criterio.");
+                    statusLabel.setTextFill(Color.RED);
+                }
+            } catch (IOException e) {
+                LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al leer la configuración de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } catch (Exception e) {
+                LOGGER.error("Error inesperado al obtener el nombre del criterio: {}", e.getMessage(), e);
+                statusLabel.setText("Error inesperado al obtener el criterio.");
+                statusLabel.setTextFill(Color.RED);
             }
             criteriaListView.getItems().add(
                     "Criterio: " + nombreCriterio +

@@ -20,7 +20,7 @@ public class ConnectionDataBase implements AutoCloseable {
 
     private static final Logger logger = LogManager.getLogger(TestApp.class);
 
-    public ConnectionDataBase() {
+    public ConnectionDataBase() throws IOException {
         Properties properties = new Properties();
         try (FileInputStream input = new FileInputStream("out/resources/config.properties")) {
             properties.load(input);
@@ -28,7 +28,8 @@ public class ConnectionDataBase implements AutoCloseable {
             this.USER = properties.getProperty("db.user");
             this.PASSWORD = properties.getProperty("db.password");
         } catch (IOException e) {
-            logger.error("Error al leer el archivo: " + e.getMessage());
+            logger.error("Error al leer el archivo de propiedades: " + e.getMessage(), e);
+            throw e;
         }
     }
 
@@ -37,7 +38,7 @@ public class ConnectionDataBase implements AutoCloseable {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             logger.info("Conexión exitosa a la base de datos.");
         } catch (SQLException e) {
-            logger.error("Error al conectar a la base de datos: " + e.getMessage());
+            logger.error("Error al conectar a la base de datos: " + e.getMessage(), e);
             throw e;
         }
         return connection;

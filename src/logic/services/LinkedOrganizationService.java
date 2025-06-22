@@ -5,6 +5,7 @@ import logic.DAO.LinkedOrganizationDAO;
 import logic.exceptions.RepeatedId;
 import logic.exceptions.RepeatedName;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -40,7 +41,7 @@ public class LinkedOrganizationService {
         return success;
     }
 
-    public void updateOrganization(LinkedOrganizationDTO organization) throws SQLException {
+    public void updateOrganization(LinkedOrganizationDTO organization) throws SQLException, IOException, RepeatedId, RepeatedName {
         if (organization == null) {
             throw new IllegalArgumentException("La organización no puede ser nula.");
         }
@@ -62,11 +63,11 @@ public class LinkedOrganizationService {
         }
     }
 
-    public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException {
+    public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException, IOException {
         return organizationDAO.getAllLinkedOrganizations();
     }
 
-    public LinkedOrganizationDTO searchLinkedOrganizationById(String id) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationById(String id) throws SQLException, IOException {
         if (id == null || id.isEmpty()) {
             throw new IllegalArgumentException("El ID no puede ser nulo o vacío.");
         }
@@ -74,7 +75,7 @@ public class LinkedOrganizationService {
         return organizationDAO.searchLinkedOrganizationById(id);
     }
 
-    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException {
+    public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException, IOException {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
         }

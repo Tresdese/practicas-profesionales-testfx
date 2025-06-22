@@ -22,19 +22,19 @@ public class DepartmentDAO implements IDeparmentDAO {
     private static final String SQL_SELECT_BY_ORGANIZATION_ID = "SELECT * FROM departamento WHERE idOrganizacion = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM departamento";
 
-    public boolean insertDepartment(DepartmentDTO department) throws SQLException {
+    public boolean insertDepartment(DepartmentDTO department) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, department.getName());
             statement.setString(2, department.getDescription());
             statement.setInt(3, department.getOrganizationId());
-            statement.setInt(4, department.getStatus());
+
             return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean updateDepartment(DepartmentDTO department) throws SQLException {
+    public boolean updateDepartment(DepartmentDTO department) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -46,7 +46,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         }
     }
 
-    public boolean updateDepartmentStatus(int departmentId, int status) throws SQLException {
+    public boolean updateDepartmentStatus(int departmentId, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
@@ -56,7 +56,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         }
     }
 
-    public boolean deleteDepartment(int departmentId) throws SQLException {
+    public boolean deleteDepartment(int departmentId) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -65,7 +65,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         }
     }
 
-    public DepartmentDTO searchDepartmentById(int departmentId) throws SQLException {
+    public DepartmentDTO searchDepartmentById(int departmentId) throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(-1, "N/A", "N/A", -1, 0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -86,8 +86,8 @@ public class DepartmentDAO implements IDeparmentDAO {
         return department;
     }
 
-    public int getOrganizationIdByDepartmentId(int departmentId) throws SQLException {
-        int organizationId = -1; // Default value if not found
+    public int getOrganizationIdByDepartmentId(int departmentId) throws SQLException, IOException {
+        int organizationId = -1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORGANIZATION_ID_BY_DEPARTMENT_ID)) {
@@ -101,7 +101,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         return organizationId;
     }
 
-    public List<DepartmentDTO> getAllDepartmentsByOrganizationId(int organizationId) throws SQLException {
+    public List<DepartmentDTO> getAllDepartmentsByOrganizationId(int organizationId) throws SQLException, IOException {
         List<DepartmentDTO> departments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -122,7 +122,7 @@ public class DepartmentDAO implements IDeparmentDAO {
         return departments;
     }
 
-    public List<DepartmentDTO> getAllDepartments() throws SQLException {
+    public List<DepartmentDTO> getAllDepartments() throws SQLException, IOException {
         List<DepartmentDTO> departments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

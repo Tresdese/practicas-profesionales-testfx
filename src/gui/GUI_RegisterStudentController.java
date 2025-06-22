@@ -153,29 +153,6 @@ public class GUI_RegisterStudentController {
             }
         } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
             statusLabel.setText(e.getMessage());
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if ("42000" .equals(sqlState)) {
-                statusLabel.setText("Base de datos no encontrada.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else if ("23000".equals(sqlState)) {
-                statusLabel.setText("Violación de restricción de integridad.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
-            }
         } catch (Exception e) {
             LOGGER.error("Error inesperado: {}", e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
@@ -221,9 +198,43 @@ public class GUI_RegisterStudentController {
         return studentDTO;
     }
 
-    private void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
-        StudentService studentService = new StudentService();
-        studentService.registerStudent(student);
+    private void registerStudent(StudentDTO student) {
+        try {
+            StudentService studentService = new StudentService();
+            studentService.registerStudent(student);
+        } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
+            LOGGER.error("Error de datos repetidos: {}", e.getMessage(), e);
+            statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+        } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42000" .equals(sqlState)) {
+                    statusLabel.setText("Base de datos no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else if ("23000".equals(sqlState)) {
+                    statusLabel.setText("Violación de restricción de integridad.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                }
+
+            } catch (Exception e) {
+            LOGGER.error("Error inesperado: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado.");
+            statusLabel.setTextFill(Color.RED);
+        }
     }
 
     private void loadNRCs() {

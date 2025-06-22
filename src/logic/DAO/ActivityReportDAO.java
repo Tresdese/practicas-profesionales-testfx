@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +20,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
     private final static String SQL_SELECT = "SELECT * FROM reporte_actividad WHERE numReporte = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM reporte_actividad";
 
-    public boolean insertActivityReport(ActivityReportDTO activityReport) throws SQLException {
+    public boolean insertActivityReport(ActivityReportDTO activityReport) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -31,7 +32,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
         }
     }
 
-    public boolean updateActivityReport(ActivityReportDTO activityReport) throws SQLException {
+    public boolean updateActivityReport(ActivityReportDTO activityReport) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -43,7 +44,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
         }
     }
 
-    public boolean deleteActivityReport(String reportNumber) throws SQLException {
+    public boolean deleteActivityReport(String reportNumber) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -52,7 +53,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
         }
     }
 
-    public ActivityReportDTO searchActivityReportByReportNumber(String reportNumber) throws SQLException {
+    public ActivityReportDTO searchActivityReportByReportNumber(String reportNumber) throws SQLException, IOException {
         ActivityReportDTO activityReport = new ActivityReportDTO("N/A", "N/A", 0, "");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -72,7 +73,7 @@ public class ActivityReportDAO implements IActivityReportDAO {
         return activityReport;
     }
 
-    public List<ActivityReportDTO> getAllActivityReports() throws SQLException {
+    public List<ActivityReportDTO> getAllActivityReports() throws SQLException, IOException {
         List<ActivityReportDTO> activityReports = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

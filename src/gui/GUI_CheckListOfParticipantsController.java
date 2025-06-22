@@ -80,19 +80,36 @@ public class GUI_CheckListOfParticipantsController {
                 logger.info("Datos cargados exitosamente en la tabla.");
             }
         } catch (SQLException e) {
-            if (e.getMessage().contains("The driver has not received any packets from the server")){
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
                 logger.error("Error de conexión con la base de datos: " + e.getMessage(), e);
-                showAlert("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
-                participantCountsLabel.setText("Error de conexión con la base de datos");
-            } else if (e.getMessage().contains("Unknown database")) {
+                showAlert("Error de conexión con la base de datos.");
+                participantCountsLabel.setText("Error de conexión");
+            } else if ("08S01".equals(sqlState)) {
+                logger.error("Error de interrupcion de conexión con la base de datos: " + e.getMessage(), e);
+                showAlert("Error de interrupcion de conexión con la base de datos.");
+                participantCountsLabel.setText("Error de conexión");
+            } else if ("42000".equals(sqlState)) {
                 logger.error("Base de datos desconocida: " + e.getMessage(), e);
-                showAlert("La base de datos no esta disponible.");
-                participantCountsLabel.setText("Base de datos no disponible");
+                showAlert("Base de datos desconocida. Por favor, verifica la configuración.");
+                participantCountsLabel.setText("Base de datos desconocida");
+            } else if ("28000".equals(sqlState)) {
+                logger.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
+                showAlert("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
+                participantCountsLabel.setText("Acceso denegado");
             } else {
-                logger.error("Error al cargar los datos de la presentación: " + e.getMessage(), e);
-                showAlert("Error al cargar los datos de la presentación. Por favor, intenta nuevamente.");
+                logger.error("Error de base de datos al cargar los datos de la presentación: " + e.getMessage(), e);
+                showAlert("Error de base de datos al cargar los datos de la presentación. Por favor, intenta nuevamente.");
                 participantCountsLabel.setText("Error al cargar los datos");
             }
+        } catch (IOException e) {
+            logger.error("Error al leer la configuracion de la base de datos: " + e.getMessage(), e);
+            showAlert("Error al leer la configuracion de la base de datos.");
+            participantCountsLabel.setText("Error al leer la configuracion de la base de datos.");
+        } catch (Exception e) {
+            logger.error("Error inesperado al cargar los datos de la presentación: " + e.getMessage(), e);
+            showAlert("Error inesperado al cargar los datos de la presentación.");
+            participantCountsLabel.setText("Error inesperado");
         }
     }
 

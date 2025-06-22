@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +19,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
     private final static String SQL_SELECT = "SELECT * FROM cronograma_actividad WHERE idCronograma = ? AND idActividad = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM cronograma_actividad";
 
-    public boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException {
+    public boolean insertActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
@@ -28,7 +29,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         }
     }
 
-    public boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule) throws SQLException {
+    public boolean updateActivitySchedule(ActivityScheduleDTO oldActivitySchedule, ActivityScheduleDTO newActivitySchedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -40,7 +41,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         }
     }
 
-    public boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException {
+    public boolean deleteActivitySchedule(ActivityScheduleDTO activitySchedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -50,7 +51,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         }
     }
 
-    public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule) throws SQLException {
+    public ActivityScheduleDTO searchActivityScheduleByIdScheduleAndIdActivity(ActivityScheduleDTO activitySchedule) throws SQLException, IOException {
         ActivityScheduleDTO activityScheduleDTO = new ActivityScheduleDTO(-1, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -66,7 +67,7 @@ public class ActivityScheduleDAO implements IActivityScheduleDAO {
         return activityScheduleDTO;
     }
 
-    public List<ActivityScheduleDTO> getAllActivitySchedules() throws SQLException {
+    public List<ActivityScheduleDTO> getAllActivitySchedules() throws SQLException, IOException {
         List<ActivityScheduleDTO> activitySchedules = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();

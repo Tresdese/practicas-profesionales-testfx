@@ -162,8 +162,36 @@ public class GUI_CheckScheduleActivityListController {
             scheduleList.addAll(schedules);
             statusLabel.setText("");
         } catch (SQLException e) {
-            statusLabel.setText("Error al cargar los cronogramas.");
-            LOGGER.error("Error al cargar los cronogramas: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al cargar los cronogramas.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de base de datos al cargar los cronogramas: {}", e.getMessage(), e);
+            }
+        } catch (IOException e) {
+            statusLabel.setText("Error de entrada/salida al cargar los datos del cronograma.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error de entrada/salida al cargar los datos del cronograma: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al cargar los cronogramas.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al cargar los cronogramas: {}", e.getMessage(), e);
         }
         tableView.setItems(scheduleList);
         updateScheduleCounts(scheduleList);

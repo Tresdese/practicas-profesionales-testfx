@@ -4,6 +4,7 @@ import data_access.ConnectionDataBase;
 import logic.DTO.ProjectRequestDTO;
 import logic.interfaces.IProjectRequestDAO;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     private static final String SQL_SELECT_BY_STATE = "SELECT * FROM solicitud_proyecto WHERE estado=?";
 
     @Override
-    public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException {
+    public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException, IOException {
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
@@ -46,7 +47,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     }
 
     @Override
-    public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException {
+    public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException, IOException {
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
@@ -72,7 +73,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         }
     }
 
-    public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException {
+    public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException, IOException {
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_STATUS)) {
@@ -83,7 +84,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     }
 
     @Override
-    public boolean deleteProjectRequest(int requestId) throws SQLException {
+    public boolean deleteProjectRequest(int requestId) throws SQLException, IOException {
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
              PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
@@ -93,7 +94,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
     }
 
     @Override
-    public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException {
+    public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(-1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0, "N/A", 0, 0, null, null);
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
@@ -108,7 +109,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         return request;
     }
 
-    public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException {
+    public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
@@ -121,7 +122,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         return requests;
     }
 
-    public List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException {
+    public List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();
@@ -160,7 +161,7 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
         );
     }
 
-    public List<ProjectRequestDTO> getProjectRequestsByStatus(String status) throws SQLException {
+    public List<ProjectRequestDTO> getProjectRequestsByStatus(String status) throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
         try (ConnectionDataBase db = new ConnectionDataBase();
              Connection conn = db.connectDB();

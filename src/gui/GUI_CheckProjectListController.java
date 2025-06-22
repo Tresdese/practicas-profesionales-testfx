@@ -103,9 +103,9 @@ public class GUI_CheckProjectListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al inicializar el servicio de proyectos.");
+                statusLabel.setText("Error de base de datos al inicializar el servicio de proyectos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al inicializar el servicio de proyectos: {}", e.getMessage(), e);
+                LOGGER.error("Error de base de datos al inicializar el servicio de proyectos: {}", e.getMessage(), e);
             }
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar el servicio de proyectos.");
@@ -332,6 +332,15 @@ public class GUI_CheckProjectListController {
     public void loadProjectData() {
         ObservableList<ProjectDTO> projectList = FXCollections.observableArrayList();
 
+        if (projectService == null) {
+            statusLabel.setText("No se pudo inicializar el servicio de proyectos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("El servicio de proyectos no está disponible (projectService es null).");
+            tableView.setItems(projectList);
+            updateProjectCounts(projectList);
+            return;
+        }
+
         try {
             List<ProjectDTO> projects = projectService.getAllProjects();
             projectList.addAll(projects);
@@ -355,9 +364,9 @@ public class GUI_CheckProjectListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al cargar los proyectos.");
+                statusLabel.setText("Error de base de datos al cargar los proyectos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al cargar los proyectos: {}", e.getMessage(), e);
+                LOGGER.error("Error de base de datos al cargar los proyectos: {}", e.getMessage(), e);
             }
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los proyectos.");
@@ -377,6 +386,15 @@ public class GUI_CheckProjectListController {
         }
 
         ObservableList<ProjectDTO> filteredList = FXCollections.observableArrayList();
+
+        if (projectService == null) {
+            statusLabel.setText("No se pudo inicializar el servicio de proyectos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("El servicio de proyectos no está disponible (projectService es null).");
+            tableView.setItems(filteredList);
+            updateProjectCounts(filteredList);
+            return;
+        }
 
         try {
             ProjectDTO projectById = projectService.searchProjectById(searchQuery);

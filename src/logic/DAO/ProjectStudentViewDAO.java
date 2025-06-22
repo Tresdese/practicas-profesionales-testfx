@@ -5,6 +5,7 @@ import logic.DTO.ProjectStudentViewDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.ProjectDTO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public class ProjectStudentViewDAO {
     private static final String SQL_SELECT_PROJECT_BY_TUITION = "SELECT idProyecto, nombreProyecto, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion, idDepartamento FROM vista_proyecto_estudiante WHERE matricula = ?";
     private static final String SQL_SELECT_STUDENT_BY_TUITION = "SELECT matricula, nombres, apellidos, telefono, correo, usuario FROM vista_proyecto_estudiante WHERE matricula = ?";
 
-    public ProjectDTO getProjectByTuition(String tuition) throws SQLException {
+    public ProjectDTO getProjectByTuition(String tuition) throws SQLException, IOException {
         if (tuition == null || tuition.isEmpty()) {
             return new ProjectDTO();
         }

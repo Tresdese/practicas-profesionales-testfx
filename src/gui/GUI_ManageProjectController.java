@@ -197,6 +197,12 @@ public class GUI_ManageProjectController {
     }
 
     private void loadAcademics() {
+        if (userService == null) {
+            statusLabel.setText("No se pudo cargar la información del académico porque el servicio de usuarios no está disponible. Verifique la conexión a la base de datos o reinicie la aplicación.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("El servicio de usuarios no está disponible (userService es null).");
+            return;
+        }
         try {
             List<UserDTO> academics = userService.getAllUsers();
             List<String> academicNames = academics.stream()
@@ -259,6 +265,13 @@ public class GUI_ManageProjectController {
         if (project.getApproximateDate() != null) {
             LocalDate endDate = project.getApproximateDate().toLocalDateTime().toLocalDate();
             endDatePicker.setValue(endDate);
+        }
+
+        if (userService == null) {
+            statusLabel.setText("No se pudo cargar la información del académico porque el servicio de usuarios no está disponible. Verifique la conexión a la base de datos o reinicie la aplicación.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("El servicio de usuarios no está disponible (userService es null).");
+            return;
         }
 
         try {

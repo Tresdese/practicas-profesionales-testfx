@@ -16,7 +16,7 @@ public class StudentService {
         this.studentDAO = new StudentDAO();
     }
 
-    public void registerStudent(StudentDTO student) throws SQLException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
+    public void registerStudent(StudentDTO student) throws SQLException, IOException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
         if (studentDAO.isTuitonRegistered(student.getTuition())) {
             throw new RepeatedTuition("La matrícula ya está registrada.");
         }
@@ -35,7 +35,7 @@ public class StudentService {
         }
     }
 
-    public void updateStudent(StudentDTO student) throws SQLException {
+    public void updateStudent(StudentDTO student) throws SQLException, IOException, RepeatedTuition, RepeatedPhone, RepeatedEmail {
         boolean success = studentDAO.updateStudent(student);
         if (!success) {
             throw new SQLException("No se pudo actualizar el estudiante.");
@@ -49,11 +49,11 @@ public class StudentService {
         }
     }
 
-    public List<StudentDTO> getAllStudents() throws SQLException {
+    public List<StudentDTO> getAllStudents() throws SQLException, IOException {
         return studentDAO.getAllStudents();
     }
 
-    public StudentDTO searchStudentByTuition(String tuition) throws SQLException {
+    public StudentDTO searchStudentByTuition(String tuition) throws SQLException, IOException {
         return studentDAO.searchStudentByTuition(tuition);
     }
 }

@@ -2,6 +2,8 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.UserStudentViewDTO;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ public class UserStudentViewDAO {
     private static final String SQL_SELECT_ALL = "SELECT * FROM vista_estudiante_usuario";
     private static final String SQL_SELECT_BY_MATRICULA = "SELECT * FROM vista_estudiante_usuario WHERE matricula = ?";
 
-    public UserStudentViewDTO getUserStudentViewByMatricula(String matricula) throws SQLException {
+    public UserStudentViewDTO getUserStudentViewByMatricula(String matricula) throws SQLException, IOException {
         UserStudentViewDTO userStudentView = null;
         logger.info("Ejecutando consulta para obtener registro de vista_estudiante_usuario con matricula: " + matricula);
 
@@ -61,7 +63,7 @@ public class UserStudentViewDAO {
         return userStudentView;
     }
 
-    public List<UserStudentViewDTO> getAllUserStudentViews() throws SQLException {
+    public List<UserStudentViewDTO> getAllUserStudentViews() throws SQLException, IOException {
         List<UserStudentViewDTO> userStudentViews = new ArrayList<>();
         logger.info("Ejecutando consulta para obtener todos los registros de vista_estudiante_usuario");
 

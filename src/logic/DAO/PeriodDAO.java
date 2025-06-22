@@ -1,5 +1,6 @@
 package logic.DAO;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,10 +20,10 @@ public class PeriodDAO implements IPeriodDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
 
     @Override
-    public boolean insertPeriod(PeriodDTO period) throws SQLException {
+    public boolean insertPeriod(PeriodDTO period) throws SQLException, IOException {
         PeriodDTO existingPeriod = searchPeriodById(period.getIdPeriod());
         if (existingPeriod != null && !"N/A".equals(existingPeriod.getIdPeriod())) {
-            return false; // Ya existe, no insertar
+            return false;
         }
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -36,7 +37,7 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public boolean updatePeriod(PeriodDTO period) throws SQLException {
+    public boolean updatePeriod(PeriodDTO period) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
@@ -49,7 +50,7 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public boolean deletePeriodById(String idPeriod) throws SQLException {
+    public boolean deletePeriodById(String idPeriod) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
@@ -59,7 +60,7 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public PeriodDTO searchPeriodById(String idPeriod) throws SQLException {
+    public PeriodDTO searchPeriodById(String idPeriod) throws SQLException, IOException {
         PeriodDTO period = new PeriodDTO("N/A", "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), java.sql.Timestamp.valueOf("0404-01-01 00:00:00"));
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
@@ -75,7 +76,7 @@ public class PeriodDAO implements IPeriodDAO {
     }
 
     @Override
-    public List<PeriodDTO> getAllPeriods() throws SQLException {
+    public List<PeriodDTO> getAllPeriods() throws SQLException, IOException {
         List<PeriodDTO> periods = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
