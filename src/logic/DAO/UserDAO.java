@@ -16,6 +16,7 @@ public class UserDAO implements IUserDAO {
 
     private static final String SQL_INSERT = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE usuario SET estado = ? WHERE idUsuario = ?";
     private static final String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM usuario WHERE idUsuario = ?";
     private static final String SQL_SELECT_BY_USERNAME = "SELECT * FROM usuario WHERE nombreUsuario = ?";
@@ -48,6 +49,16 @@ public class UserDAO implements IUserDAO {
             statement.setString(5, user.getPassword());
             statement.setString(6, user.getRole().toString());
             statement.setString(7, user.getIdUser());
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateUserStatus(String idUser, int status) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
+            Connection connection = connectionDataBase.connectDB();
+            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS);
+            statement.setInt(1, status);
+            statement.setString(2, idUser);
             return statement.executeUpdate() > 0;
         }
     }

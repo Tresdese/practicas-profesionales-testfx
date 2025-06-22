@@ -5,12 +5,14 @@ public class DepartmentDTO {
     private String name;
     private String description;
     private int organizationId;
+    private int status;
 
     public DepartmentDTO() {
         this.departmentId = 0;
         this.name = "";
         this.description = "";
         this.organizationId = 0;
+        this.status = 1;
     }
 
     public DepartmentDTO(int departmentId, String name, String description, int organizationId) {
@@ -18,6 +20,7 @@ public class DepartmentDTO {
         this.name = name;
         this.description = description;
         this.organizationId = organizationId;
+        this.status = 1;
     }
 
     public int getDepartmentId() {
@@ -50,6 +53,14 @@ public class DepartmentDTO {
 
     public void setOrganizationId(int organizationId) {
         this.organizationId = organizationId;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     @Override

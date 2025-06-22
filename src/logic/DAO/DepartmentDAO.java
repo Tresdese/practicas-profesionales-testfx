@@ -15,6 +15,7 @@ public class DepartmentDAO implements IDeparmentDAO {
 
     private static final String SQL_INSERT = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE departamento SET nombre = ?, descripcion = ?, idOrganizacion = ? WHERE idDepartamento = ?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE departamento SET estado = ? WHERE idDepartamento = ?";
     private static final String SQL_DELETE = "DELETE FROM departamento WHERE idDepartamento = ?";
     private static final String SQL_SELECT = "SELECT * FROM departamento WHERE idDepartamento = ?";
     private static final String SQL_SELECT_ORGANIZACION_ID_BY_DEPARTMENT_ID = "SELECT idOrganizacion FROM departamento WHERE idDepartamento = ?";
@@ -40,6 +41,16 @@ public class DepartmentDAO implements IDeparmentDAO {
             statement.setString(2, department.getDescription());
             statement.setInt(3, department.getOrganizationId());
             statement.setInt(4, department.getDepartmentId());
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateDepartmentStatus(int departmentId, int status) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
+            statement.setInt(1, status);
+            statement.setInt(2, departmentId);
             return statement.executeUpdate() > 0;
         }
     }

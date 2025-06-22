@@ -15,6 +15,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     private static final String SQL_INSERT = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
     private static final String SQL_UPDATE = "UPDATE organizacion_vinculada SET nombre = ?, direccion = ? WHERE idOrganizacion = ?";
+    private static final String SQL_UPDATE_STATUS = "UPDATE organizacion_vinculada SET estado = ? WHERE idOrganizacion = ?";
     private static final String SQL_DELETE = "DELETE FROM organizacion_vinculada WHERE idOrganizacion = ?";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM organizacion_vinculada WHERE idOrganizacion = ?";
     private static final String SQL_SELECT_BY_NAME = "SELECT * FROM organizacion_vinculada WHERE nombre = ?";
@@ -47,6 +48,16 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
             statement.setString(3, organization.getIdOrganization());
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
+            statement.setInt(1, status);
+            statement.setString(2, idOrganization);
             return statement.executeUpdate() > 0;
         }
     }

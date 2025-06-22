@@ -12,6 +12,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
 
     private final static String SQL_INSERT = "INSERT INTO representante (nombres, apellidos, correo, idOrganizacion, idDepartamento) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_UPDATE = "UPDATE representante SET nombres = ?, apellidos = ?, correo = ?, idOrganizacion = ?, idDepartamento = ? WHERE idRepresentante = ?";
+    private final static String SQL_UPDATE_STATUS = "UPDATE representante SET estado = ? WHERE idRepresentante = ?";
     private final static String SQL_DELETE = "DELETE FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_BY_ID = "SELECT * FROM representante WHERE idRepresentante = ?";
     private final static String SQL_SELECT_BY_FULLNAME = "SELECT * FROM representante WHERE nombres = ? AND apellidos = ?";
@@ -69,6 +70,16 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                 statement.setNull(5, Types.INTEGER);
             }
             statement.setInt(6, Integer.parseInt(representative.getIdRepresentative()));
+            return statement.executeUpdate() > 0;
+        }
+    }
+
+    public boolean updateRepresentativeStatus(String idRepresentative, int status) throws SQLException {
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
+            statement.setInt(1, status);
+            statement.setInt(2, Integer.parseInt(idRepresentative));
             return statement.executeUpdate() > 0;
         }
     }

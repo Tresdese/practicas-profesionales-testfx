@@ -29,7 +29,7 @@ public class UserStudentViewDAO {
             if (resultSet.next()) {
                 userStudentView = new UserStudentViewDTO(
                         resultSet.getString("matricula"),
-                        resultSet.getBoolean("estado"),
+                        resultSet.getInt("estado"),
                         resultSet.getString("nombres_estudiante"),
                         resultSet.getString("apellidos_estudiante"),
                         resultSet.getString("telefono"),
@@ -73,7 +73,7 @@ public class UserStudentViewDAO {
             while (resultSet.next()) {
                 UserStudentViewDTO dto = new UserStudentViewDTO(
                         resultSet.getString("matricula"),
-                        resultSet.getBoolean("estado"),
+                        resultSet.getInt("estado"),
                         resultSet.getString("nombres_estudiante"),
                         resultSet.getString("apellidos_estudiante"),
                         resultSet.getString("telefono"),

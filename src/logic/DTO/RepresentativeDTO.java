@@ -8,6 +8,7 @@ public class RepresentativeDTO {
     private String email;
     private String idOrganization;
     private String idDepartment;
+    private int status;
 
     public RepresentativeDTO() {
         this.idRepresentative = "";
@@ -16,6 +17,7 @@ public class RepresentativeDTO {
         this.email = "";
         this.idOrganization = "";
         this.idDepartment = "";
+        this.status = 1;
     }
 
     public RepresentativeDTO(String idRepresentative, String names, String surnames, String email, String idOrganization, String idDepartment) {
@@ -25,25 +27,36 @@ public class RepresentativeDTO {
         this.email = email;
         this.idOrganization = idOrganization;
         this.idDepartment = idDepartment;
+        this.status = 1;
     }
 
     public String getIdRepresentative() { return idRepresentative; }
+
     public void setIdRepresentative(String idRepresentative) { this.idRepresentative = idRepresentative; }
 
     public String getNames() { return names; }
+
     public void setNames(String names) { this.names = names; }
 
     public String getSurnames() { return surnames; }
+
     public void setSurnames(String surnames) { this.surnames = surnames; }
 
     public String getEmail() { return email; }
+
     public void setEmail(String email) { this.email = email; }
 
     public String getIdOrganization() { return idOrganization; }
+
     public void setIdOrganization(String idOrganization) { this.idOrganization = idOrganization; }
 
     public String getIdDepartment() { return idDepartment; }
+
     public void setIdDepartment(String idDepartment) { this.idDepartment = idDepartment; }
+
+    public int getStatus() { return status; }
+
+    public void setStatus(int status) { this.status = status; }
 
     @Override
     public String toString() {
