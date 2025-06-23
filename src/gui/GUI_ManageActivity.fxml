@@ -22,10 +22,10 @@
             <TextField fx:id="nameActivityField" promptText="Ingrese el nombre" />
         </HBox>
         <HBox spacing="10">
-            <Button fx:id="registerButton" onAction="#handleRegister" text="Registrar" />
-            <Button fx:id="clearButton" onAction="#handleClear" text="Limpiar" />
-            <Button fx:id="deleteButton" onAction="#handleDelete" text="Eliminar" />
-            <Button fx:id="updateButton" onAction="#handleUpdate" text="Actualizar" />
+            <Button fx:id="registerButton" onAction="#handleRegisterActiviy" text="Registrar" />
+            <Button fx:id="clearButton" onAction="#handleClearFields" text="Limpiar" />
+            <Button fx:id="deleteButton" onAction="#handleDeleteActivity" text="Eliminar" />
+            <Button fx:id="updateButton" onAction="#handleUpdateActivity" text="Actualizar" />
         </HBox>
         <Label fx:id="statusLabel" textFill="red" />
         <TableView fx:id="activityTable" prefHeight="200">
