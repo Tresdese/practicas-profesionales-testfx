@@ -94,12 +94,12 @@ public class GUI_RegisterProjectController {
                 @Override
                 public LocalDate fromString(String string) {
                     if (string == null || string.trim().isEmpty()) {
-                        return null;
+                        return LocalDate.now();
                     }
                     try {
                         return LocalDate.parse(string, dateFormatter);
                     } catch (DateTimeParseException e) {
-                        return null; //TODO
+                        return LocalDate.now();
                     }
                 }
             };
@@ -174,7 +174,13 @@ public class GUI_RegisterProjectController {
                 }
                 @Override
                 public UserDTO fromString(String string) {
-                    return null;
+                    for (UserDTO user : academicBox.getItems()) {
+                        String fullName = user.getNames() + " " + user.getSurnames();
+                        if (fullName.equals(string)) {
+                            return user;
+                        }
+                    }
+                    return new UserDTO();
                 }
             });
         } catch (SQLException e) {

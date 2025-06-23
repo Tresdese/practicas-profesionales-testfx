@@ -78,7 +78,12 @@ public class GUI_RegisterRepresentativeController {
                 }
                 @Override
                 public LinkedOrganizationDTO fromString(String string) {
-                    return null;
+                    for (LinkedOrganizationDTO org : organizationBox.getItems()) {
+                        if (org.getName().equals(string)) {
+                            return org;
+                        }
+                    }
+                    return new LinkedOrganizationDTO();
                 }
             });
 
@@ -91,7 +96,12 @@ public class GUI_RegisterRepresentativeController {
                 }
                 @Override
                 public DepartmentDTO fromString(String string) {
-                    return null;
+                    for (DepartmentDTO dept : departmentBox.getItems()) {
+                        if (dept.getName().equals(string)) {
+                            return dept;
+                        }
+                    }
+                    return new DepartmentDTO();
                 }
             });
 

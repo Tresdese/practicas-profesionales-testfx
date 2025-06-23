@@ -69,7 +69,13 @@ public class GUI_RegisterGroupController {
                 }
                 @Override
                 public UserDTO fromString(String string) {
-                    return null; //TODO
+                    for (UserDTO user : academicChoiceBox.getItems()) {
+                        String fullName = user.getNames() + " " + user.getSurnames();
+                        if (fullName.equals(string)) {
+                            return user;
+                        }
+                    }
+                    return new UserDTO();
                 }
             });
         } catch (SQLException e) {

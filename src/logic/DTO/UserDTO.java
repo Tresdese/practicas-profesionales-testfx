@@ -32,6 +32,10 @@ public class UserDTO {
         this.role = role;
     }
 
+    public UserDTO(){
+
+    }
+
     public String getIdUser() {
         return idUser;
     }

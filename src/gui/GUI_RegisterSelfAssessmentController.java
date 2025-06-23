@@ -445,31 +445,31 @@ public class GUI_RegisterSelfAssessmentController {
         } catch (UnknownHostException e) {
             showError("Error de conexión a Internet. Verifica tu conexión.");
             LOGGER.error("UnknownHostException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (SocketTimeoutException e) {
             showError("Tiempo de espera agotado al intentar conectar con Google Drive.");
             LOGGER.error("SocketTimeoutException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (FileNotFoundException e) {
             showError("Archivo de credenciales no encontrado. Verifica la configuración.");
             LOGGER.error("FileNotFoundException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (GoogleJsonResponseException e) {
             showError("Error de Google Drive al interactuar con las carpetas.");
             LOGGER.error("GoogleJsonResponseException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (IOException e) {
             showError("Error de acceso a las carpetas de Google Drive.");
             LOGGER.error("IOException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (GeneralSecurityException e) {
             showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al crear carpetas en Drive", e);
-            return null;
+            return "";
         } catch (Exception e) {
             showError("Error inesperado al crear carpetas en Google Drive.");
             LOGGER.error("Error inesperado al crear carpetas en Drive", e);
-            return null;
+            return "";
         }
     }
 

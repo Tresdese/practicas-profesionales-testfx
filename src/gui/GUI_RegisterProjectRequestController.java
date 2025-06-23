@@ -304,7 +304,12 @@ public class GUI_RegisterProjectRequestController {
 
                     @Override
                     public ProjectDTO fromString(String string) {
-                        return null;
+                        for (ProjectDTO project : projectComboBox.getItems()) {
+                            if (project.getName().equals(string)) {
+                                return project;
+                            }
+                        }
+                        return new ProjectDTO();
                     }
                 });
                 LOGGER.info("Proyectos cargados para la organización {}", org.getName());
