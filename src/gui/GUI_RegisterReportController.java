@@ -395,27 +395,27 @@ public class GUI_RegisterReportController {
         } catch (UnknownHostException e) {
             showAlert("Error de conexión a Internet al crear folders para drive. Verifica tu conexión y vuelve a intentarlo.");
             LOGGER.log(Level.SEVERE, "UnknownHostException al crear carpeta en Drive", e);
-            return null;
+            return "";
         } catch (SocketTimeoutException e) {
             showAlert("Tiempo de espera agotado al intentar crear carpetas en Google Drive. Verifica tu conexión a Internet.");
             LOGGER.log(Level.SEVERE, "SocketTimeoutException al crear carpeta en Drive", e);
-            return null;
+            return "";
         } catch (GoogleJsonResponseException e) {
             showAlert("Error de Google Drive al interactuar con las carpetas.");
             LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al crear carpeta en Drive", e);
-            return null;
+            return "";
         } catch (IOException e) {
             showAlert("Error de acceso a las carpetas de Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (GeneralSecurityException e) {
             showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al crear carpeta en Drive", e);
-            return null;
+            return "";
         } catch (Exception e) {
             showAlert("Error inesperado al crear carpetas en Google Drive.");
             LOGGER.log(Level.SEVERE, "Error inesperado al crear carpeta en Drive", e);
-            return null;
+            return "";
         }
     }
 
@@ -529,85 +529,76 @@ public class GUI_RegisterReportController {
         }
     }
 
+    // Java
     @FXML
     public void handleRegisterReport() {
+        if (!validateReportFields()) return;
+        if (!validateActivities()) return;
+        if (!validateEvidenceFile()) return;
+        int totalHours = Integer.parseInt(totalHoursField.getText());
+        if (!validateReportedHours(totalHours)) return;
+        int evidenceId = getNextEvidenceId();
+        if (evidenceId == -1) return;
+        String driveUrl = uploadEvidenceToDrive(selectedEvidenceFile);
+        if (driveUrl == null || driveUrl.isEmpty()) return;
+        if (!insertEvidenceToDatabase(evidenceId, selectedEvidenceFile.getName(), driveUrl)) return;
+        if (!insertReportAndActivities(evidenceId, totalHours)) return;
+        showAlert("Informe y actividades registrados correctamente.");
+        clearForm();
+    }
+
+    private boolean validateReportFields() {
         if (totalHoursField.getText().isEmpty() ||
                 generalObjectiveArea.getText().isEmpty() ||
                 methodologyArea.getText().isEmpty() ||
                 obtainedResultArea.getText().isEmpty()) {
             showAlert("Completa todos los campos obligatorios del informe.");
-            return;
+            return false;
         }
+        return true;
+    }
+
+    private boolean validateActivities() {
         if (activityReports.isEmpty()) {
             showAlert("Agrega al menos una actividad al informe.");
-            return;
+            return false;
         }
+        return true;
+    }
+
+    private boolean validateEvidenceFile() {
         if (selectedEvidenceFile == null) {
             showAlert("Selecciona un archivo de evidencia.");
-            return;
+            return false;
         }
-        int totalHours = Integer.parseInt(totalHoursField.getText());
+        return true;
+    }
+
+    private boolean validateReportedHours(int totalHours) {
         ReportDAO reportDAO = new ReportDAO();
         try {
             int reportedHours = reportDAO.getTotalReportedHoursByStudent(student.getTuition());
             if (reportedHours + totalHours > 420) {
                 showAlert("El alumno ya ha cumplido las 420 horas requeridas o las superaría con este informe.");
-                return;
+                return false;
             }
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                showAlert("Error de conexión con la base de datos.");
-                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                showAlert("Conexión interrumpida con la base de datos.");
-                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                showAlert("Acceso denegado a la base de datos.");
-                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                showAlert("La base de datos no está disponible.");
-                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("42S02")) {
-                showAlert("Tabla de reportes no encontrada.");
-                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("42S22")) {
-                showAlert("Columna de horas reportadas no encontrada.");
-                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
-                return;
-            } else if (sqlState != null && sqlState.equals("HY000")) {
-                showAlert("Error general de base de datos al verificar horas reportadas.");
-                LOGGER.log(Level.SEVERE, "Error general de SQL al verificar horas reportadas", e);
-                return;
-            } else {
-                showAlert("Error de base de datos al verificar horas reportadas.");
-                LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
-                return;
-            }
+            handleSQLException(e, "verificar horas reportadas");
+            return false;
         } catch (IOException e) {
             showAlert("Error al leer la configuracion de la base de datos.");
             LOGGER.log(Level.SEVERE, "Error al leer la configuracion de la base de datos ", e);
-            return;
+            return false;
         } catch (Exception e) {
             showAlert("Error inesperado al verificar horas reportadas.");
             LOGGER.log(Level.SEVERE, "Error inesperado al verificar horas reportadas", e);
-            return;
+            return false;
         }
-        int evidenceId = getNextEvidenceId();
-        if (evidenceId == -1) return;
+        return true;
+    }
 
-        String driveUrl = uploadEvidenceToDrive(selectedEvidenceFile);
-        if (driveUrl == null) return;
-
-        if (!insertEvidenceToDatabase(evidenceId, selectedEvidenceFile.getName(), driveUrl)) return;
-
+    private boolean insertReportAndActivities(int evidenceId, int totalHours) {
         try {
-            totalHours = Integer.parseInt(totalHoursField.getText());
             ReportDTO report = new ReportDTO(
                     "0",
                     new Date(),
@@ -620,104 +611,71 @@ public class GUI_RegisterReportController {
                     generalObservationsArea.getText(),
                     String.valueOf(evidenceId)
             );
-            reportDAO = new ReportDAO();
+            ReportDAO reportDAO = new ReportDAO();
             boolean inserted = reportDAO.insertReport(report);
-            if (inserted) {
-                String numReporte = report.getNumberReport();
-                ActivityReportDAO activityReportDAO = new ActivityReportDAO();
-                for (ActivityReportDTO ar : activityReports) {
-                    ar.setNumberReport(numReporte);
-                    try {
-                        activityReportDAO.insertActivityReport(ar);
-                    } catch (SQLException e) {
-                        String sqlState = e.getSQLState();
-                        if (sqlState != null && sqlState.equals("08001")) {
-                            showAlert("Error de conexión con la base de datos al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
-                        } else if (sqlState != null && sqlState.equals("08S01")) {
-                            showAlert("Conexión interrumpida con la base de datos al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
-                        } else if (sqlState != null && sqlState.equals("28000")) {
-                            showAlert("Acceso denegado a la base de datos al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
-                        } else if (sqlState != null && sqlState.equals("42000")) {
-                            showAlert("La base de datos no está disponible al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
-                        } else if (sqlState != null && sqlState.equals("42S02")) {
-                            showAlert("Tabla de actividades no encontrada al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
-                        } else if (sqlState != null && sqlState.equals("42S22")) {
-                            showAlert("Columna de actividad no encontrada al registrar actividades.");
-                            LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
-                        } else if (sqlState != null && sqlState.equals("HY000")) {
-                            showAlert("Error general de base de datos al registrar actividad.");
-                            LOGGER.log(Level.SEVERE, "Error general de SQL al registrar actividad", e);
-                        } else {
-                            showAlert("Error de base de datos al registrar actividad.");
-                            LOGGER.log(Level.SEVERE, "Error de SQL al registrar actividad", e);
-                        }
-                    } catch (GoogleJsonResponseException e) {
-                        showAlert("Error de Google Drive al registrar actividad.");
-                        LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al registrar actividad", e);
-                    } catch (SocketTimeoutException e) {
-                        showAlert("Tiempo de espera agotado al registrar actividad.");
-                        LOGGER.log(Level.SEVERE, "SocketTimeoutException al registrar actividad", e);
-                    } catch (UnknownHostException e) {
-                        showAlert("Error de conexión a Internet al registrar actividad.");
-                        LOGGER.log(Level.SEVERE, "UnknownHostException al registrar actividad", e);
-                    } catch (FileNotFoundException e) {
-                        showAlert("Archivo no encontrado al registrar actividad.");
-                        LOGGER.log(Level.SEVERE, "FileNotFoundException al registrar actividad", e);
-                    } catch (IOException e) {
-                        showAlert("Error de acceso al archivo al registrar actividad.");
-                        LOGGER.log(Level.SEVERE, "IOException al registrar actividad", e);
-                    } catch (Exception e) {
-                        showAlert("Error inesperado al registrar una actividad.");
-                        LOGGER.log(Level.SEVERE, "Error inesperado al registrar actividad", e);
-                    }
-                }
-                showAlert("Informe y actividades registrados correctamente.");
-                clearForm();
-            } else {
+            if (!inserted) {
                 showAlert("No se pudo registrar el informe.");
                 LOGGER.log(Level.WARNING, "No se pudo insertar el informe en la base de datos.");
+                return false;
+            }
+            String numReporte = report.getNumberReport();
+            ActivityReportDAO activityReportDAO = new ActivityReportDAO();
+            for (ActivityReportDTO ar : activityReports) {
+                ar.setNumberReport(numReporte);
+                try {
+                    activityReportDAO.insertActivityReport(ar);
+                } catch (SQLException e) {
+                    handleSQLException(e, "registrar actividad");
+                } catch (Exception e) {
+                    showAlert("Error inesperado al registrar una actividad.");
+                    LOGGER.log(Level.SEVERE, "Error inesperado al registrar actividad", e);
+                }
             }
         } catch (NumberFormatException e) {
             showAlert("Las horas totales deben ser un número.");
             LOGGER.log(Level.WARNING, "Formato inválido en horas totales", e);
+            return false;
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                showAlert("Error de conexión con la base de datos.");
-                LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                showAlert("Conexión interrumpida con la base de datos.");
-                LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                showAlert("Acceso denegado a la base de datos.");
-                LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                showAlert("La base de datos no está disponible.");
-                LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
-            } else if (sqlState != null && sqlState.equals("42S02")) {
-                showAlert("Tabla de reportes no encontrada.");
-                LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
-            } else if (sqlState != null && sqlState.equals("42S22")) {
-                showAlert("Columna de reporte no encontrada.");
-                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
-            } else if (sqlState != null && sqlState.equals("HY000")) {
-                showAlert("Error general de base de datos al registrar el reporte.");
-                LOGGER.log(Level.SEVERE, "Error general de SQL al registrar el reporte", e);
-            } else {
-                showAlert("Error de base de datos al Registrar el Reporte.");
-                LOGGER.log(Level.SEVERE, "Error de SQL al Registrar el Reporte", e);
-            }
+            handleSQLException(e, "registrar el reporte");
+            return false;
         } catch (IOException e) {
             showAlert("Error al leer el archivo de configuración de la base de datos.");
             LOGGER.log(Level.WARNING, "Error al leer el archivo de configuración de la base de datos", e);
+            return false;
         } catch (Exception e) {
             showAlert("Error inesperado al registrar el informe.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar informe", e);
+            return false;
+        }
+        return true;
+    }
+
+    private void handleSQLException(SQLException e, String context) {
+        String sqlState = e.getSQLState();
+        if (sqlState != null && sqlState.equals("08001")) {
+            showAlert("Error de conexión con la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error de SQL al " + context, e);
+        } else if (sqlState != null && sqlState.equals("08S01")) {
+            showAlert("Conexión interrumpida con la base de datos.");
+            LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos al " + context, e);
+        } else if (sqlState != null && sqlState.equals("28000")) {
+            showAlert("Acceso denegado a la base de datos.");
+            LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos al " + context, e);
+        } else if (sqlState != null && sqlState.equals("42000")) {
+            showAlert("La base de datos no está disponible.");
+            LOGGER.log(Level.SEVERE, "La base de datos no está disponible al " + context, e);
+        } else if (sqlState != null && sqlState.equals("42S02")) {
+            showAlert("Tabla no encontrada.");
+            LOGGER.log(Level.SEVERE, "Tabla no encontrada al " + context, e);
+        } else if (sqlState != null && sqlState.equals("42S22")) {
+            showAlert("Columna no encontrada.");
+            LOGGER.log(Level.SEVERE, "Columna no encontrada al " + context, e);
+        } else if (sqlState != null && sqlState.equals("HY000")) {
+            showAlert("Error general de base de datos.");
+            LOGGER.log(Level.SEVERE, "Error general de SQL al " + context, e);
+        } else {
+            showAlert("Error de base de datos al " + context + ".");
+            LOGGER.log(Level.SEVERE, "Error de SQL al " + context, e);
         }
     }
 
