@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -99,7 +100,7 @@ class ProjectRequestDAOTest {
         stmt.close();
     }
 
-    private void createBaseData() throws SQLException {
+    private void createBaseData() throws SQLException, IOException {
         PeriodDTO period = new PeriodDTO(String.valueOf(TEST_PERIOD_ID), "Periodo Test",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
         periodDAO.insertPeriod(period);
@@ -107,18 +108,18 @@ class ProjectRequestDAOTest {
         GroupDTO group = new GroupDTO(String.valueOf(TEST_NRC), "Grupo Test", null, String.valueOf(TEST_PERIOD_ID));
         groupDAO.insertGroup(group);
 
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
 
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null,1,  "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
-        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
         departmentDAO.insertDepartment(department);
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        RepresentativeDTO representative = new RepresentativeDTO(null, "RepName", "RepSurname", "rep@example.com", String.valueOf(organizationId), String.valueOf(departmentId));
+        RepresentativeDTO representative = new RepresentativeDTO(null, "RepName", "RepSurname", "rep@example.com", String.valueOf(organizationId), String.valueOf(departmentId), 1);
         representativeDAO.insertRepresentative(representative);
         List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives();
         representativeId = representatives.get(0).getIdRepresentative();
@@ -163,7 +164,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void insertProjectRequestSuccessfully() throws Exception {
+    void insertProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0,
                 studentTuiton,
@@ -201,7 +202,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void updateProjectRequestSuccessfully() throws Exception {
+    void updateProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
@@ -224,7 +225,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void deleteProjectRequestSuccessfully() throws Exception {
+    void deleteProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0,
                 studentTuiton,
@@ -266,7 +267,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void searchProjectRequestByIdSuccessfully() throws Exception {
+    void searchProjectRequestByIdSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
@@ -283,7 +284,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void getAllProjectRequestsSuccessfully() throws Exception {
+    void getAllProjectRequestsSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
@@ -302,7 +303,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void updateProjectRequestStatusSuccessfully() throws Exception {
+    void updateProjectRequestStatusSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
@@ -327,7 +328,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void getProjectRequestsByTuitonSuccessfully() throws Exception {
+    void getProjectRequestsByTuitonSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
@@ -357,7 +358,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void updateNonExistentProjectRequest() throws Exception {
+    void updateNonExistentProjectRequest() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 9999, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
@@ -368,13 +369,13 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void deleteNonExistentProjectRequest() throws Exception {
+    void deleteNonExistentProjectRequest() throws SQLException, IOException {
         boolean deleted = projectRequestDAO.deleteProjectRequest(9999);
         assertFalse(deleted);
     }
 
     @Test
-    void getProjectRequestsByStatusSuccessfully() throws Exception {
+    void getProjectRequestsByStatusSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
@@ -398,7 +399,7 @@ class ProjectRequestDAOTest {
     }
 
     @Test
-    void insertDuplicateProjectRequest() throws Exception {
+    void insertDuplicateProjectRequest() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",

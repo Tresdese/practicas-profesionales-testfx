@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -39,7 +40,7 @@ class EvaluationDetailDAOTest {
     private int departmentId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
@@ -59,7 +60,7 @@ class EvaluationDetailDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBaseData();
     }
@@ -91,31 +92,26 @@ class EvaluationDetailDAOTest {
         stmt.close();
     }
 
-    private void createBaseData() throws SQLException {
-        // Organization
-        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+    private void createBaseData() throws SQLException, IOException {
+        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
-        // User
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
-        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
         departmentDAO.insertDepartment(department);
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        // Period
         periodId = 20241;
         PeriodDTO period = new PeriodDTO(String.valueOf(periodId), "2024-1", new java.sql.Timestamp(System.currentTimeMillis()), new java.sql.Timestamp(System.currentTimeMillis() + 1000000));
         periodDAO.insertPeriod(period);
 
-        // Group
         nrc = 12345;
         GroupDTO group = new GroupDTO(String.valueOf(nrc), "Grupo Test", String.valueOf(userId), String.valueOf(periodId));
         groupDAO.insertGroup(group);
 
-        // Student
         StudentDTO student = new StudentDTO(
                 "A12345678", 1, "Estudiante", "Apellido", "1234567890", "correo@test.com",
                 "test", "test", String.valueOf(nrc), "100", 0.0
@@ -123,7 +119,6 @@ class EvaluationDetailDAOTest {
         studentDAO.insertStudent(student);
         studentMatricula = "A12345678";
 
-        // Project
         ProjectDTO project = new ProjectDTO(
                 null, "Proyecto Test", "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
@@ -133,21 +128,18 @@ class EvaluationDetailDAOTest {
         projectDAO.insertProject(project);
         projectId = projectDAO.getAllProjects().get(0).getIdProject();
 
-        // Presentation
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
         );
         presentationDAO.insertProjectPresentation(presentation);
         presentationId = presentationDAO.getAllProjectPresentations().get(0).getIdPresentation();
 
-        // Evaluation presentation
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 9.5
         );
         evaluationId = evaluationDAO.insertEvaluationPresentation(evaluation);
 
-        // Assessment criterion
         AssessmentCriterionDTO criterion = new AssessmentCriterionDTO(null, "Criterio Test");
         criterionDAO.insertAssessmentCriterion(criterion);
         criterionId = Integer.parseInt(criterionDAO.getAllAssessmentCriteria().get(0).getIdCriterion());
@@ -173,7 +165,7 @@ class EvaluationDetailDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -183,12 +175,12 @@ class EvaluationDetailDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException {
         clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void testInsertEvaluationDetail() throws Exception {
+    void testInsertEvaluationDetail() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(
                 0,
                 evaluationId,
@@ -206,7 +198,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testUpdateEvaluationDetail() throws Exception {
+    void testUpdateEvaluationDetail() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
@@ -220,7 +212,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testDeleteEvaluationDetail() throws Exception {
+    void testDeleteEvaluationDetail() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(-1, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
 
@@ -235,7 +227,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testSearchEvaluationDetailById() throws Exception {
+    void testSearchEvaluationDetailById() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.5);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
@@ -248,7 +240,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testGetAllEvaluationDetails() throws Exception {
+    void testGetAllEvaluationDetails() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 7.0 + i);
             detailDAO.insertEvaluationDetail(detail);
@@ -264,20 +256,20 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testUpdateEvaluationDetailNotExisting() throws Exception {
+    void testUpdateEvaluationDetailNotExisting() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(9999, evaluationId, criterionId, 8.0);
         boolean updated = detailDAO.updateEvaluationDetail(detail);
         assertFalse(updated);
     }
 
     @Test
-    void testDeleteEvaluationDetailNotExisting() throws Exception {
+    void testDeleteEvaluationDetailNotExisting() throws SQLException, IOException {
         boolean deleted = detailDAO.deleteEvaluationDetail(9999);
         assertFalse(deleted);
     }
 
     @Test
-    void testGetAllEvaluationDetailsEmpty() throws Exception {
+    void testGetAllEvaluationDetailsEmpty() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         var details = detailDAO.getAllEvaluationDetails();
         assertTrue(details.isEmpty());
@@ -292,7 +284,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testInsertEvaluationDetailWithMaxGrade() throws Exception {
+    void testInsertEvaluationDetailWithMaxGrade() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 10.0);
         detailDAO.insertEvaluationDetail(detail);
         var details = detailDAO.getAllEvaluationDetails();
@@ -300,7 +292,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testInsertEvaluationDetailWithMinGrade() throws Exception {
+    void testInsertEvaluationDetailWithMinGrade() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 0.0);
         detailDAO.insertEvaluationDetail(detail);
         var details = detailDAO.getAllEvaluationDetails();
@@ -308,13 +300,13 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testSearchEvaluationDetailByIdNotExisting() throws Exception {
+    void testSearchEvaluationDetailByIdNotExisting() throws SQLException, IOException {
         EvaluationDetailDTO found = detailDAO.searchEvaluationDetailById(9999);
         assertEquals(-1, found.getIdDetail());
     }
 
     @Test
-    void testMultipleEvaluationDetailsForSameEvaluation() throws Exception {
+    void testMultipleEvaluationDetailsForSameEvaluation() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 7.0 + i);
             detailDAO.insertEvaluationDetail(detail);
@@ -327,7 +319,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testDeleteAllEvaluationDetails() throws Exception {
+    void testDeleteAllEvaluationDetails() throws SQLException, IOException {
         for (int i = 0; i < 2; i++) {
             EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0 + i);
             detailDAO.insertEvaluationDetail(detail);
@@ -358,7 +350,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testUpdateEvaluationDetailWithNullValues() throws Exception {
+    void testUpdateEvaluationDetailWithNullValues() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
@@ -368,7 +360,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testUpdateEvaluationDetailWithMaxGrade() throws Exception {
+    void testUpdateEvaluationDetailWithMaxGrade() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
@@ -381,7 +373,7 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testUpdateEvaluationDetailWithMinGrade() throws Exception {
+    void testUpdateEvaluationDetailWithMinGrade() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);
@@ -394,13 +386,13 @@ class EvaluationDetailDAOTest {
     }
 
     @Test
-    void testSearchEvaluationDetailByInvalidId() throws Exception {
+    void testSearchEvaluationDetailByInvalidId() throws SQLException, IOException {
         EvaluationDetailDTO found = detailDAO.searchEvaluationDetailById(-1);
         assertEquals(-1, found.getIdDetail());
     }
 
     @Test
-    void testDeleteEvaluationDetailTwice() throws Exception {
+    void testDeleteEvaluationDetailTwice() throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(0, evaluationId, criterionId, 8.0);
         detailDAO.insertEvaluationDetail(detail);
         EvaluationDetailDTO inserted = detailDAO.getAllEvaluationDetails().get(0);

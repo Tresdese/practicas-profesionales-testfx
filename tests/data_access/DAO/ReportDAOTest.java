@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,7 @@ class ReportDAOTest {
     private int departmentId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
@@ -57,7 +58,7 @@ class ReportDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBasePeriod();
         createBaseGroup();
@@ -68,7 +69,7 @@ class ReportDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
@@ -107,7 +108,7 @@ class ReportDAOTest {
         stmt.close();
     }
 
-    private void createBasePeriod() throws SQLException {
+    private void createBasePeriod() throws SQLException, IOException {
         PeriodDTO period = new PeriodDTO(
                 testPeriodId,
                 "Periodo Test",
@@ -117,7 +118,7 @@ class ReportDAOTest {
         periodDAO.insertPeriod(period);
     }
 
-    private void createBaseGroup() throws SQLException {
+    private void createBaseGroup() throws SQLException, IOException {
         GroupDTO group = new GroupDTO(
                 testNRC,
                 "Grupo Test",
@@ -127,18 +128,18 @@ class ReportDAOTest {
         groupDAO.insertGroup(group);
     }
 
-    private void createBaseUserAndOrganization() throws SQLException {
-        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+    private void createBaseUserAndOrganization() throws SQLException, IOException {
+        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
         departmentId = createTestDepartment();
 
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
     }
 
     private int insertUserAndGetId(UserDTO user) throws SQLException {
-        String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getStaffNumber());
             stmt.setString(2, user.getNames());
@@ -146,6 +147,7 @@ class ReportDAOTest {
             stmt.setString(4, user.getUserName());
             stmt.setString(5, user.getPassword());
             stmt.setString(6, user.getRole().toString());
+            stmt.setInt(7, user.getStatus());
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -157,11 +159,12 @@ class ReportDAOTest {
     }
 
     private int createTestDepartment() throws SQLException {
-        String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion, estado) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Dept test");
             stmt.setString(2, "Description test");
             stmt.setInt(3, organizationId);
+            stmt.setInt(4, 1);
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -172,7 +175,7 @@ class ReportDAOTest {
         throw new SQLException("No se pudo obtener el id del departamento insertado");
     }
 
-    private void createBaseProject() throws SQLException {
+    private void createBaseProject() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Test",
@@ -190,7 +193,7 @@ class ReportDAOTest {
         projectId = Integer.parseInt(projects.get(0).getIdProject());
     }
 
-    private void createBaseStudent() throws SQLException {
+    private void createBaseStudent() throws SQLException, IOException {
         studentTuition = "2023123456";
         StudentDTO student = new StudentDTO(
                 studentTuition,
@@ -225,7 +228,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void insertReportSuccessfully() throws SQLException {
+    void insertReportSuccessfully() throws SQLException, IOException {
         ReportDTO report = new ReportDTO(
                 null,
                 new Date(),
@@ -249,7 +252,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void searchReportByIdSuccessfully() throws SQLException {
+    void searchReportByIdSuccessfully() throws SQLException, IOException {
         String reportNumber = insertTestReport("Observaciones para obtener", String.valueOf(testEvidenceId));
         ReportDTO retrieved = reportDAO.searchReportById(reportNumber);
         assertNotNull(retrieved);
@@ -259,7 +262,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void updateReportSuccessfully() throws SQLException {
+    void updateReportSuccessfully() throws SQLException, IOException {
         String reportNumber = insertTestReport("Observaciones iniciales", String.valueOf(testEvidenceId));
         ReportDTO updated = new ReportDTO(
                 reportNumber,
@@ -282,9 +285,9 @@ class ReportDAOTest {
     }
 
     @Test
-    void deleteReportSuccessfully() throws SQLException {
+    void deleteReportSuccessfully() throws SQLException, IOException {
         ReportDTO report = new ReportDTO(
-                null, 
+                null,
                 new java.util.Date(),
                 10,
                 "Objetivo",
@@ -306,7 +309,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void getAllReportsSuccessfully() throws SQLException {
+    void getAllReportsSuccessfully() throws SQLException, IOException {
         insertTestReport("Observaciones 1", String.valueOf(testEvidenceId));
         insertTestReport("Observaciones 2", String.valueOf(testEvidenceId));
         List<ReportDTO> reports = reportDAO.getAllReports();
@@ -314,8 +317,7 @@ class ReportDAOTest {
         assertEquals(2, reports.size());
     }
 
-    // Inserts using the DAO and returns the generated report number
-    private String insertTestReport(String observations, String evidenceId) throws SQLException {
+    private String insertTestReport(String observations, String evidenceId) throws SQLException, IOException {
         ReportDTO report = new ReportDTO(
                 null,
                 new Date(),
@@ -351,7 +353,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void searchNonExistentReport() throws SQLException {
+    void searchNonExistentReport() throws SQLException, IOException {
         ReportDTO report = reportDAO.searchReportById("99999");
         assertNotNull(report, "El método nunca retorna null");
         assertEquals("N/A", report.getNumberReport());
@@ -367,7 +369,7 @@ class ReportDAOTest {
     }
 
     @Test
-    void updateNonExistentReport() throws SQLException {
+    void updateNonExistentReport() throws SQLException, IOException {
         ReportDTO report = new ReportDTO(
                 "99999",
                 new Date(),
@@ -385,13 +387,13 @@ class ReportDAOTest {
     }
 
     @Test
-    void deleteNonExistentReport() throws SQLException {
+    void deleteNonExistentReport() throws SQLException, IOException {
         boolean result = reportDAO.deleteReport("99999");
         assertFalse(result, "No debe eliminar un reporte inexistente");
     }
 
     @Test
-    void insertMultipleReportsSuccessfully() throws SQLException {
+    void insertMultipleReportsSuccessfully() throws SQLException, IOException {
         String num1 = insertTestReport("Observaciones 1", String.valueOf(testEvidenceId));
         String num2 = insertTestReport("Observaciones 2", String.valueOf(testEvidenceId));
         List<ReportDTO> reports = reportDAO.getAllReports();
@@ -409,8 +411,8 @@ class ReportDAOTest {
                 "Objetivo",
                 "Metodología",
                 "Resultado",
-                99999, // Non-existent projectId
-                "9999999999", // Non-existent tuition
+                99999,
+                "9999999999",
                 "Observaciones",
                 String.valueOf(testEvidenceId)
         );

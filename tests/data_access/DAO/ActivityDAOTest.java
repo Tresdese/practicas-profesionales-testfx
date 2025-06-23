@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +26,7 @@ class ActivityDAOTest {
     private int idActividadBase;
 
     @BeforeAll
-    void setUpAll() throws SQLException {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         limpiarTablaYResetearAutoIncrement();
@@ -42,7 +43,7 @@ class ActivityDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() throws SQLException, IOException {
         limpiarTablaYResetearAutoIncrement();
         crearActividadBase();
     }
@@ -56,7 +57,7 @@ class ActivityDAOTest {
         }
     }
 
-    private void crearActividadBase() throws SQLException {
+    private void crearActividadBase() throws SQLException, IOException {
         String sql = "INSERT INTO actividad (nombreActividad) VALUES (?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, "Actividad Base");
@@ -70,21 +71,21 @@ class ActivityDAOTest {
     }
 
     @Test
-    void testInsertActivitySuccess() throws SQLException {
+    void testInsertActivitySuccess() throws SQLException, IOException {
         ActivityDTO activity = new ActivityDTO(null, "Nueva Actividad");
         boolean inserted = activityDAO.insertActivity(activity);
         assertTrue(inserted, "La actividad debería insertarse correctamente.");
     }
 
     @Test
-    void testGetActivityById() throws SQLException {
+    void testGetActivityById() throws SQLException, IOException {
         ActivityDTO activity = activityDAO.searchActivityById(String.valueOf(idActividadBase));
         assertNotNull(activity, "La actividad no debería ser nula.");
         assertEquals("Actividad Base", activity.getActivityName());
     }
 
     @Test
-    void testDeleteActivity() throws SQLException {
+    void testDeleteActivity() throws SQLException, IOException {
         ActivityDTO activity = new ActivityDTO(null, "Para Eliminar");
         activityDAO.insertActivity(activity);
         int id = activityDAO.getActivityByName("Para Eliminar");
@@ -93,7 +94,7 @@ class ActivityDAOTest {
     }
 
     @Test
-    void testUpdateActivity() throws SQLException {
+    void testUpdateActivity() throws SQLException, IOException {
         ActivityDTO activity = new ActivityDTO(null, "Para Actualizar");
         activityDAO.insertActivity(activity);
         int id = activityDAO.getActivityByName("Para Actualizar");
@@ -105,26 +106,26 @@ class ActivityDAOTest {
     }
 
     @Test
-    void testGetNonExistentActivity() throws SQLException {
+    void testGetNonExistentActivity() throws SQLException, IOException {
         ActivityDTO activity = activityDAO.searchActivityById("99999");
         assertEquals("invalido", activity.getActivityId(), "No debería encontrar una actividad inexistente.");
     }
 
     @Test
-    void testGetAllActivities() throws SQLException {
+    void testGetAllActivities() throws SQLException, IOException {
         activityDAO.insertActivity(new ActivityDTO(null, "Otra Actividad"));
         var actividades = activityDAO.getAllActivities();
         assertEquals(2, actividades.size(), "Debe haber dos actividades en la base de datos.");
     }
 
     @Test
-    void testGetActivityByNameNoExiste() throws SQLException {
+    void testGetActivityByNameNoExiste() throws SQLException, IOException {
         int id = activityDAO.getActivityByName("NoExiste");
         assertEquals(-1, id, "Debe devolver -1 si la actividad no existe.");
     }
 
     @Test
-    void testInsertActivityConIdExistente() throws SQLException {
+    void testInsertActivityConIdExistente() throws SQLException, IOException {
         int id = activityDAO.getActivityByName("Actividad Base");
         ActivityDTO actividadDuplicada = new ActivityDTO(String.valueOf(id), "Duplicada");
         assertThrows(SQLException.class, () -> activityDAO.insertActivity(actividadDuplicada),
@@ -132,14 +133,14 @@ class ActivityDAOTest {
     }
 
     @Test
-    void testUpdateActivityNoExistente() throws SQLException {
+    void testUpdateActivityNoExistente() throws SQLException, IOException {
         ActivityDTO actividadNoExiste = new ActivityDTO("99999", "NoExiste");
         boolean actualizado = activityDAO.updateActivity(actividadNoExiste);
         assertFalse(actualizado, "No debe actualizar una actividad inexistente.");
     }
 
     @Test
-    void testDeleteActivityNoExistente() throws SQLException {
+    void testDeleteActivityNoExistente() throws SQLException, IOException {
         ActivityDTO actividadNoExiste = new ActivityDTO("99999", null);
         boolean eliminado = activityDAO.deleteActivity(actividadNoExiste);
         assertFalse(eliminado, "No debe eliminar una actividad inexistente.");

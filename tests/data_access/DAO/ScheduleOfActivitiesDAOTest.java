@@ -5,6 +5,7 @@ import logic.DAO.ScheduleOfActivitiesDAO;
 import logic.DTO.ScheduleOfActivitiesDTO;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -23,7 +24,7 @@ class ScheduleOfActivitiesDAOTest {
     private String baseEvidenceId;
 
     @BeforeAll
-    void setUpAll() throws SQLException {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
@@ -76,7 +77,6 @@ class ScheduleOfActivitiesDAOTest {
                 }
             }
         }
-        // Insert base period
         String periodSql = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
         basePeriodId = "1";
         try (PreparedStatement ps = connection.prepareStatement(periodSql)) {
@@ -86,7 +86,6 @@ class ScheduleOfActivitiesDAOTest {
             ps.setDate(4, new java.sql.Date(System.currentTimeMillis()));
             ps.executeUpdate();
         }
-        // Insert base group
         String groupSql = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         baseNrc = "101";
         try (PreparedStatement ps = connection.prepareStatement(groupSql)) {
@@ -96,7 +95,6 @@ class ScheduleOfActivitiesDAOTest {
             ps.setString(4, basePeriodId);
             ps.executeUpdate();
         }
-        // Insert base student
         String studentSql = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         baseTuition = "A12345678";
         try (PreparedStatement ps = connection.prepareStatement(studentSql)) {
@@ -113,7 +111,6 @@ class ScheduleOfActivitiesDAOTest {
             ps.setDouble(11, 85.5);
             ps.executeUpdate();
         }
-        // Insert base evidence
         String evidenceSql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(evidenceSql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, "Evidencia Base");
@@ -142,6 +139,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals("Hito 1", insertedSchedule.getMilestone(), "El hito debería coincidir");
         } catch (SQLException e) {
             fail("Error en testInsertScheduleOfActivities: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testInsertScheduleOfActivities: " + e.getMessage());
         }
     }
 
@@ -158,6 +159,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals("Hito 2", retrievedSchedule.getMilestone(), "El hito debería coincidir");
         } catch (SQLException e) {
             fail("Error en testSearchScheduleOfActivitiesById: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testSearchScheduleOfActivitiesById: " + e.getMessage());
         }
     }
 
@@ -180,6 +185,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals("Hito Actualizado", retrievedSchedule.getMilestone(), "El hito debería actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdateScheduleOfActivities: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testUpdateScheduleOfActivities: " + e.getMessage());
         }
     }
 
@@ -198,6 +207,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals("N/A", deletedSchedule.getIdSchedule(), "El cronograma eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteScheduleOfActivities: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testDeleteScheduleOfActivities: " + e.getMessage());
         }
     }
 
@@ -218,6 +231,10 @@ class ScheduleOfActivitiesDAOTest {
             assertTrue(schedules.size() >= 2, "Deberían existir al menos dos cronogramas en la lista");
         } catch (SQLException e) {
             fail("Error en testGetAllSchedulesOfActivities: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testGetAllSchedulesOfActivities: " + e.getMessage());
         }
     }
 
@@ -233,6 +250,10 @@ class ScheduleOfActivitiesDAOTest {
             });
         } catch (SQLException e) {
             fail("Error en testInsertScheduleOfActivities_Duplicate: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testInsertScheduleOfActivities_Duplicate: " + e.getMessage());
         }
     }
 
@@ -246,6 +267,10 @@ class ScheduleOfActivitiesDAOTest {
             assertFalse(result, "No debería actualizar un cronograma inexistente");
         } catch (SQLException e) {
             fail("Error en testUpdateScheduleOfActivities_NotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testUpdateScheduleOfActivities_NotExists: " + e.getMessage());
         }
     }
 
@@ -259,6 +284,10 @@ class ScheduleOfActivitiesDAOTest {
             assertFalse(result, "No debería eliminar un cronograma inexistente");
         } catch (SQLException e) {
             fail("Error en testDeleteScheduleOfActivities_NotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testDeleteScheduleOfActivities_NotExists: " + e.getMessage());
         }
     }
 
@@ -269,6 +298,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals("N/A", schedule.getIdSchedule(), "El cronograma no existente debe devolver valores por defecto");
         } catch (SQLException e) {
             fail("Error en testSearchScheduleOfActivitiesById_NotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testSearchScheduleOfActivitiesById_NotExists: " + e.getMessage());
         }
     }
 
@@ -281,6 +314,10 @@ class ScheduleOfActivitiesDAOTest {
             assertEquals(0, schedules.size(), "La lista debe estar vacía si no hay cronogramas");
         } catch (SQLException e) {
             fail("Error en testGetAllSchedulesOfActivities_EmptyTable: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testGetAllSchedulesOfActivities_EmptyTable: " + e.getMessage());
         }
     }
 

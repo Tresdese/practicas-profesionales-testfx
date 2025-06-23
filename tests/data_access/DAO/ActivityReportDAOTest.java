@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -82,8 +83,7 @@ class ActivityReportDAOTest {
         stmt.close();
     }
 
-    private void createBaseData() throws SQLException {
-        // 1. Period
+    private void createBaseData() throws SQLException, IOException {
         String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlPeriod)) {
             stmt.setInt(1, TEST_PERIOD_ID);
@@ -93,7 +93,6 @@ class ActivityReportDAOTest {
             stmt.executeUpdate();
         }
 
-        // 2. Group
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
             stmt.setInt(1, TEST_NRC);
@@ -103,27 +102,23 @@ class ActivityReportDAOTest {
             stmt.executeUpdate();
         }
 
-        // 3. Student using StudentDAO
         StudentDTO student = new StudentDTO(
                 studentEnrollment, 1, "Juan", "Perez", "1234567890",
                 "juan.perez@example.com", "juanperez", "password", String.valueOf(TEST_NRC), "50", 0.0
         );
         studentDAO.insertStudent(student);
 
-        // 4. Organization
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(organization));
 
-        // 5. User
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null,1,"12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
-        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
         departmentDAO.insertDepartment(department);
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        // 6. Project using ProjectDAO
         ProjectDTO project = new ProjectDTO(null, "Proyecto Test", "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
                 new java.sql.Timestamp(System.currentTimeMillis()),
@@ -158,7 +153,7 @@ class ActivityReportDAOTest {
         reportId = Integer.parseInt(report.getNumberReport());
     }
 
-    private int insertUserAndGetId(UserDTO user) throws SQLException {
+    private int insertUserAndGetId(UserDTO user) throws SQLException, IOException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getStaffNumber());
@@ -177,7 +172,7 @@ class ActivityReportDAOTest {
         throw new SQLException("No se pudo obtener el id del usuario insertado");
     }
 
-    private int insertProjectAndGetId(ProjectDTO project) throws SQLException {
+    private int insertProjectAndGetId(ProjectDTO project) throws SQLException, IOException {
         String sql = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, project.getName());
@@ -208,7 +203,7 @@ class ActivityReportDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -218,12 +213,12 @@ class ActivityReportDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void insertActivityReportSuccessfully() throws SQLException {
+    void insertActivityReportSuccessfully() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
@@ -235,7 +230,7 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void updateActivityReportSuccessfully() throws SQLException {
+    void updateActivityReportSuccessfully() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
@@ -254,14 +249,14 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void updateActivityReportFailsWhenNotExists() throws SQLException {
+    void updateActivityReportFailsWhenNotExists() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO("999", "102", 10, "No existe");
         boolean updated = activityReportDAO.updateActivityReport(report);
         assertFalse(updated, "No debería permitir actualizar un reporte inexistente.");
     }
 
     @Test
-    void deleteActivityReportSuccessfully() throws SQLException {
+    void deleteActivityReportSuccessfully() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
@@ -274,13 +269,13 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void deleteActivityReportFailsWhenNotExists() throws SQLException {
+    void deleteActivityReportFailsWhenNotExists() throws SQLException, IOException {
         boolean deleted = activityReportDAO.deleteActivityReport("999");
         assertFalse(deleted, "No debería permitir eliminar un reporte inexistente.");
     }
 
     @Test
-    void searchActivityReportByReportNumberWhenExists() throws SQLException {
+    void searchActivityReportByReportNumberWhenExists() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
@@ -297,7 +292,7 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void searchActivityReportByReportNumberWhenNotExists() throws SQLException {
+    void searchActivityReportByReportNumberWhenNotExists() throws SQLException, IOException {
         ActivityReportDTO result = activityReportDAO.searchActivityReportByReportNumber("999");
         assertNotNull(result, "El reporte no debería ser nulo.");
         assertEquals("N/A", result.getNumberReport());
@@ -305,7 +300,7 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void getAllActivityReportsReturnsList() throws SQLException {
+    void getAllActivityReportsReturnsList() throws SQLException, IOException {
         // Insert first activity report
         ActivityReportDTO report1 = new ActivityReportDTO(
                 String.valueOf(reportId),
@@ -315,17 +310,14 @@ class ActivityReportDAOTest {
         );
         activityReportDAO.insertActivityReport(report1);
 
-        // Insert second evidence
         int evidenceId2 = evidenceDAO.getNextEvidenceId();
         EvidenceDTO evidence2 = new EvidenceDTO(evidenceId2, "Evidencia Test 2", new java.util.Date(), "/ruta/evidencia2");
         evidenceDAO.insertEvidence(evidence2);
 
-        // Insert second activity
         int activityId2 = getNextActivityId();
         ActivityDTO activity2 = new ActivityDTO(String.valueOf(activityId2), "Actividad Test 2");
         activityDAO.insertActivity(activity2);
 
-        // Insert second report
         ReportDTO report2 = new ReportDTO(
                 null,
                 new java.util.Date(),
@@ -341,7 +333,6 @@ class ActivityReportDAOTest {
         reportDAO.insertReport(report2);
         int reportId2 = Integer.parseInt(report2.getNumberReport());
 
-        // Insert second activity report
         ActivityReportDTO activityReport2 = new ActivityReportDTO(
                 String.valueOf(reportId2),
                 String.valueOf(activityId2),
@@ -350,14 +341,13 @@ class ActivityReportDAOTest {
         );
         activityReportDAO.insertActivityReport(activityReport2);
 
-        // Verify both reports exist
         List<ActivityReportDTO> result = activityReportDAO.getAllActivityReports();
         assertNotNull(result, "La lista de reportes no debería ser nula.");
         assertEquals(2, result.size(), "Debe haber dos reportes de actividad.");
     }
 
     @Test
-    void insertDuplicateActivityReportFails() throws SQLException {
+    void insertDuplicateActivityReportFails() throws SQLException, IOException {
         ActivityReportDTO report = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
@@ -381,7 +371,7 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void getAllActivityReportsReturnsEmptyListWhenNoneExist() throws SQLException {
+    void getAllActivityReportsReturnsEmptyListWhenNoneExist() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         List<ActivityReportDTO> result = activityReportDAO.getAllActivityReports();
         assertNotNull(result);
@@ -399,7 +389,7 @@ class ActivityReportDAOTest {
     }
 
     @Test
-    void insertMultipleActivityReportsSuccessfully() throws SQLException {
+    void insertMultipleActivityReportsSuccessfully() throws SQLException, IOException {
         for (int i = 0; i < 5; i++) {
             // Create new evidence, activity and report for each iteration
             int evidenceIdX = evidenceDAO.getNextEvidenceId();

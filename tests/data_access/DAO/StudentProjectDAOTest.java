@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class StudentProjectDAOTest {
     private String testStudentTuition;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
@@ -32,14 +33,14 @@ class StudentProjectDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBaseObjects();
         studentProjectDAO = new StudentProjectDAO();
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
@@ -50,7 +51,7 @@ class StudentProjectDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
@@ -72,21 +73,18 @@ class StudentProjectDAOTest {
     }
 
     private void createBaseObjects() throws SQLException {
-        // Period
         String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (1, '2024-1', '2024-01-01', '2024-06-30')";
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sqlPeriod);
             testPeriodId = 1;
         }
 
-        // User
         String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (1, 1001, 'Juan', 'Pérez', 'juanp', '1234567890123456789012345678901234567890123456789012345678901234', 'Academico')";
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sqlUser);
             testUserId = 1;
         }
 
-        // LinkedOrganization
         String sqlOrg = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES ('Org Test', 'Direccion Test')";
         try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(sqlOrg, Statement.RETURN_GENERATED_KEYS);
@@ -96,7 +94,6 @@ class StudentProjectDAOTest {
             }
         }
 
-        // Group
         testGroupNRC = "12345";
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
@@ -107,7 +104,6 @@ class StudentProjectDAOTest {
             stmt.executeUpdate();
         }
 
-        // Student
         testStudentTuition = "S12345";
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
@@ -125,7 +121,6 @@ class StudentProjectDAOTest {
             stmt.executeUpdate();
         }
 
-        // Project
         String sqlProject = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlProject, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Proyecto Test");
@@ -143,7 +138,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testInsertStudentProject() throws SQLException {
+    void testInsertStudentProject() throws SQLException, IOException {
         StudentProjectDTO studentProject = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
         boolean result = studentProjectDAO.insertStudentProject(studentProject);
         assertTrue(result, "La inserción debería ser exitosa");
@@ -154,7 +149,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testSearchStudentProjectByIdProject() throws SQLException {
+    void testSearchStudentProjectByIdProject() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
         StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
@@ -163,7 +158,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testUpdateStudentProject() throws SQLException {
+    void testUpdateStudentProject() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
         String newProjectId = String.valueOf(testProjectId + 1);
@@ -192,7 +187,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testDeleteStudentProject() throws SQLException {
+    void testDeleteStudentProject() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
         StudentProjectDTO projectToDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
@@ -204,7 +199,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testGetAllStudentProjects() throws SQLException {
+    void testGetAllStudentProjects() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
         List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
@@ -225,21 +220,21 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testUpdateStudentProjectNotFound() throws SQLException {
+    void testUpdateStudentProjectNotFound() throws SQLException, IOException {
         StudentProjectDTO nonExistent = new StudentProjectDTO("9999", "NO_EXISTE");
         boolean result = studentProjectDAO.updateStudentProject(nonExistent);
         assertFalse(result, "No debe actualizar un registro inexistente");
     }
 
     @Test
-    void testDeleteStudentProjectNotFound() throws SQLException {
+    void testDeleteStudentProjectNotFound() throws SQLException, IOException {
         StudentProjectDTO nonExistent = new StudentProjectDTO("9999", "NO_EXISTE");
         boolean result = studentProjectDAO.deleteStudentProject(nonExistent);
         assertFalse(result, "No debe eliminar un registro inexistente");
     }
 
     @Test
-    void testSearchStudentProjectByIdTuiton() throws SQLException {
+    void testSearchStudentProjectByIdTuiton() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
         StudentProjectDTO retrieved = studentProjectDAO.searchStudentProjectByIdTuiton(testStudentTuition);
@@ -256,7 +251,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testGetAllStudentProjectsEmpty() throws SQLException {
+    void testGetAllStudentProjectsEmpty() throws SQLException, IOException {
         List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
         assertNotNull(projects, "La lista no debe ser nula");
         assertTrue(projects.isEmpty(), "La lista debe estar vacía si no hay registros");
@@ -271,13 +266,13 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testSearchStudentProjectByIdProjectNotFound() throws SQLException {
+    void testSearchStudentProjectByIdProjectNotFound() throws SQLException, IOException {
         StudentProjectDTO result = studentProjectDAO.searchStudentProjectByIdProject("9999");
         assertEquals("N/A", result.getIdProject(), "Debe devolver DTO con valores por defecto");
     }
 
     @Test
-    void testDeleteStudentProjectSuccess() throws SQLException {
+    void testDeleteStudentProjectSuccess() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
         StudentProjectDTO toDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
         boolean deleted = studentProjectDAO.deleteStudentProject(toDelete);
@@ -295,7 +290,7 @@ class StudentProjectDAOTest {
     }
 
     @Test
-    void testGetAllStudentProjectsWithMultipleRecords() throws SQLException {
+    void testGetAllStudentProjectsWithMultipleRecords() throws SQLException, IOException {
         String tuition2 = "S54321";
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
