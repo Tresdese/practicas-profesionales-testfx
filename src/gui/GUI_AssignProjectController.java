@@ -1,6 +1,7 @@
 package gui;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.itextpdf.text.DocumentException;
 import jakarta.mail.AuthenticationFailedException;
 import jakarta.mail.SendFailedException;
 import javafx.collections.FXCollections;
@@ -172,53 +173,197 @@ public class GUI_AssignProjectController {
 
     @FXML
     private void handleAssignProject() {
+        if (!validateInputs()) {
+            return;
+        }
+
+        if (!assignProjectToStudent()) {
+            return;
+        }
+
+        String[] pdfPathHolder = new String[1];
+        if (!generateAssignmentPDF(pdfPathHolder)) {
+            return;
+        }
+
+        String[] driveUrlHolder = new String[1];
+        if (!uploadPDFToDrive(pdfPathHolder[0], driveUrlHolder)) {
+            return;
+        }
+
+        if (!sendNotificationEmail(pdfPathHolder[0])) {
+            return;
+        }
+
+        statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
+        statusLabel.setTextFill(Color.GREENYELLOW);
+        showSuccessAlert();
+        closeWindow();
+    }
+
+    private boolean validateInputs() {
         if (student == null) {
             statusLabel.setText("No se ha seleccionado un estudiante");
             statusLabel.setStyle("-fx-text-fill: red;");
-            return;
+            return false;
         }
-
-        ProjectDTO selectedProject = projectChoiceBox.getValue();
-        if (selectedProject == null) {
+        if (projectChoiceBox.getValue() == null) {
             statusLabel.setText("Debe seleccionar un proyecto");
             statusLabel.setStyle("-fx-text-fill: red;");
-            return;
+            return false;
         }
+        return true;
+    }
 
+    private boolean assignProjectToStudent() {
         try {
-            StudentProjectDTO studentProject = new StudentProjectDTO(
-                    selectedProject.getIdProject(),
-                    student.getTuition()
-            );
+            ProjectDTO selectedProject = projectChoiceBox.getValue();
+            StudentProjectDTO studentProject = new StudentProjectDTO(selectedProject.getIdProject(), student.getTuition());
             boolean assigned = studentProjectDAO.insertStudentProject(studentProject);
-
             if (!assigned) {
                 statusLabel.setText("No se pudo asignar el proyecto.");
                 statusLabel.setStyle("-fx-text-fill: red;");
-                return;
+                return false;
             }
+            return true;
+        } catch (SQLException e) {
+            handleSQLException(e, "asignar el proyecto");
+            return false;
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            return false;
+        }
+        catch (Exception e) {
+            statusLabel.setText("Error inesperado al asignar el proyecto.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            logger.error("Error inesperado al asignar el proyecto: {}", e.getMessage(), e);
+            return false;
+        }
+    }
 
-            ProjectDAO projectDAO = new ProjectDAO();
-            ProjectDTO project = projectDAO.searchProjectById(selectedProject.getIdProject());
+    private boolean generateAssignmentPDF(String[] pdfPathHolder) {
+        try {
+            ProjectDTO selectedProject = projectChoiceBox.getValue();
+            AssignmentData data = prepareAssignmentData(selectedProject);
+            String fileName = "Asignacion_" + student.getTuition() + ".pdf";
+            String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
+            AssignmentPDFGenerator.generatePDF(tempPath, data);
+            pdfPathHolder[0] = tempPath;
+            return true;
+        } catch (IOException e) {
+            logger.error("Error de entrada/salida al generar el PDF de asignación: {}", e.getMessage(), e);
+            statusLabel.setText("Error de entrada/salida al generar el PDF de asignación.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (DocumentException e) {
+            logger.error("Error al crear el documento PDF: {}", e.getMessage(), e);
+            statusLabel.setText("Error al crear el documento PDF.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (Exception e) {
+            logger.error("Error al generar el PDF de asignación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al generar el PDF de asignación.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        }
+    }
+
+    private boolean uploadPDFToDrive(String pdfPath, String[] driveUrlHolder) {
+        try {
+            String idPeriod = getIdPeriod();
+            String parentId = createDriveFolders(idPeriod);
+            String driveUrl = uploadFile(pdfPath, parentId);
+            driveUrlHolder[0] = driveUrl;
+            return true;
+        } catch (UnknownHostException e) {
+            logger.error("Error de red al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error de red al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (SocketTimeoutException e) {
+            logger.error("Tiempo de espera agotado al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Tiempo de espera agotado al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (FileNotFoundException e) {
+            logger.error("Archivo no encontrado al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Archivo no encontrado al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (GoogleJsonResponseException e) {
+            logger.error("Error de Google Drive al subir PDF: {}", e.getDetails().getMessage(), e);
+            statusLabel.setText("Error de Google Drive al subir PDF.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (GeneralSecurityException e) {
+            logger.error("Error de seguridad al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error de seguridad al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (IOException e) {
+            logger.error("Error entrada/salida al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error entrada/salida al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (Exception e) {
+            logger.error("Error al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        }
+    }
+
+    private boolean sendNotificationEmail(String pdfPath) {
+        try {
+            ProjectDTO selectedProject = projectChoiceBox.getValue();
+            String subject = "Asignación de Prácticas Profesionales";
+            String body = "Estimado/a " + student.getNames() + ",\n\n" +
+                    "Se le informa que ha sido asignado al proyecto \"" + selectedProject.getName() + "\".\n" +
+                    "Adjunto encontrará el documento oficial de asignación.\n\n" +
+                    "Saludos,\nEquipo de Prácticas";
+            File pdfAttachment = new File(pdfPath);
+            logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), subject, body, pdfAttachment);
+            logger.info("Correo enviado a " + student.getEmail());
+            return true;
+        } catch (AuthenticationFailedException e) {
+            logger.error("Error de autenticación al enviar el correo: {}", e.getMessage(), e);
+            statusLabel.setText("Error de autenticación al enviar el correo.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (SendFailedException e) {
+            logger.error("Error al enviar el correo: {}", e.getMessage(), e);
+            statusLabel.setText("Error al enviar el correo al estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (MessagingException e) {
+            logger.error("Error de mensajería al enviar el correo: {}", e.getMessage(), e);
+            statusLabel.setText("Error de mensajería al enviar el correo.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (IOException e) {
+            logger.error("Error de entrada/salida al enviar el correo: {}", e.getMessage(), e);
+            statusLabel.setText("Error de entrada/salida al enviar el correo.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        } catch (Exception e) {
+            logger.error("Error al enviar el correo de notificación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al enviar el correo al estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            return false;
+        }
+    }
+
+    private AssignmentData prepareAssignmentData(ProjectDTO project) {
+        try {
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
-            LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
             RepresentativeDAO representativeDAO = new RepresentativeDAO();
-            List<RepresentativeDTO> representatives = representativeDAO
-                    .getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()))
+            LinkedOrganizationDTO org = orgDAO.searchLinkedOrganizationById(String.valueOf(project.getIdOrganization()));
+            RepresentativeDTO rep = representativeDAO.getRepresentativesByOrganization(String.valueOf(project.getIdOrganization()))
                     .stream()
-                    .filter(representative -> {
-                        if (representative.getIdDepartment() == null || representative.getIdDepartment().isEmpty()) return false;
-                        try {
-                            return Integer.parseInt(representative.getIdDepartment()) == project.getIdDepartment();
-                        } catch (NumberFormatException e) {
-                            return false;
-                        }
-                    })
-                    .toList();
-            RepresentativeDTO rep = representatives.isEmpty()
-                    ? new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0)
-                    : representatives.get(0);
-
+                    .findFirst()
+                    .orElse(new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0));
             AssignmentData data = new AssignmentData();
             data.setRepresentativeFirstName(rep.getNames());
             data.setRepresentativeLastName(rep.getSurnames());
@@ -228,127 +373,44 @@ public class GUI_AssignProjectController {
             data.setStudentLastName(student.getSurnames());
             data.setStudentTuition(student.getTuition());
             data.setProjectName(project.getName());
-
-            String fileName = "Asignacion_" + student.getTuition() + ".pdf";
-            String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
-            AssignmentPDFGenerator.generatePDF(tempPath, data);
-
-            String idPeriod = getIdPeriod();
-            String parentId = createDriveFolders(idPeriod);
-            String driveUrl = uploadFile(tempPath, parentId);
-
-            try {
-                String subject = "Asignación de Prácticas Profesionales";
-                String body = "Estimado/a " + student.getNames() + ",\n\n" +
-                        "Se le informa que ha sido asignado al proyecto \"" + project.getName() + "\".\n" +
-                        "Adjunto encontrará el documento oficial de asignación.\n\n" +
-                        "Saludos,\nEquipo de Prácticas";
-                File pdfAttachment = new File(tempPath);
-
-                logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), subject, body, pdfAttachment);
-                logger.info("Correo enviado a " + student.getEmail());
-            } catch (UnknownHostException e) {
-                logger.error("Error al mandar el correo (problema de red): {}", e.getMessage(), e);
-                statusLabel.setText("Error de red al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (SocketTimeoutException e) {
-                logger.error("Error al mandar el correo (tiempo de espera agotado): {}", e.getMessage(), e);
-                statusLabel.setText("Tiempo de espera agotado al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (FileNotFoundException e) {
-                logger.error("Error al mandar el correo (archivo no encontrado): {}", e.getMessage(), e);
-                statusLabel.setText("Archivo no encontrado al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (AuthenticationFailedException e) {
-                logger.error("Error al mandar el correo (fallo de autenticación): {}", e.getMessage(), e);
-                statusLabel.setText("Fallo de autenticación al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (SendFailedException e) {
-                logger.error("Error al mandar el correo (envío fallido): {}", e.getMessage(), e);
-                statusLabel.setText("Envío fallido al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (MessagingException e) {
-                logger.error("Error al mandar el correo (problema de mensajería): {}", e.getMessage(), e);
-                statusLabel.setText("Error de mensajería al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (IOException e) {
-                logger.error("Error al mandar el correo (problema de archivo o red): {}", e.getMessage(), e);
-                statusLabel.setText("Error de archivo o red al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            } catch (Exception e) {
-                logger.error("Error inesperado al enviar el correo: {}", e.getMessage(), e);
-                statusLabel.setText("Error inesperado al enviar el correo al estudiante.");
-                statusLabel.setTextFill(Color.RED);
-            }
-            statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
-            statusLabel.setTextFill(Color.GREENYELLOW);
-
-            showSuccessAlert();
-            closeWindow();
+            return data;
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42S02")) {
-                statusLabel.setText("Tabla de asignación de proyectos no encontrada.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Tabla de asignación de proyectos no encontrada: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42S22")) {
-                statusLabel.setText("Columna no encontrada en la tabla de asignación de proyectos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Columna no encontrada en la tabla de asignación de proyectos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("23000")) {
-                statusLabel.setText("El proyecto ya está asignado a este estudiante.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("El proyecto ya está asignado a este estudiante: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al asignar el proyecto.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error al asignar el proyecto: {}", e.getMessage(), e);
-            }
-        } catch (UnknownHostException e) {
-            logger.error("Error de red al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Error de red al subir PDF a Drive.");
-            statusLabel.setTextFill(Color.RED);
-        } catch (SocketTimeoutException e) {
-            logger.error("Tiempo de espera agotado al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Tiempo de espera agotado al subir PDF a Drive.");
-            statusLabel.setTextFill(Color.RED);
-        } catch (FileNotFoundException e) {
-            logger.error("Archivo no encontrado al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Archivo no encontrado al subir PDF a Drive.");
-            statusLabel.setTextFill(Color.RED);
-        } catch (GoogleJsonResponseException e) {
-            logger.error("Error de Google Drive al subir PDF: {}", e.getDetails().getMessage(), e);
-            statusLabel.setText("Error de Google Drive al subir PDF.");
-            statusLabel.setTextFill(Color.RED);
-        } catch (GeneralSecurityException e) {
-            logger.error("Error de seguridad al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Error de seguridad al subir PDF a Drive.");
-            statusLabel.setTextFill(Color.RED);
+            handleSQLException(e, "preparar los datos de asignación");
+            return new AssignmentData();
         } catch (IOException e) {
-            logger.error("Error de entrada/salida al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Error de entrada/salida al subir PDF a Drive.");
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
+            return new AssignmentData();
         } catch (Exception e) {
-            logger.error("Error inesperado: {}", e.getMessage(), e);
-            statusLabel.setText("Error inesperado al asignar el proyecto.");
+            logger.error("Error al preparar los datos de asignación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al preparar los datos de asignación.");
             statusLabel.setTextFill(Color.RED);
+            return new AssignmentData();
         }
+    }
+
+    private void handleSQLException(SQLException e, String context) {
+        String sqlState = e.getSQLState();
+        if ("08001".equals(sqlState)) {
+            statusLabel.setText("Error de conexión con la base de datos.");
+        } else if ("08S01".equals(sqlState)) {
+            statusLabel.setText("Conexión interrumpida con la base de datos.");
+        } else if ("42000".equals(sqlState)) {
+            statusLabel.setText("Base de datos desconocida.");
+        } else if ("42S02".equals(sqlState)) {
+            statusLabel.setText("Tabla no encontrada.");
+        } else if ("42S22".equals(sqlState)) {
+            statusLabel.setText("Columna no encontrada.");
+        } else if ("28000".equals(sqlState)) {
+            statusLabel.setText("Acceso denegado a la base de datos.");
+        } else if ("23000".equals(sqlState)) {
+            statusLabel.setText("El proyecto ya está asignado a este estudiante.");
+        } else {
+            statusLabel.setText("Error al " + context + ".");
+        }
+        statusLabel.setTextFill(Color.RED);
+        logger.error("Error SQL al {}: {}", context, e.getMessage(), e);
     }
 
     private String createDriveFolders(String idPeriod) {
@@ -367,7 +429,6 @@ public class GUI_AssignProjectController {
             logger.error("Tiempo de espera agotado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Tiempo de espera agotado al crear carpetas en Drive: ");
             return "";
-
         } catch (FileNotFoundException e) {
             logger.error("Archivo no encontrado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Archivo no encontrado al crear carpetas en Drive: ");
