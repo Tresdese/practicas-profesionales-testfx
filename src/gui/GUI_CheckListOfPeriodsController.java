@@ -58,20 +58,26 @@ public class GUI_CheckListOfPeriodsController {
     public void initialize() {
         this.periodDAO = new PeriodDAO();
 
-        idPeriodColumn.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
-
+        setColumns();
         loadPeriodData();
-
-        searchButton.setOnAction(event -> searchPeriod());
-        registerPeriodButton.setOnAction(event -> openRegisterPeriodWindow());
+        setButtons();
 
         periodsTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             selectedPeriod = newVal;
             periodsTableView.refresh();
         });
+    }
+
+    private void setColumns() {
+        idPeriodColumn.setCellValueFactory(new PropertyValueFactory<>("idPeriod"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+    }
+
+    private void setButtons() {
+        searchButton.setOnAction(event -> searchPeriod());
+        registerPeriodButton.setOnAction(event -> openRegisterPeriodWindow());
     }
 
     private void openRegisterPeriodWindow() {
@@ -124,6 +130,14 @@ public class GUI_CheckListOfPeriodsController {
                 statusLabel.setText("La base de datos no está disponible.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de periodo no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla de periodo no encontrada en la base de datos: " + e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la tabla de periodo.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de periodo: " + e.getMessage(), e);
             } else {
                 statusLabel.setText("Error al cargar los periodos.");
                 statusLabel.setTextFill(Color.RED);
@@ -186,6 +200,14 @@ public class GUI_CheckListOfPeriodsController {
                 statusLabel.setText("La base de datos no está disponible.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de periodo no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla de periodo no encontrada en la base de datos: " + e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la tabla de periodo.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de periodo: " + e.getMessage(), e);
             } else {
                 statusLabel.setText("Error al buscar el periodo.");
                 statusLabel.setTextFill(Color.RED);
@@ -212,13 +234,6 @@ public class GUI_CheckListOfPeriodsController {
 
     public void setUserRole(Role userRole) {
         this.userRole = userRole;
-    }
-
-    public void setButtonVisibility(Button btn, boolean visible) {
-        if (btn != null) {
-            btn.setVisible(visible);
-            btn.setManaged(visible);
-        }
     }
 
 }

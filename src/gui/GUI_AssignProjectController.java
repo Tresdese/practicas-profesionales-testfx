@@ -144,6 +144,12 @@ public class GUI_AssignProjectController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla de autoevaluación no encontrada: {}", e.getMessage(), e);
+                showAlert("Tabla de autoevaluación no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna no encontrada en la tabla de autoevaluación: {}", e.getMessage(), e);
+                showAlert("Columna no encontrada en la tabla de autoevaluación.");
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -153,6 +159,10 @@ public class GUI_AssignProjectController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al cargar proyectos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar proyectos.");
             statusLabel.setTextFill(Color.RED);
@@ -241,44 +251,35 @@ public class GUI_AssignProjectController {
                 logger.error("Error al mandar el correo (problema de red): {}", e.getMessage(), e);
                 statusLabel.setText("Error de red al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (SocketTimeoutException e) {
                 logger.error("Error al mandar el correo (tiempo de espera agotado): {}", e.getMessage(), e);
                 statusLabel.setText("Tiempo de espera agotado al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (FileNotFoundException e) {
                 logger.error("Error al mandar el correo (archivo no encontrado): {}", e.getMessage(), e);
                 statusLabel.setText("Archivo no encontrado al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (AuthenticationFailedException e) {
                 logger.error("Error al mandar el correo (fallo de autenticación): {}", e.getMessage(), e);
                 statusLabel.setText("Fallo de autenticación al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (SendFailedException e) {
                 logger.error("Error al mandar el correo (envío fallido): {}", e.getMessage(), e);
                 statusLabel.setText("Envío fallido al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (MessagingException e) {
                 logger.error("Error al mandar el correo (problema de mensajería): {}", e.getMessage(), e);
                 statusLabel.setText("Error de mensajería al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (IOException e) {
                 logger.error("Error al mandar el correo (problema de archivo o red): {}", e.getMessage(), e);
                 statusLabel.setText("Error de archivo o red al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             } catch (Exception e) {
                 logger.error("Error inesperado al enviar el correo: {}", e.getMessage(), e);
                 statusLabel.setText("Error inesperado al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
-                return;
             }
-
             statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
             statusLabel.setTextFill(Color.GREENYELLOW);
 
@@ -298,6 +299,14 @@ public class GUI_AssignProjectController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de asignación de proyectos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla de asignación de proyectos no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de asignación de proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de asignación de proyectos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -400,6 +409,14 @@ public class GUI_AssignProjectController {
             } else if (sqlState != null && sqlState.equals("42000")) {
                 logger.warn("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("Base de datos desconocida: ");
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.warn("Tabla de grupos no encontrada: {}", e.getMessage(), e);
+                showAlert("Tabla de grupos no encontrada en la base de datos: ");
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.warn("Columna no encontrada en la tabla de grupos: {}", e.getMessage(), e);
+                showAlert("Columna no encontrada en la tabla de grupos: ");
                 return "PeriodoDesconocido";
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.warn("Acceso denegado a la base de datos: {}", e.getMessage(), e);
