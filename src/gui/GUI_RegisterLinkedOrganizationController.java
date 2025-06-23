@@ -10,6 +10,7 @@ import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_RegisterLinkedOrganizationController {
@@ -51,6 +52,22 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: ", e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: ", e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de organizaciones no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de organizaciones no encontrada: ", e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de organizaciones: ", e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: ", e);
             } else if (sqlState != null && sqlState.equals("42000")){
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -60,10 +77,14 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: ", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al inicializar el servicio de organización.");
+                statusLabel.setText("Error de base de datos al inicializar el servicio de organización.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al inicializar el servicio de organización: ", e.getMessage(), e);
+                LOGGER.error("Error de base de datos al inicializar el servicio de organización: ", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer la configuración de la base de datos: ", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error al inicializar el servicio de organización.");
             statusLabel.setTextFill(Color.RED);
@@ -117,6 +138,22 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de organizaciones no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de organizaciones no encontrada: {}", e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -137,6 +174,10 @@ public class GUI_RegisterLinkedOrganizationController {
         } catch (EmptyFields e) {
             LOGGER.warn("Error de validación: {}", e);
             statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+        } catch (IOException e) {
+            LOGGER.error("Error de entrada/salida al leer la configuración de la base de datos: {}", e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado: {}", e);

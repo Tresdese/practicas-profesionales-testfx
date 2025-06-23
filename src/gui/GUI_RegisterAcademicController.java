@@ -13,6 +13,7 @@ import logic.utils.PasswordHasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_RegisterAcademicController {
@@ -70,25 +71,44 @@ public class GUI_RegisterAcademicController {
             if (sqlState != null && sqlState.equals("08001")) {
                 statusLabel.setText("Error de conexión con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: ", e.getMessage(), e);
+                LOGGER.error("Error de conexión con la base de datos: {} ", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: ", e.getMessage(), e);
+                LOGGER.error("Base de datos desconocida: {} ", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: ", e.getMessage(), e);
-            }
-             else {
-                statusLabel.setText("Error al conectar a la base de datos.");
+                LOGGER.error("Acceso denegado a la base de datos: {} ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al conectar a la base de datos: ", e.getMessage(), e);
+                LOGGER.error("Conexión interrumpida con la base de datos: {} ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {} ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {} ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {} ", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al conectar a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de base de datos al conectar a la base de datos: {} ", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer la configuración de la base de datos: {} ", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar el servicio de usuario.");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error inesperado al inicializar el servicio de usuario: ", e.getMessage(), e);
+            LOGGER.error("Error inesperado al inicializar el servicio de usuario: {} ", e.getMessage(), e);
         }
     }
 
@@ -218,6 +238,18 @@ public class GUI_RegisterAcademicController {
                     statusLabel.setText("Conexión interrumpida con la base de datos.");
                     statusLabel.setTextFill(Color.RED);
                     LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla o vista no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                } else if ("HY000".equals(sqlState)) {
+                    statusLabel.setText("Error general de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
                 } else if ("42000".equals(sqlState)) {
                     statusLabel.setText("Base de datos desconocida.");
                     statusLabel.setTextFill(Color.RED);
@@ -231,15 +263,19 @@ public class GUI_RegisterAcademicController {
                     statusLabel.setTextFill(Color.RED);
                     LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 } else {
-                    statusLabel.setText("Error al registrar académico.");
+                    statusLabel.setText("Error de base de datos al registrar académico.");
                     statusLabel.setTextFill(Color.RED);
-                    LOGGER.error("Error al registrar académico: {}", e.getMessage(), e);
+                    LOGGER.error("Error de base de datos al registrar académico: {}", e.getMessage(), e);
                 }
             }
         } catch (EmptyFields | InvalidData e) {
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado: " + e.getMessage());
             statusLabel.setTextFill(Color.RED);

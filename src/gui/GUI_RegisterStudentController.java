@@ -13,6 +13,7 @@ import logic.utils.PasswordHasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -152,10 +153,13 @@ public class GUI_RegisterStudentController {
                 parentController.loadStudentData();
             }
         } catch (RepeatedTuition | RepeatedPhone | RepeatedEmail e) {
+            LOGGER.warn("Datos repetidos: {}", e.getMessage());
             statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado: {}", e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 
@@ -172,6 +176,10 @@ public class GUI_RegisterStudentController {
             StudentValidator.validateStudentData(tuition, email, phone, password);
         } catch (InvalidData e) {
             statusLabel.setText(e.getMessage());
+            return false;
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al validar los datos del estudiante.");
+            LOGGER.error("Error inesperado al validar los datos del estudiante: {}", e.getMessage(), e);
             return false;
         }
         String confirmPassword = isPasswordVisible ? confirmPasswordVisibleField.getText() : confirmPasswordField.getText();
@@ -191,6 +199,9 @@ public class GUI_RegisterStudentController {
                     tuition, 1, namesField.getText(), surnamesField.getText(), phoneField.getText(), emailField.getText(),
                     userField.getText(), PasswordHasher.hashPassword(password), nrcChoiceBox.getValue(), creditAdvanceField.getText(), 0.0
             );
+        } catch (InvalidData e) {
+            statusLabel.setText(e.getMessage());
+            LOGGER.error("Error al construir StudentDTO: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error al construir los datos del estudiante.");
             LOGGER.error("Error al construir StudentDTO: {}", e.getMessage(), e);
@@ -220,6 +231,14 @@ public class GUI_RegisterStudentController {
                     statusLabel.setText("Base de datos no encontrada.");
                     statusLabel.setTextFill(Color.RED);
                     LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla o vista no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
                 } else if ("28000".equals(sqlState)) {
                     statusLabel.setText("Acceso denegado a la base de datos.");
                     statusLabel.setTextFill(Color.RED);
@@ -228,9 +247,22 @@ public class GUI_RegisterStudentController {
                     statusLabel.setText("Violación de restricción de integridad.");
                     statusLabel.setTextFill(Color.RED);
                     LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                } else if ("HY000".equals(sqlState)) {
+                    statusLabel.setText("Error general de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                }
+                else {
+                    statusLabel.setText("Error de base de datos al registrar el estudiante.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de base de datos al registrar el estudiante: {}", e.getMessage(), e);
                 }
 
-            } catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Error de entrada/salida al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
             LOGGER.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado.");
             statusLabel.setTextFill(Color.RED);
@@ -254,6 +286,18 @@ public class GUI_RegisterStudentController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
@@ -267,8 +311,14 @@ public class GUI_RegisterStudentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            LOGGER.error("Error de entrada/salida al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al cargar los NRCs: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado al cargar los NRCs.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

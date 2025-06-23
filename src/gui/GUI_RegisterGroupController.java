@@ -69,7 +69,7 @@ public class GUI_RegisterGroupController {
                 }
                 @Override
                 public UserDTO fromString(String string) {
-                    return null;
+                    return null; //TODO
                 }
             });
         } catch (SQLException e) {

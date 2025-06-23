@@ -441,8 +441,15 @@ public class GUI_RegisterReportController {
                 showAlert("La base de datos no está disponible.");
                 LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
                 return -1;
-            }
-            else if (sqlState != null && sqlState.equals("42S02")) {
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de ID de evidencia no encontrada.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al obtener el ID de evidencia.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al obtener el ID de evidencia", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("42S02")) {
                 showAlert("Tabla de evidencias no encontrada.");
                 LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
                 return -1;
@@ -451,6 +458,10 @@ public class GUI_RegisterReportController {
                 LOGGER.log(Level.SEVERE, "Error de SQL al obtener el ID de evidencia", e);
                 return -1;
             }
+        } catch (IOException e) {
+            showAlert("Error al leer la configuración de la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error al leer la configuración de la base de datos", e);
+            return -1;
         } catch (Exception e) {
             showAlert("Error inesperado al obtener el ID de evidencia.");
             LOGGER.log(Level.SEVERE, "Error al obtener el ID de evidencia", e);
@@ -486,6 +497,18 @@ public class GUI_RegisterReportController {
                 showAlert("Tabla de evidencias no encontrada.");
                 LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
                 return false;
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de ID de evidencia no encontrada.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("22001")) {
+                showAlert("El nombre del archivo es demasiado largo.");
+                LOGGER.log(Level.WARNING, "Nombre de archivo demasiado largo", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al insertar evidencia.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al insertar evidencia", e);
+                return false;
             } else if (sqlState != null && sqlState.equals("23000")) {
                 showAlert("Ya existe una evidencia con el mismo ID.");
                 LOGGER.log(Level.WARNING, "Evidencia con ID ya existe", e);
@@ -495,6 +518,10 @@ public class GUI_RegisterReportController {
                 LOGGER.log(Level.SEVERE, "Error de SQL al insertar evidencia", e);
                 return false;
             }
+        } catch (IOException e) {
+            showAlert("Error al leer la configuración de la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error al leer la configuración de la base de datos", e);
+            return false;
         } catch (Exception e) {
             showAlert("Error inesperado al insertar evidencia.");
             LOGGER.log(Level.SEVERE, "Error inesperado al insertar evidencia", e);
@@ -549,11 +576,23 @@ public class GUI_RegisterReportController {
                 showAlert("Tabla de reportes no encontrada.");
                 LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
                 return;
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de horas reportadas no encontrada.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+                return;
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al verificar horas reportadas.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al verificar horas reportadas", e);
+                return;
             } else {
                 showAlert("Error de base de datos al verificar horas reportadas.");
                 LOGGER.log(Level.SEVERE, "Error de SQL al verificar horas reportadas", e);
                 return;
             }
+        } catch (IOException e) {
+            showAlert("Error al leer la configuracion de la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error al leer la configuracion de la base de datos ", e);
+            return;
         } catch (Exception e) {
             showAlert("Error inesperado al verificar horas reportadas.");
             LOGGER.log(Level.SEVERE, "Error inesperado al verificar horas reportadas", e);
@@ -591,8 +630,47 @@ public class GUI_RegisterReportController {
                     try {
                         activityReportDAO.insertActivityReport(ar);
                     } catch (SQLException e) {
-                        showAlert("Error de base de datos al registrar una actividad.");
-                        LOGGER.log(Level.SEVERE, "Error de SQL al registrar actividad", e);
+                        String sqlState = e.getSQLState();
+                        if (sqlState != null && sqlState.equals("08001")) {
+                            showAlert("Error de conexión con la base de datos al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "Error de SQL al conectarse al servidor", e);
+                        } else if (sqlState != null && sqlState.equals("08S01")) {
+                            showAlert("Conexión interrumpida con la base de datos al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
+                        } else if (sqlState != null && sqlState.equals("28000")) {
+                            showAlert("Acceso denegado a la base de datos al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
+                        } else if (sqlState != null && sqlState.equals("42000")) {
+                            showAlert("La base de datos no está disponible al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
+                        } else if (sqlState != null && sqlState.equals("42S02")) {
+                            showAlert("Tabla de actividades no encontrada al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+                        } else if (sqlState != null && sqlState.equals("42S22")) {
+                            showAlert("Columna de actividad no encontrada al registrar actividades.");
+                            LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+                        } else if (sqlState != null && sqlState.equals("HY000")) {
+                            showAlert("Error general de base de datos al registrar actividad.");
+                            LOGGER.log(Level.SEVERE, "Error general de SQL al registrar actividad", e);
+                        } else {
+                            showAlert("Error de base de datos al registrar actividad.");
+                            LOGGER.log(Level.SEVERE, "Error de SQL al registrar actividad", e);
+                        }
+                    } catch (GoogleJsonResponseException e) {
+                        showAlert("Error de Google Drive al registrar actividad.");
+                        LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al registrar actividad", e);
+                    } catch (SocketTimeoutException e) {
+                        showAlert("Tiempo de espera agotado al registrar actividad.");
+                        LOGGER.log(Level.SEVERE, "SocketTimeoutException al registrar actividad", e);
+                    } catch (UnknownHostException e) {
+                        showAlert("Error de conexión a Internet al registrar actividad.");
+                        LOGGER.log(Level.SEVERE, "UnknownHostException al registrar actividad", e);
+                    } catch (FileNotFoundException e) {
+                        showAlert("Archivo no encontrado al registrar actividad.");
+                        LOGGER.log(Level.SEVERE, "FileNotFoundException al registrar actividad", e);
+                    } catch (IOException e) {
+                        showAlert("Error de acceso al archivo al registrar actividad.");
+                        LOGGER.log(Level.SEVERE, "IOException al registrar actividad", e);
                     } catch (Exception e) {
                         showAlert("Error inesperado al registrar una actividad.");
                         LOGGER.log(Level.SEVERE, "Error inesperado al registrar actividad", e);
@@ -624,10 +702,19 @@ public class GUI_RegisterReportController {
             } else if (sqlState != null && sqlState.equals("42S02")) {
                 showAlert("Tabla de reportes no encontrada.");
                 LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de reporte no encontrada.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al registrar el reporte.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al registrar el reporte", e);
             } else {
                 showAlert("Error de base de datos al Registrar el Reporte.");
                 LOGGER.log(Level.SEVERE, "Error de SQL al Registrar el Reporte", e);
             }
+        } catch (IOException e) {
+            showAlert("Error al leer el archivo de configuración de la base de datos.");
+            LOGGER.log(Level.WARNING, "Error al leer el archivo de configuración de la base de datos", e);
         } catch (Exception e) {
             showAlert("Error inesperado al registrar el informe.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar informe", e);
@@ -647,11 +734,11 @@ public class GUI_RegisterReportController {
             });
             stage.show();
         } catch  (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error al cargar la ventana de actividades: {}", e);
-            showAlert("Error al abrir la ventana de actividades.");
+            LOGGER.log(Level.SEVERE, "Error al leer el fxml para cargar la ventana de actividades: {}", e);
+            showAlert("Error al leer el fxml para abrir la ventana de actividades.");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al abrir la ventana de actividades: {}", e);
-            showAlert("Error al abrir la ventana de actividades.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al abrir la ventana de actividades: {}", e);
+            showAlert("Error inesperado al abrir la ventana de actividades.");
         }
     }
 
@@ -676,10 +763,19 @@ public class GUI_RegisterReportController {
             } else if (sqlState != null && sqlState.equals("42S02")) {
                 showAlert("Tabla de actividades no encontrada al recargar las actividades.");
                 LOGGER.log(Level.SEVERE, "Tabla no encontrada", e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de actividad no encontrada al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada", e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al recargar las actividades.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al recargar las actividades", e);
             } else {
                 showAlert("Error de base de datos al recargar las actividades.");
                 LOGGER.log(Level.SEVERE, "Error de SQL al recargar las actividades", e);
             }
+        } catch (IOException e) {
+            showAlert("Error al leer el archivo de configuración de la base de datos al recargar las actividades.");
+            LOGGER.log(Level.WARNING, "Error al leer el archivo de configuración de la base de datos", e);
         } catch (Exception e) {
             showAlert("Error inesperado al recargar actividades.");
             LOGGER.log(Level.SEVERE, "Error inesperado al recargar actividades", e);
@@ -727,11 +823,23 @@ public class GUI_RegisterReportController {
                 showAlert("Tabla de grupos no encontrada al obtener el periodo del grupo.");
                 LOGGER.log(Level.SEVERE, "Tabla de grupos no encontrada al obtener el periodo del grupo", e);
                 return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna de periodo no encontrada al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Columna de periodo no encontrada al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de base de datos al obtener el periodo del grupo.");
+                LOGGER.log(Level.SEVERE, "Error general de SQL al obtener el periodo del grupo", e);
+                return "PeriodoDesconocido";
             } else {
                 showAlert("Error de base de datos al obtener el periodo del grupo.");
                 LOGGER.log(Level.SEVERE, "Error de SQL al obtener el periodo del grupo", e);
                 return "PeriodoDesconocido";
             }
+        } catch (IOException e) {
+            showAlert("Error al leer el archivo de configuracion de base de datos.");
+            LOGGER.log(Level.WARNING, "Error al leer el archivo de configuracion de base de datos", e);
+            return "PeriodoDesconocido";
         } catch (Exception e) {
             showAlert("Error inesperado al obtener el periodo del grupo.");
             LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);

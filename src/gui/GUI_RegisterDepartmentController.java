@@ -8,6 +8,7 @@ import logic.DTO.DepartmentDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_RegisterDepartmentController {
@@ -79,7 +80,7 @@ public class GUI_RegisterDepartmentController {
                 LOGGER.error("No se pudo registrar el departamento '{}'.", department.getName());
             }
         } catch (Exception e) {
-            messageLabel.setText("Error al registrar: ");
+            messageLabel.setText("Error inesperado al registrar: ");
             messageLabel.setTextFill(Color.RED);
             LOGGER.error("Error inesperado al registrar departamento: {}", e);
         }
@@ -126,6 +127,21 @@ public class GUI_RegisterDepartmentController {
                 messageLabel.setText("Conexión interrumpida con la base de datos.");
                 messageLabel.setTextFill(Color.RED);
                 return false;
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                messageLabel.setText("Tabla o vista no encontrada.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("22001".equals(sqlState)) {
+                LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+                messageLabel.setText("Datos demasiado largos para el campo.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                messageLabel.setText("Columna no encontrada.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
             } else if ("42000".equals(sqlState)){
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 messageLabel.setText("Base de datos desconocida.");
@@ -141,15 +157,25 @@ public class GUI_RegisterDepartmentController {
                 messageLabel.setText("Violación de restricción de integridad.");
                 messageLabel.setTextFill(Color.RED);
                 return false;
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                messageLabel.setText("Error general de la base de datos.");
+                messageLabel.setTextFill(Color.RED);
+                return false;
             } else {
-                LOGGER.error("Error al registrar departamento: {}", e);
-                messageLabel.setText("Error al registrar el departamento: ");
+                LOGGER.error("Error de la base de datos al registrar departamento: {}", e);
+                messageLabel.setText("Error de la base de datos al registrar el departamento: ");
                 messageLabel.setTextFill(Color.RED);
                 return false;
             }
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al registrar departamento: {}", e.getMessage(), e);
             messageLabel.setText("Error interno al registrar el departamento.");
+            messageLabel.setTextFill(Color.RED);
+            return false;
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            messageLabel.setText("Error al leer la configuración de la base de datos.");
             messageLabel.setTextFill(Color.RED);
             return false;
         } catch (Exception e) {

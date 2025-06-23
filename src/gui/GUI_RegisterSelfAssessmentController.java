@@ -116,6 +116,18 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos no encontradaL: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al cargar proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al cargar proyectos: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -125,7 +137,10 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar proyectos: {}", e.getMessage(), e);
             }
-        }catch (Exception e) {
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+        } catch (Exception e) {
             showError("Error inesperado al cargar proyectos.");
             LOGGER.error("Error inesperado al cargar proyectos: {}", e.getMessage(), e);
         }
@@ -173,6 +188,22 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al cargar criterios.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al cargar criterios: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -186,6 +217,9 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             showError("Error al cargar criterios.");
             LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
@@ -257,6 +291,11 @@ public class GUI_RegisterSelfAssessmentController {
                 Float.parseFloat(input.getGrade());
             } catch (NumberFormatException e) {
                 showError("Las calificaciones deben ser números válidos.");
+                LOGGER.error("Calificación inválida para el criterio: {}", input.idCriteria, e);
+                return false;
+            } catch (Exception e) {
+                showError("Error inesperado al validar las calificaciones.");
+                LOGGER.error("Error inesperado al validar las calificaciones: {}", e.getMessage(), e);
                 return false;
             }
         }
@@ -312,6 +351,26 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 return -1;
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al obtener el ID de evidencia.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al obtener el ID de evidencia: {}", e.getMessage(), e);
+                return -1;
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -327,7 +386,12 @@ public class GUI_RegisterSelfAssessmentController {
                 LOGGER.error("Error al obtener el ID de evidencia: {}", e.getMessage(), e);
                 return -1;
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            return -1;
+        }
+        catch (Exception e) {
             showError("Error al obtener el ID de evidencia.");
             LOGGER.error("Error al obtener el ID de evidencia", e);
             return -1;
