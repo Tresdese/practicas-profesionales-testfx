@@ -36,11 +36,12 @@
                 <Font size="30.0" />
             </font>
         </Label>
-        <HBox alignment="CENTER" layoutX="55.0" layoutY="597.0" prefHeight="40.0" prefWidth="892.0" spacing="70.0">
+        <HBox alignment="CENTER" layoutX="63.0" layoutY="605.0" prefHeight="40.0" prefWidth="892.0" spacing="70.0">
             <Button fx:id="registerOrganizationButton" layoutX="410.0" layoutY="597.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Registrar Organizacion" textFill="WHITE" />
             <Button fx:id="deleteOrganizationButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Eliminar organizacion" textFill="WHITE" />
+            <Button fx:id="deleteDepartmentButton" layoutX="207.0" layoutY="268.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #2772d3;" text="Eliminar departamento" textFill="WHITE" />
         </HBox>
         <Label fx:id="statusLabel" layoutX="35.0" layoutY="580.0" textFill="RED" />
-        <Label fx:id="organizationCountsLabel" layoutX="35.0" layoutY="630.0" text="Totales: 0" />
+        <Label fx:id="organizationCountsLabel" layoutX="38.0" layoutY="645.0" text="Totales: 0" />
     </children>
 </AnchorPane>

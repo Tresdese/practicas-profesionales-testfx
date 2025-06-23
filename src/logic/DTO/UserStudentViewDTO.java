@@ -74,7 +74,7 @@ public class UserStudentViewDTO {
         this.tuition = tuition;
     }
 
-    public int isStatus() {
+    public int getStatus() {
         return status;
     }
 

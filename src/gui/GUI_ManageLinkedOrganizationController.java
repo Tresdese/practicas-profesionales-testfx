@@ -31,7 +31,7 @@ public class GUI_ManageLinkedOrganizationController {
     private Label statusLabel;
 
     @FXML
-    private Button registerDepartmentButton;
+    private Button registerDepartmentButton, deleteOrganizationButton;
 
     private GUI_CheckListLinkedOrganizationController parentController;
 

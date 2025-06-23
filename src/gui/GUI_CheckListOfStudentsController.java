@@ -338,9 +338,9 @@ public class GUI_CheckListOfStudentsController {
     private boolean filterStudentByChoice(UserStudentViewDTO userStudentView, String filter) {
         return switch (filter) {
             case "Todos" -> true;
-            case "Activos" -> userStudentView.isStatus() == 1;
-            case "Inactivos" -> userStudentView.isStatus() == 0;
-            case "Mis estudiantes" -> userStudentView.isStatus() == 1 && userStudentView.getUserId() == idUserAcademic;
+            case "Activos" -> userStudentView.getStatus() == 1;
+            case "Inactivos" -> userStudentView.getStatus() == 0;
+            case "Mis estudiantes" -> userStudentView.getStatus() == 1 && userStudentView.getUserId() == idUserAcademic;
             default -> false;
         };
     }
@@ -348,7 +348,7 @@ public class GUI_CheckListOfStudentsController {
     private StudentDTO buildStudent(UserStudentViewDTO userStudentView) {
         return new StudentDTO(
                 userStudentView.getTuition(),
-                userStudentView.isStatus(),
+                userStudentView.getStatus(),
                 userStudentView.getStudentNames(),
                 userStudentView.getStudentSurnames(),
                 userStudentView.getPhoneNumber(),
@@ -373,7 +373,7 @@ public class GUI_CheckListOfStudentsController {
         try {
             UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
             UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
-            if (userStudentView != null && userStudentView.isStatus() == 1 &&
+            if (userStudentView != null && userStudentView.getStatus() == 1 &&
                     (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
                 filteredList.add(buildStudent(userStudentView));
             }
@@ -414,19 +414,19 @@ public class GUI_CheckListOfStudentsController {
             UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
             List<UserStudentViewDTO> userStudentViews = userStudentViewDAO.getAllUserStudentViews();
             int total = 0;
-            int activos = 0;
-            int inactivos = 0;
+            int active = 0;
+            int inactive = 0;
             for (UserStudentViewDTO userStudentView : userStudentViews) {
                 if (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic) {
                     total++;
-                    if (userStudentView.isStatus() == 1) {
-                        activos++;
+                    if (userStudentView.getStatus() == 1) {
+                        active++;
                     } else {
-                        inactivos++;
+                        inactive++;
                     }
                 }
             }
-            studentCountsLabel.setText("Totales: " + total + " | Activos: " + activos + " | Inactivos: " + inactivos);
+            studentCountsLabel.setText("Totales: " + total + " | Activos: " + active + " | Inactivos: " + inactive);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {

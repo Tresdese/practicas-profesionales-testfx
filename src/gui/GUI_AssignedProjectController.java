@@ -121,8 +121,11 @@ public class GUI_AssignedProjectController {
                 showAlert("Error al verificar autoevaluación.");
                 registerSelfAssessmentButton.setDisable(true);
             }
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            logger.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            showAlert("No se pudo leer el archivo de configuracion de la base de datos.");
+            registerSelfAssessmentButton.setDisable(true);
+        } catch (Exception e) {
             logger.error("Error inesperado al verificar autoevaluación: {}", e.getMessage(), e);
             showAlert("Error inesperado al verificar autoevaluación.");
             registerSelfAssessmentButton.setDisable(true);
@@ -165,7 +168,12 @@ public class GUI_AssignedProjectController {
                 statusLabel.setTextFill(Color.RED);
                 showAlert("Error al obtener el proyecto del estudiante de base de datos.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            logger.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            showAlert("No se pudo leer el archivo de configuracion de la base de datos.");
+        }catch (Exception e) {
             logger.error("Error inesperado al obtener el proyecto del estudiante: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener el proyecto del estudiante.");
             statusLabel.setTextFill(Color.RED);
@@ -219,8 +227,12 @@ public class GUI_AssignedProjectController {
                 statusLabel.setTextFill(Color.RED);
                 return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
             }
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            logger.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            showAlert("No se pudo leer el archivo de configuracion de la base de datos.");
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+        }catch (Exception e) {
             logger.error("Error inesperado al obtener el proyecto: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener el proyecto.");
             statusLabel.setTextFill(Color.RED);
@@ -281,7 +293,11 @@ public class GUI_AssignedProjectController {
                 representativeLabel.setText("Error de base de datos al obtener representante");
                 logger.error("Error de base de datos al obtener organización o representante: {}", e.getMessage(), e);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            organizationLabel.setText("Error al leer la configuración de la base de datos");
+            representativeLabel.setText("Error al leer la configuración de la base de datos");
+            logger.error("No se pudo leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+        }catch (Exception e) {
             organizationLabel.setText("Error inesperado al obtener organización");
             representativeLabel.setText("Error inesperado al obtener representante");
             logger.error("Error inesperado al obtener organización o representante: {}", e.getMessage(), e);

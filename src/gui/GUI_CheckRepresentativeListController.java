@@ -12,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import logic.DAO.RepresentativeDAO;
 import logic.DTO.DepartmentDTO;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.DTO.RepresentativeDTO;
@@ -51,7 +52,10 @@ public class GUI_CheckRepresentativeListController {
     private TableColumn<RepresentativeDTO, Void> managementColumn;
 
     @FXML
-    private Button searchButton;
+    private Button searchButton, deleteRepresentativeButton;
+
+    @FXML
+    private ChoiceBox<String> filterChoiceBox;
 
     @FXML
     private TextField searchField;
@@ -96,15 +100,38 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al inicializar el servicio de representantes: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("No se pudo leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar el servicio de representantes.");
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error inesperado al inicializar el servicio de representantes: {}", e.getMessage(), e);
         }
 
+        filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
+        filterChoiceBox.setValue("Todos");
+        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> loadOrganizationData());
+
+        setColumns();
+        addManagementButtonToTable();
+        loadOrganizationData();
+        updateRepresentativeCounts();
+
+        setButtons();
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedRepresentative = (RepresentativeDTO) newValue;
+            deleteRepresentativeButton.setDisable(selectedRepresentative == null);
+            tableView.refresh();
+        });
+    }
+
+    private void setColumns() {
+        representativeEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         representativeNameColumn.setCellValueFactory(new PropertyValueFactory<>("names"));
         representativeSurnameColumn.setCellValueFactory(new PropertyValueFactory<>("surnames"));
-        representativeEmailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         representativeDepartmentColumn.setCellValueFactory(cellData -> {
             String departmentId = cellData.getValue().getIdDepartment();
@@ -117,18 +144,12 @@ public class GUI_CheckRepresentativeListController {
             String organizationName = getOrganizationNameByDepartmentId(departmentId);
             return new SimpleStringProperty(organizationName);
         });
+    }
 
-        addManagementButtonToTable();
-
-        loadOrganizationData();
-
+    private void setButtons() {
         searchButton.setOnAction(event -> searchRepresentative());
         registerRepresentativeButton.setOnAction(event -> openRegisterRepresentativeWindow());
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedRepresentative = (RepresentativeDTO) newValue;
-            tableView.refresh();
-        });
+        deleteRepresentativeButton.setOnAction(event -> handleDeleteRepresentative());
     }
 
     private String getDepartmentNameById(String departmentId) {
@@ -251,8 +272,12 @@ public class GUI_CheckRepresentativeListController {
 
         try {
             List<RepresentativeDTO> representatives = representativeService.getAllRepresentatives();
-            representativeList.addAll(representatives);
-            statusLabel.setText("");
+            String filter = filterChoiceBox != null ? filterChoiceBox.getValue() : "Todos";
+            for (RepresentativeDTO representative : representatives) {
+                if (filterRepresentativeByChoice(representative, filter)) {
+                    representativeList.add(representative);
+                }
+            }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -276,6 +301,10 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al cargar los representantes: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar los representantes desde el archivo.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar los representantes desde el archivo: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los representantes.");
             statusLabel.setTextFill(Color.RED);
@@ -283,7 +312,16 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(representativeList);
-        updateRepresentativeCounts(representativeList);
+        updateRepresentativeCounts();
+    }
+
+    private boolean filterRepresentativeByChoice(RepresentativeDTO representative, String filter) {
+        return switch (filter) {
+            case "Todos" -> true;
+            case "Activos" -> representative.getStatus() == 1;
+            case "Inactivos" -> representative.getStatus() == 0;
+            case null, default -> false;
+        };
     }
 
     private void searchRepresentative() {
@@ -330,7 +368,7 @@ public class GUI_CheckRepresentativeListController {
         }
 
         tableView.setItems(filteredList);
-        updateRepresentativeCounts(filteredList);
+        updateRepresentativeCounts();
     }
 
     private void addManagementButtonToTable() {
@@ -376,8 +414,98 @@ public class GUI_CheckRepresentativeListController {
         }
     }
 
-    private void updateRepresentativeCounts(ObservableList<RepresentativeDTO> list) {
-        int total = list.size();
-        representativeCountsLabel.setText("Totales: " + total);
+    private void updateRepresentativeCounts() {
+        try {
+            List<RepresentativeDTO> representatives = representativeService.getAllRepresentatives();
+            int total = 0;
+            int active = 0;
+            int inactive = 0;
+            for (RepresentativeDTO representative : representatives) {
+                total++;
+                if (representative.getStatus() == 1) {
+                    active++;
+                } else {
+                    inactive++;
+                }
+            }
+            representativeCountsLabel.setText("Totales: " + total + " | Activos: " + active + " | Inactivos: " + inactive);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio de estudiantes.");
+                LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
+                statusLabel.setTextFill(Color.RED);
+            }
+        } catch (Exception e) {
+            representativeCountsLabel.setText("Error inesperado al contar estudiantes");
+            LOGGER.error("Error inesperado al contar estudiantes: {}", e.getMessage(), e);
+        }
+    }
+
+    private void handleDeleteRepresentative() {
+        if (selectedRepresentative == null) {
+            statusLabel.setText("Por favor, seleccione un representante para eliminar.");
+            statusLabel.setTextFill(Color.RED);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+            Parent root = loader.load();
+            GUI_ConfirmDialogController confirmController = loader.getController();
+            confirmController.setInformationMessage("Al borrar un representante, no podrá ser asignado a ningun proyecto ni organizacion.");
+            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar al representante " + selectedRepresentative.getNames() + "?");
+            Stage confirmStage = new Stage();
+            confirmStage.setTitle("Confirmar eliminación");
+            confirmStage.setScene(new Scene(root));
+            confirmStage.showAndWait();
+            if (confirmController.isConfirmed()) {
+                representativeService.updateRepresentativeStatus(selectedRepresentative.getIdOrganization(), 0);
+                statusLabel.setText("Representante eliminado correctamente.");
+                loadOrganizationData();
+                updateRepresentativeCounts();
+            } else {
+                statusLabel.setText("Eliminación cancelada.");
+            }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al eliminar el representante.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al eliminar el representante: {}", e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al eliminar el representante.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error inesperado al eliminar el representante: {}", e.getMessage(), e);
+        }
     }
 }

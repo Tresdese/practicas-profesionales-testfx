@@ -44,6 +44,15 @@ public class RepresentativeService {
         return success;
     }
 
+    public boolean updateRepresentativeStatus(String idRepresentative, int status) throws SQLException, IOException {
+        boolean success = representativeDAO.updateRepresentativeStatus(idRepresentative, status);
+        if (!success) {
+            throw new SQLException("No se pudo actualizar el estado del representante.");
+        }
+
+        return success;
+    }
+
     public List<RepresentativeDTO> getAllRepresentatives() throws SQLException, IOException {
         return representativeDAO.getAllRepresentatives();
     }
