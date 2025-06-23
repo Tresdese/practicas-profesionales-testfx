@@ -195,6 +195,14 @@ public class GUI_CheckProjectRequestListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de solicitudes no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de solicitudes no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de solicitudes.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de solicitudes: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -204,6 +212,10 @@ public class GUI_CheckProjectRequestListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al cargar solicitudes: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             statusLabel.setText("Error al cargar solicitudes.");
             statusLabel.setTextFill(Color.RED);
