@@ -146,8 +146,8 @@ public class GUI_DetailsStudentController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            LOGGER.error("No se pudo abrir la ventana de reportes: {}", e.getMessage(), e);
-            showAlert("Error", "No se pudo abrir la ventana de reportes. Por favor, intente más tarde.");
+            LOGGER.error("No se pudo leer el fxml al abrir la ventana de reportes: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo leer el fxml al abrir la ventana de reportes. Por favor, intente más tarde.");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al abrir la ventana de reportes: {}", e.getMessage(), e);
             showAlert("Error", "Ocurrió un error inesperado al abrir la ventana de reportes. Por favor, intente más tarde.");
@@ -171,8 +171,8 @@ public class GUI_DetailsStudentController {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
-            LOGGER.error("No se pudo abrir la ventana de autoevaluación: {}", e.getMessage(), e);
-            showAlert("Error", "No se pudo abrir la ventana de autoevaluación. Por favor, intente más tarde.");
+            LOGGER.error("No se pudo leer el fxml al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo leer el fxml al abrir la ventana de autoevaluación. Por favor, intente más tarde.");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al abrir la ventana de autoevaluación: {}", e.getMessage(), e);
             showAlert("Error", "Ocurrió un error inesperado al abrir la ventana de autoevaluación. Por favor, intente más tarde.");
@@ -199,11 +199,33 @@ public class GUI_DetailsStudentController {
             stage.setScene(new Scene(root));
             stage.show();
         }catch (IOException e) {
-            LOGGER.error("No se pudo abrir la ventana de Calificaciones de Presentacion: {}", e.getMessage(), e);
-            showAlert("Error", "No se pudo abrir la ventana de Calificaciones de Presentacion. Por favor, intente más tarde.");
+            LOGGER.error("No se pudo leer el fxml al abrir la ventana de Calificaciones de Presentacion: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo leer el fxml al abrir la ventana de Calificaciones de Presentacion. Por favor, intente más tarde.");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al abrir la ventana de Calificaciones de Presentacion: {}", e.getMessage(), e);
             showAlert("Error", "Ocurrió un error inesperado al abrir la ventana de Calificaciones de Presentacion. Por favor, intente más tarde.");
+        }
+    }
+
+    @FXML
+    private void handleCheckScheduleOfActivities() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckScheduleOfActivities.fxml"));
+            Parent root = loader.load();
+
+            GUI_CheckScheduleOfActivitiesController controller = loader.getController();
+            controller.setStudentTuition(tuitionLabel.getText());
+
+            Stage stage = new Stage();
+            stage.setTitle("Cronograma de Actividades");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.error("No se pudo leer el fxml al abrir el cronograma: {}", e.getMessage(), e);
+            showAlert("Error", "No se pudo leer el FXML del cronograma. Por favor, intente más tarde.");
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado al abrir el cronograma: {}", e.getMessage(), e);
+            showAlert("Error", "Ocurrió un error inesperado al abrir el cronograma. Por favor, intente más tarde.");
         }
     }
 

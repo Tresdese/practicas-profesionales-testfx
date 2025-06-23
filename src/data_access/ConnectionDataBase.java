@@ -55,4 +55,17 @@ public class ConnectionDataBase implements AutoCloseable {
             }
         }
     }
+
+    public ConnectionDataBase(String configPath) throws IOException {
+        Properties properties = new Properties();
+        try (FileInputStream input = new FileInputStream(configPath)) {
+            properties.load(input);
+            this.URL = properties.getProperty("db.url");
+            this.USER = properties.getProperty("db.user");
+            this.PASSWORD = properties.getProperty("db.password");
+        } catch (IOException e) {
+            logger.error("Error al leer el archivo de propiedades: " + e.getMessage(), e);
+            throw e;
+        }
+    }
 }
