@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -27,7 +28,7 @@ class ProjectPresentationDAOTest {
     private int departmentId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
@@ -40,7 +41,7 @@ class ProjectPresentationDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBaseUserOrganizationAndProject();
     }
@@ -61,16 +62,16 @@ class ProjectPresentationDAOTest {
         stmt.close();
     }
 
-    private void createBaseUserOrganizationAndProject() throws SQLException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+    private void createBaseUserOrganizationAndProject() throws SQLException, IOException {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
 
-        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
         departmentDAO.insertDepartment(department);
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
         ProjectDTO project = new ProjectDTO(
@@ -119,12 +120,12 @@ class ProjectPresentationDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void insertProjectPresentationSuccessfully() throws Exception {
+    void insertProjectPresentationSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1,
                 projectId,
@@ -140,7 +141,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void searchProjectPresentationByIdSuccessfully() throws Exception {
+    void searchProjectPresentationByIdSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1,
                 projectId,
@@ -159,7 +160,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void updateProjectPresentationSuccessfully() throws Exception {
+    void updateProjectPresentationSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1,
                 projectId,
@@ -180,7 +181,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void deleteProjectPresentationSuccessfully() throws Exception {
+    void deleteProjectPresentationSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(1, projectId, new Timestamp(System.currentTimeMillis()), Tipe.Parcial);
         assertTrue(projectPresentationDAO.insertProjectPresentation(presentation));
 
@@ -195,7 +196,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void searchProjectPresentationsByProjectIdSuccessfully() throws Exception {
+    void searchProjectPresentationsByProjectIdSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation1 = new ProjectPresentationDTO(
                 1,
                 projectId,
@@ -229,7 +230,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void getAllProjectPresentationsWhenEmpty() throws Exception {
+    void getAllProjectPresentationsWhenEmpty() throws SQLException, IOException {
         List<ProjectPresentationDTO> presentations = projectPresentationDAO.getAllProjectPresentations();
         assertNotNull(presentations);
         assertTrue(presentations.isEmpty());
@@ -249,7 +250,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void updateNonExistentProjectPresentation() throws Exception {
+    void updateNonExistentProjectPresentation() throws SQLException, IOException {
         ProjectPresentationDTO nonExistent = new ProjectPresentationDTO(
                 9999,
                 projectId,
@@ -261,13 +262,13 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void deleteNonExistentProjectPresentation() throws Exception {
+    void deleteNonExistentProjectPresentation() throws SQLException, IOException {
         boolean deleted = projectPresentationDAO.deleteProjectPresentation(9999);
         assertFalse(deleted);
     }
 
     @Test
-    void insertDuplicateProjectPresentation() throws Exception {
+    void insertDuplicateProjectPresentation() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
         );
@@ -281,7 +282,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void searchProjectPresentationsByTypeSuccessfully() throws Exception {
+    void searchProjectPresentationsByTypeSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO parcial = new ProjectPresentationDTO(
                 1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
         );
@@ -299,7 +300,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void getUpcomingPresentationsOrderByDateSuccessfully() throws Exception {
+    void getUpcomingPresentationsOrderByDateSuccessfully() throws SQLException, IOException {
         long now = System.currentTimeMillis();
         ProjectPresentationDTO future1 = new ProjectPresentationDTO(
                 1, projectId, new java.sql.Timestamp(now + 86400000), Tipe.Parcial
@@ -326,7 +327,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void partialUpdateProjectPresentationSuccessfully() throws Exception {
+    void partialUpdateProjectPresentationSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
         );
@@ -345,7 +346,7 @@ class ProjectPresentationDAOTest {
     }
 
     @Test
-    void bulkInsertProjectPresentationsSuccessfully() throws Exception {
+    void bulkInsertProjectPresentationsSuccessfully() throws SQLException, IOException {
         int count = 10;
         for (int i = 1; i <= count; i++) {
             ProjectPresentationDTO pres = new ProjectPresentationDTO(

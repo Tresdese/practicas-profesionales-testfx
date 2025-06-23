@@ -30,7 +30,7 @@ public class DepartmentDAO implements IDeparmentDAO {
             statement.setString(1, department.getName());
             statement.setString(2, department.getDescription());
             statement.setInt(3, department.getOrganizationId());
-
+            statement.setInt(4, department.getStatus());
             return statement.executeUpdate() > 0;
         }
     }

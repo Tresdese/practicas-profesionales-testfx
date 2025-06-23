@@ -5,6 +5,7 @@ import logic.DAO.SelfAssessmentDAO;
 import org.junit.jupiter.api.*;
 import logic.DTO.SelfAssessmentDTO;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -25,7 +26,7 @@ class SelfAssessmentDAOTest {
     private int testOrganizationId = 1;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         clearTablesAndResetAutoIncrement();
@@ -34,7 +35,7 @@ class SelfAssessmentDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -44,13 +45,13 @@ class SelfAssessmentDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException {
         clearTablesAndResetAutoIncrement();
         createBaseObjects();
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
@@ -81,7 +82,6 @@ class SelfAssessmentDAOTest {
             stmt.setDate(4, Date.valueOf("2024-06-30"));
             stmt.executeUpdate();
         }
-        // User
         String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlUser)) {
             stmt.setString(1, testUserId);
@@ -93,7 +93,6 @@ class SelfAssessmentDAOTest {
             stmt.setString(7, "Academico");
             stmt.executeUpdate();
         }
-        // Group
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
             stmt.setString(1, testGroupNRC);
@@ -102,7 +101,6 @@ class SelfAssessmentDAOTest {
             stmt.setString(4, testPeriodId);
             stmt.executeUpdate();
         }
-        // Student
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
             stmt.setString(1, testStudentTuition);
@@ -118,7 +116,6 @@ class SelfAssessmentDAOTest {
             stmt.setDouble(11, 0.0);
             stmt.executeUpdate();
         }
-        // Linked Organization
         String sqlOrg = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlOrg, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Org Test");
@@ -130,7 +127,6 @@ class SelfAssessmentDAOTest {
                 }
             }
         }
-        // Project
         String sqlProject = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlProject)) {
             stmt.setInt(1, testProjectId);
@@ -142,7 +138,6 @@ class SelfAssessmentDAOTest {
             stmt.setInt(7, testOrganizationId);
             stmt.executeUpdate();
         }
-        // Evidence
         String sqlEvidence = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sqlEvidence, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Evidencia 1");
@@ -158,7 +153,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessment() throws SQLException {
+    void testInsertSelfAssessment() throws SQLException, IOException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0,
                 "Buen trabajo",
@@ -179,7 +174,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testSearchSelfAssessmentById() throws SQLException {
+    void testSearchSelfAssessmentById() throws SQLException, IOException {
         int id = insertTestSelfAssessment("Comentario test", 8.0);
         SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById(String.valueOf(id));
         assertNotNull(found);
@@ -187,7 +182,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testUpdateSelfAssessment() throws SQLException {
+    void testUpdateSelfAssessment() throws SQLException, IOException {
         int id = insertTestSelfAssessment("Comentario original", 7.0);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 id,
@@ -209,7 +204,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testDeleteSelfAssessment() throws SQLException {
+    void testDeleteSelfAssessment() throws SQLException, IOException {
         int id = insertTestSelfAssessment("Comentario a borrar", 6.0);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 id,
@@ -230,7 +225,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testGetAllSelfAssessments() throws SQLException {
+    void testGetAllSelfAssessments() throws SQLException, IOException {
         insertTestSelfAssessment("Comentario 1", 7.5);
         insertTestSelfAssessment("Comentario 2", 8.5);
 
@@ -260,21 +255,21 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testGetAllSelfAssessmentsWhenEmpty() throws SQLException {
+    void testGetAllSelfAssessmentsWhenEmpty() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         List<SelfAssessmentDTO> all = selfAssessmentDAO.getAllSelfAssessments();
         assertTrue(all.isEmpty(), "La lista debe estar vacía si no hay registros");
     }
 
     @Test
-    void testSearchSelfAssessmentByInvalidId() throws SQLException {
+    void testSearchSelfAssessmentByInvalidId() throws SQLException, IOException {
         SelfAssessmentDTO found = selfAssessmentDAO.searchSelfAssessmentById("-999");
         assertEquals(0, found.getSelfAssessmentId());
         assertEquals("N/A", found.getComments());
     }
 
     @Test
-    void testUpdateNonExistentSelfAssessment() throws SQLException {
+    void testUpdateNonExistentSelfAssessment() throws SQLException, IOException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 9999, "No existe", 5.0f, testStudentTuition, testProjectId, testEvidenceId,
                 new java.util.Date(), SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA, "N/A"
@@ -284,7 +279,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testDeleteNonExistentSelfAssessment() throws SQLException {
+    void testDeleteNonExistentSelfAssessment() throws SQLException, IOException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 9999, "No existe", 5.0f, testStudentTuition, testProjectId, testEvidenceId,
                 new java.util.Date(), SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA, "N/A"
@@ -294,7 +289,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testMultipleInsertionsAndRetrieval() throws SQLException {
+    void testMultipleInsertionsAndRetrieval() throws SQLException, IOException {
         insertTestSelfAssessment("Comentario 1", 7.0);
         insertTestSelfAssessment("Comentario 2", 8.0);
         insertTestSelfAssessment("Comentario 3", 9.0);
@@ -312,7 +307,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessmentWithNullFields() throws SQLException {
+    void testInsertSelfAssessmentWithNullFields() throws SQLException, IOException {
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0, null, 8.0f, testStudentTuition, testProjectId, testEvidenceId,
                 null, SelfAssessmentDTO.EstadoAutoevaluacion.COMPLETADA, null
@@ -322,14 +317,14 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessmentDuplicated() throws SQLException {
+    void testInsertSelfAssessmentDuplicated() throws SQLException, IOException {
         int id1 = insertTestSelfAssessment("Duplicado", 7.0);
         int id2 = insertTestSelfAssessment("Duplicado", 7.0);
         assertNotEquals(id1, id2, "Cada inserción debe generar un ID diferente");
     }
 
     @Test
-    void testInsertSelfAssessmentWithMaxLengthComments() throws SQLException {
+    void testInsertSelfAssessmentWithMaxLengthComments() throws SQLException, IOException {
         String maxComment = "a".repeat(255);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0, maxComment, 8.0f, testStudentTuition, testProjectId, testEvidenceId,
@@ -340,7 +335,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessmentWithSpecialCharacters() throws SQLException {
+    void testInsertSelfAssessmentWithSpecialCharacters() throws SQLException, IOException {
         String specialComment = "¡Excelente! 😊 #Prueba_áéíóú";
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0, specialComment, 9.0f, testStudentTuition, testProjectId, testEvidenceId,
@@ -353,7 +348,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testUpdateSelfAssessmentWithNullFields() throws SQLException {
+    void testUpdateSelfAssessmentWithNullFields() throws SQLException, IOException {
         int id = insertTestSelfAssessment("Original", 7.0);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 id, null, 8.0f, testStudentTuition, testProjectId, testEvidenceId,
@@ -366,7 +361,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testDeleteSelfAssessmentTwice() throws SQLException {
+    void testDeleteSelfAssessmentTwice() throws SQLException, IOException {
         int id = insertTestSelfAssessment("Para borrar dos veces", 6.0);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 id, "Para borrar dos veces", 6.0f, testStudentTuition, testProjectId, testEvidenceId,
@@ -377,7 +372,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessmentWithFutureDate() throws SQLException {
+    void testInsertSelfAssessmentWithFutureDate() throws SQLException, IOException {
         java.util.Date futureDate = new java.util.Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365);
         SelfAssessmentDTO selfAssessment = new SelfAssessmentDTO(
                 0, "Futuro", 8.0f, testStudentTuition, testProjectId, testEvidenceId,
@@ -388,7 +383,7 @@ class SelfAssessmentDAOTest {
     }
 
     @Test
-    void testInsertSelfAssessmentWithInvalidGrade() throws SQLException {
+    void testInsertSelfAssessmentWithInvalidGrade() throws SQLException, IOException {
         float invalidGrade = 20.0f;
         if (invalidGrade < 0.0f || invalidGrade > 10.0f) {
             assertTrue(true, "La calificación es inválida, pero la BD no lo restringe.");

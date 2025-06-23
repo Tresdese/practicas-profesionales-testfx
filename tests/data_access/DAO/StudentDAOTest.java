@@ -5,6 +5,7 @@ import logic.DAO.StudentDAO;
 import logic.DTO.StudentDTO;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,11 +24,15 @@ class StudentDAOTest {
 
     @BeforeAll
     static void setUpClass() {
-        connectionDB = new ConnectionDataBase();
         try {
+            connectionDB = new ConnectionDataBase();
             connection = connectionDB.connectDB();
         } catch (SQLException e) {
             fail("Error al conectar a la base de datos: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al conectar a la base de datos: " + e.getMessage());
         }
     }
 
@@ -40,12 +45,10 @@ class StudentDAOTest {
     void setUp() {
         studentDAO = new StudentDAO();
         try {
-            // Limpiar tablas en orden de dependencias
             connection.prepareStatement("DELETE FROM estudiante").executeUpdate();
             connection.prepareStatement("DELETE FROM grupo").executeUpdate();
             connection.prepareStatement("DELETE FROM periodo").executeUpdate();
 
-            // Insertar periodo de prueba
             String sqlPeriodo = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
             try (PreparedStatement stmt = connection.prepareStatement(sqlPeriodo)) {
                 stmt.setInt(1, TEST_PERIODO_ID);
@@ -55,7 +58,6 @@ class StudentDAOTest {
                 stmt.executeUpdate();
             }
 
-            // Insertar grupo de prueba
             String sqlGrupo = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
             try (PreparedStatement stmt = connection.prepareStatement(sqlGrupo)) {
                 stmt.setInt(1, TEST_NRC);
@@ -82,6 +84,10 @@ class StudentDAOTest {
             assertEquals("Juan", insertedStudent.getNames(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en testInsertStudent: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testInsertStudent: " + e.getMessage());
         }
     }
 
@@ -95,6 +101,10 @@ class StudentDAOTest {
             assertEquals("Juana", retrievedStudent.getNames(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en testSearchStudentByTuiton: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testSearchStudentByTuiton: " + e.getMessage());
         }
     }
 
@@ -112,6 +122,10 @@ class StudentDAOTest {
             assertEquals("Actualizado", retrievedStudent.getNames(), "El nombre debería actualizarse");
         } catch (SQLException e) {
             fail("Error en testUpdateStudent: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testUpdateStudent: " + e.getMessage());
         }
     }
 
@@ -127,6 +141,10 @@ class StudentDAOTest {
             assertEquals("N/A", deletedStudent.getTuition(), "El estudiante eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en testDeleteStudent: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testDeleteStudent: " + e.getMessage());
         }
     }
 
@@ -143,6 +161,10 @@ class StudentDAOTest {
             assertTrue(found, "El estudiante de prueba debería estar en la lista");
         } catch (SQLException e) {
             fail("Error en testGetAllStudents: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testGetAllStudents: " + e.getMessage());
         }
     }
 
@@ -168,13 +190,17 @@ class StudentDAOTest {
     void testUpdateStudentState() {
         try {
             insertTestStudent("S88888888", 1, "Estado", "Prueba", "9999999999", "estado@prueba.com", "estadouser", "estadopass", String.valueOf(TEST_NRC), "10");
-            boolean updated = studentDAO.updateStudentState("S88888888", 2);
+            boolean updated = studentDAO.updateStudentStatus("S88888888", 2);
             assertTrue(updated, "El estado debería actualizarse correctamente");
 
             StudentDTO student = studentDAO.searchStudentByTuition("S88888888");
             assertEquals(2, student.getState(), "El estado del estudiante debería ser 2");
         } catch (SQLException e) {
             fail("Error en testUpdateStudentState: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testUpdateStudentState: " + e.getMessage());
         }
     }
 
@@ -187,6 +213,10 @@ class StudentDAOTest {
             assertEquals("S77777777", student.getTuition(), "La matrícula debería coincidir");
         } catch (SQLException e) {
             fail("Error en testSearchStudentByUserAndPassword: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testSearchStudentByUserAndPassword: " + e.getMessage());
         }
     }
 
@@ -198,6 +228,10 @@ class StudentDAOTest {
             assertFalse(studentDAO.isTuitonRegistered("NO_EXISTE"), "La matrícula no debería estar registrada");
         } catch (SQLException e) {
             fail("Error en testIsTuitonRegistered: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testIsTuitonRegistered: " + e.getMessage());
         }
     }
 
@@ -209,6 +243,10 @@ class StudentDAOTest {
             assertFalse(studentDAO.isPhoneRegistered("0000000000"), "El teléfono no debería estar registrado");
         } catch (SQLException e) {
             fail("Error en testIsPhoneRegistered: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testIsPhoneRegistered: " + e.getMessage());
         }
     }
 
@@ -220,6 +258,10 @@ class StudentDAOTest {
             assertFalse(studentDAO.isEmailRegistered("noexiste@correo.com"), "El correo no debería estar registrado");
         } catch (SQLException e) {
             fail("Error en testIsEmailRegistered: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testIsEmailRegistered: " + e.getMessage());
         }
     }
 
@@ -231,6 +273,8 @@ class StudentDAOTest {
             assertThrows(SQLException.class, () -> studentDAO.insertStudent(duplicate), "No debe permitir insertar matrícula duplicada");
         } catch (SQLException e) {
             fail("Error en testInsertStudent_DuplicateTuition: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testInsertStudent_DuplicateTuition: " + e.getMessage());
         }
     }
 
@@ -242,6 +286,10 @@ class StudentDAOTest {
             assertFalse(result, "No debe actualizar un estudiante inexistente");
         } catch (SQLException e) {
             fail("Error en testUpdateStudent_NonExistent: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testUpdateStudent_NonExistent: " + e.getMessage());
         }
     }
 
@@ -252,6 +300,10 @@ class StudentDAOTest {
             assertFalse(result, "No debe eliminar un estudiante inexistente");
         } catch (SQLException e) {
             fail("Error en testDeleteStudent_NonExistent: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testDeleteStudent_NonExistent: " + e.getMessage());
         }
     }
 
@@ -263,6 +315,10 @@ class StudentDAOTest {
             assertEquals("N/A", student.getTuition(), "Debe devolver estudiante no encontrado");
         } catch (SQLException e) {
             fail("Error en testSearchStudentByUserAndPassword_InvalidCredentials: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testSearchStudentByUserAndPassword_InvalidCredentials: " + e.getMessage());
         }
     }
 
@@ -275,6 +331,10 @@ class StudentDAOTest {
             assertTrue(students.isEmpty(), "La lista debe estar vacía si no hay estudiantes");
         } catch (SQLException e) {
             fail("Error en testGetAllStudents_Empty: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en testGetAllStudents_Empty: " + e.getMessage());
         }
     }
 

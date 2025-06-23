@@ -5,6 +5,7 @@ import logic.DAO.SelfAssessmentCriteriaDAO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,11 +21,15 @@ class SelfAssessmentCriteriaDAOTest {
 
     @BeforeAll
     static void setUpAll() {
-        connectionDB = new ConnectionDataBase();
         try {
+            connectionDB = new ConnectionDataBase();
             connection = connectionDB.connectDB();
         } catch (SQLException e) {
             fail("Error al conectar a la base de datos: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al conectar a la base de datos: " + e.getMessage());
         }
     }
 
@@ -59,6 +64,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("Criterio de Prueba", criteriaList.get(0).getNameCriteria(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en insertSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en insertSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
         }
     }
 
@@ -75,6 +84,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("Criterio de Consulta", found.getNameCriteria(), "El nombre debe coincidir");
         } catch (SQLException e) {
             fail("Error en searchSelfAssessmentCriteriaByIdSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en searchSelfAssessmentCriteriaByIdSuccessfully: " + e.getMessage());
         }
     }
 
@@ -96,6 +109,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("Criterio Actualizado", found.getNameCriteria(), "El nombre debe actualizarse");
         } catch (SQLException e) {
             fail("Error en updateSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en updateSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
         }
     }
 
@@ -114,6 +131,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("N/A", found.getIdCriteria(), "El criterio eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en deleteSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en deleteSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
         }
     }
 
@@ -136,6 +157,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals(2, criteriaList.size(), "Deberían existir dos criterios en la base de datos");
         } catch (SQLException e) {
             fail("Error en getAllSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en getAllSelfAssessmentCriteriaSuccessfully: " + e.getMessage());
         }
     }
 
@@ -145,10 +170,13 @@ class SelfAssessmentCriteriaDAOTest {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO("10", "Criterio Único");
             assertTrue(selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria));
 
-            // Intentar insertar con el mismo ID
             SelfAssessmentCriteriaDTO duplicate = new SelfAssessmentCriteriaDTO("10", "Criterio Duplicado");
             assertThrows(SQLException.class, () -> selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(duplicate));
         } catch (SQLException e) {
+            fail("Error inesperado en insertSelfAssessmentCriteriaFailsWithDuplicateId: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en insertSelfAssessmentCriteriaFailsWithDuplicateId: " + e.getMessage());
         }
     }
@@ -161,6 +189,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertFalse(result, "No debería actualizar un criterio inexistente");
         } catch (SQLException e) {
             fail("Error inesperado en updateSelfAssessmentCriteriaFailsWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en updateSelfAssessmentCriteriaFailsWhenNotExists: " + e.getMessage());
         }
     }
 
@@ -171,6 +203,10 @@ class SelfAssessmentCriteriaDAOTest {
             boolean result = selfAssessmentCriteriaDAO.deleteSelfAssessmentCriteria(nonExistent);
             assertFalse(result, "No debería eliminar un criterio inexistente");
         } catch (SQLException e) {
+            fail("Error inesperado en deleteSelfAssessmentCriteriaFailsWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en deleteSelfAssessmentCriteriaFailsWhenNotExists: " + e.getMessage());
         }
     }
@@ -184,25 +220,31 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("N/A", found.getNameCriteria(), "El nombre debe ser 'N/A' si no existe");
         } catch (SQLException e) {
             fail("Error inesperado en searchSelfAssessmentCriteriaByIdReturnsNAWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en searchSelfAssessmentCriteriaByIdReturnsNAWhenNotExists: " + e.getMessage());
         }
     }
 
     @Test
     void getAllSelfAssessmentCriteriaReturnsEmptyListWhenNoCriteriaExist() {
         try {
-            // Asegura que la tabla está vacía
             connection.prepareStatement("DELETE FROM criterio_de_autoevaluacion").executeUpdate();
             List<SelfAssessmentCriteriaDTO> list = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertNotNull(list, "La lista no debe ser nula");
             assertTrue(list.isEmpty(), "La lista debe estar vacía si no hay criterios");
         } catch (SQLException e) {
             fail("Error inesperado en getAllSelfAssessmentCriteriaReturnsEmptyListWhenNoCriteriaExist: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en getAllSelfAssessmentCriteriaReturnsEmptyListWhenNoCriteriaExist: " + e.getMessage());
         }
     }
 
     @Test
     void insertSelfAssessmentCriteriaFailsWithNullOrEmptyFields() {
-        // Dependiendo de las restricciones de la base de datos, puede lanzar SQLException o retornar false
         assertThrows(SQLException.class, () -> {
             SelfAssessmentCriteriaDTO nullFields = new SelfAssessmentCriteriaDTO(null, null);
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(nullFields);
@@ -229,6 +271,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertEquals("3", list.get(2).getIdCriteria());
         } catch (SQLException e) {
             fail("Error inesperado en getAllSelfAssessmentCriteriaReturnsOrderedList: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en getAllSelfAssessmentCriteriaReturnsOrderedList: " + e.getMessage());
         }
     }
 
@@ -243,6 +289,10 @@ class SelfAssessmentCriteriaDAOTest {
             List<SelfAssessmentCriteriaDTO> list = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertEquals(10, list.size());
         } catch (SQLException e) {
+            fail("Error inesperado en insertMultipleSelfAssessmentCriteriaAndCheckCount: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en insertMultipleSelfAssessmentCriteriaAndCheckCount: " + e.getMessage());
         }
     }
@@ -261,6 +311,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertTrue(afterDelete.isEmpty());
         } catch (SQLException e) {
             fail("Error inesperado en deleteAllSelfAssessmentCriteria: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en deleteAllSelfAssessmentCriteria: " + e.getMessage());
         }
     }
 
@@ -275,6 +329,10 @@ class SelfAssessmentCriteriaDAOTest {
             assertNotNull(foundEmpty);
             assertEquals("N/A", foundEmpty.getIdCriteria());
         } catch (SQLException e) {
+            fail("Error inesperado en searchSelfAssessmentCriteriaByIdWithNullOrEmptyId: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en searchSelfAssessmentCriteriaByIdWithNullOrEmptyId: " + e.getMessage());
         }
     }

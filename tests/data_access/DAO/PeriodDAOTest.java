@@ -5,6 +5,7 @@ import logic.DAO.PeriodDAO;
 import logic.DTO.PeriodDTO;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,8 +27,8 @@ class PeriodDAOTest {
 
     @BeforeAll
     void setUpAll() {
-        connectionDB = new ConnectionDataBase();
         try {
+            connectionDB = new ConnectionDataBase();
             connection = connectionDB.connectDB();
             periodDAO = new PeriodDAO();
             clearTable();
@@ -35,6 +36,10 @@ class PeriodDAOTest {
             assertTrue(periodDAO.insertPeriod(basePeriod), "No se pudo insertar el periodo base en BeforeAll");
         } catch (SQLException e) {
             fail("Error al conectar o preparar la base de datos: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al conectar a la base de datos: " + e.getMessage());
         }
     }
 
@@ -44,7 +49,11 @@ class PeriodDAOTest {
             clearTable();
             if (connection != null) connection.close();
             if (connectionDB != null) connectionDB.close();
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            fail("Error al limpiar la tabla o cerrar la conexión: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al cerrar la conexión: " + e.getMessage());
+        }
     }
 
     @BeforeEach
@@ -55,6 +64,10 @@ class PeriodDAOTest {
             assertTrue(periodDAO.insertPeriod(basePeriod), "No se pudo insertar el periodo base en BeforeEach");
         } catch (SQLException e) {
             fail("Error al limpiar la tabla periodo: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al limpiar la tabla periodo: " + e.getMessage());
         }
     }
 
@@ -83,6 +96,10 @@ class PeriodDAOTest {
             assertEquals("Periodo Extra", insertedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en insertPeriodSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en insertPeriodSuccessfully: " + e.getMessage());
         }
     }
 
@@ -94,6 +111,10 @@ class PeriodDAOTest {
             assertEquals(baseName, retrievedPeriod.getName(), "El nombre debería coincidir");
         } catch (SQLException e) {
             fail("Error en searchPeriodByIdSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en searchPeriodByIdSuccessfully: " + e.getMessage());
         }
     }
 
@@ -113,6 +134,10 @@ class PeriodDAOTest {
             assertEquals("Periodo Base Actualizado", retrievedPeriod.getName(), "El nombre debería actualizarse");
         } catch (SQLException e) {
             fail("Error en updatePeriodSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en updatePeriodSuccessfully: " + e.getMessage());
         }
     }
 
@@ -125,6 +150,10 @@ class PeriodDAOTest {
             assertEquals("N/A", deletedPeriod.getIdPeriod(), "El periodo eliminado no debería existir");
         } catch (SQLException e) {
             fail("Error en deletePeriodSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en deletePeriodSuccessfully: " + e.getMessage());
         }
     }
 
@@ -143,6 +172,10 @@ class PeriodDAOTest {
             assertTrue(periods.size() >= 2, "Deberían existir al menos dos periodos en la base de datos");
         } catch (SQLException e) {
             fail("Error en getAllPeriodsSuccessfully: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en getAllPeriodsSuccessfully: " + e.getMessage());
         }
     }
 
@@ -158,6 +191,10 @@ class PeriodDAOTest {
             boolean result = periodDAO.insertPeriod(duplicate);
             assertFalse(result, "No debería permitir insertar un periodo con ID duplicado");
         } catch (SQLException e) {
+            fail("Error inesperado en insertPeriodFailsWithDuplicateId: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en insertPeriodFailsWithDuplicateId: " + e.getMessage());
         }
     }
@@ -175,6 +212,10 @@ class PeriodDAOTest {
             assertFalse(result, "No debería actualizar un periodo inexistente");
         } catch (SQLException e) {
             fail("Error inesperado en updatePeriodFailsWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en updatePeriodFailsWhenNotExists: " + e.getMessage());
         }
     }
 
@@ -184,6 +225,10 @@ class PeriodDAOTest {
             boolean result = periodDAO.deletePeriodById("8888");
             assertFalse(result, "No debería eliminar un periodo inexistente");
         } catch (SQLException e) {
+            fail("Error inesperado en deletePeriodFailsWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en deletePeriodFailsWhenNotExists: " + e.getMessage());
         }
     }
@@ -197,6 +242,10 @@ class PeriodDAOTest {
             assertEquals("N/A", found.getName(), "El nombre debe ser 'N/A' si no existe");
         } catch (SQLException e) {
             fail("Error inesperado en searchPeriodByIdReturnsNAWhenNotExists: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado en searchPeriodByIdReturnsNAWhenNotExists: " + e.getMessage());
         }
     }
 
@@ -208,6 +257,10 @@ class PeriodDAOTest {
             assertNotNull(list, "La lista no debe ser nula");
             assertTrue(list.isEmpty(), "La lista debe estar vacía si no hay periodos");
         } catch (SQLException e) {
+            fail("Error inesperado en getAllPeriodsReturnsEmptyListWhenNoPeriodsExist: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en getAllPeriodsReturnsEmptyListWhenNoPeriodsExist: " + e.getMessage());
         }
     }
@@ -227,7 +280,7 @@ class PeriodDAOTest {
 
     @Test
     void insertPeriodWithLongFields() {
-        String longId = "a".repeat(300); // Ajusta según el límite real de la columna
+        String longId = "a".repeat(300);
         String longName = "b".repeat(300);
         PeriodDTO period = new PeriodDTO(longId, longName, baseStart, baseEnd);
         assertThrows(SQLException.class, () -> periodDAO.insertPeriod(period));
@@ -250,6 +303,10 @@ class PeriodDAOTest {
             assertEquals("2", list.get(1).getIdPeriod());
             assertEquals("3", list.get(2).getIdPeriod());
         } catch (SQLException e) {
+            fail("Error inesperado en getAllPeriodsReturnsOrderedList: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
             fail("Error inesperado en getAllPeriodsReturnsOrderedList: " + e.getMessage());
         }
     }

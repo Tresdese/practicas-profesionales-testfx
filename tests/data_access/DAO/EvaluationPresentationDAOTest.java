@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -35,7 +36,7 @@ class EvaluationPresentationDAOTest {
     private int departmentId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, Exception {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
@@ -53,7 +54,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBaseData();
     }
@@ -81,16 +82,16 @@ class EvaluationPresentationDAOTest {
         stmt.close();
     }
 
-    private void createBaseData() throws SQLException {
+    private void createBaseData() throws SQLException, IOException {
         // Organization
-        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
         // User
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         userId = insertUserAndGetId(user);
 
-        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId);
+        DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
         departmentDAO.insertDepartment(department);
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
@@ -167,7 +168,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -177,14 +178,14 @@ class EvaluationPresentationDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void insertEvaluationPresentation() throws Exception {
+    void insertEvaluationPresentation() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, // idEvaluation (o puedes omitir si usas el constructor sin idEvaluation)
+                0,
                 presentationId,
                 studentMatricula,
                 new java.util.Date(),
@@ -200,7 +201,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void updateEvaluationPresentation() throws Exception {
+    void updateEvaluationPresentation() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0
@@ -217,7 +218,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void deleteEvaluationPresentation() throws Exception {
+    void deleteEvaluationPresentation() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 -1,
                 presentationId,
@@ -236,7 +237,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void searchEvaluationPresentationById() throws Exception {
+    void searchEvaluationPresentationById() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.5
@@ -249,7 +250,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getAllEvaluationPresentations() throws Exception {
+    void getAllEvaluationPresentations() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0, presentationId, studentMatricula, new java.util.Date(),
@@ -262,7 +263,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getLastInsertedId() throws Exception {
+    void getLastInsertedId() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 10.0
@@ -272,7 +273,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getEvaluationPresentationsByTuiton() throws Exception {
+    void getEvaluationPresentationsByTuiton() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 9.0
@@ -294,7 +295,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void updateEvaluationPresentation_notExisting() throws Exception {
+    void updateEvaluationPresentation_notExisting() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 9999, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0
@@ -304,20 +305,20 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void deleteEvaluationPresentation_notExisting() throws Exception {
+    void deleteEvaluationPresentation_notExisting() throws SQLException, IOException {
         boolean deleted = evaluationDAO.deleteEvaluationPresentation(9999);
         assertFalse(deleted);
     }
 
     @Test
-    void getAllEvaluationPresentations_empty() throws Exception {
+    void getAllEvaluationPresentations_empty() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         List<EvaluationPresentationDTO> list = evaluationDAO.getAllEvaluationPresentations();
         assertTrue(list.isEmpty());
     }
 
     @Test
-    void getEvaluationPresentationsByTuiton_noResults() throws Exception {
+    void getEvaluationPresentationsByTuiton_noResults() throws SQLException, IOException {
         List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuiton("NOEXISTE");
         assertTrue(list.isEmpty());
     }
@@ -332,14 +333,14 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void searchEvaluationPresentationById_notExisting() throws Exception {
+    void searchEvaluationPresentationById_notExisting() throws SQLException, IOException {
         int nonExistentId = 99999;
         EvaluationPresentationDTO result = evaluationDAO.searchEvaluationPresentationById(nonExistentId);
         assertEquals(0, result.getIdEvaluation());
     }
 
     @Test
-    void insertEvaluationPresentation_upperLimitAverage() throws Exception {
+    void insertEvaluationPresentation_upperLimitAverage() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 10.0
@@ -351,7 +352,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void insertEvaluationPresentation_lowerLimitAverage() throws Exception {
+    void insertEvaluationPresentation_lowerLimitAverage() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 0.0
@@ -363,7 +364,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getEvaluationPresentationsByTuitonMultipleRecords() throws Exception {
+    void getEvaluationPresentationsByTuitonMultipleRecords() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0, presentationId, studentMatricula, new java.util.Date(),
@@ -376,7 +377,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void deleteEvaluationPresentationMultipleRecords() throws Exception {
+    void deleteEvaluationPresentationMultipleRecords() throws SQLException, IOException {
         int[] ids = new int[3];
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
@@ -416,7 +417,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void updateEvaluationPresentation_nullDate() throws Exception {
+    void updateEvaluationPresentation_nullDate() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0

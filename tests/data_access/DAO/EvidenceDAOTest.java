@@ -1,5 +1,6 @@
 package data_access.DAO;
 
+import java.io.IOException;
 import java.util.Date;
 import data_access.ConnectionDataBase;
 import logic.DAO.EvidenceDAO;
@@ -21,11 +22,15 @@ class EvidenceDAOTest {
 
     @BeforeAll
     static void setUpClass() {
-        connectionDB = new ConnectionDataBase();
         try {
+            connectionDB = new ConnectionDataBase();
             connection = connectionDB.connectDB();
         } catch (SQLException e) {
             fail("Error al conectar a la base de datos: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Error inesperado al conectar a la base de datos: " + e.getMessage());
         }
     }
 
@@ -79,7 +84,10 @@ class EvidenceDAOTest {
             }
         } catch (SQLException e) {
             fail("Error en testInsertEvidence: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
         }
+
     }
 
     @Test
@@ -97,6 +105,8 @@ class EvidenceDAOTest {
             assertEquals(route, evidence.getRoute(), "La ruta debería coincidir");
         } catch (SQLException e) {
             fail("Error en testGetEvidence: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
         }
     }
 
@@ -119,6 +129,8 @@ class EvidenceDAOTest {
             assertEquals("/ruta/actualizada", updatedEvidence.getRoute());
         } catch (SQLException e) {
             fail("Error en testUpdateEvidence: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
         }
     }
 
@@ -137,6 +149,8 @@ class EvidenceDAOTest {
             assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
         } catch (SQLException e) {
             fail("Error en testDeleteEvidence: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
         }
     }
 
@@ -151,31 +165,33 @@ class EvidenceDAOTest {
             assertTrue(evidences.size() >= 2, "Debe haber al menos dos evidencias");
         } catch (SQLException e) {
             fail("Error en testGetAllEvidences: " + e.getMessage());
+        } catch (IOException e) {
+            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
         }
     }
 
     @Test
-    void testUpdateEvidence_NonExistent() throws Exception {
+    void testUpdateEvidence_NonExistent() throws SQLException, IOException {
         EvidenceDTO evidence = new EvidenceDTO(9999, "No existe", new Date(), "/ruta/noexiste");
         boolean updated = evidenceDAO.updateEvidence(evidence);
         assertFalse(updated, "No debe actualizar una evidencia inexistente");
     }
 
     @Test
-    void testDeleteEvidence_NonExistent() throws Exception {
+    void testDeleteEvidence_NonExistent() throws SQLException, IOException {
         boolean deleted = evidenceDAO.deleteEvidence(9999);
         assertFalse(deleted, "No debe eliminar una evidencia inexistente");
     }
 
     @Test
-    void testSearchEvidenceById_NonExistent() throws Exception {
+    void testSearchEvidenceById_NonExistent() throws SQLException, IOException {
         EvidenceDTO evidence = evidenceDAO.searchEvidenceById(9999);
         assertNotNull(evidence, "Debe retornar un objeto");
         assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
     }
 
     @Test
-    void testGetAllEvidences_EmptyTable() throws SQLException {
+    void testGetAllEvidences_EmptyTable() throws SQLException, IOException {
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("DELETE FROM evidencia");
         }
@@ -185,7 +201,7 @@ class EvidenceDAOTest {
     }
 
     @Test
-    void testInsertAndRetrieveMultipleEvidences() throws Exception {
+    void testInsertAndRetrieveMultipleEvidences() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvidenceDTO evidence = new EvidenceDTO(0, "Evidencia" + i, new Date(), "/ruta/" + i);
             evidenceDAO.insertEvidence(evidence);
@@ -195,7 +211,7 @@ class EvidenceDAOTest {
     }
 
     @Test
-    void testGetNextEvidenceId() throws Exception {
+    void testGetNextEvidenceId() throws SQLException, IOException {
         int nextIdBefore = evidenceDAO.getNextEvidenceId();
         insertTestEvidence("Evidencia NextId", new Date(), "/ruta/nextid");
         int nextIdAfter = evidenceDAO.getNextEvidenceId();

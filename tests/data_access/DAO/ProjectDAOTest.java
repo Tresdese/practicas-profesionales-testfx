@@ -5,6 +5,7 @@ import logic.DAO.*;
 import logic.DTO.*;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class ProjectDAOTest {
     private int testDepartmentId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
         connection = connectionDB.connectDB();
         userDAO = new UserDAO();
@@ -54,17 +55,17 @@ class ProjectDAOTest {
         stmt.close();
     }
 
-    private void createBaseUserAndOrganization() throws SQLException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test");
+    private void createBaseUserAndOrganization() throws SQLException, IOException {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         testOrganizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
 
         testDepartmentId = createTestDepartment();
 
-        UserDTO user = new UserDTO(null, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
         testUserId = insertUserAndGetId(user);
     }
 
-    private int insertUserAndGetId(UserDTO user) throws SQLException {
+    private int insertUserAndGetId(UserDTO user) throws SQLException, IOException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getStaffNumber());
@@ -100,7 +101,7 @@ class ProjectDAOTest {
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
@@ -110,12 +111,12 @@ class ProjectDAOTest {
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    void insertProjectSuccessfully() throws Exception {
+    void insertProjectSuccessfully() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Test",
@@ -131,7 +132,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void getAllProjectsSuccessfully() throws Exception {
+    void getAllProjectsSuccessfully() throws SQLException, IOException {
         insertProjectSuccessfully();
         List<ProjectDTO> projects = projectDAO.getAllProjects();
         assertNotNull(projects);
@@ -139,7 +140,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void searchProjectByIdSuccessfully() throws Exception {
+    void searchProjectByIdSuccessfully() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Test",
@@ -162,7 +163,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void updateProjectSuccessfully() throws Exception {
+    void updateProjectSuccessfully() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Actualizar",
@@ -189,7 +190,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void deleteProjectSuccessfully() throws Exception {
+    void deleteProjectSuccessfully() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Eliminar",
@@ -220,7 +221,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void updateNonExistentProject() throws Exception {
+    void updateNonExistentProject() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO("9999", "No existe", "Desc", new Timestamp(System.currentTimeMillis()),
                 new Timestamp(System.currentTimeMillis()), String.valueOf(testUserId), testOrganizationId,
                 testDepartmentId);
@@ -229,13 +230,13 @@ class ProjectDAOTest {
     }
 
     @Test
-    void deleteNonExistentProject() throws Exception {
+    void deleteNonExistentProject() throws SQLException, IOException {
         boolean deleted = projectDAO.deleteProject("9999");
         assertFalse(deleted, "No debe eliminar un proyecto inexistente");
     }
 
     @Test
-    void insertDuplicateProjectName() throws Exception {
+    void insertDuplicateProjectName() throws SQLException, IOException {
         ProjectDTO project1 = new ProjectDTO(null, "Proyecto Duplicado", "Desc1",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId), testOrganizationId, testDepartmentId);
@@ -251,7 +252,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void getAllProjectsWhenTableIsEmpty() throws Exception {
+    void getAllProjectsWhenTableIsEmpty() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         List<ProjectDTO> projects = projectDAO.getAllProjects();
         assertNotNull(projects);
@@ -259,7 +260,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void insertAndRetrieveMultipleProjects() throws Exception {
+    void insertAndRetrieveMultipleProjects() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             ProjectDTO project = new ProjectDTO(null, "Proyecto" + i, "Desc" + i,
                     new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
@@ -271,7 +272,7 @@ class ProjectDAOTest {
     }
 
     @Test
-    void updateProjectWithNullData() throws Exception {
+    void updateProjectWithNullData() throws SQLException, IOException {
         ProjectDTO project = new ProjectDTO(null, "Proyecto Null", "Desc",
                 new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()),
                 String.valueOf(testUserId), testOrganizationId, testDepartmentId);

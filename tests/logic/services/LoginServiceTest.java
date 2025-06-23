@@ -2,6 +2,7 @@ package logic.services;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +32,10 @@ class LoginServiceTest {
             System.out.println("SQLState (host incorrecto): " + sqlState);
             assertTrue("08001".equals(sqlState) || "08S01".equals(sqlState),
                     "Se esperaba SQLState 08001 o 08S01 para host incorrecto");
+        } catch (IOException e) {
+            fail("Se esperaba una SQLException, no IOException: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Se esperaba una SQLException, no otra excepción: " + e.getMessage());
         }
     }
 
@@ -45,6 +50,10 @@ class LoginServiceTest {
             System.out.println("SQLState (base apagada): " + sqlState);
             assertTrue("08006".equals(sqlState) || "08S01".equals(sqlState),
                     "Se esperaba SQLState 08006 o 08S01 para base de datos apagada");
+        } catch (IOException e) {
+            fail("Se esperaba una SQLException, no IOException: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Se esperaba una SQLException, no otra excepción: " + e.getMessage());
         }
     }
 

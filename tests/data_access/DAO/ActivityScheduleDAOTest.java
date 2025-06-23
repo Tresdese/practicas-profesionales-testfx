@@ -5,6 +5,7 @@ import logic.DTO.ActivityScheduleDTO;
 import org.junit.jupiter.api.*;
 import data_access.ConnectionDataBase;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 
@@ -20,7 +21,7 @@ class ActivityScheduleDAOTest {
     private int baseActivityId;
 
     @BeforeAll
-    void setUpAll() throws Exception {
+    void setUpAll() throws SQLException, IOException {
         connection = new ConnectionDataBase().connectDB();
         activityScheduleDAO = new ActivityScheduleDAO();
         clearTablesAndResetAutoIncrement();
@@ -28,13 +29,13 @@ class ActivityScheduleDAOTest {
     }
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         createBaseRecords();
     }
 
     @AfterAll
-    void tearDownAll() throws Exception {
+    void tearDownAll() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         if (connection != null && !connection.isClosed()) {
             connection.close();
@@ -60,7 +61,6 @@ class ActivityScheduleDAOTest {
     }
 
     private void createBaseRecords() throws SQLException {
-        // 1. Insert period
         int periodId = 1;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)")) {
@@ -71,7 +71,6 @@ class ActivityScheduleDAOTest {
             ps.executeUpdate();
         }
 
-        // 2. Insert group
         int groupId = 1;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)")) {
@@ -82,7 +81,6 @@ class ActivityScheduleDAOTest {
             ps.executeUpdate();
         }
 
-        // 3. Insert student
         String studentId = "A0001";
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
@@ -100,7 +98,6 @@ class ActivityScheduleDAOTest {
             ps.executeUpdate();
         }
 
-        // 4. Insert evidence
         int evidenceId = 1;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO evidencia (idEvidencia, nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?, ?)")) {
@@ -111,7 +108,6 @@ class ActivityScheduleDAOTest {
             ps.executeUpdate();
         }
 
-        // 5. Insert schedule of activities
         baseScheduleId = 1;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO cronograma_de_actividades (idCronograma, hito, fechaEstimada, matricula, idEvidencia) VALUES (?, ?, ?, ?, ?)")) {
@@ -123,7 +119,6 @@ class ActivityScheduleDAOTest {
             ps.executeUpdate();
         }
 
-        // 6. Insert activity
         baseActivityId = 1;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO actividad (idActividad, nombreActividad) VALUES (?, ?)")) {
@@ -134,14 +129,14 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testInsertActivitySchedule() throws SQLException {
+    void testInsertActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO activitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         boolean inserted = activityScheduleDAO.insertActivitySchedule(activitySchedule);
         assertTrue(inserted, "The scheduled activity should be inserted correctly.");
     }
 
     @Test
-    void testSearchActivityScheduleById() throws SQLException {
+    void testSearchActivityScheduleById() throws SQLException, IOException {
         ActivityScheduleDTO activitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         activityScheduleDAO.insertActivitySchedule(activitySchedule);
 
@@ -154,7 +149,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testDeleteActivitySchedule() throws SQLException {
+    void testDeleteActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO activitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         activityScheduleDAO.insertActivitySchedule(activitySchedule);
 
@@ -163,11 +158,10 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testUpdateActivitySchedule() throws SQLException {
+    void testUpdateActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO oldActivitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         activityScheduleDAO.insertActivitySchedule(oldActivitySchedule);
 
-        // Insert new dependent records for the update
         int newActivityId = 2;
         try (PreparedStatement ps = connection.prepareStatement(
                 "INSERT INTO actividad (idActividad, nombreActividad) VALUES (?, ?)")) {
@@ -192,7 +186,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testInsertDuplicateActivitySchedule() throws SQLException {
+    void testInsertDuplicateActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO activitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         assertTrue(activityScheduleDAO.insertActivitySchedule(activitySchedule));
         assertThrows(SQLException.class, () -> {
@@ -201,7 +195,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testSearchNonExistentActivitySchedule() throws SQLException {
+    void testSearchNonExistentActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO nonExistent = new ActivityScheduleDTO(999, 999);
         ActivityScheduleDTO result = activityScheduleDAO.searchActivityScheduleByIdScheduleAndIdActivity(nonExistent);
         assertNotNull(result, "El resultado no debe ser null.");
@@ -210,14 +204,14 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testDeleteNonExistentActivitySchedule() throws SQLException {
+    void testDeleteNonExistentActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO nonExistent = new ActivityScheduleDTO(999, 999);
         boolean deleted = activityScheduleDAO.deleteActivitySchedule(nonExistent);
         assertFalse(deleted, "Deleting a non-existent record should return false.");
     }
 
     @Test
-    void testUpdateNonExistentActivitySchedule() throws SQLException {
+    void testUpdateNonExistentActivitySchedule() throws SQLException, IOException {
         ActivityScheduleDTO oldActivitySchedule = new ActivityScheduleDTO(999, 999);
         ActivityScheduleDTO newActivitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         boolean updated = activityScheduleDAO.updateActivitySchedule(oldActivitySchedule, newActivitySchedule);
@@ -225,7 +219,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testGetAllActivitySchedules() throws SQLException {
+    void testGetAllActivitySchedules() throws SQLException, IOException {
         ActivityScheduleDTO activitySchedule1 = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         activityScheduleDAO.insertActivitySchedule(activitySchedule1);
 
@@ -260,7 +254,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testUpdateActivityScheduleWithInvalidData() throws SQLException {
+    void testUpdateActivityScheduleWithInvalidData() throws SQLException, IOException {
         ActivityScheduleDTO oldActivitySchedule = new ActivityScheduleDTO(baseScheduleId, baseActivityId);
         activityScheduleDAO.insertActivitySchedule(oldActivitySchedule);
 
@@ -271,7 +265,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testGetAllActivitySchedulesWhenEmpty() throws Exception {
+    void testGetAllActivitySchedulesWhenEmpty() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         var allSchedules = activityScheduleDAO.getAllActivitySchedules();
         assertTrue(allSchedules.isEmpty(), "The list should be empty if there are no records.");
@@ -279,7 +273,7 @@ class ActivityScheduleDAOTest {
     }
 
     @Test
-    void testBulkInsertActivitySchedules() throws SQLException {
+    void testBulkInsertActivitySchedules() throws SQLException, IOException {
         int bulkCount = 3;
         int startId = 100;
         for (int i = 0; i < bulkCount; i++) {
