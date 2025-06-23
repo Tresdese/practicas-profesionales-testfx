@@ -353,32 +353,32 @@ public class GUI_AssignProjectController {
         } catch (UnknownHostException e) {
             logger.error("Error de red al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error de red al crear carpetas en Drive: ");
-            return null;
+            return "";
         } catch (SocketTimeoutException e) {
             logger.error("Tiempo de espera agotado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Tiempo de espera agotado al crear carpetas en Drive: ");
-            return null;
+            return "";
 
         } catch (FileNotFoundException e) {
             logger.error("Archivo no encontrado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Archivo no encontrado al crear carpetas en Drive: ");
-            return null;
+            return "";
         } catch (GoogleJsonResponseException e) {
             logger.error("Error de Google Drive al crear carpetas: {}", e.getDetails().getMessage(), e);
             showAlert("Error de Google Drive al crear carpetas: ");
-            return null;
+            return "";
         } catch (GeneralSecurityException e) {
             logger.error("Error de seguridad al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error de seguridad al crear carpetas en Drive: ");
-            return null;
+            return "";
         } catch (IOException e) {
             logger.error("Error entrada/salida al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error entrada/salida al crear carpetas en Drive: ");
-            return null;
+            return "";
         } catch (Exception e) {
             logger.error("Error inesperado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error inesperado al crear carpetas en Drive: ");
-            return null;
+            return "";
         }
     }
 

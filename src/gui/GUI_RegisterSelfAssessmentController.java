@@ -406,31 +406,31 @@ public class GUI_RegisterSelfAssessmentController {
         } catch (UnknownHostException e) {
             showError("Error de conexión a Internet. Verifica tu conexión.");
             LOGGER.error("UnknownHostException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (SocketTimeoutException e) {
             showError("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
             LOGGER.error("SocketTimeoutException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (FileNotFoundException e) {
             showError("Archivo de credenciales no encontrado. Verifica la configuración.");
             LOGGER.error("FileNotFoundException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (GoogleJsonResponseException e) {
             showError("Error de Google Drive al subir el archivo.");
             LOGGER.error("GoogleJsonResponseException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (IOException e) {
             showError("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.error("IOException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (GeneralSecurityException e) {
             showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (Exception e) {
             showError("Error inesperado al subir el archivo a Google Drive.");
             LOGGER.error("Error inesperado al subir archivo a Drive", e);
-            return null;
+            return "";
         }
     }
 
@@ -485,6 +485,21 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                 return "PeriodoDesconocido";
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al obtener el periodo del grupo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al obtener el periodo del grupo: {}", e.getMessage(), e);
+                return "PeriodoDesconocido";
             } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -500,6 +515,10 @@ public class GUI_RegisterSelfAssessmentController {
                 LOGGER.error("Error al obtener el periodo del grupo: {}", e.getMessage(), e);
                 return "PeriodoDesconocido";
             }
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            return "PeriodoDesconocido";
         } catch (Exception e) {
             showError("Error inesperado al obtener el periodo del grupo.");
             LOGGER.error("Error inesperado al obtener el periodo del grupo: {}", e.getMessage(), e);
@@ -519,22 +538,50 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Error de conexión con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                return false;
             } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                return false;
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                return false;
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                return false;
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                return false;
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al insertar evidencia.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al insertar evidencia: {}", e.getMessage(), e);
+                return false;
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                return false;
             } else if ("23000".equals(sqlState)) {
                 statusLabel.setText("Violación de restricción de integridad.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+                return false;
             } else {
                 showError("Error al insertar evidencia en la base de datos.");
                 LOGGER.error("Error al insertar evidencia en la base de datos: {}", e.getMessage(), e);
+                return false;
             }
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
             return false;
         } catch (Exception e) {
             showError("Error al insertar evidencia en la base de datos.");
@@ -577,6 +624,22 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al registrar la autoevaluación.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al registrar autoevaluación: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -589,6 +652,9 @@ public class GUI_RegisterSelfAssessmentController {
                 showError("Error al registrar la autoevaluación.");
                 LOGGER.error("Error al registrar autoevaluación: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             showError("Ocurrió un error inesperado al registrar la autoevaluación.");
             LOGGER.error("Error inesperado al registrar autoevaluación: {}", e.getMessage(), e);
@@ -619,6 +685,22 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al guardar criterios.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al guardar criterios: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -635,6 +717,9 @@ public class GUI_RegisterSelfAssessmentController {
         } catch (NumberFormatException e){
             showError("Formato numérico inválido en las calificaciones.");
             LOGGER.error("Formato numérico inválido en las calificaciones: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             showError("Ocurrió un error inesperado al guardar los criterios.");
             LOGGER.error("Error inesperado al guardar criterios: {}", e.getMessage(), e);

@@ -263,6 +263,18 @@ public class GUI_CheckListOfStudentsController {
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("HY000".equals(sqlState)) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
             } else if ("42000".equals(sqlState)) {
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
@@ -283,6 +295,10 @@ public class GUI_CheckListOfStudentsController {
         } catch (IllegalStateException e) {
             logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
             statusLabel.setText("Error de estado al abrir la ventana");
+            statusLabel.setTextFill(Color.RED);
+        } catch (IOException e) {
+            logger.error("Error al abrir el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al abrir el archivo de configuracion de la base de datos");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             logger.error("Error inesperado al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
@@ -313,6 +329,18 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -326,6 +354,10 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error de base de datos al cargar los estudiantes: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los estudiantes.");
             statusLabel.setTextFill(Color.RED);
@@ -387,6 +419,18 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -400,6 +444,10 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error de base de datos al buscar estudiante: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar estudiante.");
             statusLabel.setTextFill(Color.RED);
@@ -437,6 +485,18 @@ public class GUI_CheckListOfStudentsController {
                 studentCountsLabel.setText("Conexión interrumpida con la base de datos.");
                 studentCountsLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                studentCountsLabel.setText("Columna desconocida en la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                studentCountsLabel.setText("Tabla desconocida en la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                studentCountsLabel.setText("Error general de la base de datos.");
+                studentCountsLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 studentCountsLabel.setText("Base de datos desconocida.");
                 studentCountsLabel.setTextFill(Color.RED);
@@ -450,6 +510,10 @@ public class GUI_CheckListOfStudentsController {
                 studentCountsLabel.setTextFill(Color.RED);
                 logger.error("Error de base de datos al actualizar conteos de estudiantes: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            studentCountsLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            studentCountsLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             studentCountsLabel.setText("Error inesperado al actualizar conteos de estudiantes.");
             studentCountsLabel.setTextFill(Color.RED);
@@ -557,6 +621,18 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -578,6 +654,10 @@ public class GUI_CheckListOfStudentsController {
             statusLabel.setText("Error de estado al abrir la ventana de gestión de estudiante.");
             statusLabel.setTextFill(Color.RED);
             logger.error("Estado ilegal al abrir la ventana de gestión de estudiante: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al abrir la ventana de gestión de estudiante.");
             statusLabel.setTextFill(Color.RED);
@@ -610,11 +690,48 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setText("Eliminación cancelada.");
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al eliminar el estudiante.");
-            logger.error("Error al eliminar el estudiante: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if ("08001".equals(sqlState)) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("28000".equals(sqlState)) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error de base de datos al eliminar el estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de base de datos al eliminar el estudiante: {}", e.getMessage(), e);
+            }
         } catch (IOException e) {
-            statusLabel.setText("Error al cargar la ventana de confirmación.");
-            logger.error("Error al cargar la ventana de confirmación: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            statusLabel.setText("Error inesperado al eliminar el estudiante.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error inesperado al eliminar el estudiante: {}", e.getMessage(), e);
         }
     }
 }

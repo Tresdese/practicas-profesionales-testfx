@@ -113,6 +113,22 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intenta de nuevo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna desconocida en la base de datos. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla desconocida en la base de datos. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intenta de nuevo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -126,6 +142,10 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al cargar las presentaciones: {}", e.getMessage(), e);
             }
+        }  catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar las presentaciones.");
             statusLabel.setTextFill(Color.RED);
@@ -163,6 +183,22 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna desconocida en la base de datos. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla desconocida en la base de datos. Por favor, verifica la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intenta de nuevo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intenta de nuevo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
                 statusLabel.setTextFill(Color.RED);
@@ -172,6 +208,10 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al buscar presentaciones: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar presentaciones.");
             statusLabel.setTextFill(Color.RED);
@@ -255,7 +295,7 @@ public class GUI_CheckListOfPresentationsController {
             LOGGER.info("Ventana de Registrar Presentación abierta correctamente.");
         } catch (IOException e) {
             LOGGER.error("Error al abrir el fxml de la ventana de Registrar Presentación.", e);
-            statusLabel.setText("Error al abrir el fxmk de la ventana de Registrar Presentación.");
+            statusLabel.setText("Error al abrir el fxml de la ventana de Registrar Presentación.");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al abrir la ventana de Registrar Presentación.", e);

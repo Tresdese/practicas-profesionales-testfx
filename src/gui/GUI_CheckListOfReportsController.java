@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.application.Platform;
 import logic.DAO.EvidenceDAO;
 import logic.DAO.ReportDAO;
 import logic.DTO.ReportDTO;
@@ -19,6 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.Date;
 
 public class GUI_CheckListOfReportsController implements Initializable {
 
@@ -29,7 +31,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
     @FXML
     private TableColumn<ReportDTO, String> numberColumn;
     @FXML
-    private TableColumn<ReportDTO, java.util.Date> dateColumn;
+    private TableColumn<ReportDTO, Date> dateColumn;
     @FXML
     private TableColumn<ReportDTO, Integer> hoursColumn;
     @FXML
@@ -44,7 +46,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
     public void setStudentTuition(String tuition) {
         this.studentTuition = (tuition != null) ? tuition.trim() : null;
         if (reportsTableView != null) {
-            javafx.application.Platform.runLater(this::loadReports);
+            Platform.runLater(this::loadReports);
         }
     }
 
@@ -57,9 +59,9 @@ public class GUI_CheckListOfReportsController implements Initializable {
         resultColumn.setCellValueFactory(new PropertyValueFactory<>("obtainedResult"));
 
         evidenceColumn.setCellFactory(col -> new TableCell<>() {
-            private final Button btn = new Button("Ver Evidencia");
+            private final Button seeEvidenceButton = new Button("Ver Evidencia");
             {
-                btn.setOnAction(event -> {
+                seeEvidenceButton.setOnAction(event -> {
                     ReportDTO report = getTableView().getItems().get(getIndex());
                     String evidenceUrl = getEvidenceUrlById(report.getIdEvidence());
                     if (evidenceUrl != null && !evidenceUrl.isEmpty()) {
@@ -72,7 +74,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
+                setGraphic(empty ? null : seeEvidenceButton);
             }
         });
 
@@ -105,6 +107,15 @@ public class GUI_CheckListOfReportsController implements Initializable {
             } else if ("08S01".equals(sqlState)) {
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos.");
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                showAlert("Columna desconocida en la base de datos.");
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                showAlert("Tabla desconocida en la base de datos.");
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de conexión con la base de datos: {}", e.getMessage(), e);
+                showAlert("Error general de conexión con la base de datos.");
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("Base de datos desconocida.");
@@ -118,6 +129,9 @@ public class GUI_CheckListOfReportsController implements Initializable {
         } catch (NullPointerException e) {
             LOGGER.error("Se encontró un valor nulo inesperado al cargar reportes: {}", e.getMessage(), e);
             showAlert("Error de valor nulo al cargar reportes. Por favor, intente más tarde.");
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de la configuracion de la base de datos: {}", e.getMessage(), e);
+            showAlert("Error al leer el archivo de la configuracion de la base de datos.");
         } catch (Exception e) {
             LOGGER.error("Error inesperado al cargar reportes: {}", e.getMessage(), e);
             showAlert("Ocurrió un error inesperado al cargar los reportes. Por favor, intente más tarde.");
@@ -143,6 +157,15 @@ public class GUI_CheckListOfReportsController implements Initializable {
             } else if ("08S01".equals(sqlState)) {
                 LOGGER.error("Conexión interrumpida con la base de datos al buscar evidencia: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos al buscar evidencia.");
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna desconocida al buscar evidencia: {}", e.getMessage(), e);
+                showAlert("Columna desconocida al buscar evidencia.");
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla desconocida al buscar evidencia: {}", e.getMessage(), e);
+                showAlert("Tabla desconocida al buscar evidencia.");
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de conexión con la base de datos al buscar evidencia: {}", e.getMessage(), e);
+                showAlert("Error general de conexión con la base de datos al buscar evidencia.");
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos desconocida al buscar evidencia: {}", e.getMessage(), e);
                 showAlert("Base de datos desconocida al buscar evidencia.");
@@ -153,6 +176,9 @@ public class GUI_CheckListOfReportsController implements Initializable {
                 LOGGER.error("Error al obtener la URL de la evidencia de la base de datos: {}", e.getMessage(), e);
                 showAlert("Error al obtener la URL de la evidencia de la base de datos.");
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            showAlert("Error al leer el archivo de configuración de la base de datos.");
         } catch (Exception e) {
             LOGGER.error("Error inesperado: No se pudo obtener la URL de la evidencia para id {}: {}", idEvidence, e.getMessage(), e);
             showAlert("Ocurrió un error inesperado al obtener la URL de la evidencia.");

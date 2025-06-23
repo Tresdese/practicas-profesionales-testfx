@@ -84,8 +84,7 @@ public class GUI_AssignedProjectController {
             statusLabel.setText("Error de estado al buscar el proyecto asignado.");
             statusLabel.setTextFill(Color.RED);
             showErrorLoadingProject();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error inesperado al buscar el proyecto asignado: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al buscar el proyecto asignado.");
             statusLabel.setTextFill(Color.RED);
@@ -107,6 +106,22 @@ public class GUI_AssignedProjectController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                showAlert("Base de datos desconocida.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                showAlert("Columna desconocida en la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                showAlert("Tabla desconocida en la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                showAlert("Error de conexión con la base de datos.");
                 registerSelfAssessmentButton.setDisable(true);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);

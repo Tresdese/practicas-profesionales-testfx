@@ -185,31 +185,31 @@ public class GUI_RegisterActivityScheduleController {
         } catch (UnknownHostException e) {
             showAlert("No se pudo conectar a Internet. Verifica tu conexión.");
             LOGGER.log(Level.SEVERE, "UnknownHostException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (SocketTimeoutException e) {
             showAlert("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
             LOGGER.log(Level.SEVERE, "SocketTimeoutException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (FileNotFoundException e) {
             showAlert("Archivo no encontrado al intentar subir a Google Drive.");
             LOGGER.log(Level.SEVERE, "FileNotFoundException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (GoogleJsonResponseException e) {
             showAlert("Error de Google Drive: " + e.getDetails().getMessage());
             LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (IOException e) {
             showAlert("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (GeneralSecurityException e) {
             showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al subir archivo a Drive", e);
-            return null;
+            return "";
         } catch (Exception e) {
             showAlert("Ocurrió un error inesperado al subir el archivo a Google Drive.");
             LOGGER.log(Level.SEVERE, "Error inesperado al subir archivo a Drive", e);
-            return null;
+            return "";
         }
     }
 

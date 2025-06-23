@@ -104,6 +104,18 @@ public class GUI_CheckListOfPeriodsController {
                 statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -154,6 +166,18 @@ public class GUI_CheckListOfPeriodsController {
                 statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);

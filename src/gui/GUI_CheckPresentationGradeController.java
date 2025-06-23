@@ -145,6 +145,21 @@ public class GUI_CheckPresentationGradeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                updateEvaluationCounts(FXCollections.observableArrayList());
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
@@ -160,6 +175,10 @@ public class GUI_CheckPresentationGradeController {
                 statusLabel.setText("Error de base de datos al cargar las evaluaciones.");
                 updateEvaluationCounts(FXCollections.observableArrayList());
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            updateEvaluationCounts(FXCollections.observableArrayList());
         } catch (Exception e) {
             LOGGER.error("Error inesperado al cargar las evaluaciones: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al cargar las evaluaciones.");

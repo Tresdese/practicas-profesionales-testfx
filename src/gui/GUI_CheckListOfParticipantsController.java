@@ -89,6 +89,18 @@ public class GUI_CheckListOfParticipantsController {
                 logger.error("Error de interrupcion de conexión con la base de datos: " + e.getMessage(), e);
                 showAlert("Error de interrupcion de conexión con la base de datos.");
                 participantCountsLabel.setText("Error de conexión");
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla no encontrada en la base de datos: " + e.getMessage(), e);
+                showAlert("Tabla no encontrada en la base de datos. Por favor, verifica la configuración.");
+                participantCountsLabel.setText("Tabla no encontrada");
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna no encontrada en la base de datos: " + e.getMessage(), e);
+                showAlert("Columna no encontrada en la base de datos. Por favor, verifica la configuración.");
+                participantCountsLabel.setText("Columna no encontrada");
+            } else if ("HY000".equals(sqlState)) {
+                logger.error("Error general de la base de datos: " + e.getMessage(), e);
+                showAlert("Error general de la base de datos. Por favor, intenta nuevamente.");
+                participantCountsLabel.setText("Error general");
             } else if ("42000".equals(sqlState)) {
                 logger.error("Base de datos desconocida: " + e.getMessage(), e);
                 showAlert("Base de datos desconocida. Por favor, verifica la configuración.");
@@ -158,8 +170,10 @@ public class GUI_CheckListOfParticipantsController {
             stage.show();
         } catch (IOException e) {
             logger.error("Error al abrir la ventana de calificación.", e);
+            showAlert("Error al leer el fxml para abrir la ventana de calificación. Por favor, intenta nuevamente.");
         } catch (Exception e) {
             logger.error("Error inesperado al abrir la ventana de calificación.", e);
+            showAlert("Error inesperado al abrir la ventana de calificación. Por favor, intenta nuevamente.");
         }
     }
 

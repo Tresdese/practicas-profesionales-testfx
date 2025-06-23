@@ -146,6 +146,18 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -159,6 +171,10 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los académicos.");
             statusLabel.setTextFill(Color.RED);
@@ -201,6 +217,18 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -214,6 +242,10 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al buscar académico de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar académico.");
             statusLabel.setTextFill(Color.RED);
@@ -297,6 +329,18 @@ public class GUI_CheckAcademicListController {
                 academicCountsLabel.setText("Conexión interrumpida con la base de datos.");
                 academicCountsLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                academicCountsLabel.setText("Tabla no encontrada en la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                academicCountsLabel.setText("Columna no encontrada en la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                academicCountsLabel.setText("Error general de la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 academicCountsLabel.setText("Base de datos desconocida.");
                 academicCountsLabel.setTextFill(Color.RED);
@@ -310,6 +354,10 @@ public class GUI_CheckAcademicListController {
                 academicCountsLabel.setTextFill(Color.RED);
                 logger.error("Error al contar los académicos de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            academicCountsLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            academicCountsLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             academicCountsLabel.setText("Error inesperado al contar los académicos.");
             academicCountsLabel.setTextFill(Color.RED);
@@ -345,7 +393,7 @@ public class GUI_CheckAcademicListController {
             statusLabel.setText("Error al eliminar la organización.");
             logger.error("Error al eliminar la organización: {}", e.getMessage(), e);
         } catch (IOException e) {
-            statusLabel.setText("Error al cargar el diálogo de confirmación.");
+            statusLabel.setText("Error al leer el fxml para cargar el diálogo de confirmación.");
             logger.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");

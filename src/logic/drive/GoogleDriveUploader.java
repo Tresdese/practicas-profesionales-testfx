@@ -91,14 +91,4 @@ public class GoogleDriveUploader {
 
         return uploadedFile.getWebViewLink();
     }
-
-    public static void main(String[] args) {
-        try {
-            String pdfPath = "C:/Users/TuUsuario/Documents/reporte.pdf";
-            String fileUrl = uploadFile(pdfPath);
-            System.out.println("Archivo subido a Drive. Enlace: " + fileUrl);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

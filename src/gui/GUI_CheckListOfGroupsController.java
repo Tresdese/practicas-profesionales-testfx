@@ -13,6 +13,7 @@ import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -105,6 +106,18 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -118,6 +131,10 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar los grupos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los grupos.");
             statusLabel.setTextFill(Color.RED);
@@ -151,6 +168,18 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -164,6 +193,10 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al buscar el grupo: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar el grupo.");
             statusLabel.setTextFill(Color.RED);
