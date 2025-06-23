@@ -66,10 +66,10 @@ public class GUI_CheckPresentationGradeController {
 
     private void addViewDetailsButtonToTable() {
         Callback<TableColumn<EvaluationPresentationDTO, Void>, TableCell<EvaluationPresentationDTO, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button btn = new Button("Ver Detalles");
+            private final Button seeDetailsButton = new Button("Ver Detalles");
 
             {
-                btn.setOnAction(event -> {
+                seeDetailsButton.setOnAction(event -> {
                     EvaluationPresentationDTO evaluation = getTableView().getItems().get(getIndex());
                     showDetailsDialog(evaluation);
                 });
@@ -81,7 +81,7 @@ public class GUI_CheckPresentationGradeController {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btn);
+                    setGraphic(seeDetailsButton);
                 }
             }
         };

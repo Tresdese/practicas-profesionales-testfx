@@ -200,8 +200,8 @@ public class GUI_RegisterGroupController {
     }
 
     private boolean areFieldsFilled() {
-        return !nrcField.getText().isEmpty() &&
-                !nameField.getText().isEmpty() &&
+        return !nrcField.getText().trim().isEmpty() &&
+                !nameField.getText().trim().isEmpty() &&
                 academicChoiceBox.getValue() != null &&
                 periodChoiceBox.getValue() != null;
     }

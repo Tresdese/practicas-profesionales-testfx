@@ -108,6 +108,21 @@ public class GUI_CheckScheduleActivityListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos");
                 statusLabel.setTextFill(Color.RED);
                 return "Conexión interrumpida con la base de datos";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla no encontrada en la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Tabla no encontrada en la base de datos";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Columna no encontrada en la base de datos";
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "Error general de la base de datos";
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida");
@@ -129,6 +144,11 @@ public class GUI_CheckScheduleActivityListController {
             statusLabel.setText("ID de evidencia inválido");
             statusLabel.setTextFill(Color.RED);
             return "ID de evidencia inválido";
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos");
+            statusLabel.setTextFill(Color.RED);
+            return "Error al leer el archivo de configuracion de la base de datos";
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener nombre de evidencia: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener nombre de evidencia");
@@ -171,6 +191,18 @@ public class GUI_CheckScheduleActivityListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -185,9 +217,9 @@ public class GUI_CheckScheduleActivityListController {
                 LOGGER.error("Error de base de datos al cargar los cronogramas: {}", e.getMessage(), e);
             }
         } catch (IOException e) {
-            statusLabel.setText("Error de entrada/salida al cargar los datos del cronograma.");
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error de entrada/salida al cargar los datos del cronograma: {}", e.getMessage(), e);
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los cronogramas.");
             statusLabel.setTextFill(Color.RED);
@@ -219,6 +251,18 @@ public class GUI_CheckScheduleActivityListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -236,6 +280,10 @@ public class GUI_CheckScheduleActivityListController {
             statusLabel.setText("ID de cronograma inválido.");
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("ID de cronograma inválido: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar el cronograma.");
             statusLabel.setTextFill(Color.RED);

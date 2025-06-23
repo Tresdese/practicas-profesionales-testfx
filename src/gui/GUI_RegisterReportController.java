@@ -555,6 +555,17 @@ public class GUI_RegisterReportController {
             showAlert("Completa todos los campos obligatorios del informe.");
             return false;
         }
+
+        try {
+            int totalHours = Integer.parseInt(totalHoursField.getText());
+            if (totalHours <= 0) {
+                showAlert("Las horas totales deben ser mayores a 0.");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Las horas totales deben ser un número válido.");
+            return false;
+        }
         return true;
     }
 

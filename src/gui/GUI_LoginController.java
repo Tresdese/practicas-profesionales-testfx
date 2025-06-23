@@ -18,6 +18,7 @@ import logic.services.LoginService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_LoginController {
@@ -59,6 +60,18 @@ public class GUI_LoginController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 LOGGER.error("Error de conexión interrumpida a la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión interrumpida a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla de usuarios no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de usuarios no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna de usuario no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Columna de usuario no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
                 statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -179,6 +192,18 @@ public class GUI_LoginController {
                 LOGGER.error("Error de conexión interrumpida a la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión interrumpida a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla de usuarios no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de usuarios no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna de usuario no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Columna de usuario no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
@@ -192,29 +217,15 @@ public class GUI_LoginController {
                 statusLabel.setText("Error al iniciar sesión. Intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
             }
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la interfaz de usuario: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar la interfaz de usuario.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
             LOGGER.error("Error inesperado: {}", e.getMessage(), e);
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
         }
     }
-
-    private void goToRegisterProjectRequest(StudentDTO student) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_CheckListOfProjects.fxml"));
-            Scene scene = new Scene(loader.load());
-            GUI_RegisterProjectRequestController controller = loader.getController();
-            controller.setStudent(student);
-
-            Stage stage = (Stage) loginButton.getScene().getWindow();
-            stage.setScene(scene);
-            stage.setTitle("Registrar Solicitud de Proyecto");
-            stage.show();
-        } catch (Exception e) {
-            LOGGER.error("Error al abrir la ventana de registro de solicitud de proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("No se pudo abrir la ventana de registro.");
-            statusLabel.setStyle("-fx-text-fill: red;");
-        }
-    }
+    
 }

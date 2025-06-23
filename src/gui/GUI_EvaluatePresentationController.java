@@ -13,6 +13,7 @@ import logic.DTO.EvaluationPresentationDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,15 @@ public class GUI_EvaluatePresentationController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos. Intenta más tarde.");
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                showAlert("Tabla de criterios de evaluación no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                showAlert("Columna de criterios de evaluación no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                showAlert("Error general de la base de datos. Intenta más tarde.");
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("La base de datos no está disponible.");
@@ -117,7 +127,11 @@ public class GUI_EvaluatePresentationController {
                 LOGGER.error("Error al cargar los criterios de evaluación: {}", e.getMessage(), e);
                 showAlert("Ocurrió un error al cargar los criterios. Intenta más tarde.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            showAlert("Error al cargar la configuración de la base de datos.");
+        }
+        catch (Exception e) {
             LOGGER.error("Error inesperado al cargar los criterios de evaluación: {} ", e.getMessage(), e);
             showAlert("Ocurrió un error inesperado. Intenta más tarde.");
         }
@@ -267,26 +281,38 @@ public class GUI_EvaluatePresentationController {
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
-                LOGGER.error("Error de conexión con la base de datos: " + e.getMessage(), e);
+                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                 showAlert("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
             } else if (sqlState != null && sqlState.equals("08S01")) {
-                LOGGER.error("Conexión interrumpida con la base de datos: " + e.getMessage(), e);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos. Intenta más tarde.");
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                showAlert("Tabla de evaluaciones no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                showAlert("Columna de evaluaciones no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                showAlert("Error general de la base de datos. Intenta más tarde.");
             } else if (sqlState != null && sqlState.equals("42000")) {
-                LOGGER.error("Base de datos desconocida: " + e.getMessage(), e);
+                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("La base de datos no está disponible.");
             } else if (sqlState != null && sqlState.equals("28000")) {
-                LOGGER.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
+                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 showAlert("Acceso denegado a la base de datos.");
             } else if (sqlState != null && sqlState.equals("23000")) {
-                LOGGER.error("Violación de restricción de integridad: " + e.getMessage(), e);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
                 showAlert("Violación de restricción de integridad. Verifica los datos ingresados.");
             } else {
-                LOGGER.error("Error al guardar las calificaciones: " + e.getMessage(), e);
+                LOGGER.error("Error al guardar las calificaciones: {}" ,e.getMessage(), e);
                 showAlert("Ocurrió un error al guardar las calificaciones.");
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al cargar la configuración de la base de datos: {} ", e.getMessage(), e);
+            showAlert("Error al cargar la configuración de la base de datos.");
         } catch (Exception e) {
-            LOGGER.error("Error al guardar las calificaciones.", e);
+            LOGGER.error("Error al guardar las calificaciones. {}", e.getMessage(), e);
             showAlert("Ocurrió un error inesperado al guardar las calificaciones. Intenta más tarde.");
         }
     }

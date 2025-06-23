@@ -125,8 +125,8 @@ public class GUI_RegisterPeriodController {
     }
 
     private boolean areFieldsFilled() {
-        return !periodLabel.getText().isEmpty() &&
-                !nameField.getText().isEmpty() &&
+        return !periodLabel.getText().trim().isEmpty() &&
+                !nameField.getText().trim().isEmpty() &&
                 startDateLabel.getValue() != null &&
                 endDateField.getValue() != null;
     }

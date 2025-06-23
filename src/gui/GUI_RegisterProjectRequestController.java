@@ -449,19 +449,19 @@ public class GUI_RegisterProjectRequestController {
         if (organizationComboBox.getValue() == null ||
                 representativeComboBox.getValue() == null ||
                 projectComboBox.getValue() == null ||
-                generalObjectiveArea.getText().isEmpty() ||
-                immediateObjectivesArea.getText().isEmpty() ||
-                mediateObjectivesArea.getText().isEmpty() ||
-                methodologyArea.getText().isEmpty() ||
-                resourcesArea.getText().isEmpty() ||
-                activitiesArea.getText().isEmpty() ||
-                responsibilitiesArea.getText().isEmpty() ||
+                generalObjectiveArea.getText().trim().isEmpty() ||
+                immediateObjectivesArea.getText().trim().isEmpty() ||
+                mediateObjectivesArea.getText().trim().isEmpty() ||
+                methodologyArea.getText().trim().isEmpty() ||
+                resourcesArea.getText().trim().isEmpty() ||
+                activitiesArea.getText().trim().isEmpty() ||
+                responsibilitiesArea.getText().trim().isEmpty() ||
                 (!mondayCheck.isSelected() && !tuesdayCheck.isSelected() && !wednesdayCheck.isSelected() &&
                         !thursdayCheck.isSelected() && !fridayCheck.isSelected() && !saturdayCheck.isSelected() && !sundayCheck.isSelected()) ||
-                scheduleTimeField.getText().isEmpty() ||
-                !scheduleTimeField.getText().matches(REGEX_SCHEDULE_TIME) ||
-                directUsersField.getText().isEmpty() ||
-                indirectUsersField.getText().isEmpty()) {
+                scheduleTimeField.getText().trim().isEmpty() ||
+                !scheduleTimeField.getText().trim().matches(REGEX_SCHEDULE_TIME) ||
+                directUsersField.getText().trim().isEmpty() ||
+                indirectUsersField.getText().trim().isEmpty()) {
             setStatus("Completa todos los campos obligatorios.", true);
             LOGGER.warn("Validación fallida: campos obligatorios incompletos.");
             return false;

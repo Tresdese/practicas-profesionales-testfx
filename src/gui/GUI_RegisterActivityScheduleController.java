@@ -98,10 +98,10 @@ public class GUI_RegisterActivityScheduleController {
     }
 
     private boolean validateInputs() {
-        String filePath = evidenceFileTextField.getText();
-        String milestone = milestoneField.getText();
+        String filePath = evidenceFileTextField.getText().trim();
+        String milestone = milestoneField.getText().trim();
         LocalDate estimatedDate = estimatedDateField.getValue();
-        String tuition = fieldTuition.getText();
+        String tuition = fieldTuition.getText().trim();
 
         if (filePath.isEmpty() || milestone.isEmpty() || estimatedDate == null || tuition.isEmpty() || selectedEvidenceFile == null) {
             statusLabel.setText("Completa todos los campos y selecciona un archivo.");

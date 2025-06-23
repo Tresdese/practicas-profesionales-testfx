@@ -97,6 +97,24 @@ public class GUI_DetailsStudentController {
                 projectDescriptionLabel.setText("Error de conexion interrumpida con la base de datos");
                 projectOrganizationLabel.setText("Error de conexion interrumpida con la base de datos");
                 showAlert("Conexión interrumpida", "La conexión con la base de datos se ha interrumpido. Por favor, intente más tarde.");
+             } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                projectNameLabel.setText("Error de tabla no encontrada");
+                projectDescriptionLabel.setText("Error de tabla no encontrada");
+                projectOrganizationLabel.setText("Error de tabla no encontrada");
+                showAlert("Tabla no encontrada", "La tabla solicitada no se encuentra disponible. Por favor, intente más tarde.");
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                projectNameLabel.setText("Error de columna no encontrada");
+                projectDescriptionLabel.setText("Error de columna no encontrada");
+                projectOrganizationLabel.setText("Error de columna no encontrada");
+                showAlert("Columna no encontrada", "La columna solicitada no se encuentra disponible. Por favor, intente más tarde.");
+             } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                projectNameLabel.setText("Error general de la base de datos");
+                projectDescriptionLabel.setText("Error general de la base de datos");
+                projectOrganizationLabel.setText("Error general de la base de datos");
+                showAlert("Error general", "Ocurrió un error general en la base de datos. Por favor, intente más tarde.");
              } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 projectNameLabel.setText("Error de base de datos desconocida");
@@ -111,7 +129,7 @@ public class GUI_DetailsStudentController {
                 showAlert("Acceso denegado", "No tiene permiso para acceder a la base de datos. Por favor, contacte al administrador.");
              } else {
                 LOGGER.error("Error al obtener el proyecto asignado: {}", e.getMessage(), e);
-                projectNameLabel.setText("Error al obtener el proyecto");
+                projectNameLabel.setText("Error de base de datos al obtener el proyecto");
                 projectDescriptionLabel.setText("Error al obtener el proyecto");
                 projectOrganizationLabel.setText("Error al obtener el proyecto");
                 showAlert("Error al obtener el proyecto", "Ocurrió un error al intentar obtener el proyecto asignado. Por favor, intente más tarde.");
@@ -122,7 +140,14 @@ public class GUI_DetailsStudentController {
             projectDescriptionLabel.setText("Error de referencia nula");
             projectOrganizationLabel.setText("Error de referencia nula");
             showAlert("Error de referencia nula", "Ocurrió un error interno al intentar obtener el proyecto asignado. Por favor, intente más tarde.");
-        } catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            projectNameLabel.setText("Error de lectura de configuración");
+            projectDescriptionLabel.setText("Error de lectura de configuración");
+            projectOrganizationLabel.setText("Error de lectura de configuración");
+            showAlert("Error de configuración", "No se pudo leer la configuración de la base de datos. Por favor, intente más tarde.");
+        }
+        catch (Exception e) {
             LOGGER.error("Error inesperado al obtener el proyecto asignado: {}", e.getMessage(), e);
             projectNameLabel.setText("Error inesperado");
             projectDescriptionLabel.setText("Error inesperado");

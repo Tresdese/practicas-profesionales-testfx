@@ -87,6 +87,18 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -171,6 +183,21 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 return "Conexión interrumpida";
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Tabla no encontrada";
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Columna no encontrada";
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error general de la base de datos";
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
@@ -187,6 +214,11 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 return "Error al obtener departamento";
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return "Error al leer archivo de configuración";
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener nombre de departamento: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener el departamento.");
@@ -220,6 +252,21 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 return "Conexión interrumpida";
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Tabla no encontrada";
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Columna no encontrada";
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Error general de la base de datos";
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
@@ -236,8 +283,12 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 return "Error de base de datos al obtener organización por departamento";
             }
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return "Error al leer archivo de configuración";
+        } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener nombre de organización por departamento: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener la organización por departamento.");
             statusLabel.setTextFill(Color.RED);
@@ -288,6 +339,18 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -348,6 +411,18 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -361,6 +436,10 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al buscar representante: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar representante.");
             statusLabel.setTextFill(Color.RED);
@@ -435,6 +514,22 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -493,6 +588,18 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos. Por favor, verifique la configuración.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);

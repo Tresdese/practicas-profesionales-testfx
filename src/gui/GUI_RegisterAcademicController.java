@@ -296,12 +296,12 @@ public class GUI_RegisterAcademicController {
     }
 
     public boolean areFieldsFilled() {
-        return !numberOfStaffField.getText().isEmpty() &&
-                !namesField.getText().isEmpty() &&
-                !surnamesField.getText().isEmpty() &&
-                !userField.getText().isEmpty() &&
-                (!passwordField.getText().isEmpty() || !passwordVisibleField.getText().isEmpty()) &&
-                (!confirmPasswordField.getText().isEmpty() || !confirmPasswordVisibleField.getText().isEmpty()) &&
+        return !numberOfStaffField.getText().trim().isEmpty() &&
+                !namesField.getText().trim().isEmpty() &&
+                !surnamesField.getText().trim().isEmpty() &&
+                !userField.getText().trim().isEmpty() &&
+                (!passwordField.getText().trim().isEmpty() || !passwordVisibleField.getText().trim().isEmpty()) &&
+                (!confirmPasswordField.getText().trim().isEmpty() || !confirmPasswordVisibleField.getText().trim().isEmpty()) &&
                 roleBox.getValue() != null;
     }
 

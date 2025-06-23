@@ -10,12 +10,12 @@
 <AnchorPane prefHeight="208.0" prefWidth="349.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_DeleteDepartmentController">
 
     <VBox alignment="CENTER" layoutY="35.0" prefHeight="138.0" prefWidth="349.0" spacing="20.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
-        <ChoiceBox fx:id="choiceBoxDepartments" prefWidth="300.0" />
+        <ChoiceBox fx:id="departmentsChoiceBox" prefWidth="300.0" />
         <Label fx:id="statusLabel" textFill="RED" />
         <HBox alignment="CENTER" spacing="20.0">
          <children>
-               <Button fx:id="btnCancel" mnemonicParsing="false" prefWidth="120.0" style="-fx-background-color: #2772d3;" text="Cancelar" textFill="WHITE" />
-               <Button fx:id="btnDelete" mnemonicParsing="false" prefWidth="120.0" style="-fx-background-color: #2772d3;" text="Eliminar" textFill="WHITE" />
+               <Button fx:id="cancelButton" mnemonicParsing="false" prefWidth="120.0" style="-fx-background-color: #2772d3;" text="Cancelar" textFill="WHITE" />
+               <Button fx:id="deleteButton" mnemonicParsing="false" prefWidth="120.0" style="-fx-background-color: #2772d3;" text="Eliminar" textFill="WHITE" />
          </children>
         </HBox>
     </VBox>

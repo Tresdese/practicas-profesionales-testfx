@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Collections;
+import java.util.Optional;
 
 public class GUI_CheckSelfAssessmentController {
 
@@ -43,8 +44,9 @@ public class GUI_CheckSelfAssessmentController {
 
     public void setStudentTuition(String tuition) {
         try {
-            SelfAssessmentDTO selfAssessment = getSelfAssessmentByTuition(tuition);
-            if (selfAssessment != null) {
+            Optional<SelfAssessmentDTO> selfAssessmentOpt = getSelfAssessmentByTuition(tuition);
+            if (selfAssessmentOpt.isPresent()) {
+                SelfAssessmentDTO selfAssessment = selfAssessmentOpt.get();
                 evidenceId = selfAssessment.getEvidenceId();
                 updateSelfAssessmentLabels(selfAssessment);
                 List<CriterionSelfAssessmentDTO> criterios = getCriteriaBySelfAssessmentId(selfAssessment.getSelfAssessmentId());
@@ -65,52 +67,66 @@ public class GUI_CheckSelfAssessmentController {
         }
     }
 
-    private SelfAssessmentDTO getSelfAssessmentByTuition(String tuition) {
+    private Optional<SelfAssessmentDTO> getSelfAssessmentByTuition(String tuition) {
         try {
             SelfAssessmentDAO dao = new SelfAssessmentDAO();
             return dao.getAllSelfAssessments()
                     .stream()
                     .filter(sa -> sa.getRegistration().equalsIgnoreCase(tuition))
-                    .findFirst()
-                    .orElse(null);
+                    .findFirst();
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return null;
+                return Optional.empty();
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Optional.empty();
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Optional.empty();
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return Optional.empty();
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
-                return null;
+                return Optional.empty();
             } else if (sqlState != null && sqlState.equals("28000")) {
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return null;
+                return Optional.empty();
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return null;
+                return Optional.empty();
             } else {
-                LOGGER.error("Error de base de datos al buscar la autoevaluación por matrícula: {}", e.getMessage(), e);
+                LOGGER.error("Error de base de datos al buscar la autoevaluación: {}", e.getMessage(), e);
                 statusLabel.setText("Error de base de datos al buscar la autoevaluación.");
                 statusLabel.setTextFill(Color.RED);
-                return null;
+                return Optional.empty();
             }
         } catch (IOException e) {
             LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
             statusLabel.setText("Error al leer la configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
-            return null;
+            return Optional.empty();
         } catch (Exception e) {
-            LOGGER.error("Error inesperado al buscar la autoevaluación por matrícula: {}", e.getMessage(), e);
+            LOGGER.error("Error inesperado al buscar la autoevaluación: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al buscar la autoevaluación.");
             statusLabel.setTextFill(Color.RED);
-            return null;
+            return Optional.empty();
         }
     }
 
