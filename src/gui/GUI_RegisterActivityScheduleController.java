@@ -1,5 +1,6 @@
 package gui;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -14,7 +15,10 @@ import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
 import static logic.drive.GoogleDriveUploader.uploadFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -162,13 +166,33 @@ public class GUI_RegisterActivityScheduleController {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             return uploadFile(file.getAbsolutePath(), parentId);
+        } catch (UnknownHostException e) {
+            showAlert("No se pudo conectar a Internet. Verifica tu conexión.");
+            LOGGER.log(Level.SEVERE, "UnknownHostException al subir archivo a Drive", e);
+            return null;
+        } catch  (SocketTimeoutException e) {
+            showAlert("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
+            LOGGER.log(Level.SEVERE, "SocketTimeoutException al subir archivo a Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showAlert("Archivo no encontrado al intentar subir a Google Drive.");
+            LOGGER.log(Level.SEVERE, "FileNotFoundException al subir archivo a Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showAlert("Error de Google Drive: " + e.getDetails().getMessage());
+            LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al subir archivo a Drive", e);
+            return null;
         } catch (IOException e) {
             showAlert("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showAlert("Error al conectar con Google Drive.");
+            showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al subir archivo a Drive", e);
+            return null;
+        } catch (Exception e) {
+            showAlert("Ocurrió un error inesperado al subir el archivo a Google Drive.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al subir archivo a Drive", e);
             return null;
         }
     }
@@ -181,12 +205,24 @@ public class GUI_RegisterActivityScheduleController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Cronograma", parentId);
             return parentId;
+        } catch (UnknownHostException e) {
+            showAlert("No se pudo conectar a Internet. Verifica tu conexión.");
+            LOGGER.log(Level.SEVERE, "UnknownHostException al crear carpeta en Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showAlert("Tiempo de espera agotado al intentar crear carpetas en Google Drive.");
+            LOGGER.log(Level.SEVERE, "SocketTimeoutException al crear carpeta en Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showAlert("Error de Google Drive: " + e.getDetails().getMessage());
+            LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al crear carpeta en Drive", e);
+            return null;
         } catch (IOException e) {
             showAlert("Error de acceso a las carpetas de Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showAlert("Error al conectar con Google Drive.");
+            showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al crear carpeta en Drive", e);
             return null;
         }

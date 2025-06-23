@@ -1,5 +1,8 @@
 package gui;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.SendFailedException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,6 +28,9 @@ import org.apache.logging.log4j.Logger;
 import jakarta.mail.MessagingException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.List;
 import java.io.IOException;
@@ -231,14 +237,44 @@ public class GUI_AssignProjectController {
 
                 logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), subject, body, pdfAttachment);
                 logger.info("Correo enviado a " + student.getEmail());
-            } catch (MessagingException ex) {
-                logger.error("Error al mandar el correo (problema de mensajería): {}", ex.getMessage(), ex);
+            } catch (UnknownHostException e) {
+                logger.error("Error al mandar el correo (problema de red): {}", e.getMessage(), e);
+                statusLabel.setText("Error de red al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (SocketTimeoutException e) {
+                logger.error("Error al mandar el correo (tiempo de espera agotado): {}", e.getMessage(), e);
+                statusLabel.setText("Tiempo de espera agotado al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (FileNotFoundException e) {
+                logger.error("Error al mandar el correo (archivo no encontrado): {}", e.getMessage(), e);
+                statusLabel.setText("Archivo no encontrado al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (AuthenticationFailedException e) {
+                logger.error("Error al mandar el correo (fallo de autenticación): {}", e.getMessage(), e);
+                statusLabel.setText("Fallo de autenticación al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (SendFailedException e) {
+                logger.error("Error al mandar el correo (envío fallido): {}", e.getMessage(), e);
+                statusLabel.setText("Envío fallido al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (MessagingException e) {
+                logger.error("Error al mandar el correo (problema de mensajería): {}", e.getMessage(), e);
                 statusLabel.setText("Error de mensajería al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
                 return;
-            } catch (IOException ex) {
-                logger.error("Error al mandar el correo (problema de archivo o red): {}", ex.getMessage(), ex);
+            } catch (IOException e) {
+                logger.error("Error al mandar el correo (problema de archivo o red): {}", e.getMessage(), e);
                 statusLabel.setText("Error de archivo o red al enviar el correo al estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            } catch (Exception e) {
+                logger.error("Error inesperado al enviar el correo: {}", e.getMessage(), e);
+                statusLabel.setText("Error inesperado al enviar el correo al estudiante.");
                 statusLabel.setTextFill(Color.RED);
                 return;
             }
@@ -275,9 +311,29 @@ public class GUI_AssignProjectController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al asignar el proyecto: {}", e.getMessage(), e);
             }
-        } catch (IOException | GeneralSecurityException e) {
-            logger.error("Error al subir PDF a Drive: {}", e.getMessage(), e);
-            statusLabel.setText("Error al subir PDF a Drive.");
+        } catch (UnknownHostException e) {
+            logger.error("Error de red al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error de red al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (SocketTimeoutException e) {
+            logger.error("Tiempo de espera agotado al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Tiempo de espera agotado al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (FileNotFoundException e) {
+            logger.error("Archivo no encontrado al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Archivo no encontrado al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (GoogleJsonResponseException e) {
+            logger.error("Error de Google Drive al subir PDF: {}", e.getDetails().getMessage(), e);
+            statusLabel.setText("Error de Google Drive al subir PDF.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (GeneralSecurityException e) {
+            logger.error("Error de seguridad al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error de seguridad al subir PDF a Drive.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (IOException e) {
+            logger.error("Error de entrada/salida al subir PDF a Drive: {}", e.getMessage(), e);
+            statusLabel.setText("Error de entrada/salida al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             logger.error("Error inesperado: {}", e.getMessage(), e);
@@ -294,9 +350,30 @@ public class GUI_AssignProjectController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Asignacion", parentId);
             return parentId;
-        } catch (IOException | GeneralSecurityException e) {
-            logger.error("Error al crear carpetas en Drive: {}", e.getMessage(), e);
-            showAlert("Error al crear carpetas en Drive: ");
+        } catch (UnknownHostException e) {
+            logger.error("Error de red al crear carpetas en Drive: {}", e.getMessage(), e);
+            showAlert("Error de red al crear carpetas en Drive: ");
+            return null;
+        } catch (SocketTimeoutException e) {
+            logger.error("Tiempo de espera agotado al crear carpetas en Drive: {}", e.getMessage(), e);
+            showAlert("Tiempo de espera agotado al crear carpetas en Drive: ");
+            return null;
+
+        } catch (FileNotFoundException e) {
+            logger.error("Archivo no encontrado al crear carpetas en Drive: {}", e.getMessage(), e);
+            showAlert("Archivo no encontrado al crear carpetas en Drive: ");
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            logger.error("Error de Google Drive al crear carpetas: {}", e.getDetails().getMessage(), e);
+            showAlert("Error de Google Drive al crear carpetas: ");
+            return null;
+        } catch (GeneralSecurityException e) {
+            logger.error("Error de seguridad al crear carpetas en Drive: {}", e.getMessage(), e);
+            showAlert("Error de seguridad al crear carpetas en Drive: ");
+            return null;
+        } catch (IOException e) {
+            logger.error("Error entrada/salida al crear carpetas en Drive: {}", e.getMessage(), e);
+            showAlert("Error entrada/salida al crear carpetas en Drive: ");
             return null;
         } catch (Exception e) {
             logger.error("Error inesperado al crear carpetas en Drive: {}", e.getMessage(), e);

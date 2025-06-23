@@ -1,5 +1,6 @@
 package gui;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -18,6 +19,9 @@ import logic.DTO.EvidenceDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 
+import java.io.FileNotFoundException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
@@ -335,13 +339,33 @@ public class GUI_RegisterSelfAssessmentController {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             return uploadFile(file.getAbsolutePath(), parentId);
+        } catch (UnknownHostException e) {
+            showError("Error de conexión a Internet. Verifica tu conexión.");
+            LOGGER.error("UnknownHostException al subir archivo a Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showError("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
+            LOGGER.error("SocketTimeoutException al subir archivo a Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showError("Archivo de credenciales no encontrado. Verifica la configuración.");
+            LOGGER.error("FileNotFoundException al subir archivo a Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showError("Error de Google Drive al subir el archivo.");
+            LOGGER.error("GoogleJsonResponseException al subir archivo a Drive", e);
+            return null;
         } catch (IOException e) {
             showError("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.error("IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showError("Error al conectar con Google Drive.");
+            showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al subir archivo a Drive", e);
+            return null;
+        } catch (Exception e) {
+            showError("Error inesperado al subir el archivo a Google Drive.");
+            LOGGER.error("Error inesperado al subir archivo a Drive", e);
             return null;
         }
     }
@@ -354,13 +378,33 @@ public class GUI_RegisterSelfAssessmentController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Autoevaluacion", parentId);
             return parentId;
+        } catch (UnknownHostException e) {
+            showError("Error de conexión a Internet. Verifica tu conexión.");
+            LOGGER.error("UnknownHostException al crear carpetas en Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showError("Tiempo de espera agotado al intentar conectar con Google Drive.");
+            LOGGER.error("SocketTimeoutException al crear carpetas en Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showError("Archivo de credenciales no encontrado. Verifica la configuración.");
+            LOGGER.error("FileNotFoundException al crear carpetas en Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showError("Error de Google Drive al interactuar con las carpetas.");
+            LOGGER.error("GoogleJsonResponseException al crear carpetas en Drive", e);
+            return null;
         } catch (IOException e) {
             showError("Error de acceso a las carpetas de Google Drive.");
             LOGGER.error("IOException al crear carpetas en Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showError("Error al conectar con Google Drive.");
+            showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al crear carpetas en Drive", e);
+            return null;
+        } catch (Exception e) {
+            showError("Error inesperado al crear carpetas en Google Drive.");
+            LOGGER.error("Error inesperado al crear carpetas en Drive", e);
             return null;
         }
     }
