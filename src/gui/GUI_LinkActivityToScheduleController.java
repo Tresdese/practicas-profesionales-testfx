@@ -64,7 +64,7 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
                 }
                 @Override
                 public ScheduleOfActivitiesDTO fromString(String string) {
-                    return null;
+                    throw new UnsupportedOperationException("Conversión desde String a Cronograma de actividades no soportada.");
                 }
             });
         } catch (SQLException e) {

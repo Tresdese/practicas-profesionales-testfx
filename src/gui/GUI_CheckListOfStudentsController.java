@@ -264,8 +264,8 @@ public class GUI_CheckListOfStudentsController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
             } else if ("42S22".equals(sqlState)) {
-                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Columna desconocida en la base de datos.");
+                logger.error("Columna desconocida en la tabla proyecto a estudiante base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla proyecto a estudiante base de datos.");
                 statusLabel.setTextFill(Color.RED);
             } else if ("42S02".equals(sqlState)) {
                 logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);

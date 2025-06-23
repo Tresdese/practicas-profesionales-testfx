@@ -7,6 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import logic.DAO.ActivityDAO;
 import logic.DTO.ActivityDTO;
+import logic.exceptions.InvalidData;
+import logic.utils.ObjectIdValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,21 +100,26 @@ public class GUI_ManageActivityController {
     }
 
     @FXML
-    private void handleRegister() {
+    private void handleRegisterActiviy() {
         clearStatus();
         try {
             if (!areFieldsFilled()) {
                 throw new IllegalArgumentException("Todos los campos son obligatorios.");
             }
-            ActivityDTO activity = new ActivityDTO(idActivityField.getText().trim(), nameActivityField.getText().trim());
+            String activityId = idActivityField.getText().trim();
+            ObjectIdValidator.validate(activityId);
+            ActivityDTO activity = new ActivityDTO(activityId, nameActivityField.getText().trim());
             boolean inserted = activityDAO.insertActivity(activity);
             if (inserted) {
                 setStatus("Actividad registrada correctamente.", false);
                 loadActivities();
-                handleClear();
+                handleClearFields();
             } else {
                 setStatus("No se pudo registrar la actividad.", true);
             }
+        } catch (InvalidData e) {
+            setStatus("El identificador debe ser un numero", true);
+            LOGGER.error("Error de validación de datos al registrar actividad: {}", e.getMessage(), e);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -153,7 +160,7 @@ public class GUI_ManageActivityController {
     }
 
     @FXML
-    private void handleClear() {
+    private void handleClearFields() {
         idActivityField.clear();
         nameActivityField.clear();
         idActivityField.setDisable(false);
@@ -162,7 +169,7 @@ public class GUI_ManageActivityController {
     }
 
     @FXML
-    private void handleDelete() {
+    private void handleDeleteActivity() {
         clearStatus();
         ActivityDTO selected = activityTable.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -174,7 +181,7 @@ public class GUI_ManageActivityController {
             if (deleted) {
                 setStatus("Actividad eliminada correctamente.", false);
                 loadActivities();
-                handleClear();
+                handleClearFields();
             } else {
                 setStatus("No se pudo eliminar la actividad.", true);
             }
@@ -218,7 +225,7 @@ public class GUI_ManageActivityController {
     }
 
     @FXML
-    private void handleUpdate() {
+    private void handleUpdateActivity() {
         clearStatus();
         try {
             if (!areFieldsFilled()) {
@@ -229,7 +236,7 @@ public class GUI_ManageActivityController {
             if (updated) {
                 setStatus("Actividad actualizada correctamente.", false);
                 loadActivities();
-                handleClear();
+                handleClearFields();
             } else {
                 setStatus("No se pudo actualizar la actividad.", true);
             }
