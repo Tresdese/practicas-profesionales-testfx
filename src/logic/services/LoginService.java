@@ -26,22 +26,19 @@ public class LoginService {
         String hashedPassword = PasswordHasher.hashPassword(plainPassword);
 
         StudentDTO student = studentDAO.searchStudentByUserAndPassword(username, hashedPassword);
-        if (student != null) {
-            if (student.getState() == 1 /* && !"N/A".equals(student.getTuition()) */) {
+        if (student != null && !"N/A".equals(student.getTuition())) {
+            if (student.getState() == 1) {
                 return student;
-            }
-            if (student.getState() == 0) {
+            } else if (student.getState() == 0) {
                 throw new InactiveUser("Estudiante inactivo o dado de baja.");
             }
-            // Si la matrícula es "N/A" u otra condición, sigue con usuario general
         }
 
         UserDTO user = userDAO.searchUserByUsernameAndPassword(username, hashedPassword);
-        if (user != null) {
+        if (user != null && !"INVALID".equals(user.getIdUser())) {
             if (user.getStatus() == 1) {
                 return user;
-            }
-            if (user.getStatus() == 0) {
+            } else if (user.getStatus() == 0) {
                 throw new InactiveUser("Usuario inactivo o dado de baja.");
             }
         }
