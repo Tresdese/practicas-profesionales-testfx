@@ -30,7 +30,6 @@ public class GoogleDriveUploader {
     private static final String APPLICATION_NAME = "Mi Proyecto Java";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    // Agrega el scope de Gmail junto con el de Drive
     private static final List<String> SCOPES = Arrays.asList(
             DriveScopes.DRIVE_FILE,
             "https://www.googleapis.com/auth/gmail.send"
