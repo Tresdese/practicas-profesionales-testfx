@@ -15,6 +15,7 @@ import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -71,8 +72,19 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            }
-            else if (sqlState != null && sqlState.equals("42000")) {
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de representantes no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de representantes no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de representantes.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de representantes: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -86,6 +98,10 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error en la base de datos al inicializar el servicio: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración del servicio.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la configuración del servicio: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar el servicio.");
             statusLabel.setTextFill(Color.RED);
@@ -112,6 +128,18 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de organizaciones no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de organizaciones no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -123,12 +151,16 @@ public class GUI_ManageRepresentativeController {
             } else {
                 statusLabel.setText("Error al cargar organizaciones.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al cargar organizaciones: {}", e);
+                LOGGER.error("Error al cargar organizaciones: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración del servicio.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la configuración del servicio: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error al cargar organizaciones.");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error al cargar organizaciones: {}", e);
+            LOGGER.error("Error al cargar organizaciones: {}", e.getMessage(), e);
         }
     }
 
@@ -156,6 +188,18 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de departamentos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de departamentos no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de departamentos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de departamentos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -169,8 +213,11 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar departamentos: {}", e.getMessage(), e);
             }
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración del servicio.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la configuración del servicio: {}", e.getMessage(), e);
+        } catch (Exception e) {
             statusLabel.setText("Error al cargar departamentos.");
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error al cargar departamentos: {}", e.getMessage(), e);
@@ -212,6 +259,18 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de representantes no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de representantes no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de representantes.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de representantes: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -225,6 +284,10 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar los datos del representante: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración del servicio.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la configuración del servicio: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los datos del representante.");
             statusLabel.setTextFill(Color.RED);
@@ -288,6 +351,18 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de representantes no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de representantes no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de representantes.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de representantes: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -301,17 +376,22 @@ public class GUI_ManageRepresentativeController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al actualizar el representante.");
-                LOGGER.error("Error al actualizar el representante: {}", e);
+                statusLabel.setText("Error de base de datos al actualizar el representante.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al actualizar el representante: {}", e.getMessage(), e);
             }
         } catch (IllegalArgumentException e) {
             statusLabel.setText("Argumento inválido:");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.warn("Error al guardar cambios: {}", e);
+            LOGGER.warn("Error al guardar cambios: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al guardar cambios.");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error inesperado al guardar cambios: {}", e);
+            LOGGER.error("Error inesperado al guardar cambios: {}", e.getMessage(), e);
         }
     }
 

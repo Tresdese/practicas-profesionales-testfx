@@ -57,6 +57,22 @@ public class GUI_ManageLinkedOrganizationController {
                 statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -70,6 +86,10 @@ public class GUI_ManageLinkedOrganizationController {
                 LOGGER.error("Error al inicializar el servicio de organización: {}", e.getMessage(), e);
                 statusLabel.setTextFill(Color.RED);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración del servicio de organización.");
+            LOGGER.error("Error al cargar la configuración del servicio de organización: {}", e.getMessage(), e);
+            statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar el servicio de organización.");
             LOGGER.error("Error inesperado al inicializar el servicio de organización:0 {}", e.getMessage(), e);
@@ -121,6 +141,18 @@ public class GUI_ManageLinkedOrganizationController {
                 statusLabel.setText("Conexión interrumpida con la base de datos. Por favor, intente más tarde.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos. Por favor, intente más tarde.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
                 statusLabel.setTextFill(Color.RED);
@@ -136,12 +168,16 @@ public class GUI_ManageLinkedOrganizationController {
             } else {
                 statusLabel.setText("Error al actualizar la organización vinculada.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al actualizar la organización vinculada: {}", e);
+                LOGGER.error("Error al actualizar la organización vinculada: {}", e.getMessage(), e);
             }
         } catch (IllegalArgumentException e) {
             statusLabel.setText("Error de validación");
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error al guardar cambios: {}", e.getMessage(), e);
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error de entrada/salida al guardar cambios: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
@@ -170,7 +206,7 @@ public class GUI_ManageLinkedOrganizationController {
             stage.show();
         } catch (IOException e) {
             LOGGER.error("Error al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir la ventana de registro de departamento.");
+            statusLabel.setText("Error al abrir el fxml de la ventana de registro de departamento.");
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al abrir la ventana de registro de departamento: {}", e.getMessage(), e);
