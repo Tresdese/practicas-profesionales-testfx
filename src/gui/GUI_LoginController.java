@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import logic.DTO.Role;
 import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
+import logic.exceptions.InactiveUser;
 import logic.exceptions.InvalidCredential;
 import logic.services.LoginService;
 import org.apache.logging.log4j.LogManager;
@@ -162,6 +163,10 @@ public class GUI_LoginController {
             }
         } catch (InvalidCredential e) {
             LOGGER.warn("Credenciales inválidas: {}", e.getMessage());
+            statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+        } catch (InactiveUser e) {
+            LOGGER.warn("Usuario inactivo o dado de baja: {}", e.getMessage());
             statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
         } catch (SQLException e) {

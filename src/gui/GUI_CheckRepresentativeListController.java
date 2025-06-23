@@ -448,6 +448,10 @@ public class GUI_CheckRepresentativeListController {
                 LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
                 statusLabel.setTextFill(Color.RED);
             }
+        } catch (IOException e) {
+            representativeCountsLabel.setText("No se pudo leer el archivo de configuracion de la base de datos.");
+            representativeCountsLabel.setTextFill(Color.RED);
+            LOGGER.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             representativeCountsLabel.setText("Error inesperado al contar estudiantes");
             LOGGER.error("Error inesperado al contar estudiantes: {}", e.getMessage(), e);
@@ -502,6 +506,10 @@ public class GUI_CheckRepresentativeListController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al eliminar el representante: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("No se pudo leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al eliminar el representante.");
             statusLabel.setTextFill(Color.RED);
