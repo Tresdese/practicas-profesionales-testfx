@@ -117,6 +117,14 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de presentaciones no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de presentaciones no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de presentaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de presentaciones: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
                 statusLabel.setTextFill(Color.RED);
@@ -126,6 +134,10 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al cargar las presentaciones: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar las presentaciones.");
             statusLabel.setTextFill(Color.RED);
@@ -163,6 +175,14 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de presentaciones no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de presentaciones no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de presentaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de presentaciones: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
                 statusLabel.setTextFill(Color.RED);
@@ -172,6 +192,10 @@ public class GUI_CheckListOfPresentationsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al buscar presentaciones: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar presentaciones.");
             statusLabel.setTextFill(Color.RED);

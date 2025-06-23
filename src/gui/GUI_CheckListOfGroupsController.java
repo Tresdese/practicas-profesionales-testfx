@@ -13,6 +13,7 @@ import logic.DTO.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -109,6 +110,14 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de grupos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de grupos: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -118,6 +127,10 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar los grupos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los grupos.");
             statusLabel.setTextFill(Color.RED);
@@ -155,6 +168,14 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de grupos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de grupos: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -164,6 +185,10 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al buscar el grupo: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar el grupo.");
             statusLabel.setTextFill(Color.RED);

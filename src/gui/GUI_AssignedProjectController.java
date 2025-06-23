@@ -112,6 +112,14 @@ public class GUI_AssignedProjectController {
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("Base de datos desconocida.");
                 registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla de autoevaluación no encontrada: {}", e.getMessage(), e);
+                showAlert("Tabla de autoevaluación no encontrada en la base de datos.");
+                registerSelfAssessmentButton.setDisable(true);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna no encontrada en la tabla de autoevaluación: {}", e.getMessage(), e);
+                showAlert("Columna no encontrada en la tabla de autoevaluación.");
+                registerSelfAssessmentButton.setDisable(true);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 showAlert("Acceso denegado a la base de datos.");
@@ -162,6 +170,16 @@ public class GUI_AssignedProjectController {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 showAlert("Acceso denegado a la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla de proyecto a estudiante no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de proyecto a estudiante no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Tabla de proyecto a estudiante no encontrada en la base de datos.");
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna no encontrada en la tabla de proyecto a estudiante: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la tabla de proyecto a estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                showAlert("Columna no encontrada en la tabla de proyecto a estudiante.");
             } else {
                 logger.error("Error al obtener el proyecto del estudiante de base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error al obtener el proyecto del estudiante de base de datos.");
@@ -214,6 +232,18 @@ public class GUI_AssignedProjectController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla de proyecto no encontrada: {}", e.getMessage(), e);
+                showAlert("Tabla de proyecto no encontrada en la base de datos.");
+                statusLabel.setText("Tabla de proyecto no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna no encontrada en la tabla de proyecto: {}", e.getMessage(), e);
+                showAlert("Columna no encontrada en la tabla de proyecto.");
+                statusLabel.setText("Columna no encontrada en la tabla de proyecto.");
+                statusLabel.setTextFill(Color.RED);
+                return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 showAlert("Acceso denegado a la base de datos.");
@@ -232,7 +262,7 @@ public class GUI_AssignedProjectController {
             showAlert("No se pudo leer el archivo de configuracion de la base de datos.");
             statusLabel.setText("Error al leer la configuración de la base de datos.");
             return new ProjectDTO("-1", "N/A", "N/A", null, null, "N/A", 0, 0);
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Error inesperado al obtener el proyecto: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener el proyecto.");
             statusLabel.setTextFill(Color.RED);
@@ -284,6 +314,14 @@ public class GUI_AssignedProjectController {
                 organizationLabel.setText("Base de datos desconocida");
                 representativeLabel.setText("Base de datos desconocida");
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                organizationLabel.setText("Tabla de organización no encontrada");
+                representativeLabel.setText("Tabla de representante no encontrada");
+                logger.error("Tabla de organización o representante no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                organizationLabel.setText("Columna no encontrada en la tabla de organización");
+                representativeLabel.setText("Columna no encontrada en la tabla de representante");
+                logger.error("Columna no encontrada en la tabla de organización o representante: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 organizationLabel.setText("Acceso denegado a la base de datos");
                 representativeLabel.setText("Acceso denegado a la base de datos");
@@ -335,6 +373,14 @@ public class GUI_AssignedProjectController {
             } else if (sqlState != null && sqlState.equals("42000")) {
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.error("Tabla de representante no encontrada: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de representante no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.error("Columna no encontrada en la tabla de representante: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la tabla de representante.");
                 statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
@@ -481,6 +527,14 @@ public class GUI_AssignedProjectController {
                 logger.warn("Base de datos desconocida al obtener el periodo o profesor: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.warn("Tabla de grupo no encontrada al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de grupo no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.warn("Columna no encontrada en la tabla de grupo al obtener el periodo o profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la tabla de grupo.");
+                statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.warn("Acceso denegado a la base de datos al obtener el periodo o profesor: {}", e.getMessage(), e);
                 statusLabel.setText("Acceso denegado a la base de datos.");
@@ -490,6 +544,11 @@ public class GUI_AssignedProjectController {
                 statusLabel.setText("Error de base de datos.");
                 statusLabel.setTextFill(Color.RED);
             }
+        } catch (IOException e) {
+            logger.warn("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            showAlert("No se pudo leer el archivo de configuracion de la base de datos.");
         } catch (NullPointerException e) {
             logger.warn("NRC nulo al obtener el periodo o profesor: {}", e.getMessage(), e);
             showAlert("Error al obtener el periodo o profesor.");
@@ -522,6 +581,16 @@ public class GUI_AssignedProjectController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 return "Base de datos desconocida.";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.warn("Tabla de organización no encontrada al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de organización no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Tabla de organización no encontrada en la base de datos.";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.warn("Columna no encontrada en la tabla de organización al obtener la organización: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la tabla de organización.");
+                statusLabel.setTextFill(Color.RED);
+                return "Columna no encontrada en la tabla de organización.";
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.warn("Acceso denegado a la base de datos al obtener la organización: {}", e.getMessage(), e);
                 statusLabel.setText("Acceso denegado a la base de datos.");
@@ -533,6 +602,11 @@ public class GUI_AssignedProjectController {
                 statusLabel.setTextFill(Color.RED);
                 return "Error de base de datos.";
             }
+        } catch (IOException e) {
+            logger.warn("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return "Error al leer el archivo de configuración de la base de datos.";
         } catch (NullPointerException e) {
             logger.warn("ID de organización nulo al obtener la organización: {}", e.getMessage(), e);
             statusLabel.setText("ID de organización nulo.");
@@ -570,6 +644,16 @@ public class GUI_AssignedProjectController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 return "Base de datos desconocida.";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                logger.warn("Tabla de usuario no encontrada al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla de usuario no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                return "Tabla de usuario no encontrada en la base de datos.";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                logger.warn("Columna no encontrada en la tabla de usuario al obtener el profesor: {}", e.getMessage(), e);
+                statusLabel.setText("Columna no encontrada en la tabla de usuario.");
+                statusLabel.setTextFill(Color.RED);
+                return "Columna no encontrada en la tabla de usuario.";
             } else if (sqlState != null && sqlState.equals("28000")) {
                 logger.warn("Acceso denegado a la base de datos al obtener el profesor: {}", e.getMessage(), e);
                 statusLabel.setText("Acceso denegado a la base de datos.");
@@ -581,6 +665,11 @@ public class GUI_AssignedProjectController {
                 statusLabel.setTextFill(Color.RED);
                 return "Error de base de datos.";
             }
+        } catch (IOException e) {
+            logger.warn("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            return "Error al leer el archivo de configuración de la base de datos.";
         } catch (NullPointerException e) {
             logger.warn("ID de usuario nulo al obtener el profesor: {}", e.getMessage(), e);
             statusLabel.setText("ID de usuario nulo.");

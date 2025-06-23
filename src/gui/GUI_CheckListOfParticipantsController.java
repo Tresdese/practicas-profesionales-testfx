@@ -93,6 +93,14 @@ public class GUI_CheckListOfParticipantsController {
                 logger.error("Base de datos desconocida: " + e.getMessage(), e);
                 showAlert("Base de datos desconocida. Por favor, verifica la configuración.");
                 participantCountsLabel.setText("Base de datos desconocida");
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla de estudiante a proyecto no encontrada en la base de datos: " + e.getMessage(), e);
+                showAlert("Tabla de estudiante a proyecto no encontrada en la base de datos.");
+                participantCountsLabel.setText("Tabla no encontrada");
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna no encontrada en la tabla de estudiante a proyecto: " + e.getMessage(), e);
+                showAlert("Columna no encontrada en la tabla de estudiante a proyecto.");
+                participantCountsLabel.setText("Columna no encontrada");
             } else if ("28000".equals(sqlState)) {
                 logger.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
                 showAlert("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");

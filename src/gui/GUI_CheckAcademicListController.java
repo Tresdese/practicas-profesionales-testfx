@@ -104,7 +104,7 @@ public class GUI_CheckAcademicListController {
     private void setButtons() {
         searchButton.setOnAction(event -> searchAcademic());
         registerAcademicButton.setOnAction(event -> openRegisterAcademicWindow());
-        deleteAcademicButton.setOnAction(event -> handleDeleteOrganization());
+        deleteAcademicButton.setOnAction(event -> handleDeleteUser());
     }
 
     private void openRegisterAcademicWindow() {
@@ -150,6 +150,14 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            }else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de usuario no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla de usuario no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de usuario.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de usuario: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -159,6 +167,10 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("No se pudo leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("No se pudo leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los académicos.");
             statusLabel.setTextFill(Color.RED);
@@ -205,6 +217,14 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                statusLabel.setText("Tabla de usuario no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Tabla de usuario no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                statusLabel.setText("Columna no encontrada en la tabla de usuario.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de usuario: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -214,6 +234,10 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al buscar académico de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("No se pudo leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("No se pudo leer el archivo de configuracion de la base de datos. {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar académico.");
             statusLabel.setTextFill(Color.RED);
@@ -301,6 +325,14 @@ public class GUI_CheckAcademicListController {
                 academicCountsLabel.setText("Base de datos desconocida.");
                 academicCountsLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                academicCountsLabel.setText("Tabla de usuario no encontrada.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Tabla de usuario no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                academicCountsLabel.setText("Columna no encontrada en la tabla de usuario.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de usuario: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 academicCountsLabel.setText("Acceso denegado a la base de datos.");
                 academicCountsLabel.setTextFill(Color.RED);
@@ -317,9 +349,9 @@ public class GUI_CheckAcademicListController {
         }
     }
 
-    private void handleDeleteOrganization() {
+    private void handleDeleteUser() {
         if (selectedAcademic == null) {
-            statusLabel.setText("Debe seleccionar una organización para eliminar");
+            statusLabel.setText("Debe seleccionar un usuario para eliminar");
             return;
         }
 
@@ -342,8 +374,36 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Eliminación cancelada.");
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al eliminar la organización.");
-            logger.error("Error al eliminar la organización: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                academicCountsLabel.setText("Error de conexión con la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                academicCountsLabel.setText("Conexión interrumpida con la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                academicCountsLabel.setText("Base de datos desconocida.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                academicCountsLabel.setText("Tabla de usuario no encontrada.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Tabla de usuario no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                academicCountsLabel.setText("Columna no encontrada en la tabla de usuario.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Columna no encontrada en la tabla de usuario: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                academicCountsLabel.setText("Acceso denegado a la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                academicCountsLabel.setText("Error al contar los académicos de la base de datos.");
+                academicCountsLabel.setTextFill(Color.RED);
+                logger.error("Error al contar los académicos de la base de datos: {}", e.getMessage(), e);
+            }
         } catch (IOException e) {
             statusLabel.setText("Error al cargar el diálogo de confirmación.");
             logger.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);
