@@ -10,6 +10,7 @@ import logic.DTO.AssessmentCriterionDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_ManageAssessmentCriteriaController {
@@ -60,6 +61,15 @@ public class GUI_ManageAssessmentCriteriaController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 setStatus("Error de conexión interrumpida con la base de datos.", true);
                 LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                setStatus("Tabla de criterios no encontrada.", true);
+                LOGGER.error("Tabla de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                setStatus("Columna de criterios no encontrada.", true);
+                LOGGER.error("Columna de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                setStatus("Error general de la base de datos.", true);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 setStatus("Base de datos desconocida.", true);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -70,6 +80,9 @@ public class GUI_ManageAssessmentCriteriaController {
                 setStatus("Error al cargar criterios.", true);
                 LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            setStatus("Error al cargar la configuración de la base de datos.", true);
+            LOGGER.error("Error de entrada/salida al cargar criterios: {}", e.getMessage(), e);
         } catch (Exception e) {
             setStatus("Error inesperado al cargar criterios.", true);
             LOGGER.error("Error inesperado al cargar criterios: {}", e.getMessage(), e);
@@ -111,6 +124,15 @@ public class GUI_ManageAssessmentCriteriaController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 setStatus("Error de conexión interrumpida con la base de datos.", true);
                 LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                setStatus("Tabla de criterios no encontrada.", true);
+                LOGGER.error("Tabla de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                setStatus("Columna de criterios no encontrada.", true);
+                LOGGER.error("Columna de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                setStatus("Error general de la base de datos.", true);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 setStatus("Base de datos desconocida.", true);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -124,6 +146,9 @@ public class GUI_ManageAssessmentCriteriaController {
                 setStatus("Error de base de datos al registrar.", true);
                 LOGGER.error("Error SQL al registrar criterio: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            setStatus("Error al cargar la configuración de la base de datos.", true);
+            LOGGER.error("Error de entrada/salida al registrar criterio: {}", e.getMessage(), e);
         } catch (Exception e) {
             setStatus("Error inesperado al registrar criterio", true);
             LOGGER.error("Error al registrar criterio: {}", e.getMessage(), e);
@@ -164,6 +189,15 @@ public class GUI_ManageAssessmentCriteriaController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 setStatus("Error de conexión interrumpida con la base de datos.", true);
                 LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                setStatus("Tabla de criterios no encontrada.", true);
+                LOGGER.error("Tabla de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                setStatus("Columna de criterios no encontrada.", true);
+                LOGGER.error("Columna de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                setStatus("Error general de la base de datos.", true);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 setStatus("Base de datos desconocida.", true);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -177,6 +211,9 @@ public class GUI_ManageAssessmentCriteriaController {
                 setStatus("Error de base de datos al eliminar.", true);
                 LOGGER.error("Error SQL al eliminar criterio: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            setStatus("Error al cargar la configuración de la base de datos.", true);
+            LOGGER.error("Error de entrada/salida al eliminar criterio: {}", e.getMessage(), e);
         } catch (Exception e) {
             setStatus("Error inesperado al eliminar criterio", true);
             LOGGER.error("Error al eliminar criterio: {}", e.getMessage(), e);
@@ -215,6 +252,15 @@ public class GUI_ManageAssessmentCriteriaController {
             } else if (sqlState != null && sqlState.equals("08S01")) {
                 setStatus("Error de conexión interrumpida con la base de datos.", true);
                 LOGGER.error("Error de conexion interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                setStatus("Tabla de criterios no encontrada.", true);
+                LOGGER.error("Tabla de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                setStatus("Columna de criterios no encontrada.", true);
+                LOGGER.error("Columna de criterios no encontrada: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                setStatus("Error general de la base de datos.", true);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
                 setStatus("Base de datos desconocida.", true);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
@@ -228,6 +274,9 @@ public class GUI_ManageAssessmentCriteriaController {
                 setStatus("Error de base de datos al actualizar.", true);
                 LOGGER.error("Error SQL al actualizar criterio: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            setStatus("Error al cargar la configuración de la base de datos.", true);
+            LOGGER.error("Error de entrada/salida al actualizar criterio: {}", e.getMessage(), e);
         } catch (Exception e) {
             setStatus("Error inesperado al actualizar criterio", true);
             LOGGER.error("Error al actualizar criterio: {}", e.getMessage(), e);

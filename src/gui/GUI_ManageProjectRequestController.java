@@ -14,6 +14,7 @@ import logic.DTO.ProjectStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_ManageProjectRequestController {
@@ -126,6 +127,18 @@ public class GUI_ManageProjectRequestController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
             } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
@@ -143,6 +156,10 @@ public class GUI_ManageProjectRequestController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al actualizar la solicitud de proyecto: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error de entrada/salida: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Ocurrió un error inesperado.");
             statusLabel.setTextFill(Color.RED);
