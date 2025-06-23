@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GUI_CheckScheduleOfActivitiesController">
+    <children>
+        <VBox layoutX="30" layoutY="20" prefHeight="360" prefWidth="540" spacing="20">
+            <children>
+                <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-underline: true;" text="Detalle de Cronograma de Actividades" />
+                <GridPane hgap="15" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="120" />
+                        <ColumnConstraints minWidth="300" />
+                        <ColumnConstraints minWidth="120" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="30" />
+                        <RowConstraints minHeight="30" />
+                        <RowConstraints minHeight="30" />
+                    </rowConstraints>
+                    <children>
+                        <Label text="Hito:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="milestoneLabel" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label text="Fecha estimada:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="dateLabel" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Evidencia:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="evidenceLabel" style="-fx-background-color: #f4f4f4; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Button fx:id="viewEvidenceButton" onAction="#handleViewEvidence" style="-fx-background-color: #1976d2; -fx-text-fill: white;" text="Ver Evidencia" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                    </children>
+                </GridPane>
+                <Label style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Cronograma completo:" />
+                <ListView fx:id="scheduleListView" prefHeight="150" style="-fx-background-color: #f9f9f9;" />
+                <Label fx:id="statusLabel" style="-fx-text-fill: red;" text="" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

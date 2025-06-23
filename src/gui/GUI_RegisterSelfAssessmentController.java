@@ -1,5 +1,6 @@
 package gui;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -18,6 +19,9 @@ import logic.DTO.EvidenceDTO;
 import logic.DTO.StudentDTO;
 import logic.DTO.SelfAssessmentCriteriaDTO;
 
+import java.io.FileNotFoundException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 
 import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
@@ -112,6 +116,18 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos no encontradaL: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al cargar proyectos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al cargar proyectos: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -121,7 +137,10 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar proyectos: {}", e.getMessage(), e);
             }
-        }catch (Exception e) {
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+        } catch (Exception e) {
             showError("Error inesperado al cargar proyectos.");
             LOGGER.error("Error inesperado al cargar proyectos: {}", e.getMessage(), e);
         }
@@ -169,6 +188,22 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al cargar criterios.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al cargar criterios: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -182,6 +217,9 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
         } catch (Exception e) {
             showError("Error al cargar criterios.");
             LOGGER.error("Error al cargar criterios: {}", e.getMessage(), e);
@@ -253,6 +291,11 @@ public class GUI_RegisterSelfAssessmentController {
                 Float.parseFloat(input.getGrade());
             } catch (NumberFormatException e) {
                 showError("Las calificaciones deben ser números válidos.");
+                LOGGER.error("Calificación inválida para el criterio: {}", input.idCriteria, e);
+                return false;
+            } catch (Exception e) {
+                showError("Error inesperado al validar las calificaciones.");
+                LOGGER.error("Error inesperado al validar las calificaciones: {}", e.getMessage(), e);
                 return false;
             }
         }
@@ -308,6 +351,26 @@ public class GUI_RegisterSelfAssessmentController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 return -1;
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                return -1;
+            } else if ("HY000".equals(sqlState)) {
+                statusLabel.setText("Error general de la base de datos al obtener el ID de evidencia.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error general de la base de datos al obtener el ID de evidencia: {}", e.getMessage(), e);
+                return -1;
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -323,7 +386,12 @@ public class GUI_RegisterSelfAssessmentController {
                 LOGGER.error("Error al obtener el ID de evidencia: {}", e.getMessage(), e);
                 return -1;
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            showError("Error al leer la configuración de la base de datos.");
+            LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            return -1;
+        }
+        catch (Exception e) {
             showError("Error al obtener el ID de evidencia.");
             LOGGER.error("Error al obtener el ID de evidencia", e);
             return -1;
@@ -335,13 +403,33 @@ public class GUI_RegisterSelfAssessmentController {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             return uploadFile(file.getAbsolutePath(), parentId);
+        } catch (UnknownHostException e) {
+            showError("Error de conexión a Internet. Verifica tu conexión.");
+            LOGGER.error("UnknownHostException al subir archivo a Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showError("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
+            LOGGER.error("SocketTimeoutException al subir archivo a Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showError("Archivo de credenciales no encontrado. Verifica la configuración.");
+            LOGGER.error("FileNotFoundException al subir archivo a Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showError("Error de Google Drive al subir el archivo.");
+            LOGGER.error("GoogleJsonResponseException al subir archivo a Drive", e);
+            return null;
         } catch (IOException e) {
             showError("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.error("IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showError("Error al conectar con Google Drive.");
+            showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al subir archivo a Drive", e);
+            return null;
+        } catch (Exception e) {
+            showError("Error inesperado al subir el archivo a Google Drive.");
+            LOGGER.error("Error inesperado al subir archivo a Drive", e);
             return null;
         }
     }
@@ -354,13 +442,33 @@ public class GUI_RegisterSelfAssessmentController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Autoevaluacion", parentId);
             return parentId;
+        } catch (UnknownHostException e) {
+            showError("Error de conexión a Internet. Verifica tu conexión.");
+            LOGGER.error("UnknownHostException al crear carpetas en Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showError("Tiempo de espera agotado al intentar conectar con Google Drive.");
+            LOGGER.error("SocketTimeoutException al crear carpetas en Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showError("Archivo de credenciales no encontrado. Verifica la configuración.");
+            LOGGER.error("FileNotFoundException al crear carpetas en Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showError("Error de Google Drive al interactuar con las carpetas.");
+            LOGGER.error("GoogleJsonResponseException al crear carpetas en Drive", e);
+            return null;
         } catch (IOException e) {
             showError("Error de acceso a las carpetas de Google Drive.");
             LOGGER.error("IOException al crear carpetas en Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showError("Error al conectar con Google Drive.");
+            showError("Error de seguridad al conectar con Google Drive.");
             LOGGER.error("GeneralSecurityException al crear carpetas en Drive", e);
+            return null;
+        } catch (Exception e) {
+            showError("Error inesperado al crear carpetas en Google Drive.");
+            LOGGER.error("Error inesperado al crear carpetas en Drive", e);
             return null;
         }
     }

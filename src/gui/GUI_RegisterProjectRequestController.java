@@ -16,6 +16,7 @@ import logic.DTO.ProjectStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -179,16 +180,31 @@ public class GUI_RegisterProjectRequestController {
             } else if ("08S01".equals(sqlState)) {
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 setStatus("Conexión interrumpida con la base de datos.", true);
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                setStatus("Tabla o vista no encontrada.", true);
+            } else if ("22001".equals(sqlState)) {
+                LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+                setStatus("Datos demasiado largos para el campo.", true);
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                setStatus("Columna no encontrada.", true);
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
                 setStatus("Base de datos no encontrada.", true);
             } else if ("28000".equals(sqlState)) {
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 setStatus("Acceso denegado a la base de datos.", true);
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                setStatus("Error general de la base de datos.", true);
             } else {
                 LOGGER.error("Error al cargar organizaciones: {}", e.getMessage(), e);
                 setStatus("Error al cargar organizaciones.", true);
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            setStatus("Error al leer el archivo de configuración de la base de datos.", true);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al cargar organizaciones: {}", e.getMessage(), e);
             setStatus("Error inesperado al cargar organizaciones.", true);
@@ -217,16 +233,31 @@ public class GUI_RegisterProjectRequestController {
                 } else if ("08S01".equals(e.getSQLState())) {
                     LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                     setStatus("Conexión interrumpida con la base de datos.", true);
+                } else if ("42S02".equals(e.getSQLState())) {
+                    LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                    setStatus("Tabla o vista no encontrada.", true);
+                } else if ("22001".equals(e.getSQLState())) {
+                    LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+                    setStatus("Datos demasiado largos para el campo.", true);
+                } else if ("42S22".equals(e.getSQLState())) {
+                    LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                    setStatus("Columna no encontrada.", true);
                 } else if ("42000".equals(e.getSQLState())) {
                     LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
                     setStatus("Base de datos no encontrada.", true);
                 } else if ("28000".equals(e.getSQLState())) {
                     LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                     setStatus("Acceso denegado a la base de datos.", true);
+                } else if ("HY000".equals(e.getSQLState())) {
+                    LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                    setStatus("Error general de la base de datos.", true);
                 } else {
-                    LOGGER.error("Error al cargar representantes: {}", e.getMessage(), e);
-                    setStatus("Error al cargar representantes.", true);
+                    LOGGER.error("Error de base de datos al cargar representantes: {}", e.getMessage(), e);
+                    setStatus("Error de base de datos al cargar representantes.", true);
                 }
+            } catch (IOException e) {
+                LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+                setStatus("Error al leer el archivo de configuración de la base de datos.", true);
             } catch (Exception e) {
                 LOGGER.error("Error inesperado al cargar representantes: {}", e.getMessage(), e);
                 setStatus("Error inesperado al cargar representantes.", true);
@@ -285,19 +316,34 @@ public class GUI_RegisterProjectRequestController {
                 } else if ("08S01".equals(sqlState)) {
                     LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                     setStatus("Conexión interrumpida con la base de datos.", true);
+                } else if ("42S02".equals(sqlState)) {
+                    LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                    setStatus("Tabla o vista no encontrada.", true);
+                } else if ("22001".equals(sqlState)) {
+                    LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+                    setStatus("Datos demasiado largos para el campo.", true);
+                } else if ("42S22".equals(sqlState)) {
+                    LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                    setStatus("Columna no encontrada.", true);
                 } else if ("42000".equals(sqlState)) {
                     LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
                     setStatus("Base de datos no encontrada.", true);
                 } else if ("28000".equals(sqlState)) {
                     LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                     setStatus("Acceso denegado a la base de datos.", true);
+                } else if ("HY000".equals(sqlState)) {
+                    LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                    setStatus("Error general de la base de datos.", true);
                 } else {
-                    LOGGER.error("Error cargando proyectos: {}", e.getMessage(), e);
-                    setStatus("Error cargando proyectos.", true);
+                    LOGGER.error("Error de base de datos cargando proyectos: {}", e.getMessage(), e);
+                    setStatus("Error de base de datos cargando proyectos.", true);
                 }
+            } catch (IOException e) {
+                LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+                setStatus("Error al leer el archivo de configuración de la base de datos.", true);
             } catch (Exception e) {
-                LOGGER.error("Error cargando proyectos: {}", e.getMessage(), e);
-                setStatus("Error cargando proyectos.", true);
+                LOGGER.error("Error inesperado cargando proyectos: {}", e.getMessage(), e);
+                setStatus("Error inesperado cargando proyectos.", true);
             }
         }
     }
@@ -355,16 +401,31 @@ public class GUI_RegisterProjectRequestController {
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
                 setStatus("Base de datos no encontrada.", true);
+            } else if ("42S02".equals(sqlState)) {
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+                setStatus("Tabla o vista no encontrada.", true);
+            } else if ("22001".equals(sqlState)) {
+                LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+                setStatus("Datos demasiado largos para el campo.", true);
+            } else if ("42S22".equals(sqlState)) {
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+                setStatus("Columna no encontrada.", true);
             } else if ("28000".equals(sqlState)) {
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 setStatus("Acceso denegado a la base de datos.", true);
             } else if ("23000".equals(sqlState)) {
                 LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
                 setStatus("Violación de restricción de integridad.", true);
+            } else if ("HY000".equals(sqlState)) {
+                LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
+                setStatus("Error general de la base de datos.", true);
             } else {
-                LOGGER.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
-                setStatus("Error al registrar la solicitud.", true);
+                LOGGER.error("Error de base de datos al registrar la solicitud de proyecto: {}", e.getMessage(), e);
+                setStatus("Error de base de datos al registrar la solicitud.", true);
             }
+        } catch (IOException e) {
+            LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+            setStatus("Error al leer el archivo de configuracion de la base de datos.", true);
         } catch (Exception e) {
             LOGGER.error("Error al registrar la solicitud de proyecto: {}", e.getMessage(), e);
             setStatus("Error al registrar la solicitud.", true);

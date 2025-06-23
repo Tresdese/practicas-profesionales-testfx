@@ -10,6 +10,7 @@ import logic.validators.StudentValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class GUI_UpdateProfileController {
@@ -129,7 +130,20 @@ public class GUI_UpdateProfileController {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
+            } else if ("42S02".equals(sqlState)) {
+                statusLabel.setText("Tabla o vista no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla o vista no encontrada: {}", e.getMessage(), e);
+            } else if ("22001".equals(sqlState)) {
+                statusLabel.setText("Datos demasiado largos para el campo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Datos demasiado largos para el campo: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada: {}", e.getMessage(), e);
+            }
+            else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
@@ -142,14 +156,18 @@ public class GUI_UpdateProfileController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al actualizar el perfil: {}", e.getMessage(), e);
             }
-    } catch (InvalidData e) {
-        LOGGER.warn("Error de validación: {}", e.getMessage(), e);
-        statusLabel.setText(e.getMessage());
-        statusLabel.setTextFill(Color.RED);
-    } catch (Exception e) {
-        LOGGER.error("Error inesperado: {}", e);
-        statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
-        statusLabel.setTextFill(Color.RED);
+        } catch (IOException e) {
+            LOGGER.error("Error de entrada/salida al leer la configuracion de la base de datos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (InvalidData e) {
+            LOGGER.warn("Error de validación: {}", e.getMessage(), e);
+            statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+        } catch (Exception e) {
+            LOGGER.error("Error inesperado: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         }
     }
 

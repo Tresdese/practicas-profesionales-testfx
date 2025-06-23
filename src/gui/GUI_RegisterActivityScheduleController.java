@@ -1,5 +1,6 @@
 package gui;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
@@ -14,7 +15,10 @@ import static logic.drive.GoogleDriveFolderCreator.createOrGetFolder;
 import static logic.drive.GoogleDriveUploader.uploadFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -137,6 +141,18 @@ public class GUI_RegisterActivityScheduleController {
                 showAlert("Base de datos desconocida.");
                 LOGGER.log(Level.SEVERE, "Base de datos desconocida", e);
                 return -1;
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de evidencias no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla de evidencias no encontrada", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna no encontrada en la tabla de evidencias.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada en la tabla de evidencias", e);
+                return -1;
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error general de la base de datos", e);
+                return -1;
             } else if (sqlState != null && sqlState.equals("28000")) {
                 showAlert("Acceso denegado a la base de datos.");
                 LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos", e);
@@ -150,6 +166,10 @@ public class GUI_RegisterActivityScheduleController {
                 LOGGER.log(Level.SEVERE, "Error al registrar la evidencia", e);
                 return -1;
             }
+        } catch (IOException e) {
+            showAlert("Error al leer el archivo de configuración de la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error al leer el archivo de configuración de la base de datos", e);
+            return -1;
         } catch (Exception e) {
             showAlert("Ocurrió un error inesperado al registrar la evidencia.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar la evidencia", e);
@@ -162,13 +182,33 @@ public class GUI_RegisterActivityScheduleController {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             return uploadFile(file.getAbsolutePath(), parentId);
+        } catch (UnknownHostException e) {
+            showAlert("No se pudo conectar a Internet. Verifica tu conexión.");
+            LOGGER.log(Level.SEVERE, "UnknownHostException al subir archivo a Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showAlert("Tiempo de espera agotado al intentar subir el archivo a Google Drive.");
+            LOGGER.log(Level.SEVERE, "SocketTimeoutException al subir archivo a Drive", e);
+            return null;
+        } catch (FileNotFoundException e) {
+            showAlert("Archivo no encontrado al intentar subir a Google Drive.");
+            LOGGER.log(Level.SEVERE, "FileNotFoundException al subir archivo a Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showAlert("Error de Google Drive: " + e.getDetails().getMessage());
+            LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al subir archivo a Drive", e);
+            return null;
         } catch (IOException e) {
             showAlert("Error de acceso al archivo al subir a Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showAlert("Error al conectar con Google Drive.");
+            showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al subir archivo a Drive", e);
+            return null;
+        } catch (Exception e) {
+            showAlert("Ocurrió un error inesperado al subir el archivo a Google Drive.");
+            LOGGER.log(Level.SEVERE, "Error inesperado al subir archivo a Drive", e);
             return null;
         }
     }
@@ -181,12 +221,24 @@ public class GUI_RegisterActivityScheduleController {
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Cronograma", parentId);
             return parentId;
+        } catch (UnknownHostException e) {
+            showAlert("No se pudo conectar a Internet. Verifica tu conexión.");
+            LOGGER.log(Level.SEVERE, "UnknownHostException al crear carpeta en Drive", e);
+            return null;
+        } catch (SocketTimeoutException e) {
+            showAlert("Tiempo de espera agotado al intentar crear carpetas en Google Drive.");
+            LOGGER.log(Level.SEVERE, "SocketTimeoutException al crear carpeta en Drive", e);
+            return null;
+        } catch (GoogleJsonResponseException e) {
+            showAlert("Error de Google Drive: " + e.getDetails().getMessage());
+            LOGGER.log(Level.SEVERE, "GoogleJsonResponseException al crear carpeta en Drive", e);
+            return null;
         } catch (IOException e) {
             showAlert("Error de acceso a las carpetas de Google Drive.");
             LOGGER.log(Level.SEVERE, "IOException al subir archivo a Drive", e);
             return null;
         } catch (GeneralSecurityException e) {
-            showAlert("Error al conectar con Google Drive.");
+            showAlert("Error de seguridad al conectar con Google Drive.");
             LOGGER.log(Level.SEVERE, "GeneralSecurityException al crear carpeta en Drive", e);
             return null;
         }
@@ -214,6 +266,18 @@ public class GUI_RegisterActivityScheduleController {
                 showAlert("Conexión interrumpida con la base de datos.");
                 LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos", e);
                 return false;
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                showAlert("Tabla de cronograma de actividades no encontrada.");
+                LOGGER.log(Level.SEVERE, "Tabla de cronograma de actividades no encontrada", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                showAlert("Columna no encontrada en la tabla de cronograma de actividades.");
+                LOGGER.log(Level.SEVERE, "Columna no encontrada en la tabla de cronograma de actividades", e);
+                return false;
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                showAlert("Error general de la base de datos.");
+                LOGGER.log(Level.SEVERE, "Error general de la base de datos", e);
+                return false;
             } else if (sqlState != null && sqlState.equals("42000")) {
                 showAlert("Base de datos desconocida.");
                 LOGGER.log(Level.SEVERE, "Base de datos desconocida", e);
@@ -232,6 +296,10 @@ public class GUI_RegisterActivityScheduleController {
                 LOGGER.log(Level.SEVERE, "Error al registrar el cronograma de actividades", e);
                 return false;
             }
+        } catch (IOException e) {
+            showAlert("Error al leer el archivo de configuracion de la base de datos.");
+            LOGGER.log(Level.SEVERE, "Error al leer el archivo de configuracion de la base de datos", e);
+            return false;
         } catch (Exception e) {
             showAlert("Ocurrió un error inesperado al registrar el cronograma de actividades.");
             LOGGER.log(Level.SEVERE, "Error inesperado al registrar el cronograma de actividades", e);
@@ -256,6 +324,21 @@ public class GUI_RegisterActivityScheduleController {
                 statusLabel.setText("Conexión interrumpida con la base de datos");
                 statusLabel.setTextFill(Color.RED);
                 return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S02")) {
+                LOGGER.log(Level.WARNING, "Tabla de grupos no encontrada", e);
+                statusLabel.setText("Tabla de grupos no encontrada");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("42S22")) {
+                LOGGER.log(Level.WARNING, "Columna no encontrada en la tabla de grupos", e);
+                statusLabel.setText("Columna no encontrada en la tabla de grupos");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
+            } else if (sqlState != null && sqlState.equals("HY000")) {
+                LOGGER.log(Level.WARNING, "Error general de la base de datos", e);
+                statusLabel.setText("Error general de la base de datos");
+                statusLabel.setTextFill(Color.RED);
+                return "PeriodoDesconocido";
             } else if (sqlState != null && sqlState.equals("42000")) {
                 LOGGER.log(Level.WARNING, "Base de datos desconocida", e);
                 statusLabel.setText("Base de datos desconocida");
@@ -267,11 +350,16 @@ public class GUI_RegisterActivityScheduleController {
                 statusLabel.setTextFill(Color.RED);
                 return "PeriodoDesconocido";
             } else {
-                LOGGER.log(Level.WARNING, "Error al obtener el periodo del grupo", e);
-                statusLabel.setText("Error al obtener el periodo del grupo");
+                LOGGER.log(Level.WARNING, "Error de base de datos al obtener el periodo del grupo", e);
+                statusLabel.setText("Error de base de datos al obtener el periodo del grupo");
                 statusLabel.setTextFill(Color.RED);
                 return "PeriodoDesconocido";
             }
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Error al leer el archivo de configuración de la base de datos", e);
+            statusLabel.setText("Error al leer la configuración de la base de datos");
+            statusLabel.setTextFill(Color.RED);
+            return "PeriodoDesconocido";
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "No se pudo obtener el periodo del grupo", e);
             statusLabel.setText("Error al obtener el periodo del grupo");

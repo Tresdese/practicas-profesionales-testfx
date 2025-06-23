@@ -99,7 +99,7 @@ public class GUI_RegisterProjectController {
                     try {
                         return LocalDate.parse(string, dateFormatter);
                     } catch (DateTimeParseException e) {
-                        return null;
+                        return null; //TODO
                     }
                 }
             };
