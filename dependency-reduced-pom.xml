@@ -7,7 +7,7 @@
   <build>
     <resources>
       <resource>
-        <directory>out/resources</directory>
+        <directory>../no/out/resources</directory>
         <includes>
           <include>**/*</include>
         </includes>
@@ -18,12 +18,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>22</source>
-          <target>22</target>
-          <compilerArgs>
-            <arg>--add-modules</arg>
-            <arg>jdk.httpserver</arg>
-          </compilerArgs>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -32,10 +28,6 @@
         <version>0.0.8</version>
         <configuration>
           <mainClass>${exec.mainClass}</mainClass>
-          <options>
-            <option>--add-modules</option>
-            <option>jdk.httpserver</option>
-          </options>
         </configuration>
       </plugin>
       <plugin>
@@ -44,8 +36,9 @@
         <configuration>
           <argLine>--add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.util=ALL-UNNAMED
-                        --add-opens com.google.api.client.auth.oauth2=ALL-UNNAMED
-                        --add-opens com.google.api.client.googleapis.auth.oauth2=ALL-UNNAMED</argLine>
+                        --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED</argLine>
         </configuration>
       </plugin>
       <plugin>
@@ -86,18 +79,7 @@
       <name>Maven Central</name>
       <url>https://repo.maven.apache.org/maven2</url>
     </repository>
-    <repository>
-      <id>apache</id>
-      <url>https://repository.apache.org/content/repositories/releases/</url>
-    </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </pluginRepository>
-  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>mysql</groupId>
@@ -125,12 +107,54 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>testfx-junit5</artifactId>
+      <version>4.0.16-alpha</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>testfx-core</artifactId>
+      <version>4.0.16-alpha</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>assertj-core</artifactId>
+          <groupId>org.assertj</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.11.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>byte-buddy</artifactId>
+          <groupId>net.bytebuddy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>byte-buddy-agent</artifactId>
+          <groupId>net.bytebuddy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.target>22</maven.compiler.target>
+    <maven.compiler.target>17</maven.compiler.target>
     <exec.mainClass>gui.GUI_Login</exec.mainClass>
-    <maven.compiler.source>22</maven.compiler.source>
+    <maven.compiler.source>17</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>22</javafx.version>
+    <javafx.version>17.0.10</javafx.version>
   </properties>
 </project>

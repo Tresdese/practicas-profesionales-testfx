@@ -173,7 +173,7 @@ public class GUI_CheckAcademicListController {
             case "Todos" -> true;
             case "Activos" -> user.getStatus() == 1;
             case "Inactivos" -> user.getStatus() == 0;
-            case null, default -> false;
+            default -> false;
         };
     }
 

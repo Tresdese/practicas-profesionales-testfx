@@ -20,6 +20,7 @@ import logic.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -50,7 +51,7 @@ public class GUI_RegisterProjectController {
     @FXML
     private ChoiceBox<DepartmentDTO> departmentBox;
     @FXML
-    private Button registerProyectButton;
+    private Button registerProjectButton;
     @FXML
     private Label statusLabel;
     @FXML
@@ -66,19 +67,27 @@ public class GUI_RegisterProjectController {
 
     private ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
 
+    public GUI_RegisterProjectController(UserService userService, LinkedOrganizationService organizationService, DepartmentDAO departmentDAO, ProjectService projectService) {
+        this.userService = userService;
+        this.organizationService = organizationService;
+        this.departmentDAO = departmentDAO;
+        this.projectService = projectService;
+    }
+
     @FXML
     public void initialize() {
         try {
-            serviceConfig = new ServiceConfig();
-            projectService = serviceConfig.getProjectService();
-            organizationService = serviceConfig.getLinkedOrganizationService();
-            userService = serviceConfig.getUserService();
-            departmentDAO = new DepartmentDAO();
+            if (serviceConfig == null) serviceConfig = new ServiceConfig();
+            if (projectService == null) projectService = serviceConfig.getProjectService();
+            if (organizationService == null) organizationService = serviceConfig.getLinkedOrganizationService();
+            if (userService == null) userService = serviceConfig.getUserService();
+            if (departmentDAO == null) departmentDAO = new DepartmentDAO();
 
             loadAcademics();
-
             loadOrganizations();
             loadDepartments();
+
+            registerProjectButton.setOnAction(event -> handleRegisterProject());
 
             nameField.setTextFormatter(createTextFormatter(MAX_NAME));
             descriptionField.setTextFormatter(createTextFormatter(MAX_DESCRIPTION));
@@ -138,6 +147,10 @@ public class GUI_RegisterProjectController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al inicializar el servicio: {}", e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar la vista.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al cargar la vista: {}", e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar la vista.");
             statusLabel.setTextFill(Color.RED);
@@ -161,13 +174,17 @@ public class GUI_RegisterProjectController {
 
     private void loadAcademics() {
         try {
-            UserDAO userDAO = new UserDAO();
-            List<UserDTO> academics = userDAO.getAllUsers().stream()
-                    .filter(user -> user.getRole() == Role.ACADEMICO)
-                    .collect(Collectors.toList());
+            List<UserDTO> academics;
+            if (userService != null) {
+                academics = userService.getAllUsers().stream()
+                        .filter(user -> user.getRole() == Role.ACADEMICO)
+                        .collect(Collectors.toList());
+            } else {
+                academics = FXCollections.observableArrayList();
+            }
             academicList.setAll(academics);
             academicBox.setItems(academicList);
-            academicBox.setConverter(new javafx.util.StringConverter<UserDTO>() {
+            academicBox.setConverter(new StringConverter<UserDTO>() {
                 @Override
                 public String toString(UserDTO user) {
                     return user == null ? "" : user.getNames() + " " + user.getSurnames();
@@ -294,7 +311,7 @@ public class GUI_RegisterProjectController {
     }
 
     @FXML
-    private void handleRegisterProject(ActionEvent event) {
+    private void handleRegisterProject() {
         try {
             if (!validateFields()) {
                 throw new EmptyFields("Todos los campos son obligatorios.");

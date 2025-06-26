@@ -204,7 +204,7 @@ public class GUI_CheckListLinkedOrganizationController {
             case "Todos" -> true;
             case "Activos" -> organization.getStatus() == 1;
             case "Inactivos" -> organization.getStatus() == 0;
-            case null, default -> false;
+            default -> false;
         };
     }
 

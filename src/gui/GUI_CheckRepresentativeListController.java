@@ -383,7 +383,7 @@ public class GUI_CheckRepresentativeListController {
             case "Todos" -> true;
             case "Activos" -> representative.getStatus() == 1;
             case "Inactivos" -> representative.getStatus() == 0;
-            case null, default -> false;
+            default -> false;
         };
     }
 
