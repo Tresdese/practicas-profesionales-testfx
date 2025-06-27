@@ -79,7 +79,7 @@ public class GUI_CheckAcademicListController {
 
         filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
         filterChoiceBox.setValue("Todos");
-            filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadAcademicData());
+        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadAcademicData());
 
         setColumns();
         addManagementButtonToTable();
@@ -102,7 +102,42 @@ public class GUI_CheckAcademicListController {
     }
 
     private void setButtons() {
-        searchButton.setOnAction(event -> searchAcademic());
+        searchButton.setOnAction(event -> {
+            try {
+                searchAcademic();
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if (sqlState != null && sqlState.equals("08001")) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("08S01")) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("42000")) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("42S02".equals(sqlState)) {
+                    logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Tabla desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if (sqlState != null && sqlState.equals("28000")) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al cargar los académicos de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
+                }
+            }
+        });
         registerAcademicButton.setOnAction(event -> openRegisterAcademicWindow());
         deleteAcademicButton.setOnAction(event -> handleDeleteOrganization());
     }
@@ -150,6 +185,14 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -177,7 +220,7 @@ public class GUI_CheckAcademicListController {
         };
     }
 
-    public void searchAcademic() {
+    public void searchAcademic() throws SQLException {
         String searchQuery = searchField.getText().trim();
         if (searchQuery.isEmpty()) {
             loadAcademicData();

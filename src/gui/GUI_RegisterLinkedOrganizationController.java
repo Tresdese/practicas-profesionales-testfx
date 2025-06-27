@@ -53,9 +53,9 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: ", e);
             } else if (sqlState != null && sqlState.equals("08S01")) {
-                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: ", e);
+                LOGGER.error("Conexión interrumpida con la base de datos: ", e);
             } else if (sqlState != null && sqlState.equals("42S02")) {
                 statusLabel.setText("Tabla de organizaciones no encontrada.");
                 statusLabel.setTextFill(Color.RED);

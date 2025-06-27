@@ -67,13 +67,6 @@ public class GUI_RegisterProjectController {
 
     private ObservableList<UserDTO> academicList = FXCollections.observableArrayList();
 
-    public GUI_RegisterProjectController(UserService userService, LinkedOrganizationService organizationService, DepartmentDAO departmentDAO, ProjectService projectService) {
-        this.userService = userService;
-        this.organizationService = organizationService;
-        this.departmentDAO = departmentDAO;
-        this.projectService = projectService;
-    }
-
     @FXML
     public void initialize() {
         try {
@@ -127,18 +120,23 @@ public class GUI_RegisterProjectController {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            }
-            else if ("42000".equals(sqlState)) {
+            } else if ("42000".equals(sqlState)) {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
-            }
-            else if ("28000".equals(sqlState)) {
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de académicos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de académicos no encontrada: {}", e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna de académicos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna de académicos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            }
-            else if ("23000".equals(sqlState)) {
+            } else if ("23000".equals(sqlState)) {
                 statusLabel.setText("Violación de restricción de integridad.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
@@ -148,9 +146,9 @@ public class GUI_RegisterProjectController {
                 LOGGER.error("Error al inicializar el servicio: {}", e);
             }
         } catch (IOException e) {
-            statusLabel.setText("Error al cargar la vista.");
+            statusLabel.setText("Error al leer el archivo de configuración.");
             statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error al cargar la vista: {}", e);
+            LOGGER.error("Error al leer el archivo de configuración: {}", e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al inicializar la vista.");
             statusLabel.setTextFill(Color.RED);
@@ -172,7 +170,7 @@ public class GUI_RegisterProjectController {
         );
     }
 
-    private void loadAcademics() {
+    public void loadAcademics() {
         try {
             List<UserDTO> academics;
             if (userService != null) {
@@ -214,6 +212,14 @@ public class GUI_RegisterProjectController {
                 statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos no encontrada: {}", e);
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de académicos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de académicos no encontrada: {}", e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna de académicos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna de académicos no encontrada: {}", e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -234,7 +240,7 @@ public class GUI_RegisterProjectController {
         }
     }
 
-    private void loadOrganizations() {
+    public void loadOrganizations() {
         try {
             List<LinkedOrganizationDTO> organizations = organizationService.getAllLinkedOrganizations();
             organizationBox.setItems(FXCollections.observableArrayList(organizations));
@@ -272,7 +278,7 @@ public class GUI_RegisterProjectController {
         }
     }
 
-    private void loadDepartments() {
+    public void loadDepartments() {
         try {
             List<DepartmentDTO> departments = departmentDAO.getAllDepartments();
             departmentBox.setItems(FXCollections.observableArrayList(departments));

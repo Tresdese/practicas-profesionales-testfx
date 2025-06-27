@@ -204,8 +204,32 @@ public class GUI_RegisterReportController {
                 }
             } catch (SQLException e) {
                 if (e.getMessage().contains("The driver has not received any packets from the server")) {
-                    LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos", e);
-                    showAlert("Error de conexión con la base de datos al cargar actividades.");
+                    String sqlState = e.getSQLState();
+                    if ("08001".equals(sqlState)){
+                        showAlert("Error de conexión con la base de datos.");
+                        LOGGER.log(Level.SEVERE, "Error de conexión con la base de datos: {}", e);
+                    } else if ("08S01".equals(sqlState)) {
+                        showAlert("Conexión interrumpida con la base de datos.");
+                        LOGGER.log(Level.SEVERE, "Conexión interrumpida con la base de datos: {}", e);
+                    } else if ("42000".equals(sqlState)) {
+                        showAlert("Base de datos no encontrada.");
+                        LOGGER.log(Level.SEVERE, "Base de datos no encontrada: {}", e);
+                    } else if ("40S02".equals(sqlState)) {
+                        showAlert("Tabla de académicos no encontrada.");
+                        LOGGER.log(Level.SEVERE, "Tabla de académicos no encontrada: {}", e);
+                    } else if ("40S22".equals(sqlState)) {
+                        showAlert("Columna de académicos no encontrada.");
+                        LOGGER.log(Level.SEVERE, "Columna de académicos no encontrada: {}", e);
+                    } else if ("28000".equals(sqlState)) {
+                        showAlert("Acceso denegado a la base de datos.");
+                        LOGGER.log(Level.SEVERE, "Acceso denegado a la base de datos: {}", e);
+                    } else if ("23000".equals(sqlState)) {
+                        showAlert("Violación de restricción de integridad.");
+                        LOGGER.log(Level.SEVERE, "Violación de restricción de integridad: {}", e);
+                    } else {
+                        showAlert("Error al inicializar el servicio.");
+                        LOGGER.log(Level.SEVERE, "Error al inicializar el servicio: {}", e);
+                    }
                 } else if (e.getMessage().contains("Unknown database")) {
                     LOGGER.log(Level.SEVERE, "La base de datos no está disponible", e);
                     showAlert("La base de datos no está disponible al cargar actividades.");

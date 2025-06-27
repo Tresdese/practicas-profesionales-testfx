@@ -1,5 +1,6 @@
 package user_interface.controllers;
 
+import data_access.ConnectionDataBase;
 import gui.GUI_RegisterProjectController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,75 +8,206 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
-import logic.DAO.DepartmentDAO;
+import logic.DAO.LinkedOrganizationDAO;
+import logic.DAO.ProjectDAO;
+import logic.DAO.UserDAO;
 import logic.DTO.*;
-import logic.services.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
-import logic.services.UserService;
-import user_interface.DataProvider;
 
 
+import java.io.IOException;
+import java.sql.*;
 import java.time.LocalDate;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
 import static org.testfx.assertions.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RegisterProjectControllerTest extends ApplicationTest {
 
-    @Mock
-    private UserService userServiceMock;
+    private ConnectionDataBase connectionDB;
+    private Connection connection;
+    private UserDAO userDAO;
+    private LinkedOrganizationDAO linkedOrganizationDAO;
+    private ProjectDAO projectDAO;
 
-    @Mock
-    private LinkedOrganizationService orgServiceMock;
+    private int testUserId;
+    private int testOrganizationId;
+    private int testDepartmentId;
+    private boolean isDatabaseActive = false;
 
-    @Mock
-    private DepartmentDAO departmentDAOMock;
-
-    @Mock
-    private ProjectService projectServiceMock;
-
-    @InjectMocks
-    private GUI_RegisterProjectController controller;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        when(userServiceMock.getAllUsers()).thenReturn(DataProvider.getAllUsers());
-        when(orgServiceMock.getAllLinkedOrganizations()).thenReturn(DataProvider.getAllLinkedOrganizations());
-        when(departmentDAOMock.getAllDepartments()).thenReturn(DataProvider.getAllDepartments());
-    }
+    private FXMLLoader loader;
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterProject.fxml"));
-        GUI_RegisterProjectController testController = new GUI_RegisterProjectController(userServiceMock, orgServiceMock, departmentDAOMock, projectServiceMock);
-        loader.setController(testController);
+        loader = new FXMLLoader(getClass().getResource("/gui/GUI_RegisterProject.fxml"));
         Parent root = loader.load();
-        WaitForAsyncUtils.waitForFxEvents();
+
+        Scene scene = new Scene(root);
+
+        stage.setTitle("Registrar proyecto");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    void connectToDatabase() throws SQLException, IOException {
+        if (connection == null || connection.isClosed()) {
+            connectionDB = new ConnectionDataBase();
+            connection = connectionDB.connectDB();
+        }
+    }
+
+    void setServices() {
+        userDAO = new UserDAO();
+        linkedOrganizationDAO = new LinkedOrganizationDAO();
+        projectDAO = new ProjectDAO();
+    }
+
+    @BeforeAll
+    void setUpAll() throws SQLException, IOException {
+        connectToDatabase();
+        setServices();
+        clearTablesAndResetAutoIncrement();
+    }
+
+    @BeforeEach
+    void setUp() throws Exception {
+        clearTablesAndResetAutoIncrement();
+        createBaseUserAndOrganization();
+    }
+
+    private void clearTablesAndResetAutoIncrement() throws SQLException {
+        Statement stmt = connection.createStatement();
+        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
+        stmt.execute("TRUNCATE TABLE proyecto");
+        stmt.execute("TRUNCATE TABLE usuario");
+        stmt.execute("TRUNCATE TABLE departamento");
+        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
+        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
+        stmt.close();
+    }
+
+    private void createBaseUserAndOrganization() throws SQLException, IOException {
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
+        testOrganizationId = Integer.parseInt(linkedOrganizationDAO.insertLinkedOrganizationAndGetId(organization));
+
+        testDepartmentId = createTestDepartment();
+
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        testUserId = insertUserAndGetId(user);
+    }
+
+    private int insertUserAndGetId(UserDTO user) throws SQLException, IOException {
+        String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, user.getStaffNumber());
+            stmt.setString(2, user.getNames());
+            stmt.setString(3, user.getSurnames());
+            stmt.setString(4, user.getUserName());
+            stmt.setString(5, user.getPassword());
+            stmt.setString(6, user.getRole().toString());
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo obtener el id del usuario insertado");
+    }
+
+    private int createTestDepartment() throws SQLException {
+        String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Dept test");
+            stmt.setString(2, "Description test");
+            stmt.setInt(3, testOrganizationId);
+            stmt.executeUpdate();
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo obtener el id del departamento insertado");
+    }
+
+    private void forceLoadData() {
+        GUI_RegisterProjectController controller = loader.getController();
+        interact(() -> {
+            controller.loadAcademics();
+            controller.loadOrganizations();
+            controller.loadDepartments();
+        });
+    }
+
+    @AfterAll
+    void tearDownAll() throws SQLException, IOException {
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
+        if (connectionDB != null) {
+            connectionDB.close();
+        }
+    }
+
+    @AfterEach
+    void tearDown() throws SQLException, IOException {
+        clearTablesAndResetAutoIncrement();
     }
 
     @Test
-    public void testSuccessProjectRegister() {
+    public void testSuccessProjectRegister() throws SQLException, IOException {
+        forceLoadData();
+
         clickOn("#nameField").write("Proyecto Test");
         clickOn("#descriptionField").write("Descripción de prueba");
 
         interact(() -> {
-            ChoiceBox<UserDTO> academicBox = (ChoiceBox<UserDTO>) lookup("#academicBox").query();
+            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+
+            if (!academicBox.getItems().isEmpty()) {
+                academicBox.getSelectionModel().selectFirst();
+            }
+            if (!organizationBox.getItems().isEmpty()) {
+                organizationBox.getSelectionModel().selectFirst();
+            }
+            if (!departmentBox.getItems().isEmpty()) {
+                departmentBox.getSelectionModel().selectFirst();
+            }
+
+            ((DatePicker) lookup("#startDatePicker").query()).setValue(LocalDate.of(2024, 1, 1));
+            ((DatePicker) lookup("#endDatePicker").query()).setValue(LocalDate.of(2024, 12, 31));
+        });
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        clickOn("#registerProjectButton");
+        WaitForAsyncUtils.waitForFxEvents();
+        assertThat(lookup("#statusLabel").queryLabeled()).hasText("Proyecto registrado correctamente.");
+    }
+
+    @Test
+    public void testFailureProjectRegisterWithoutName() {
+        forceLoadData();
+
+        clickOn("#descriptionField").write("Descripción de prueba");
+
+        interact(() -> {
+            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
             academicBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<LinkedOrganizationDTO> orgBox = (ChoiceBox<LinkedOrganizationDTO>) lookup("#organizationBox").query();
-            orgBox.getSelectionModel().selectFirst();
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+            organizationBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<DepartmentDTO> deptBox = (ChoiceBox<DepartmentDTO>) lookup("#departmentBox").query();
-            deptBox.getSelectionModel().selectFirst();
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+            departmentBox.getSelectionModel().selectFirst();
 
             ((DatePicker) lookup("#startDatePicker").query()).setValue(LocalDate.of(2024, 1, 1));
             ((DatePicker) lookup("#endDatePicker").query()).setValue(LocalDate.of(2024, 12, 31));
@@ -83,7 +215,106 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
         clickOn("#registerProjectButton");
         WaitForAsyncUtils.waitForFxEvents();
-
         assertThat(lookup("#statusLabel").queryLabeled()).hasText("Todos los campos son obligatorios.");
+    }
+
+    @Test
+    public void testFailureProjectRegisterWithoutDescription() {
+        forceLoadData();
+
+        clickOn("#nameField").write("Proyecto Test");
+
+        interact(() -> {
+            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+            academicBox.getSelectionModel().selectFirst();
+
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+            organizationBox.getSelectionModel().selectFirst();
+
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+            departmentBox.getSelectionModel().selectFirst();
+
+            ((DatePicker) lookup("#startDatePicker").query()).setValue(LocalDate.of(2024, 1, 1));
+            ((DatePicker) lookup("#endDatePicker").query()).setValue(LocalDate.of(2024, 12, 31));
+        });
+
+        clickOn("#registerProjectButton");
+        WaitForAsyncUtils.waitForFxEvents();
+        assertThat(lookup("#statusLabel").queryLabeled()).hasText("Todos los campos son obligatorios.");
+    }
+
+    @Test
+    public void testLoadAcademicsPopulatesChoiceBox() {
+        forceLoadData();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+        assertThat(academicBox.getItems()).isNotEmpty();
+
+        for (UserDTO user : academicBox.getItems()) {
+            assertThat(user.getRole()).isEqualTo(Role.ACADEMICO);
+        }
+        assertThat(academicBox.getItems().size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testLoadAcademicsChoiceBoxEmptyWhenNoAcademics() throws Exception {
+        clearTablesAndResetAutoIncrement();
+
+        GUI_RegisterProjectController controller = loader.getController();
+        interact(controller::loadAcademics);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+        assertThat(academicBox.getItems()).isEmpty();
+    }
+
+    @Test
+    public void testLoadOrganizationsPopulatesChoiceBox() {
+        forceLoadData();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+        assertThat(organizationBox.getItems()).isNotEmpty();
+
+        assertThat(organizationBox.getItems().size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testLoadOrganizationsChoiceEmptyWhenNoOrganizations() throws Exception {
+        clearTablesAndResetAutoIncrement();
+        GUI_RegisterProjectController controller = loader.getController();
+        interact(controller::loadOrganizations);
+
+
+        WaitForAsyncUtils.waitForFxEvents();
+        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+        assertThat(organizationBox.getItems()).isEmpty();
+    }
+
+    @Test
+    public void testLoadDepartmentsPopulatesChoiceBox() {
+        forceLoadData();
+
+        WaitForAsyncUtils.waitForFxEvents();
+
+        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+        assertThat(departmentBox.getItems()).isNotEmpty();
+
+        assertThat(departmentBox.getItems().size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void testLoadDepartmentsChoiceEmptyWhenNoDepartments() throws Exception {
+        clearTablesAndResetAutoIncrement();
+
+        GUI_RegisterProjectController controller = loader.getController();
+        interact(controller::loadDepartments);
+
+        WaitForAsyncUtils.waitForFxEvents();
+        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+        assertThat(departmentBox.getItems()).isEmpty();
     }
 }

@@ -49,9 +49,9 @@ public class GUI_RegisterPresentationController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: ", e);
             } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: ", e);
+                LOGGER.error("Conexión interrumpida con la base de datos: ", e);
             } else if ("42S02".equals(sqlState)) {
                 statusLabel.setText("Tabla de proyectos no encontrada.");
                 statusLabel.setTextFill(Color.RED);

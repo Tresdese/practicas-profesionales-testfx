@@ -15,6 +15,7 @@ import logic.DTO.PeriodDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,25 +81,45 @@ public class GUI_RegisterGroupController {
             });
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
+            if ("08001".equals(sqlState)){
                 statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
-                statusLabel.setText("Conexión interrumída con la base de datos.");
+            } else if ("08S01".equals(sqlState)) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida.");
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna de grupos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al cargar académicos.");
-                LOGGER.error("Error al cargar académicos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al inicializar el servicio.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio: {}", e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el archivo de configuracion.");
+            LOGGER.error("Error al cargar el archivo de configuracion: {}", e.getMessage(), e);
         } catch (Exception e) {
-            statusLabel.setText("Error al cargar académicos.");
-            LOGGER.error("Error al cargar académicos: {}", e.getMessage(), e);
+            statusLabel.setText("Error al cargar grupos.");
+            LOGGER.error("Error al cargar grupos: {}", e.getMessage(), e);
         }
     }
 
@@ -120,22 +141,42 @@ public class GUI_RegisterGroupController {
             });
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
+            if ("08001".equals(sqlState)){
                 statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
+            } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida.");
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna de grupos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al cargar periodos.");
-                LOGGER.error("Error al cargar periodos: {}", e);
+                statusLabel.setText("Error al inicializar el servicio.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio: {}", e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el archivo de configuracion.");
+            LOGGER.error("Error al cargar el archivo de configuracion: {}", e.getMessage(), e);
         } catch (Exception e) {
             LOGGER.error("Error al cargar periodos: {}", e.getMessage(), e);
             statusLabel.setText("Error al cargar periodos.");
@@ -173,27 +214,42 @@ public class GUI_RegisterGroupController {
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
+            if ("08001".equals(sqlState)){
                 statusLabel.setText("Error de conexión con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("08S01")) {
+            } else if ("08S01".equals(sqlState)) {
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida.");
+            } else if ("42000".equals(sqlState)) {
+                statusLabel.setText("Base de datos no encontrada.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
+                LOGGER.error("Base de datos no encontrada: {}", e.getMessage(), e);
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna de grupos no encontrada: {}", e);
+            } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al registrar el grupo.");
+            } else if ("23000".equals(sqlState)) {
+                statusLabel.setText("Violación de restricción de integridad.");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al registrar el grupo: {}", e.getMessage(), e);
+                LOGGER.error("Violación de restricción de integridad: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al inicializar el servicio.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error al inicializar el servicio: {}", e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al cargar el archivo de configuracion.");
+            LOGGER.error("Error al cargar el archivo de configuracion: {}", e.getMessage(), e);
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al registrar el grupo: {}", e.getMessage(), e);
             statusLabel.setText("Error interno al registrar el grupo.");

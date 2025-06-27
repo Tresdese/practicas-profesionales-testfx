@@ -39,7 +39,7 @@ public class GUI_RegisterPeriodController {
         try {
             if (!areFieldsFilled()) {
                 statusLabel.setText("Todos los campos deben estar llenos.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
                 return;
             }
 
@@ -61,10 +61,10 @@ public class GUI_RegisterPeriodController {
 
             if (success) {
                 statusLabel.setText("¡Periodo registrado exitosamente!");
-                statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
+                statusLabel.setTextFill(Color.GREEN);
             } else {
                 statusLabel.setText("No se pudo registrar el periodo.");
-                statusLabel.setTextFill(javafx.scene.paint.Color.RED);
+                statusLabel.setTextFill(Color.RED);
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();

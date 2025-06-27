@@ -11,7 +11,7 @@
         <Label layoutX="50" layoutY="90" text="Descripción:" />
         <TextArea fx:id="descriptionArea" layoutX="220" layoutY="85" prefHeight="80" prefWidth="300" />
 
-        <Button fx:id="registerButton" layoutX="220" layoutY="200" onAction="#handleRegister" text="Registrar" />
+        <Button fx:id="registerButton" layoutX="220" layoutY="200" text="Registrar" />
         <Label fx:id="messageLabel" layoutX="220" layoutY="250" textFill="red" />
       <Label fx:id="nameCharCountLabel" layoutX="528.0" layoutY="39.0" text="0/100" />
       <Label fx:id="descriptionCharCountLabel" layoutX="530.0" layoutY="90.0" text="0/200" />
