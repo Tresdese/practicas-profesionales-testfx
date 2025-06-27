@@ -4,7 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import logic.DTO.PeriodDTO;
-import logic.DAO.PeriodDAO;
+import logic.services.PeriodService;
+import logic.exceptions.RepeatedId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,16 +57,12 @@ public class GUI_RegisterPeriodController {
                     endDate
             );
 
-            PeriodDAO periodDAO = new PeriodDAO();
-            boolean success = periodDAO.insertPeriod(period);
+            PeriodService periodService = new PeriodService();
+            periodService.registerPeriod(period);
 
-            if (success) {
-                statusLabel.setText("¡Periodo registrado exitosamente!");
-                statusLabel.setTextFill(Color.GREEN);
-            } else {
-                statusLabel.setText("No se pudo registrar el periodo.");
-                statusLabel.setTextFill(Color.RED);
-            }
+            statusLabel.setText("¡Periodo registrado exitosamente!");
+            statusLabel.setTextFill(Color.GREEN);
+
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {
@@ -109,6 +106,10 @@ public class GUI_RegisterPeriodController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al registrar el periodo: {}", e.getMessage(), e);
             }
+        } catch (RepeatedId e) {
+            statusLabel.setText("El ID del periodo ya existe.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Error al registrar el periodo: {}", e.getMessage(), e);
         } catch (NullPointerException e) {
             LOGGER.error("Referencia nula al registrar el periodo: {}", e.getMessage(), e);
             statusLabel.setText("Error interno al registrar el periodo.");

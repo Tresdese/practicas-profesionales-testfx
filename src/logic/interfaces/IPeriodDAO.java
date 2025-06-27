@@ -15,4 +15,6 @@ public interface IPeriodDAO {
     PeriodDTO searchPeriodById(String idPeriod) throws SQLException, IOException;
 
     List<PeriodDTO> getAllPeriods() throws SQLException, IOException;
+
+    boolean isIdRegistered(String id) throws SQLException, IOException;
 }

@@ -24,15 +24,15 @@
         <TextArea fx:id="descriptionField" layoutX="232.0" layoutY="135.0" prefHeight="86.0" prefWidth="204.0" />
         <Label fx:id="descriptionCharCountLabel" layoutX="440.0" layoutY="135.0" text="0/300" />
         <Label layoutX="104.0" layoutY="333.0" text="Academico a cargo" />
-        <ChoiceBox fx:id="academicBox" layoutX="234.0" layoutY="329.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="academicChoiceBox" layoutX="234.0" layoutY="329.0" prefWidth="150.0" />
         <Label layoutX="117.0" layoutY="381.0" text="Organización" />
-        <ChoiceBox fx:id="organizationBox" layoutX="234.0" layoutY="377.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="organizationChoiceBox" layoutX="234.0" layoutY="377.0" prefWidth="150.0" />
         <Label layoutX="89.0" layoutY="292.0" prefHeight="17.0" prefWidth="132.0" text="Fecha aproximada de fin" />
         <DatePicker fx:id="endDatePicker" layoutX="233.0" layoutY="288.0" />
         <Label layoutX="115.0" layoutY="248.0" text="Fecha de inicio" />
         <DatePicker fx:id="startDatePicker" layoutX="233.0" layoutY="244.0" />
         <Label layoutX="117.0" layoutY="425.0" text="Departamento" />
-        <ChoiceBox fx:id="departmentBox" layoutX="234.0" layoutY="421.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="departmentChoiceBox" layoutX="234.0" layoutY="421.0" prefWidth="150.0" />
         <Button fx:id="registerProjectButton" layoutX="238.0" layoutY="478.0" mnemonicParsing="false" style="-fx-background-color: #2772d3;" text="Registrar proyecto" textFill="WHITE">
             <opaqueInsets>
                 <Insets bottom="78.0" left="78.0" right="78.0" top="78.0" />

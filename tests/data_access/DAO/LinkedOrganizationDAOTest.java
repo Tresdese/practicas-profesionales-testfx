@@ -15,6 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LinkedOrganizationDAOTest {
+
     private Connection connection;
     private LinkedOrganizationDAO linkedOrganizationDAO;
 
@@ -84,10 +85,7 @@ class LinkedOrganizationDAOTest {
     @Test
     void searchLinkedOrganizationByIdWhenNotExists() throws SQLException, IOException {
         LinkedOrganizationDTO result = linkedOrganizationDAO.searchLinkedOrganizationById("999");
-        assertNotNull(result, "La organización no debería ser nula");
-        assertEquals("N/A", result.getIdOrganization());
-        assertEquals("N/A", result.getName());
-        assertEquals("N/A", result.getAddress());
+        assertNull(result, "La organización debería ser nula si no existe");
     }
 
     @Test

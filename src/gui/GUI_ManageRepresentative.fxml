@@ -21,9 +21,9 @@
         <Label layoutX="86.0" layoutY="188.0" text="Correo" />
         <TextField fx:id="emailField" layoutX="169.0" layoutY="184.0" />
         <Label layoutX="70.0" layoutY="230.0" text="Organización" />
-        <ChoiceBox fx:id="organizationBox" layoutX="169.0" layoutY="226.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="organizationChoiceBox" layoutX="169.0" layoutY="226.0" prefWidth="150.0" />
         <Label layoutX="70.0" layoutY="274.0" text="Departamento" />
-        <ChoiceBox fx:id="departmentBox" layoutX="169.0" layoutY="270.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="departmentChoiceBox" layoutX="169.0" layoutY="270.0" prefWidth="150.0" />
         <Button layoutX="175.0" layoutY="329.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
         <Label fx:id="statusLabel" layoutX="14.0" layoutY="370.0" prefHeight="17.0" prefWidth="400.0" textFill="RED" />
     </children>

@@ -76,7 +76,7 @@ public class UserDAO implements IUserDAO {
 
 
     public UserDTO searchUserById(String idUser) throws SQLException, IOException {
-        UserDTO user = new UserDTO("INVALID", 0, "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
+        UserDTO user;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
@@ -93,6 +93,8 @@ public class UserDAO implements IUserDAO {
                             resultSet.getString("contraseña"),
                             Role.valueOf(resultSet.getString("rol").toUpperCase())
                     );
+                } else {
+                    user = null;
                 }
             }
         }
@@ -100,7 +102,7 @@ public class UserDAO implements IUserDAO {
     }
 
     public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException, IOException {
-        UserDTO user = new UserDTO("INVALID", 0, "INVALID", "INVALID", "INVALID", "INVALID", "INVALID", Role.GUEST);
+        UserDTO user = new UserDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDB();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD);

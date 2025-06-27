@@ -27,10 +27,10 @@ public class GUI_ManageRepresentativeController {
     private TextField namesField, surnamesField, emailField;
 
     @FXML
-    private ChoiceBox<String> organizationBox;
+    private ChoiceBox<String> organizationChoiceBox;
 
     @FXML
-    private ChoiceBox<String> departmentBox;
+    private ChoiceBox<String> departmentChoiceBox;
 
     @FXML
     private Label statusLabel;
@@ -59,7 +59,7 @@ public class GUI_ManageRepresentativeController {
 
             loadOrganizations();
 
-            organizationBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            organizationChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
                 loadDepartmentsForSelectedOrganization();
             });
         } catch (SQLException e) {
@@ -116,8 +116,8 @@ public class GUI_ManageRepresentativeController {
                     .map(LinkedOrganizationDTO::getName)
                     .toList();
 
-            organizationBox.getItems().clear();
-            organizationBox.getItems().addAll(organizationNames);
+            organizationChoiceBox.getItems().clear();
+            organizationChoiceBox.getItems().addAll(organizationNames);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -165,8 +165,8 @@ public class GUI_ManageRepresentativeController {
     }
 
     private void loadDepartmentsForSelectedOrganization() {
-        departmentBox.getItems().clear();
-        String orgName = organizationBox.getValue();
+        departmentChoiceBox.getItems().clear();
+        String orgName = organizationChoiceBox.getValue();
         if (orgName == null) return;
         try {
             LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
@@ -176,7 +176,7 @@ public class GUI_ManageRepresentativeController {
                 List<String> departmentNames = departments.stream()
                         .map(DepartmentDTO::getName)
                         .toList();
-                departmentBox.getItems().setAll(departmentNames);
+                departmentChoiceBox.getItems().setAll(departmentNames);
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
@@ -243,9 +243,9 @@ public class GUI_ManageRepresentativeController {
                 if (department != null) {
                     LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
                     if (org != null) {
-                        organizationBox.setValue(org.getName());
+                        organizationChoiceBox.setValue(org.getName());
                         loadDepartmentsForSelectedOrganization();
-                        departmentBox.setValue(department.getName());
+                        departmentChoiceBox.setValue(department.getName());
                     }
                 }
             }
@@ -305,13 +305,13 @@ public class GUI_ManageRepresentativeController {
             String name = namesField.getText();
             String surname = surnamesField.getText();
             String email = emailField.getText();
-            String departmentName = departmentBox.getValue();
+            String departmentName = departmentChoiceBox.getValue();
 
             representative.setNames(name);
             representative.setSurnames(surname);
             representative.setEmail(email);
 
-            String orgName = organizationBox.getValue();
+            String orgName = organizationChoiceBox.getValue();
             LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
             if (org == null) {
                 throw new IllegalArgumentException("La organización seleccionada no es válida.");
@@ -399,7 +399,7 @@ public class GUI_ManageRepresentativeController {
         return !namesField.getText().isEmpty() &&
                 !surnamesField.getText().isEmpty() &&
                 !emailField.getText().isEmpty() &&
-                organizationBox.getValue() != null &&
-                departmentBox.getValue() != null;
+                organizationChoiceBox.getValue() != null &&
+                departmentChoiceBox.getValue() != null;
     }
 }

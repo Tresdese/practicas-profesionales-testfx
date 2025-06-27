@@ -25,7 +25,7 @@
         <TextField fx:id="surnamesField" layoutX="172.0" layoutY="152.0" />
 
         <Label layoutX="84.0" layoutY="280.0" text="Rol:" />
-        <ChoiceBox fx:id="roleBox" layoutX="172.0" layoutY="276.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="roleChoiceBox" layoutX="172.0" layoutY="276.0" prefWidth="150.0" />
 
         <Button layoutX="143.0" layoutY="402.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
 

@@ -42,10 +42,10 @@ public class GUI_ManageProjectController {
     private DatePicker startDatePicker, endDatePicker;
 
     @FXML
-    private ChoiceBox<String> organizationBox, academicBox, statusBox;
+    private ChoiceBox<String> organizationChoiceBox, academicChoiceBox, statusChoiceBox;
 
     @FXML
-    private ChoiceBox<DepartmentDTO> departmentBox;
+    private ChoiceBox<DepartmentDTO> departmentChoiceBox;
 
     @FXML
     private Label statusLabel;
@@ -74,7 +74,7 @@ public class GUI_ManageProjectController {
             loadAcademics();
             loadStatusOptions();
 
-            departmentBox.setConverter(new StringConverter<>() {
+            departmentChoiceBox.setConverter(new StringConverter<>() {
                 @Override
                 public String toString(DepartmentDTO dept) {
                     return dept == null ? "" : dept.getName();
@@ -85,9 +85,9 @@ public class GUI_ManageProjectController {
                 }
             });
 
-            organizationBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            organizationChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
                 loadDepartmentsForSelectedOrganization();
-                departmentBox.setValue(null);
+                departmentChoiceBox.setValue(null);
             });
 
         } catch (SQLException e) {
@@ -140,8 +140,8 @@ public class GUI_ManageProjectController {
                     .map(LinkedOrganizationDTO::getName)
                     .toList();
 
-            organizationBox.getItems().clear();
-            organizationBox.getItems().addAll(organizationNames);
+            organizationChoiceBox.getItems().clear();
+            organizationChoiceBox.getItems().addAll(organizationNames);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -177,15 +177,15 @@ public class GUI_ManageProjectController {
     }
 
     private void loadDepartmentsForSelectedOrganization() {
-        departmentBox.getItems().clear();
-        String orgName = organizationBox.getValue();
+        departmentChoiceBox.getItems().clear();
+        String orgName = organizationChoiceBox.getValue();
         if (orgName == null) return;
         try {
             LinkedOrganizationDTO org = linkedOrganizationService.searchLinkedOrganizationByName(orgName);
             if (org != null && org.getIdOrganization() != null) {
                 int orgId = Integer.parseInt(org.getIdOrganization());
                 List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(orgId);
-                departmentBox.setItems(FXCollections.observableArrayList(departments));
+                departmentChoiceBox.setItems(FXCollections.observableArrayList(departments));
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
@@ -242,8 +242,8 @@ public class GUI_ManageProjectController {
                     .map(academic -> academic.getNames() + " " + academic.getSurnames())
                     .toList();
 
-            academicBox.getItems().clear();
-            academicBox.getItems().addAll(academicNames);
+            academicChoiceBox.getItems().clear();
+            academicChoiceBox.getItems().addAll(academicNames);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -287,8 +287,8 @@ public class GUI_ManageProjectController {
     }
 
     private void loadStatusOptions() {
-        statusBox.getItems().clear();
-        statusBox.getItems().addAll("Pendiente", "En curso", "Finalizado", "Cancelado");
+        statusChoiceBox.getItems().clear();
+        statusChoiceBox.getItems().addAll("Pendiente", "En curso", "Finalizado", "Cancelado");
     }
 
     public void setProjectData(ProjectDTO project) {
@@ -324,7 +324,7 @@ public class GUI_ManageProjectController {
             if (orgId > 0) {
                 LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(String.valueOf(orgId));
                 if (organization != null) {
-                    organizationBox.setValue(organization.getName());
+                    organizationChoiceBox.setValue(organization.getName());
                     loadDepartmentsForSelectedOrganization();
                 }
             }
@@ -374,7 +374,7 @@ public class GUI_ManageProjectController {
             if (deptId > 0) {
                 DepartmentDTO department = departmentDAO.searchDepartmentById(deptId);
                 if (department != null) {
-                    departmentBox.setValue(department);
+                    departmentChoiceBox.setValue(department);
                 }
             }
         } catch (SQLException e) {
@@ -423,7 +423,7 @@ public class GUI_ManageProjectController {
             if (userId != null && !userId.isEmpty()) {
                 UserDTO academic = userService.searchUserById(userId);
                 if (academic != null) {
-                    academicBox.setValue(academic.getNames() + " " + academic.getSurnames());
+                    academicChoiceBox.setValue(academic.getNames() + " " + academic.getSurnames());
                 }
             }
         } catch (SQLException e) {
@@ -467,7 +467,7 @@ public class GUI_ManageProjectController {
             LOGGER.error("Error inesperado al obtener el académico del proyecto: {}", e.getMessage(), e);
         }
 
-        statusBox.setValue("En curso");
+        statusChoiceBox.setValue("En curso");
     }
 
     @FXML
@@ -479,8 +479,8 @@ public class GUI_ManageProjectController {
 
             String name = nameField.getText();
             String description = descriptionArea.getText();
-            String organizationName = organizationBox.getValue();
-            String academicFullName = academicBox.getValue();
+            String organizationName = organizationChoiceBox.getValue();
+            String academicFullName = academicChoiceBox.getValue();
 
             LocalDate startLocalDate = startDatePicker.getValue();
             LocalDate approximateLocalDate = endDatePicker.getValue();
@@ -517,7 +517,7 @@ public class GUI_ManageProjectController {
                 }
             }
 
-            DepartmentDTO selectedDepartment = departmentBox.getValue();
+            DepartmentDTO selectedDepartment = departmentChoiceBox.getValue();
             if (selectedDepartment != null) {
                 project.setIdDepartment(selectedDepartment.getDepartmentId());
             } else {
@@ -601,8 +601,8 @@ public class GUI_ManageProjectController {
         return !nameField.getText().isEmpty() &&
                 !descriptionArea.getText().isEmpty() &&
                 startDatePicker.getValue() != null &&
-                organizationBox.getValue() != null &&
-                academicBox.getValue() != null &&
-                departmentBox.getValue() != null;
+                organizationChoiceBox.getValue() != null &&
+                academicChoiceBox.getValue() != null &&
+                departmentChoiceBox.getValue() != null;
     }
 }

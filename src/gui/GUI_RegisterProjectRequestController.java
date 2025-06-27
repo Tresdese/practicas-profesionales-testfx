@@ -166,7 +166,7 @@ public class GUI_RegisterProjectRequestController {
         }));
     }
 
-    private void loadOrganizations() {
+    public void loadOrganizations() {
         try {
             LinkedOrganizationDAO orgDao = new LinkedOrganizationDAO();
             List<LinkedOrganizationDTO> orgs = orgDao.getAllLinkedOrganizations();
@@ -211,7 +211,7 @@ public class GUI_RegisterProjectRequestController {
         }
     }
 
-    private void loadRepresentatives() {
+    public void loadRepresentatives() {
         representativeComboBox.getItems().clear();
         LinkedOrganizationDTO org = organizationComboBox.getValue();
         if (org != null) {
@@ -285,7 +285,7 @@ public class GUI_RegisterProjectRequestController {
         }));
     }
 
-    private void loadProjects() {
+    public void loadProjects() {
         projectComboBox.getItems().clear();
         LinkedOrganizationDTO org = organizationComboBox.getValue();
         if (org != null) {

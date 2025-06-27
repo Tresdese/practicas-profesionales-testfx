@@ -218,9 +218,7 @@ class UserDAOTest {
     void testSearchUserByIdNotExists() {
         try {
             UserDTO user = userDAO.searchUserById("99999");
-            assertNotNull(user, "El método nunca retorna null");
-            assertEquals("INVALID", user.getIdUser());
-            assertEquals(Role.GUEST, user.getRole());
+            assertNull(user, "Debe retornar null si el usuario no existe");
         } catch (SQLException e) {
             fail("Error en testSearchUserByIdNotExists: " + e.getMessage());
         } catch (IOException e) {
@@ -257,8 +255,8 @@ class UserDAOTest {
     void testSearchUserByUsernameAndPasswordInvalid() {
         try {
             UserDTO user = userDAO.searchUserByUsernameAndPassword("noexiste", "contraseñaIncorrecta");
-            assertEquals("INVALID", user.getIdUser(), "Debe retornar un usuario inválido");
-            assertEquals(Role.GUEST, user.getRole(), "Role debe ser GUEST para usuario no encontrado");
+            assertNull(user.getIdUser(), "El id debe ser null si el usuario no existe");
+            assertNull(user.getRole(), "El rol debe ser null si el usuario no existe");
         } catch (SQLException e) {
             fail("Error en testSearchUserByUsernameAndPasswordInvalid de base de datos: " + e.getMessage());
         } catch (IOException e) {

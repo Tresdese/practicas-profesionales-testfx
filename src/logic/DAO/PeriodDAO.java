@@ -18,6 +18,7 @@ public class PeriodDAO implements IPeriodDAO {
     private final static String SQL_DELETE = "DELETE FROM periodo WHERE idPeriodo = ?";
     private final static String SQL_SELECT = "SELECT * FROM periodo WHERE idPeriodo = ?";
     private final static String SQL_SELECT_ALL = "SELECT * FROM periodo";
+    private static final String SQL_COUNT_BY_ID = "SELECT COUNT(*) FROM periodo WHERE idPeriodo = ?";
 
     @Override
     public boolean insertPeriod(PeriodDTO period) throws SQLException, IOException {
@@ -87,5 +88,22 @@ public class PeriodDAO implements IPeriodDAO {
             }
         }
         return periods;
+    }
+
+    @Override
+    public boolean isIdRegistered(String id) throws SQLException, IOException {
+        boolean success = false;
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDB();
+             PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_ID)) {
+            statement.setString(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    success = resultSet.getInt(1) > 0;
+                }
+            }
+        }
+
+        return success;
     }
 }

@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import logic.DTO.LinkedOrganizationDTO;
 import logic.exceptions.EmptyFields;
+import logic.exceptions.RepeatedId;
+import logic.exceptions.RepeatedName;
 import logic.services.LinkedOrganizationService;
 import logic.services.ServiceConfig;
 import org.apache.logging.log4j.LogManager;
@@ -76,11 +78,19 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Acceso denegado a la base de datos: ", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("23000")) {
+                statusLabel.setText("Violación de restricción de integridad. Nombre duplicado.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Violación de restricción de integridad. Nombre duplicado: ", e.getMessage(), e);
             } else {
                 statusLabel.setText("Error de base de datos al inicializar el servicio de organización.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error de base de datos al inicializar el servicio de organización: ", e.getMessage(), e);
             }
+        } catch (RepeatedName e) {
+            statusLabel.setText("Nombre de organización ya registrado.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Nombre de organización ya registrado: ", e.getMessage(), e);
         } catch (IOException e) {
             statusLabel.setText("Error al leer la configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
@@ -171,6 +181,10 @@ public class GUI_RegisterLinkedOrganizationController {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al registrar la organización: {}", e);
             }
+        } catch (RepeatedName e) {
+            statusLabel.setText("Nombre de organización ya registrado.");
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.error("Nombre de organización ya registrado: ", e.getMessage(), e);
         } catch (EmptyFields e) {
             LOGGER.warn("Error de validación: {}", e);
             statusLabel.setText(e.getMessage());

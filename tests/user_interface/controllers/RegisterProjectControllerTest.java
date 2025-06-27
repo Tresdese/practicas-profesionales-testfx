@@ -5,6 +5,7 @@ import gui.GUI_RegisterProjectController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -78,17 +79,17 @@ public class RegisterProjectControllerTest extends ApplicationTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("DELETE FROM proyecto");
+        statement.execute("DELETE FROM usuario");
+        statement.execute("DELETE FROM departamento");
+        statement.execute("DELETE FROM organizacion_vinculada");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBaseUserAndOrganization() throws SQLException, IOException {
@@ -103,15 +104,15 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
     private int insertUserAndGetId(UserDTO user) throws SQLException, IOException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, user.getStaffNumber());
-            stmt.setString(2, user.getNames());
-            stmt.setString(3, user.getSurnames());
-            stmt.setString(4, user.getUserName());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, user.getStaffNumber());
+            statement.setString(2, user.getNames());
+            statement.setString(3, user.getSurnames());
+            statement.setString(4, user.getUserName());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getRole().toString());
+            statement.executeUpdate();
+            try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
@@ -122,12 +123,12 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
     private int createTestDepartment() throws SQLException {
         String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Dept test");
-            stmt.setString(2, "Description test");
-            stmt.setInt(3, testOrganizationId);
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Dept test");
+            statement.setString(2, "Description test");
+            statement.setInt(3, testOrganizationId);
+            statement.executeUpdate();
+            try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
@@ -168,9 +169,9 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         clickOn("#descriptionField").write("Descripción de prueba");
 
         interact(() -> {
-            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
-            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
-            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+            ChoiceBox<UserDTO> academicBox = lookup("#academicChoiceBox").query();
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationChoiceBox").query();
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentChoiceBox").query();
 
             if (!academicBox.getItems().isEmpty()) {
                 academicBox.getSelectionModel().selectFirst();
@@ -200,13 +201,13 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         clickOn("#descriptionField").write("Descripción de prueba");
 
         interact(() -> {
-            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+            ChoiceBox<UserDTO> academicBox = lookup("#academicChoiceBox").query();
             academicBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationChoiceBox").query();
             organizationBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentChoiceBox").query();
             departmentBox.getSelectionModel().selectFirst();
 
             ((DatePicker) lookup("#startDatePicker").query()).setValue(LocalDate.of(2024, 1, 1));
@@ -225,13 +226,13 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         clickOn("#nameField").write("Proyecto Test");
 
         interact(() -> {
-            ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+            ChoiceBox<UserDTO> academicBox = lookup("#academicChoiceBox").query();
             academicBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+            ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationChoiceBox").query();
             organizationBox.getSelectionModel().selectFirst();
 
-            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+            ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentChoiceBox").query();
             departmentBox.getSelectionModel().selectFirst();
 
             ((DatePicker) lookup("#startDatePicker").query()).setValue(LocalDate.of(2024, 1, 1));
@@ -249,7 +250,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+        ChoiceBox<UserDTO> academicBox = lookup("#academicChoiceBox").query();
         assertThat(academicBox.getItems()).isNotEmpty();
 
         for (UserDTO user : academicBox.getItems()) {
@@ -266,7 +267,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         interact(controller::loadAcademics);
 
         WaitForAsyncUtils.waitForFxEvents();
-        ChoiceBox<UserDTO> academicBox = lookup("#academicBox").query();
+        ChoiceBox<UserDTO> academicBox = lookup("#academicChoiceBox").query();
         assertThat(academicBox.getItems()).isEmpty();
     }
 
@@ -276,7 +277,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationChoiceBox").query();
         assertThat(organizationBox.getItems()).isNotEmpty();
 
         assertThat(organizationBox.getItems().size()).isGreaterThan(0);
@@ -288,9 +289,8 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         GUI_RegisterProjectController controller = loader.getController();
         interact(controller::loadOrganizations);
 
-
         WaitForAsyncUtils.waitForFxEvents();
-        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationBox").query();
+        ChoiceBox<LinkedOrganizationDTO> organizationBox = lookup("#organizationChoiceBox").query();
         assertThat(organizationBox.getItems()).isEmpty();
     }
 
@@ -300,7 +300,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentChoiceBox").query();
         assertThat(departmentBox.getItems()).isNotEmpty();
 
         assertThat(departmentBox.getItems().size()).isGreaterThan(0);
@@ -314,7 +314,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         interact(controller::loadDepartments);
 
         WaitForAsyncUtils.waitForFxEvents();
-        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentBox").query();
+        ChoiceBox<DepartmentDTO> departmentBox = lookup("#departmentChoiceBox").query();
         assertThat(departmentBox.getItems()).isEmpty();
     }
 }

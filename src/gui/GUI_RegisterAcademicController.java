@@ -3,6 +3,7 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
 import logic.DTO.Role;
 import logic.DTO.UserDTO;
 import logic.exceptions.*;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class GUI_RegisterAcademicController {
 
@@ -27,7 +29,7 @@ public class GUI_RegisterAcademicController {
     private static final int MAX_PASSWORD = 64;
 
     @FXML
-    private ChoiceBox<String> roleBox;
+    private ChoiceBox<Role> roleBox;
 
     @FXML
     private Label statusLabel;
@@ -58,7 +60,7 @@ public class GUI_RegisterAcademicController {
         togglePasswordVisibilityButton.setText("🙈");
         togglePasswordVisibilityButton.setOnAction(event -> togglePasswordVisibility());
 
-        roleBox.getItems().addAll("Académico", "Académico Evaluador", "Coordinador");
+        setRoles();
 
         configureTextFormatters();
         configureCharCountLabels();
@@ -145,6 +147,45 @@ public class GUI_RegisterAcademicController {
         );
     }
 
+    public void setRoles() {
+        roleBox.getItems().clear();
+        roleBox.getItems().addAll(
+                Role.ACADEMICO,
+                Role.ACADEMICO_EVALUADOR,
+                Role.COORDINADOR
+        );
+        roleBox.setConverter(new StringConverter<Role>() {
+            @Override
+            public String toString(Role role) {
+                if (role == null) return "";
+                return switch (role) {
+                    case ACADEMICO -> "Académico";
+                    case ACADEMICO_EVALUADOR -> "Académico Evaluador";
+                    case COORDINADOR -> "Coordinador";
+                    default -> "";
+                };
+            }
+            @Override
+            public Role fromString(String string) {
+                return getRoleFromText(string);
+            }
+        });
+    }
+
+    private Role getRoleFromText(String text) {
+        return switch (text) {
+            case "Académico" -> Role.ACADEMICO;
+            case "Académico Evaluador" -> Role.ACADEMICO_EVALUADOR;
+            case "Coordinador" -> Role.COORDINADOR;
+            default -> {
+                statusLabel.setText("Rol no válido");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Rol no válido: {}", text);
+                yield Role.ACADEMICO;
+            }
+        };
+    }
+
     @FXML
     private void togglePasswordVisibility() {
         if (isPasswordVisible) {
@@ -201,8 +242,7 @@ public class GUI_RegisterAcademicController {
 
             String names = namesField.getText();
             String surname = surnamesField.getText();
-            String selectedRoleText = roleBox.getValue();
-            Role role = getRoleFromText(selectedRoleText);
+            Role role = roleBox.getValue(); // Ya no necesitas conversión aquí
             String userName = userField.getText();
             String hashedPassword = PasswordHasher.hashPassword(password);
 
@@ -305,16 +345,4 @@ public class GUI_RegisterAcademicController {
                 roleBox.getValue() != null;
     }
 
-    private Role getRoleFromText(String text) {
-        switch (text) {
-            case "Académico":
-                return Role.ACADEMICO;
-            case "Académico Evaluador":
-                return Role.ACADEMICO_EVALUADOR;
-            case "Coordinador":
-                return Role.COORDINADOR;
-            default:
-                throw new IllegalArgumentException("Rol no válido: " + text);
-        }
-    }
 }

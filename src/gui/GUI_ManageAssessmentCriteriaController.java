@@ -19,22 +19,31 @@ public class GUI_ManageAssessmentCriteriaController {
 
     @FXML
     private TextField idCriterionField;
+
     @FXML
     private TextField nameCriterionField;
+
     @FXML
     private Button registerButton;
+
     @FXML
     private Button clearButton;
+
     @FXML
     private Button deleteButton;
+
     @FXML
     private Button updateButton;
+
     @FXML
     private Label statusLabel;
+
     @FXML
     private TableView<AssessmentCriterionDTO> criteriaTable;
+
     @FXML
     private TableColumn<AssessmentCriterionDTO, String> idColumn;
+
     @FXML
     private TableColumn<AssessmentCriterionDTO, String> nameColumn;
 

@@ -42,7 +42,7 @@ public class GUI_RegisterRepresentativeController {
     private TextField nameField;
 
     @FXML
-    private ChoiceBox<LinkedOrganizationDTO> organizationBox;
+    private ChoiceBox<LinkedOrganizationDTO> organizationChoiceBox;
 
     @FXML
     private ChoiceBox<DepartmentDTO> departmentBox;
@@ -70,15 +70,15 @@ public class GUI_RegisterRepresentativeController {
             representativeService = serviceConfig.getRepresentativeService();
             linkedOrganizationService = serviceConfig.getLinkedOrganizationService();
 
-            organizationBox.setItems(FXCollections.observableArrayList(getOrganizations()));
-            organizationBox.setConverter(new StringConverter<LinkedOrganizationDTO>() {
+            organizationChoiceBox.setItems(FXCollections.observableArrayList(loadOrganizations()));
+            organizationChoiceBox.setConverter(new StringConverter<LinkedOrganizationDTO>() {
                 @Override
                 public String toString(LinkedOrganizationDTO org) {
                     return org != null ? org.getName() : "";
                 }
                 @Override
                 public LinkedOrganizationDTO fromString(String string) {
-                    for (LinkedOrganizationDTO org : organizationBox.getItems()) {
+                    for (LinkedOrganizationDTO org : organizationChoiceBox.getItems()) {
                         if (org.getName().equals(string)) {
                             return org;
                         }
@@ -87,7 +87,7 @@ public class GUI_RegisterRepresentativeController {
                 }
             });
 
-            organizationBox.setOnAction(event -> loadDepartmentsForSelectedOrganization());
+            organizationChoiceBox.setOnAction(event -> loadDepartmentsForSelectedOrganization());
 
             departmentBox.setConverter(new StringConverter<DepartmentDTO>() {
                 @Override
@@ -151,7 +151,7 @@ public class GUI_RegisterRepresentativeController {
 
     private void loadDepartmentsForSelectedOrganization() {
         departmentBox.getItems().clear();
-        LinkedOrganizationDTO org = organizationBox.getValue();
+        LinkedOrganizationDTO org = organizationChoiceBox.getValue();
         if (org == null) return;
         try {
             int orgId = Integer.parseInt(org.getIdOrganization());
@@ -214,7 +214,7 @@ public class GUI_RegisterRepresentativeController {
             String surname = surnameField.getText();
             String email = emailField.getText();
             DepartmentDTO selectedDept = departmentBox.getValue();
-            LinkedOrganizationDTO selectedOrg = organizationBox.getValue();
+            LinkedOrganizationDTO selectedOrg = organizationChoiceBox.getValue();
 
             if (selectedDept == null) {
                 throw new InvalidData("Debe seleccionar un departamento válido.");
@@ -237,7 +237,7 @@ public class GUI_RegisterRepresentativeController {
                     statusLabel.setText("¡Representante registrado exitosamente!");
                     statusLabel.setTextFill(javafx.scene.paint.Color.GREEN);
 
-                    organizationBox.setItems(FXCollections.observableArrayList(getOrganizations()));
+                    organizationChoiceBox.setItems(FXCollections.observableArrayList(loadOrganizations()));
                     departmentBox.getItems().clear();
                 } else {
                     statusLabel.setText("El representante ya existe.");
@@ -301,7 +301,7 @@ public class GUI_RegisterRepresentativeController {
         }
     }
 
-    public List<LinkedOrganizationDTO> getOrganizations() {
+    public List<LinkedOrganizationDTO> loadOrganizations() {
         try {
             return linkedOrganizationService.getAllLinkedOrganizations();
         } catch (SQLException e) {
@@ -358,7 +358,7 @@ public class GUI_RegisterRepresentativeController {
         return !nameField.getText().isEmpty() &&
                 !surnameField.getText().isEmpty() &&
                 !emailField.getText().isEmpty() &&
-                organizationBox.getValue() != null &&
+                organizationChoiceBox.getValue() != null &&
                 departmentBox.getValue() != null;
     }
 }

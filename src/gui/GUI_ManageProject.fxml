@@ -29,16 +29,16 @@
         <DatePicker fx:id="endDatePicker" layoutX="390.0" layoutY="226.0" prefWidth="150.0" />
 
         <Label layoutX="80.0" layoutY="280.0" text="Organización" />
-        <ChoiceBox fx:id="organizationBox" layoutX="169.0" layoutY="276.0" prefWidth="350.0" />
+        <ChoiceBox fx:id="organizationChoiceBox" layoutX="169.0" layoutY="276.0" prefWidth="350.0" />
 
         <Label layoutX="80.0" layoutY="330.0" text="Departamento" />
-        <ChoiceBox fx:id="departmentBox" layoutX="169.0" layoutY="326.0" prefWidth="350.0" />
+        <ChoiceBox fx:id="departmentChoiceBox" layoutX="169.0" layoutY="326.0" prefWidth="350.0" />
 
         <Label layoutX="80.0" layoutY="380.0" text="Académico" />
-        <ChoiceBox fx:id="academicBox" layoutX="169.0" layoutY="376.0" prefWidth="350.0" />
+        <ChoiceBox fx:id="academicChoiceBox" layoutX="169.0" layoutY="376.0" prefWidth="350.0" />
 
         <Label layoutX="80.0" layoutY="430.0" text="Estado" />
-        <ChoiceBox fx:id="statusBox" layoutX="169.0" layoutY="426.0" prefWidth="150.0" />
+        <ChoiceBox fx:id="statusChoiceBox" layoutX="169.0" layoutY="426.0" prefWidth="150.0" />
 
         <Button layoutX="169.0" layoutY="480.0" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
         <Button layoutX="310.0" layoutY="480.0" onAction="#handleCancel" style="-fx-background-color: #d32727;" text="Cancelar" textFill="WHITE" />

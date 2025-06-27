@@ -15,10 +15,10 @@
         </Label>
 
         <Label layoutX="40.0" layoutY="80.0" text="Cronograma:" />
-        <ChoiceBox fx:id="scheduleBox" layoutX="150.0" layoutY="76.0" prefWidth="200.0" />
+        <ChoiceBox fx:id="scheduleChoiceBox" layoutX="150.0" layoutY="76.0" prefWidth="200.0" />
 
         <Label layoutX="40.0" layoutY="130.0" text="Actividad:" />
-        <ChoiceBox fx:id="activityBox" layoutX="150.0" layoutY="126.0" prefWidth="200.0" />
+        <ChoiceBox fx:id="activityChoiceBox" layoutX="150.0" layoutY="126.0" prefWidth="200.0" />
 
         <Button layoutX="130.0" layoutY="220.0" onAction="#handleLinkActivityToSchedule" style="-fx-background-color: #2772d3;" text="Vincular" textFill="WHITE" />
 

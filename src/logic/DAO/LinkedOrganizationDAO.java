@@ -73,7 +73,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException, IOException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A", 1);
+        LinkedOrganizationDTO organization = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
@@ -94,7 +94,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException, IOException {
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO("N/A", "N/A", "N/A", 1);
+        LinkedOrganizationDTO organization = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
@@ -147,7 +147,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     }
 
     public String getOrganizationNameById(String idOrganization) throws SQLException, IOException {
-        String organizationName = "N/A";
+        String organizationName = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDB();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {

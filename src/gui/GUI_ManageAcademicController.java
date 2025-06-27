@@ -25,7 +25,7 @@ public class GUI_ManageAcademicController implements Initializable {
     private TextField numberOfStaffField, namesField, surnamesField;
 
     @FXML
-    private ChoiceBox<Role> roleBox;
+    private ChoiceBox<Role> roleChoiceBox;
 
     @FXML
     private Label statusLabel;
@@ -34,7 +34,7 @@ public class GUI_ManageAcademicController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        roleBox.setItems(FXCollections.observableArrayList(Role.values()));
+        roleChoiceBox.setItems(FXCollections.observableArrayList(Role.values()));
     }
 
     public void setAcademicData(UserDTO academic) {
@@ -48,7 +48,7 @@ public class GUI_ManageAcademicController implements Initializable {
         numberOfStaffField.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
         namesField.setText(academic.getNames() != null ? academic.getNames() : "");
         surnamesField.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
-        roleBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
+        roleChoiceBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
     }
 
     @FXML
@@ -63,7 +63,7 @@ public class GUI_ManageAcademicController implements Initializable {
             String numberOffStaff = numberOfStaffField.getText();
             String names = namesField.getText();
             String surnames = surnamesField.getText();
-            Role role = roleBox.getValue();
+            Role role = roleChoiceBox.getValue();
 
             academic.setStaffNumber(numberOffStaff);
             academic.setNames(names);
@@ -119,7 +119,7 @@ public class GUI_ManageAcademicController implements Initializable {
         return !numberOfStaffField.getText().isEmpty() &&
                 !namesField.getText().isEmpty() &&
                 !surnamesField.getText().isEmpty() &&
-                roleBox.getValue() != null;
+                roleChoiceBox.getValue() != null;
     }
 
     private Role getRoleFromText(String text) {

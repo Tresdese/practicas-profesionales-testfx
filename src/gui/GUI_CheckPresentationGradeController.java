@@ -27,18 +27,25 @@ public class GUI_CheckPresentationGradeController {
 
     @FXML
     private TableView<EvaluationPresentationDTO> presentationGradeTableView;
+
     @FXML
     private TableColumn<EvaluationPresentationDTO, Integer> idEvaluationColumn;
+
     @FXML
     private TableColumn<EvaluationPresentationDTO, Integer> idPresentationColumn;
+
     @FXML
     private TableColumn<EvaluationPresentationDTO, String> dateColumn;
+
     @FXML
     private TableColumn<EvaluationPresentationDTO, Double> averageColumn;
+
     @FXML
     private TableColumn<EvaluationPresentationDTO, Void> seeDetailsColumn;
+
     @FXML
     private Label statusLabel;
+
     @FXML
     private Label evaluationCountsLabel;
 

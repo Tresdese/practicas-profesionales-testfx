@@ -115,6 +115,7 @@ public class GUI_RegisterPresentationController {
 
             if (success) {
                 statusLabel.setText("Presentación registrada correctamente.");
+                statusLabel.setTextFill(Color.GREEN);
                 idProjectComboBox.setValue(null);
                 dateField.setValue(null);
                 timeField.clear();

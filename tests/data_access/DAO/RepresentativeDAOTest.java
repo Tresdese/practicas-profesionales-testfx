@@ -55,22 +55,22 @@ class RepresentativeDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE representante");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("ALTER TABLE representante AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE representante");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("TRUNCATE TABLE departamento");
+        statement.execute("ALTER TABLE representante AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBaseOrganization() throws SQLException {
         String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES ('Org Test', 'Direccion Test')";
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-            var rs = stmt.getGeneratedKeys();
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            var rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 testOrganizationId = rs.getInt(1);
             } else {
@@ -81,12 +81,12 @@ class RepresentativeDAOTest {
 
     private int createTestDepartment() throws SQLException {
         String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
-        try (var stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Dept test");
-            stmt.setString(2, "Description test");
-            stmt.setInt(3, testOrganizationId);
-            stmt.executeUpdate();
-            var rs = stmt.getGeneratedKeys();
+        try (var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Dept test");
+            statement.setString(2, "Description test");
+            statement.setInt(3, testOrganizationId);
+            statement.executeUpdate();
+            var rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 testDepartmentId = rs.getInt(1);
                 return testDepartmentId;
@@ -167,13 +167,13 @@ class RepresentativeDAOTest {
 
     private void insertTestRepresentative(String id, String names, String surnames, String email, String orgId) throws SQLException {
         String sql = "INSERT INTO representante (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
-        try (var stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, id);
-            stmt.setString(2, names);
-            stmt.setString(3, surnames);
-            stmt.setString(4, email);
-            stmt.setString(5, orgId);
-            stmt.executeUpdate();
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setString(1, id);
+            statement.setString(2, names);
+            statement.setString(3, surnames);
+            statement.setString(4, email);
+            statement.setString(5, orgId);
+            statement.executeUpdate();
         }
     }
 

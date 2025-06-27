@@ -138,6 +138,10 @@ public class GUI_CheckListOfStudentsController {
         });
     }
 
+    public TableView<StudentDTO> getTableView() {
+        return tableView;
+    }
+
     private void setColumns() {
         tuitionColumn.setCellValueFactory(new PropertyValueFactory<>("tuition"));
         namesColumn.setCellValueFactory(new PropertyValueFactory<>("names"));

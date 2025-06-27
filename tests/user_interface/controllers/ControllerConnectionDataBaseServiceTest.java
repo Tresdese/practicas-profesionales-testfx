@@ -6,8 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -20,7 +18,6 @@ import java.io.IOException;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.assertions.api.Assertions.assertThat;
-import static org.testfx.util.NodeQueryUtils.hasText;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ControllerConnectionDataBaseServiceTest extends ApplicationTest {
@@ -289,6 +286,7 @@ public class ControllerConnectionDataBaseServiceTest extends ApplicationTest {
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        assertThat(lookup("#statusLabel").queryLabeled()).hasText("Conexión interrumpida con la base de datos.");
+        assertThat(lookup("#statusLabel").queryLabeled())
+                .hasText("Conexión interrumpida con la base de datos.");
     }
 }

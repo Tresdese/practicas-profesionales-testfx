@@ -21,6 +21,7 @@ public class LinkedOrganizationService {
     }
 
     public String registerOrganization(LinkedOrganizationDTO organization) throws SQLException, IOException, RepeatedId, RepeatedName {
+
         if (organization == null) {
             throw new IllegalArgumentException("La organización no puede ser nula.");
         }

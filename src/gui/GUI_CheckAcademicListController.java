@@ -65,32 +65,67 @@ public class GUI_CheckAcademicListController {
     public void initialize() {
         try {
             this.userService = ServiceFactory.getUserService();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los académicos de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
+            }
+        } catch (IllegalStateException e) {
+            logger.error("Error de estado al inicializar UserService: {}", e.getMessage(), e);
+            statusLabel.setText("Error de estado al inicializar UserService. Intente más tarde.");
+            statusLabel.setTextFill(Color.RED);
         } catch (RuntimeException e) {
             logger.error("Error de tiempo de ejecucion al inicializar UserService: {}", e.getMessage(), e);
             statusLabel.setText("Error interno de tiempo de ejecucion. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
-            return;
         } catch (Exception e) {
             logger.error("Error inesperado al inicializar UserService: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al al inicializar UserService.");
             statusLabel.setTextFill(Color.RED);
-            return;
         }
 
-        filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
-        filterChoiceBox.setValue("Todos");
-        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadAcademicData());
+        if (userService != null) {
+            filterChoiceBox.getItems().addAll("Todos", "Activos", "Inactivos");
+            filterChoiceBox.setValue("Todos");
+            filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadAcademicData());
 
-        setColumns();
-        addManagementButtonToTable();
-        loadAcademicData();
-        setButtons();
+            setColumns();
+            addManagementButtonToTable();
+            loadAcademicData();
+            setButtons();
 
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedAcademic = newValue;
-            deleteAcademicButton.setDisable(selectedAcademic == null);
-            tableView.refresh();
-        });
+            tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                selectedAcademic = newValue;
+                deleteAcademicButton.setDisable(selectedAcademic == null);
+                tableView.refresh();
+            });
+        }
     }
 
     private void setColumns() {
@@ -139,7 +174,8 @@ public class GUI_CheckAcademicListController {
             }
         });
         registerAcademicButton.setOnAction(event -> openRegisterAcademicWindow());
-        deleteAcademicButton.setOnAction(event -> handleDeleteOrganization());
+        deleteAcademicButton.setOnAction(event -> handleDeleteAcademic());
+        deleteAcademicButton.setDisable(true);
     }
 
     private void openRegisterAcademicWindow() {
@@ -151,7 +187,7 @@ public class GUI_CheckAcademicListController {
             statusLabel.setTextFill(Color.RED);
             logger.error("Error de estado al abrir la ventana de registro: {}", e.getMessage(), e);
         } catch (RuntimeException e) {
-            statusLabel.setText("Error de tiempo de ejecucion al abrir la ventana de regisrar Academico.");
+            statusLabel.setText("Error de tiempo de ejecucion al abrir la ventana de registrar Academico.");
             statusLabel.setTextFill(Color.RED);
             logger.error("Error de tiempo de ejecucion al abrir la ventana de registro: {}", e.getMessage(), e);
         } catch (Exception e) {
@@ -202,6 +238,14 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IllegalStateException e) {
+            statusLabel.setText("Error de estado al cargar los académicos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de estado al cargar los académicos: {}", e.getMessage(), e);
+        } catch (RuntimeException e) {
+            statusLabel.setText("Error de tiempo de ejecucion al cargar los académicos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de tiempo de ejecucion al cargar los académicos: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al cargar los académicos.");
             statusLabel.setTextFill(Color.RED);
@@ -360,12 +404,7 @@ public class GUI_CheckAcademicListController {
         }
     }
 
-    private void handleDeleteOrganization() {
-        if (selectedAcademic == null) {
-            statusLabel.setText("Debe seleccionar una organización para eliminar");
-            return;
-        }
-
+    private void handleDeleteAcademic() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
             Parent root = loader.load();
@@ -378,21 +417,21 @@ public class GUI_CheckAcademicListController {
             confirmStage.showAndWait();
             if (confirmController.isConfirmed()) {
                 userService.updateUserStatus(selectedAcademic.getIdUser(), 0);
-                statusLabel.setText("Organizacion eliminada correctamente.");
+                statusLabel.setText("Academico eliminado correctamente.");
                 loadAcademicData();
                 updateAcademicCounts();
             } else {
                 statusLabel.setText("Eliminación cancelada.");
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al eliminar la organización.");
-            logger.error("Error al eliminar la organización: {}", e.getMessage(), e);
+            statusLabel.setText("Error al eliminar el academico.");
+            logger.error("Error al eliminar el academico: {}", e.getMessage(), e);
         } catch (IOException e) {
             statusLabel.setText("Error al cargar el diálogo de confirmación.");
             logger.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);
         } catch (Exception e) {
-            statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");
-            logger.error("Error inesperado al eliminar la organización: {}", e.getMessage(), e);
+            statusLabel.setText("Ocurrió un error inesperado al eliminar el academico.");
+            logger.error("Error inesperado al eliminar el academico: {}", e.getMessage(), e);
         }
     }
 }

@@ -2,13 +2,11 @@ package gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import logic.DAO.DepartmentDAO;
-import logic.DAO.UserDAO;
 import logic.DTO.*;
 import logic.exceptions.EmptyFields;
 import logic.exceptions.InvalidData;
@@ -38,24 +36,34 @@ public class GUI_RegisterProjectController {
 
     @FXML
     private TextField nameField;
+
     @FXML
     private TextArea descriptionField;
+
     @FXML
-    private ChoiceBox<UserDTO> academicBox;
+    private ChoiceBox<UserDTO> academicChoiceBox;
+
     @FXML
-    private ChoiceBox<LinkedOrganizationDTO> organizationBox;
+    private ChoiceBox<LinkedOrganizationDTO> organizationChoiceBox;
+
+    @FXML
+    private ChoiceBox<DepartmentDTO> departmentChoiceBox;
+
     @FXML
     private DatePicker startDatePicker;
+
     @FXML
     private DatePicker endDatePicker;
-    @FXML
-    private ChoiceBox<DepartmentDTO> departmentBox;
+
     @FXML
     private Button registerProjectButton;
+
     @FXML
     private Label statusLabel;
+
     @FXML
     private Label nameCharCountLabel;
+
     @FXML
     private Label descriptionCharCountLabel;
 
@@ -181,15 +189,15 @@ public class GUI_RegisterProjectController {
                 academics = FXCollections.observableArrayList();
             }
             academicList.setAll(academics);
-            academicBox.setItems(academicList);
-            academicBox.setConverter(new StringConverter<UserDTO>() {
+            academicChoiceBox.setItems(academicList);
+            academicChoiceBox.setConverter(new StringConverter<UserDTO>() {
                 @Override
                 public String toString(UserDTO user) {
                     return user == null ? "" : user.getNames() + " " + user.getSurnames();
                 }
                 @Override
                 public UserDTO fromString(String string) {
-                    for (UserDTO user : academicBox.getItems()) {
+                    for (UserDTO user : academicChoiceBox.getItems()) {
                         String fullName = user.getNames() + " " + user.getSurnames();
                         if (fullName.equals(string)) {
                             return user;
@@ -243,7 +251,7 @@ public class GUI_RegisterProjectController {
     public void loadOrganizations() {
         try {
             List<LinkedOrganizationDTO> organizations = organizationService.getAllLinkedOrganizations();
-            organizationBox.setItems(FXCollections.observableArrayList(organizations));
+            organizationChoiceBox.setItems(FXCollections.observableArrayList(organizations));
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {
@@ -281,7 +289,7 @@ public class GUI_RegisterProjectController {
     public void loadDepartments() {
         try {
             List<DepartmentDTO> departments = departmentDAO.getAllDepartments();
-            departmentBox.setItems(FXCollections.observableArrayList(departments));
+            departmentChoiceBox.setItems(FXCollections.observableArrayList(departments));
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {
@@ -325,9 +333,9 @@ public class GUI_RegisterProjectController {
 
             String name = nameField.getText().trim();
             String description = descriptionField.getText().trim();
-            UserDTO academic = academicBox.getValue();
-            LinkedOrganizationDTO organization = organizationBox.getValue();
-            DepartmentDTO department = departmentBox.getValue();
+            UserDTO academic = academicChoiceBox.getValue();
+            LinkedOrganizationDTO organization = organizationChoiceBox.getValue();
+            DepartmentDTO department = departmentChoiceBox.getValue();
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
 
@@ -394,9 +402,9 @@ public class GUI_RegisterProjectController {
     private boolean validateFields() {
         return !nameField.getText().trim().isEmpty()
                 && !descriptionField.getText().trim().isEmpty()
-                && academicBox.getValue() != null
-                && organizationBox.getValue() != null
-                && departmentBox.getValue() != null
+                && academicChoiceBox.getValue() != null
+                && organizationChoiceBox.getValue() != null
+                && departmentChoiceBox.getValue() != null
                 && startDatePicker.getValue() != null
                 && endDatePicker.getValue() != null;
     }
@@ -404,9 +412,9 @@ public class GUI_RegisterProjectController {
     private void clearFields() {
         nameField.clear();
         descriptionField.clear();
-        academicBox.getSelectionModel().clearSelection();
-        organizationBox.getSelectionModel().clearSelection();
-        departmentBox.getSelectionModel().clearSelection();
+        academicChoiceBox.getSelectionModel().clearSelection();
+        organizationChoiceBox.getSelectionModel().clearSelection();
+        departmentChoiceBox.getSelectionModel().clearSelection();
         startDatePicker.setValue(null);
         endDatePicker.setValue(null);
     }

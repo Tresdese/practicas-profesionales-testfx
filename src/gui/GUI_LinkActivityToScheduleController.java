@@ -26,10 +26,10 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
     private static final Logger LOGGER = LogManager.getLogger(GUI_LinkActivityToScheduleController.class);
 
     @FXML
-    private ChoiceBox<ScheduleOfActivitiesDTO> scheduleBox;
+    private ChoiceBox<ScheduleOfActivitiesDTO> scheduleChoiceBox;
 
     @FXML
-    private ChoiceBox<ActivityDTO> activityBox;
+    private ChoiceBox<ActivityDTO> activityChoiceBox;
 
     @FXML
     private Label statusLabel;
@@ -50,8 +50,8 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
         ScheduleOfActivitiesDAO scheduleDAO = new ScheduleOfActivitiesDAO();
         try {
             List<ScheduleOfActivitiesDTO> schedules = scheduleDAO.getAllSchedulesOfActivities();
-            scheduleBox.setItems(FXCollections.observableArrayList(schedules));
-            scheduleBox.setConverter(new StringConverter<ScheduleOfActivitiesDTO>() {
+            scheduleChoiceBox.setItems(FXCollections.observableArrayList(schedules));
+            scheduleChoiceBox.setConverter(new StringConverter<ScheduleOfActivitiesDTO>() {
                 @Override
                 public String toString(ScheduleOfActivitiesDTO object) {
                     if (object == null) return "";
@@ -101,7 +101,7 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
         try {
             ActivityDAO activityDAO = new ActivityDAO();
             List<ActivityDTO> activities = activityDAO.getAllActivities();
-            activityBox.setItems(FXCollections.observableArrayList(activities));
+            activityChoiceBox.setItems(FXCollections.observableArrayList(activities));
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -135,8 +135,8 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
     @FXML
     private void handleLinkActivityToSchedule() {
         try {
-            ScheduleOfActivitiesDTO selectedSchedule = scheduleBox.getValue();
-            ActivityDTO selectedActivity = activityBox.getValue();
+            ScheduleOfActivitiesDTO selectedSchedule = scheduleChoiceBox.getValue();
+            ActivityDTO selectedActivity = activityChoiceBox.getValue();
 
             if (selectedSchedule == null || selectedActivity == null) {
                 throw new IllegalArgumentException("Debe seleccionar un cronograma y una actividad.");
