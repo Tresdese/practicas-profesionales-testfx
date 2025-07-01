@@ -21,7 +21,7 @@ public class ReportDAO implements IReportDAO {
     @Override
     public boolean insertReport(ReportDTO report) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setDate(1, new java.sql.Date(report.getReportDate().getTime()));
             statement.setInt(2, report.getTotalHours());
@@ -48,7 +48,7 @@ public class ReportDAO implements IReportDAO {
     @Override
     public boolean updateReport(ReportDTO report) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setDate(1, new java.sql.Date(report.getReportDate().getTime()));
             statement.setInt(2, report.getTotalHours());
@@ -67,7 +67,7 @@ public class ReportDAO implements IReportDAO {
     @Override
     public boolean deleteReport(String numberReport) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, Integer.parseInt(numberReport));
             return statement.executeUpdate() > 0;
@@ -78,7 +78,7 @@ public class ReportDAO implements IReportDAO {
     public ReportDTO searchReportById(String numberReport) throws SQLException, IOException {
         ReportDTO reportDTO = new ReportDTO("N/A", null, 0, "N/A", "N/A", "N/A", 0, "N/A", "N/A", "0");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, Integer.parseInt(numberReport));
             try (ResultSet rs = statement.executeQuery()) {
@@ -105,7 +105,7 @@ public class ReportDAO implements IReportDAO {
     public List<ReportDTO> getAllReports() throws SQLException, IOException {
         List<ReportDTO> reports = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
@@ -128,7 +128,7 @@ public class ReportDAO implements IReportDAO {
 
     public int getTotalReportedHoursByStudent(String tuition) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_TOTAL_HOURS_STUDENT)) {
             statement.setString(1, tuition);
             try (ResultSet rs = statement.executeQuery()) {

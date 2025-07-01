@@ -21,7 +21,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     @Override
     public boolean insertSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, selfAssessment.getComments());
             statement.setFloat(2, selfAssessment.getGrade());
@@ -42,7 +42,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     @Override
     public boolean updateSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, selfAssessment.getComments());
             statement.setFloat(2, selfAssessment.getGrade());
@@ -64,7 +64,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     @Override
     public boolean deleteSelfAssessment(SelfAssessmentDTO selfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, selfAssessment.getSelfAssessmentId());
             return statement.executeUpdate() > 0;
@@ -85,7 +85,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
                 "N/A"
         );
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, Integer.parseInt(selfAssessmentId));
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -101,7 +101,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     public List<SelfAssessmentDTO> getAllSelfAssessments() throws SQLException, IOException {
         List<SelfAssessmentDTO> selfAssessments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -114,7 +114,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
     public int getLastSelfAssessmentId() throws Exception, SQLException, IOException {
         int lastId = -1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(SQL_GET_LAST_ID)) {
             if (rs.next()) {
@@ -152,7 +152,7 @@ public class SelfAssessmentDAO implements ISelfAssessmentDAO {
 
     public boolean existsSelfAssessment(String matricula, int idProyecto) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_EXISTS)) {
             statement.setString(1, matricula);
             statement.setInt(2, idProyecto);

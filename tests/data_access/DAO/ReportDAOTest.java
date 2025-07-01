@@ -38,7 +38,7 @@ class ReportDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         userDAO = new UserDAO();
         departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
@@ -134,7 +134,7 @@ class ReportDAOTest {
 
         departmentId = createTestDepartment();
 
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
     }
 

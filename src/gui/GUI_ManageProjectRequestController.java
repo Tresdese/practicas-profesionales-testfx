@@ -50,8 +50,7 @@ public class GUI_ManageProjectRequestController {
 
     @FXML
     public void initialize() {
-        statusCombo.setItems(FXCollections.observableArrayList("pendiente", "aprobada", "rechazada"));
-
+        statusCombo.setItems(FXCollections.observableArrayList("Pendiente", "Aprobado", "Rechazado"));
         if (projectRequestDAO == null) {
             projectRequestDAO = new ProjectRequestDAO();
         }
@@ -77,7 +76,34 @@ public class GUI_ManageProjectRequestController {
         scheduleDaysField.setText(projectRequest.getScheduleDays());
         directUsersField.setText(String.valueOf(projectRequest.getDirectUsers()));
         indirectUsersField.setText(String.valueOf(projectRequest.getIndirectUsers()));
-        statusCombo.setValue(projectRequest.getStatus() != null ? projectRequest.getStatus().name() : "pendiente");
+        statusCombo.setValue(mapStatusToCombo(projectRequest.getStatus()));
+    }
+
+    private ProjectStatus mapStatusFromCombo(String value) {
+        switch (value) {
+            case "Pendiente":
+                return ProjectStatus.pending;
+            case "Aprobado":
+                return ProjectStatus.approved;
+            case "Rechazado":
+                return ProjectStatus.refused;
+            default:
+                return ProjectStatus.pending;
+        }
+    }
+
+    private String mapStatusToCombo(ProjectStatus status) {
+        if (status == null) return "Pendiente";
+        switch (status) {
+            case pending:
+                return "Pendiente";
+            case approved:
+                return "Aprobado";
+            case refused:
+                return "Rechazado";
+            default:
+                return "Pendiente";
+        }
     }
 
     @FXML
@@ -97,7 +123,7 @@ public class GUI_ManageProjectRequestController {
             projectRequest.setScheduleDays(scheduleDaysField.getText());
             projectRequest.setDirectUsers(Integer.parseInt(directUsersField.getText()));
             projectRequest.setIndirectUsers(Integer.parseInt(indirectUsersField.getText()));
-            projectRequest.setStatus(ProjectStatus.valueOf(statusCombo.getValue()));
+            projectRequest.setStatus(mapStatusFromCombo(statusCombo.getValue()));
 
             boolean result = projectRequestDAO.updateProjectRequest(projectRequest);
 

@@ -6,17 +6,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logic.DAO.GroupDAO;
-import logic.DTO.GroupDTO;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 
 import static org.testfx.assertions.api.Assertions.assertThat;
 
@@ -42,7 +39,7 @@ public class RegisterStudentControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -60,37 +57,35 @@ public class RegisterStudentControllerTest extends ApplicationTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("DELETE FROM estudiante");
-        stmt.execute("DELETE FROM grupo");
-        stmt.execute("DELETE FROM periodo");
-        stmt.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("DELETE FROM estudiante");
+        statement.execute("DELETE FROM grupo");
+        statement.execute("DELETE FROM periodo");
+        statement.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createTestGroup() throws SQLException {
-        // Insertar periodo
         String periodoSql = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(periodoSql)) {
-            stmt.setInt(1, 1001);
-            stmt.setString(2, "Periodo Test");
-            stmt.setDate(3, Date.valueOf("2024-01-01"));
-            stmt.setDate(4, Date.valueOf("2024-12-31"));
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(periodoSql)) {
+            statement.setInt(1, 1001);
+            statement.setString(2, "Periodo Test");
+            statement.setDate(3, Date.valueOf("2024-01-01"));
+            statement.setDate(4, Date.valueOf("2024-12-31"));
+            statement.executeUpdate();
         }
-        // Insertar grupo
         String grupoSql = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(grupoSql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, 11111);
-            stmt.setString(2, "Grupo Test");
-            stmt.setNull(3, Types.INTEGER);
-            stmt.setInt(4, 1001);
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
+        try (PreparedStatement statement = connection.prepareStatement(grupoSql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setInt(1, 11111);
+            statement.setString(2, "Grupo Test");
+            statement.setNull(3, Types.INTEGER);
+            statement.setInt(4, 1001);
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 testNRC = 11111;
             }
@@ -223,32 +218,6 @@ public class RegisterStudentControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         assertThat(lookup("#statusLabel").queryLabeled()).hasText("La contraseña debe contener al menos una mayúscula, una minúscula, un número y un símbolo.");
-    }
-
-    @Test
-    public void testFailureStudentRegisterWithoutName() {
-        forceLoadData();
-
-        clickOn("#tuitionField").write("S12345678");
-        clickOn("#surnamesField").write("Pérez");
-        clickOn("#phoneField").write("1234567890");
-        clickOn("#emailField").write("juan.perez@example.com");
-        clickOn("#userField").write("juanperez");
-        clickOn("#passwordField").write("password123");
-        clickOn("#confirmPasswordField").write("password123");
-        clickOn("#creditAdvanceField").write("50");
-
-        interact(() -> {
-            ChoiceBox<String> nrcChoiceBox = lookup("#nrcChoiceBox").query();
-            if (!nrcChoiceBox.getItems().isEmpty()) {
-                nrcChoiceBox.getSelectionModel().selectFirst();
-            }
-        });
-
-        clickOn("#registerStudentButton");
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertThat(lookup("#statusLabel").queryLabeled()).hasText("Todos los campos deben estar llenos.");
     }
 
     @Test

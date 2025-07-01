@@ -1,8 +1,6 @@
 package logic.DAO;
 
 import data_access.ConnectionDataBase;
-import logic.DTO.ProjectStudentViewDTO;
-import logic.DTO.StudentDTO;
 import logic.DTO.ProjectDTO;
 
 import java.io.IOException;
@@ -28,7 +26,7 @@ public class ProjectStudentViewDAO {
 
         ProjectDTO project = new ProjectDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_PROJECT_BY_TUITION)) {
 
             statement.setString(1, tuition);

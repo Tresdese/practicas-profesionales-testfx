@@ -28,7 +28,7 @@ class AssessmentCriterionDAOTest {
     static void setUpClass() {
         try {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         } catch (SQLException e) {
             fail("Error connecting to the database: " + e.getMessage());
         } catch (IOException e) {

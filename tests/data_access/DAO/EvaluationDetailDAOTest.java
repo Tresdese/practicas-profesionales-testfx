@@ -31,7 +31,7 @@ class EvaluationDetailDAOTest {
     private int userId;
     private int organizationId;
     private String projectId;
-    private String studentMatricula;
+    private String studentTuition;
     private int presentationId;
     private int periodId;
     private int nrc;
@@ -42,7 +42,7 @@ class EvaluationDetailDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         userDAO = new UserDAO();
         departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
@@ -56,47 +56,47 @@ class EvaluationDetailDAOTest {
         criterionDAO = new AssessmentCriterionDAO();
 
         clearTablesAndResetAutoIncrement();
-        createBaseData();
+        createDataBase();
     }
 
     @BeforeEach
     void setUp() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
-        createBaseData();
+        createDataBase();
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE detalle_evaluacion");
-        stmt.execute("TRUNCATE TABLE evaluacion_presentacion");
-        stmt.execute("TRUNCATE TABLE presentacion_proyecto");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("TRUNCATE TABLE criterio_de_evaluacion");
-        stmt.execute("ALTER TABLE detalle_evaluacion AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE evaluacion_presentacion AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE criterio_de_evaluacion AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE detalle_evaluacion");
+        statement.execute("TRUNCATE TABLE evaluacion_presentacion");
+        statement.execute("TRUNCATE TABLE presentacion_proyecto");
+        statement.execute("TRUNCATE TABLE proyecto");
+        statement.execute("TRUNCATE TABLE estudiante");
+        statement.execute("TRUNCATE TABLE grupo");
+        statement.execute("TRUNCATE TABLE periodo");
+        statement.execute("TRUNCATE TABLE usuario");
+        statement.execute("TRUNCATE TABLE departamento");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("TRUNCATE TABLE criterio_de_evaluacion");
+        statement.execute("ALTER TABLE detalle_evaluacion AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE evaluacion_presentacion AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE criterio_de_evaluacion AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
-    private void createBaseData() throws SQLException, IOException {
+    private void createDataBase() throws SQLException, IOException {
         LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
@@ -117,7 +117,7 @@ class EvaluationDetailDAOTest {
                 "test", "test", String.valueOf(nrc), "100", 0.0
         );
         studentDAO.insertStudent(student);
-        studentMatricula = "A12345678";
+        studentTuition = "A12345678";
 
         ProjectDTO project = new ProjectDTO(
                 null, "Proyecto Test", "Descripción Test",
@@ -129,13 +129,13 @@ class EvaluationDetailDAOTest {
         projectId = projectDAO.getAllProjects().get(0).getIdProject();
 
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Partial
         );
         presentationDAO.insertProjectPresentation(presentation);
         presentationId = presentationDAO.getAllProjectPresentations().get(0).getIdPresentation();
 
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
-                0, presentationId, studentMatricula, new java.util.Date(),
+                0, presentationId, studentTuition, new java.util.Date(),
                 "Comentario de prueba", 9.5
         );
         evaluationId = evaluationDAO.insertEvaluationPresentation(evaluation);
@@ -147,17 +147,17 @@ class EvaluationDetailDAOTest {
 
     private int insertUserAndGetId(UserDTO user) throws SQLException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, user.getStaffNumber());
-            stmt.setString(2, user.getNames());
-            stmt.setString(3, user.getSurnames());
-            stmt.setString(4, user.getUserName());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, user.getStaffNumber());
+            statement.setString(2, user.getNames());
+            statement.setString(3, user.getSurnames());
+            statement.setString(4, user.getUserName());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getRole().toString());
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }

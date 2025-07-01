@@ -2,7 +2,7 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.ProjectPresentationDTO;
-import logic.DTO.Tipe;
+import logic.DTO.Type;
 import logic.interfaces.IProjectPresentationDAO;
 
 import java.io.IOException;
@@ -25,23 +25,23 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
 
     public boolean insertProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, projectPresentation.getIdPresentation());
             statement.setString(2, projectPresentation.getIdProject());
             statement.setTimestamp(3, projectPresentation.getDate());
-            statement.setString(4, projectPresentation.getTipe().name());
+            statement.setString(4, projectPresentation.getType().getDataBaseValue());
             return statement.executeUpdate() > 0;
         }
     }
 
     public boolean updateProjectPresentation(ProjectPresentationDTO projectPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, projectPresentation.getIdProject());
             statement.setTimestamp(2, projectPresentation.getDate());
-            statement.setString(3, projectPresentation.getTipe().name());
+            statement.setString(3, projectPresentation.getType().name());
             statement.setInt(4, projectPresentation.getIdPresentation());
             return statement.executeUpdate() > 0;
         }
@@ -49,7 +49,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
 
     public boolean deleteProjectPresentation(int idPresentation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idPresentation);
             return statement.executeUpdate() > 0;
@@ -59,7 +59,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
     public ProjectPresentationDTO searchProjectPresentationById(int idPresentation) throws SQLException, IOException {
         ProjectPresentationDTO projectPresentation = new ProjectPresentationDTO(-1, "N/A", null, null);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idPresentation);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -68,7 +68,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
                             resultSet.getInt("idPresentacion"),
                             resultSet.getString("idProyecto"),
                             resultSet.getTimestamp("fecha"),
-                            Tipe.valueOf(resultSet.getString("tipo"))
+                            Type.getValueFromDataBase(resultSet.getString("tipo"))
                     );
                 }
             }
@@ -79,7 +79,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
     public List<ProjectPresentationDTO> searchProjectPresentationsByProjectId(String idProject) throws SQLException, IOException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_PROJECT_ID)) {
             statement.setString(1, idProject);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -88,7 +88,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
                             resultSet.getInt("idPresentacion"),
                             resultSet.getString("idProyecto"),
                             resultSet.getTimestamp("fecha"),
-                            Tipe.valueOf(resultSet.getString("tipo"))
+                            Type.getValueFromDataBase(resultSet.getString("tipo"))
                     ));
                 }
             }
@@ -99,7 +99,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
     public List<ProjectPresentationDTO> getAllProjectPresentations() throws SQLException, IOException {
         List<ProjectPresentationDTO> presentations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -107,7 +107,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
                         resultSet.getInt("idPresentacion"),
                         resultSet.getString("idProyecto"),
                         resultSet.getTimestamp("fecha"),
-                        Tipe.valueOf(resultSet.getString("tipo"))
+                        Type.getValueFromDataBase(resultSet.getString("tipo"))
                 ));
             }
         }
@@ -118,7 +118,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
         List<ProjectPresentationDTO> upcomingPresentations = new ArrayList<>();
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_UPCOMING);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -126,7 +126,7 @@ public class ProjectPresentationDAO implements IProjectPresentationDAO {
                         resultSet.getInt("idPresentacion"),
                         resultSet.getString("idProyecto"),
                         resultSet.getTimestamp("fecha"),
-                        Tipe.valueOf(resultSet.getString("tipo"))
+                        Type.getValueFromDataBase(resultSet.getString("tipo"))
                 ));
             }
         }

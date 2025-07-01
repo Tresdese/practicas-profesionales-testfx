@@ -23,7 +23,7 @@ public class ActivityDAO implements IActivityDAO {
 
     public boolean insertActivity(ActivityDTO activity) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, activity.getActivityId());
             statement.setString(2, activity.getActivityName());
@@ -33,7 +33,7 @@ public class ActivityDAO implements IActivityDAO {
 
     public boolean updateActivity(ActivityDTO activity) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, activity.getActivityName());
             statement.setString(2, activity.getActivityId());
@@ -43,7 +43,7 @@ public class ActivityDAO implements IActivityDAO {
 
     public boolean deleteActivity(ActivityDTO activity) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, activity.getActivityId());
             return statement.executeUpdate() > 0;
@@ -53,7 +53,7 @@ public class ActivityDAO implements IActivityDAO {
     public ActivityDTO searchActivityById(String idActivity) throws SQLException, IOException {
         ActivityDTO activity = new ActivityDTO("invalido","invalido");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idActivity);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -68,7 +68,7 @@ public class ActivityDAO implements IActivityDAO {
     public int getActivityByName (String name) throws SQLException, IOException {
         int id = -1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -84,7 +84,7 @@ public class ActivityDAO implements IActivityDAO {
         List<ActivityDTO> activities = new ArrayList<>();
         String SQL_SELECT_ALL = "SELECT * FROM actividad";
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

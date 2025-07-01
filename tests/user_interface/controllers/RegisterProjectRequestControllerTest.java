@@ -70,7 +70,7 @@ public class RegisterProjectRequestControllerTest extends ApplicationTest {
     private void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -154,7 +154,7 @@ public class RegisterProjectRequestControllerTest extends ApplicationTest {
 
     private int createTestAcademic() throws SQLException, IOException {
         UserDAO userDAO = new UserDAO();
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, user.getStaffNumber());
@@ -162,7 +162,7 @@ public class RegisterProjectRequestControllerTest extends ApplicationTest {
             stmt.setString(3, user.getSurnames());
             stmt.setString(4, user.getUserName());
             stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
+            stmt.setString(6, user.getRole().getDataBaseValue());
             stmt.executeUpdate();
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {

@@ -183,7 +183,7 @@ public class GUI_RegisterProjectController {
             List<UserDTO> academics;
             if (userService != null) {
                 academics = userService.getAllUsers().stream()
-                        .filter(user -> user.getRole() == Role.ACADEMICO)
+                        .filter(user -> user.getRole() == Role.ACADEMIC)
                         .collect(Collectors.toList());
             } else {
                 academics = FXCollections.observableArrayList();

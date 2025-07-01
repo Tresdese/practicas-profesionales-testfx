@@ -21,7 +21,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
 
     public boolean insertScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, schedule.getIdSchedule());
             statement.setString(2, schedule.getMilestone());
@@ -34,7 +34,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
 
     public boolean updateScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, schedule.getMilestone());
             statement.setTimestamp(2, schedule.getEstimatedDate());
@@ -47,7 +47,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
 
     public boolean deleteScheduleOfActivities(ScheduleOfActivitiesDTO schedule) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, schedule.getIdSchedule());
             return statement.executeUpdate() > 0;
@@ -63,7 +63,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
                 "N/A"
         );
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idSchedule);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -84,7 +84,7 @@ public class ScheduleOfActivitiesDAO implements IScheduleOfActivitiesDAO {
     public List<ScheduleOfActivitiesDTO> getAllSchedulesOfActivities() throws SQLException, IOException {
         List<ScheduleOfActivitiesDTO> schedules = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

@@ -28,7 +28,7 @@ class ActivityDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         limpiarTablaYResetearAutoIncrement();
         activityDAO = new ActivityDAO();
         crearActividadBase();

@@ -173,17 +173,17 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private void applyRoleRestrictions() {
-        if (userRole == Role.ACADEMICO_EVALUADOR) {
+        if (userRole == Role.EVALUATOR_ACADEMIC) {
             setButtonVisibilityByRole(registerStudentButton, false);
             setButtonVisibilityByRole(assignProjectButton, false);
             setButtonVisibilityByRole(reassignProjectButton, false);
             managementColumn.setVisible(false);
-        } else if (userRole == Role.ACADEMICO) {
+        } else if (userRole == Role.ACADEMIC) {
             setButtonVisibilityByRole(registerStudentButton, true);
             setButtonVisibilityByRole(assignProjectButton, false);
             setButtonVisibilityByRole(reassignProjectButton, false);
             managementColumn.setVisible(true);
-        } else if (userRole == Role.COORDINADOR) {
+        } else if (userRole == Role.COORDINATOR) {
             setButtonVisibilityByRole(registerStudentButton, false);
             setButtonVisibilityByRole(assignProjectButton, true);
             setButtonVisibilityByRole(reassignProjectButton, true);

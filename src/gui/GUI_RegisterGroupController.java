@@ -59,7 +59,7 @@ public class GUI_RegisterGroupController {
         try {
             UserDAO userDAO = new UserDAO();
             List<UserDTO> academics = userDAO.getAllUsers().stream()
-                    .filter(user -> user.getRole() == Role.ACADEMICO)
+                    .filter(user -> user.getRole() == Role.ACADEMIC)
                     .collect(Collectors.toList());
             academicList.setAll(academics);
             academicChoiceBox.setItems(academicList);

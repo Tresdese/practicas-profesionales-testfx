@@ -26,7 +26,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public String insertLinkedOrganizationAndGetId(LinkedOrganizationDTO organization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
@@ -44,7 +44,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean updateLinkedOrganization(LinkedOrganizationDTO organization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, organization.getName());
             statement.setString(2, organization.getAddress());
@@ -55,7 +55,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean updateLinkedOrganizationStatus(String idOrganization, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
             statement.setInt(1, status);
             statement.setString(2, idOrganization);
@@ -65,7 +65,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean deleteLinkedOrganization(String idOrganization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idOrganization);
             return statement.executeUpdate() > 0;
@@ -75,7 +75,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     public LinkedOrganizationDTO searchLinkedOrganizationById(String idOrganization) throws SQLException, IOException {
         LinkedOrganizationDTO organization = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -96,7 +96,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     public LinkedOrganizationDTO searchLinkedOrganizationByName(String name) throws SQLException, IOException {
         LinkedOrganizationDTO organization = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -115,7 +115,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean isLinkedOrganizationRegistered(String idOrganization) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -126,7 +126,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean isNameRegistered(String name) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_NAME)) {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -137,7 +137,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
 
     public boolean isAddressRegistered(String address) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ADDRESS)) {
             statement.setString(1, address);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -149,7 +149,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     public String getOrganizationNameById(String idOrganization) throws SQLException, IOException {
         String organizationName = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setString(1, idOrganization);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -164,7 +164,7 @@ public class LinkedOrganizationDAO implements ILinkedOrganizationDAO {
     public List<LinkedOrganizationDTO> getAllLinkedOrganizations() throws SQLException, IOException {
         List<LinkedOrganizationDTO> organizations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

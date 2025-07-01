@@ -1,6 +1,7 @@
 package logic.interfaces;
 
 import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ public interface IProjectRequestDAO {
 
     boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException, IOException;
 
-    boolean updateProjectRequestStatus(int requestId, String status) throws SQLException, IOException;
+    boolean updateProjectRequestStatus(int requestId, ProjectStatus status) throws SQLException, IOException;
 
     boolean deleteProjectRequest(int requestId) throws SQLException, IOException;
 

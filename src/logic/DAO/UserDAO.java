@@ -26,7 +26,7 @@ public class UserDAO implements IUserDAO {
 
     public boolean insertUser(UserDTO user) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
             statement.setString(1, user.getIdUser());
             statement.setString(2, user.getStaffNumber());
@@ -34,7 +34,7 @@ public class UserDAO implements IUserDAO {
             statement.setString(4, user.getSurnames());
             statement.setString(5, user.getUserName());
             statement.setString(6, user.getPassword());
-            statement.setString(7, user.getRole().toString());
+            statement.setString(7, user.getRole().getDataBaseValue());
             statement.setInt(8, user.getStatus());
             return statement.executeUpdate() > 0;
         }
@@ -42,14 +42,14 @@ public class UserDAO implements IUserDAO {
 
     public boolean updateUser(UserDTO user) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
             statement.setString(1, user.getStaffNumber());
             statement.setString(2, user.getNames());
             statement.setString(3, user.getSurnames());
             statement.setString(4, user.getUserName());
             statement.setString(5, user.getPassword());
-            statement.setString(6, user.getRole().toString());
+            statement.setString(6, user.getRole().getDataBaseValue());
             statement.setString(7, user.getIdUser());
             return statement.executeUpdate() > 0;
         }
@@ -57,7 +57,7 @@ public class UserDAO implements IUserDAO {
 
     public boolean updateUserStatus(String idUser, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS);
             statement.setInt(1, status);
             statement.setString(2, idUser);
@@ -67,7 +67,7 @@ public class UserDAO implements IUserDAO {
 
     public boolean deleteUser(String idUser) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_DELETE);
             statement.setString(1, idUser);
             return statement.executeUpdate() > 0;
@@ -78,7 +78,7 @@ public class UserDAO implements IUserDAO {
     public UserDTO searchUserById(String idUser) throws SQLException, IOException {
         UserDTO user;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -91,7 +91,7 @@ public class UserDAO implements IUserDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("nombreUsuario"),
                             resultSet.getString("contraseña"),
-                            Role.valueOf(resultSet.getString("rol").toUpperCase())
+                            Role.getValueFromDataBase(resultSet.getString("rol"))
                     );
                 } else {
                     user = null;
@@ -104,7 +104,7 @@ public class UserDAO implements IUserDAO {
     public UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException, IOException {
         UserDTO user = new UserDTO();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD);
             statement.setString(1, username);
             statement.setString(2, hashedPassword);
@@ -118,7 +118,7 @@ public class UserDAO implements IUserDAO {
                             resultSet.getString("apellidos"),
                             resultSet.getString("nombreUsuario"),
                             resultSet.getString("contraseña"),
-                            Role.valueOf(resultSet.getString("rol").toUpperCase())
+                            Role.getValueFromDataBase(resultSet.getString("rol"))
                     );
                 }
             }
@@ -128,7 +128,7 @@ public class UserDAO implements IUserDAO {
 
     public boolean isUserRegistered(String idUser) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -139,7 +139,7 @@ public class UserDAO implements IUserDAO {
 
     public boolean isNameRegistered(String username) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME);
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -151,7 +151,7 @@ public class UserDAO implements IUserDAO {
     public String getUserIdByUsername(String username) throws SQLException, IOException {
         String userId = null;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USERNAME);
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -166,7 +166,7 @@ public class UserDAO implements IUserDAO {
     public List<UserDTO> getAllUsers() throws SQLException, IOException {
         List<UserDTO> users = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
-            Connection connection = connectionDataBase.connectDB();
+            Connection connection = connectionDataBase.connectDataBase();
             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -178,7 +178,7 @@ public class UserDAO implements IUserDAO {
                         resultSet.getString("apellidos"),
                         resultSet.getString("nombreUsuario"),
                         resultSet.getString("contraseña"),
-                        Role.valueOf(resultSet.getString("rol").toUpperCase())
+                        Role.getValueFromDataBase(resultSet.getString("rol"))
                 ));
             }
         }

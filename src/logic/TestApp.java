@@ -16,7 +16,7 @@ public class TestApp {
 
         try {
             ConnectionDataBase db = new ConnectionDataBase();
-            try (Connection connection = db.connectDB()) {
+            try (Connection connection = db.connectDataBase()) {
                 if (connection != null) {
                     logger.info("Conexión a la base de datos establecida correctamente.");
                 }

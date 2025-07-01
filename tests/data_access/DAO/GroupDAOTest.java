@@ -29,7 +29,7 @@ class GroupDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         ConnectionDataBase db = new ConnectionDataBase();
-        connection = db.connectDB();
+        connection = db.connectDataBase();
         groupDAO = new GroupDAO();
         periodDAO = new PeriodDAO();
         userDAO = new UserDAO();
@@ -42,7 +42,7 @@ class GroupDAOTest {
         PeriodDTO periodo = new PeriodDTO("1", "Periodo Test", Timestamp.valueOf("2024-01-01 00:00:00"), Timestamp.valueOf("2024-12-31 00:00:00"));
         periodDAO.insertPeriod(periodo);
 
-        UserDTO usuario = new UserDTO("1", 1, "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMICO);
+        UserDTO usuario = new UserDTO("1", 1, "1001", "Juan", "Pérez", "juanp", "password", Role.ACADEMIC);
         userDAO.insertUser(usuario);
     }
 

@@ -16,7 +16,7 @@
                alignment="CENTER" textAlignment="CENTER" wrapText="true"/>
         <HBox alignment="CENTER" layoutX="154.0" layoutY="307.0" spacing="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-               <Button fx:id="okButton" onAction="#handleOk" style="-fx-background-color: #2772d3;" text="Confirmar" textFill="WHITE" />
+               <Button fx:id="confirmButton" onAction="#handleOk" style="-fx-background-color: #2772d3;" text="Confirmar" textFill="WHITE" />
                <Button fx:id="cancelButton" onAction="#handleCancel" style="-fx-background-color: #2772d3;" text="Cancelar" textFill="WHITE" />
          </children>
         </HBox>

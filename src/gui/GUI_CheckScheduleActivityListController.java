@@ -63,6 +63,18 @@ public class GUI_CheckScheduleActivityListController {
 
     @FXML
     public void initialize() {
+
+        loadScheduleData();
+        setColumns();
+        setButtons();
+
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedSchedule = newValue;
+            tableView.refresh();
+        });
+    }
+
+    private void setColumns() {
         milestoneColumn.setCellValueFactory(new PropertyValueFactory<>("milestone"));
         estimatedDateColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getEstimatedDate() != null) {
@@ -77,16 +89,11 @@ public class GUI_CheckScheduleActivityListController {
             String evidenceName = getEvidenceNameById(idEvidence);
             return new SimpleStringProperty(evidenceName);
         });
+    }
 
-        loadScheduleData();
-
+    private void setButtons() {
         searchButton.setOnAction(event -> searchSchedule());
         registerScheduleButton.setOnAction(event -> openRegisterScheduleWindow());
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedSchedule = newValue;
-            tableView.refresh();
-        });
     }
 
     private String getEvidenceNameById(String idEvidence) {

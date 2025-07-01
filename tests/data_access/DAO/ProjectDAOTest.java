@@ -27,7 +27,7 @@ class ProjectDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         userDAO = new UserDAO();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         projectDAO = new ProjectDAO();
@@ -61,7 +61,7 @@ class ProjectDAOTest {
 
         testDepartmentId = createTestDepartment();
 
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         testUserId = insertUserAndGetId(user);
     }
 

@@ -2,9 +2,7 @@ package data_access.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DAO.CriterionSelfAssessmentDAO;
-import logic.DAO.SelfAssessmentCriteriaDAO;
 import logic.DTO.CriterionSelfAssessmentDTO;
-import logic.DTO.SelfAssessmentCriteriaDTO;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -26,7 +24,7 @@ class CriterionSelfAssessmentDAOTest {
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         clearTablesAndResetAutoIncrement();
         createBaseObjects();
         criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO();
@@ -54,136 +52,136 @@ class CriterionSelfAssessmentDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("DELETE FROM cronograma_actividad");
-        stmt.execute("DELETE FROM cronograma_de_actividades");
-        stmt.execute("DELETE FROM autoevaluacion_criterio");
-        stmt.execute("DELETE FROM criterio_de_autoevaluacion");
-        stmt.execute("DELETE FROM autoevaluacion");
-        stmt.execute("ALTER TABLE autoevaluacion AUTO_INCREMENT = 1");
-        stmt.execute("DELETE FROM evidencia");
-        stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
-        stmt.execute("DELETE FROM proyecto");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("DELETE FROM organizacion_vinculada");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("DELETE FROM estudiante");
-        stmt.execute("DELETE FROM grupo");
-        stmt.execute("DELETE FROM usuario");
-        stmt.execute("DELETE FROM periodo");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM cronograma_actividad");
+        statement.execute("DELETE FROM cronograma_de_actividades");
+        statement.execute("DELETE FROM autoevaluacion_criterio");
+        statement.execute("DELETE FROM criterio_de_autoevaluacion");
+        statement.execute("DELETE FROM autoevaluacion");
+        statement.execute("ALTER TABLE autoevaluacion AUTO_INCREMENT = 1");
+        statement.execute("DELETE FROM evidencia");
+        statement.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
+        statement.execute("DELETE FROM proyecto");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("DELETE FROM organizacion_vinculada");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("DELETE FROM estudiante");
+        statement.execute("DELETE FROM grupo");
+        statement.execute("DELETE FROM usuario");
+        statement.execute("DELETE FROM periodo");
+        statement.close();
     }
 
     private void createBaseObjects() throws SQLException {
         String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlPeriod)) {
-            stmt.setString(1, "1");
-            stmt.setString(2, "2024-1");
-            stmt.setDate(3, Date.valueOf("2024-01-01"));
-            stmt.setDate(4, Date.valueOf("2024-06-30"));
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlPeriod)) {
+            statement.setString(1, "1");
+            statement.setString(2, "2024-1");
+            statement.setDate(3, Date.valueOf("2024-01-01"));
+            statement.setDate(4, Date.valueOf("2024-06-30"));
+            statement.executeUpdate();
         }
 
         String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlUser)) {
-            stmt.setString(1, "1");
-            stmt.setString(2, "10001");
-            stmt.setString(3, "Juan");
-            stmt.setString(4, "Pérez");
-            stmt.setString(5, "juanp");
-            stmt.setString(6, "1234567890123456789012345678901234567890123456789012345678901234");
-            stmt.setString(7, "Academico");
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlUser)) {
+            statement.setString(1, "1");
+            statement.setString(2, "10001");
+            statement.setString(3, "Juan");
+            statement.setString(4, "Pérez");
+            statement.setString(5, "juanp");
+            statement.setString(6, "1234567890123456789012345678901234567890123456789012345678901234");
+            statement.setString(7, "Academico");
+            statement.executeUpdate();
         }
 
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
-            stmt.setString(1, "1001");
-            stmt.setString(2, "Grupo 1");
-            stmt.setString(3, "1");
-            stmt.setString(4, "1");
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlGroup)) {
+            statement.setString(1, "1001");
+            statement.setString(2, "Grupo 1");
+            statement.setString(3, "1");
+            statement.setString(4, "1");
+            statement.executeUpdate();
         }
 
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
-            stmt.setString(1, "S12345");
-            stmt.setInt(2, 1);
-            stmt.setString(3, "Pedro");
-            stmt.setString(4, "López");
-            stmt.setString(5, "5555555555");
-            stmt.setString(6, "pedro@test.com");
-            stmt.setString(7, "pedrolopez");
-            stmt.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
-            stmt.setString(9, "1001");
-            stmt.setString(10, "100");
-            stmt.setDouble(11, 0.0);
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlStudent)) {
+            statement.setString(1, "S12345");
+            statement.setInt(2, 1);
+            statement.setString(3, "Pedro");
+            statement.setString(4, "López");
+            statement.setString(5, "5555555555");
+            statement.setString(6, "pedro@test.com");
+            statement.setString(7, "pedrolopez");
+            statement.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
+            statement.setString(9, "1001");
+            statement.setString(10, "100");
+            statement.setDouble(11, 0.0);
+            statement.executeUpdate();
         }
 
-        int orgId = 0;
+        int organizationId = 0;
         String sqlOrg = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlOrg, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Org Test");
-            stmt.setString(2, "Calle Falsa 123");
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    orgId = rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sqlOrg, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Org Test");
+            statement.setString(2, "Calle Falsa 123");
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    organizationId = resultSet.getInt(1);
                 }
             }
         }
 
         int projectId = 1;
         String sqlProject = "INSERT INTO proyecto (idProyecto, nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlProject)) {
-            stmt.setInt(1, projectId);
-            stmt.setString(2, "Proyecto Test");
-            stmt.setString(3, "Descripción de prueba");
-            stmt.setDate(4, Date.valueOf("2024-05-01"));
-            stmt.setDate(5, Date.valueOf("2024-04-01"));
-            stmt.setString(6, "1");
-            stmt.setInt(7, orgId);
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlProject)) {
+            statement.setInt(1, projectId);
+            statement.setString(2, "Proyecto Test");
+            statement.setString(3, "Descripción de prueba");
+            statement.setDate(4, Date.valueOf("2024-05-01"));
+            statement.setDate(5, Date.valueOf("2024-04-01"));
+            statement.setString(6, "1");
+            statement.setInt(7, organizationId);
+            statement.executeUpdate();
         }
 
         int evidenceId = 1;
         String sqlEvidence = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlEvidence, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Evidencia 1");
-            stmt.setDate(2, Date.valueOf("2024-05-01"));
-            stmt.setString(3, "/ruta/evidencia1.pdf");
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    evidenceId = rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sqlEvidence, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Evidencia 1");
+            statement.setDate(2, Date.valueOf("2024-05-01"));
+            statement.setString(3, "/ruta/evidencia1.pdf");
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    evidenceId = resultSet.getInt(1);
                 }
             }
         }
 
         String sqlSelfAssessment = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlSelfAssessment, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Comentario base");
-            stmt.setFloat(2, 8.0f);
-            stmt.setString(3, "S12345");
-            stmt.setInt(4, projectId);
-            stmt.setInt(5, evidenceId);
-            stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
-            stmt.setString(7, "completada");
-            stmt.setString(8, "General");
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    testSelfAssessmentId = rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sqlSelfAssessment, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Comentario base");
+            statement.setFloat(2, 8.0f);
+            statement.setString(3, "S12345");
+            statement.setInt(4, projectId);
+            statement.setInt(5, evidenceId);
+            statement.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+            statement.setString(7, "completada");
+            statement.setString(8, "General");
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    testSelfAssessmentId = resultSet.getInt(1);
                 }
             }
         }
 
         String sqlCriteria = "INSERT INTO criterio_de_autoevaluacion (idCriterios, nombreCriterio) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlCriteria)) {
-            stmt.setInt(1, 1);
-            stmt.setString(2, "Criterio 1");
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlCriteria)) {
+            statement.setInt(1, 1);
+            statement.setString(2, "Criterio 1");
+            statement.executeUpdate();
             testCriteriaId = 1;
         }
     }
@@ -201,12 +199,12 @@ class CriterionSelfAssessmentDAOTest {
 
     @Test
     void testUpdateCriterionSelfAssessment() throws SQLException, IOException {
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 7.0f, "Original");
-        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 7.0f, "Original");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessmentDTO);
 
-        dto.setGrade(10.0f);
-        dto.setComments("Actualizado");
-        boolean result = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(dto);
+        criterionSelfAssessmentDTO.setGrade(10.0f);
+        criterionSelfAssessmentDTO.setComments("Actualizado");
+        boolean result = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(criterionSelfAssessmentDTO);
         assertTrue(result);
 
         CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(testSelfAssessmentId, testCriteriaId);
@@ -216,8 +214,8 @@ class CriterionSelfAssessmentDAOTest {
 
     @Test
     void testDeleteCriterionSelfAssessment() throws SQLException, IOException {
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar");
-        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessmentDTO);
 
         boolean result = criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId);
         assertTrue(result);
@@ -229,11 +227,11 @@ class CriterionSelfAssessmentDAOTest {
 
     @Test
     void testGetAllCriterionSelfAssessmentWhenEmpty() throws SQLException, IOException {
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM autoevaluacion_criterio");
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("DELETE FROM autoevaluacion_criterio");
         }
-        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
-        List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
+        CriterionSelfAssessmentDAO criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO();
+        List<CriterionSelfAssessmentDTO> all = criterionSelfAssessmentDAO.getAllCriterionSelfAssessments();
         assertTrue(all.isEmpty(), "There should be at least one self-assessment-criterion record");
     }
 
@@ -251,8 +249,8 @@ class CriterionSelfAssessmentDAOTest {
 
     @Test
     void testUpdateNonExistentCriterionSelfAssessment() throws SQLException, IOException {
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(9999, 8888, 5.0f, "No existe");
-        boolean updated = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(9999, 8888, 5.0f, "No existe");
+        boolean updated = criterionSelfAssessmentDAO.updateCriterionSelfAssessment(criterionSelfAssessmentDTO);
         assertFalse(updated, "Should not update a non-existent record");
     }
 
@@ -310,8 +308,8 @@ class CriterionSelfAssessmentDAOTest {
 
     @Test
     void testDeleteCriterionSelfAssessmentTwice() throws SQLException, IOException {
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar dos veces");
-        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 8.0f, "Para borrar dos veces");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessmentDTO);
         assertTrue(criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId));
         assertFalse(criterionSelfAssessmentDAO.deleteCriterionSelfAssessment(testSelfAssessmentId, testCriteriaId), "Second delete should fail");
     }
@@ -319,8 +317,8 @@ class CriterionSelfAssessmentDAOTest {
     @Test
     void testInsertCriterionSelfAssessmentWithExtremeValues() throws SQLException, IOException {
         String longComment = "a".repeat(255);
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 10.0f, longComment);
-        boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(testSelfAssessmentId, testCriteriaId, 10.0f, longComment);
+        boolean inserted = criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessmentDTO);
         assertTrue(inserted, "Should allow long comments and max grade");
     }
 
@@ -328,19 +326,19 @@ class CriterionSelfAssessmentDAOTest {
     void testSearchByCompositeKey() throws SQLException, IOException {
         int selfAssessmentId = insertTestSelfAssessment();
         int criteriaId = insertTestCriteria("Criterio Key");
-        CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
-        CriterionSelfAssessmentDTO dto = new CriterionSelfAssessmentDTO(selfAssessmentId, criteriaId, 6.0f, "Buscar");
-        dao.insertCriterionSelfAssessment(dto);
+        CriterionSelfAssessmentDAO criterionSelfAssessmentDAO = new CriterionSelfAssessmentDAO();
+        CriterionSelfAssessmentDTO criterionSelfAssessmentDTO = new CriterionSelfAssessmentDTO(selfAssessmentId, criteriaId, 6.0f, "Buscar");
+        criterionSelfAssessmentDAO.insertCriterionSelfAssessment(criterionSelfAssessmentDTO);
 
-        CriterionSelfAssessmentDTO found = dao.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(selfAssessmentId, criteriaId);
+        CriterionSelfAssessmentDTO found = criterionSelfAssessmentDAO.searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(selfAssessmentId, criteriaId);
         assertEquals("Buscar", found.getComments());
     }
 
     @Test
     void testGetAllCriterionSelfAssessmentsWhenEmpty() throws SQLException, IOException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("DELETE FROM autoevaluacion_criterio");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("DELETE FROM autoevaluacion_criterio");
+        statement.close();
 
         CriterionSelfAssessmentDAO dao = new CriterionSelfAssessmentDAO();
         List<CriterionSelfAssessmentDTO> all = dao.getAllCriterionSelfAssessments();
@@ -348,19 +346,19 @@ class CriterionSelfAssessmentDAOTest {
     }
 
     private int insertTestSelfAssessment() throws SQLException {
-        String sql = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Test");
-            stmt.setFloat(2, 8.0f);
-            stmt.setString(3, "S12345");
-            stmt.setInt(4, 1);
-            stmt.setInt(5, 1);
-            stmt.setDate(6, new java.sql.Date(System.currentTimeMillis()));
-            stmt.setString(7, "completada");
-            stmt.setString(8, "General");
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
+        String sqlQuery = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, "Test");
+            statement.setFloat(2, 8.0f);
+            statement.setString(3, "S12345");
+            statement.setInt(4, 1);
+            statement.setInt(5, 1);
+            statement.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+            statement.setString(7, "completada");
+            statement.setString(8, "General");
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) return resultSet.getInt(1);
             }
         }
         throw new SQLException("Could not insert test self-assessment");
@@ -368,11 +366,11 @@ class CriterionSelfAssessmentDAOTest {
 
     private int insertTestCriteria(String name) throws SQLException {
         String sql = "INSERT INTO criterio_de_autoevaluacion (nombreCriterio) VALUES (?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, name);
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) return rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, name);
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) return resultSet.getInt(1);
             }
         }
         throw new SQLException("Could not insert test criteria");
@@ -415,8 +413,8 @@ class CriterionSelfAssessmentDAOTest {
     }
 
     void clearCriterionSelfAssessmentTable() throws SQLException {
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM autoevaluacion_criterio");
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("DELETE FROM autoevaluacion_criterio");
         }
     }
 }

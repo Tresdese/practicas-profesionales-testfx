@@ -109,6 +109,14 @@ public class GUI_CheckListOfGroupsController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("40S02".equals(sqlState)) {
+                statusLabel.setText("Tabla de grupos no encontrada.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla de grupos no encontrada: {}", e.getMessage(), e);
+            } else if ("40S22".equals(sqlState)) {
+                statusLabel.setText("Columna no encontrada en la tabla de grupos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la tabla de grupos: {}", e.getMessage(), e);
             } else if ("28000".equals(sqlState)) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -192,11 +200,11 @@ public class GUI_CheckListOfGroupsController {
     }
 
     public void applyRoleRestrictions() {
-        if (userRole == Role.ACADEMICO_EVALUADOR) {
+        if (userRole == Role.EVALUATOR_ACADEMIC) {
             setButtonVisibility(registerGroupButton, false);
-        } else if (userRole == Role.ACADEMICO) {
+        } else if (userRole == Role.ACADEMIC) {
             setButtonVisibility(registerGroupButton, false);
-        } else if (userRole == Role.COORDINADOR) {
+        } else if (userRole == Role.COORDINATOR) {
             setButtonVisibility(registerGroupButton, true);
         }
     }

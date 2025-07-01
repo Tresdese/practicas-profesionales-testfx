@@ -7,16 +7,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import logic.DTO.Role;
 import logic.DTO.StudentDTO;
-import logic.DTO.UserDTO;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 
 import static org.testfx.assertions.api.Assertions.assertThat;
 
@@ -45,7 +42,7 @@ public class CheckListOfStudentsControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -333,5 +330,30 @@ public class CheckListOfStudentsControllerTest extends ApplicationTest {
                 assertThat(rs.getInt("estado")).isEqualTo(0);
             }
         }
+    }
+
+    @Test
+    public void testStudentDetailsButton() {
+        forceLoadData();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TableView<StudentDTO> tableView = lookup("#tableView").query();
+        interact(() -> tableView.getSelectionModel().select(0));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Button detailsButton = lookup(".button")
+                .queryAll()
+                .stream()
+                .filter(node -> node instanceof Button && "Ver detalles".equals(((Button) node).getText()))
+                .map(node -> (Button) node)
+                .findFirst()
+                .orElseThrow();
+        clickOn(detailsButton);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label studentNameLabel = lookup("#namesLabel").query();
+        Label studentSurnameLabel = lookup("#surnamesLabel").query();
+        assertThat(studentNameLabel.getText()).contains("Ana");
+        assertThat(studentSurnameLabel.getText()).contains("García");
     }
 }

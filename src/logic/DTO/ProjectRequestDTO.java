@@ -39,7 +39,7 @@ public class ProjectRequestDTO {
         this.scheduleDays = "";
         this.directUsers = 0;
         this.indirectUsers = 0;
-        this.status = ProjectStatus.pendiente;
+        this.status = ProjectStatus.pending;
         this.requestDate = "";
     }
 
@@ -48,7 +48,7 @@ public class ProjectRequestDTO {
             String tuition,
             String organizationId,
             String representativeId,
-            String projectName, // Cambiado aquí
+            String projectName,
             String description,
             String generalObjective,
             String immediateObjectives,
@@ -61,7 +61,7 @@ public class ProjectRequestDTO {
             String scheduleDays,
             int directUsers,
             int indirectUsers,
-            String status,
+            ProjectStatus status,
             String requestDate
     ) {
         this.requestId = requestId;
@@ -81,15 +81,10 @@ public class ProjectRequestDTO {
         this.scheduleDays = scheduleDays;
         this.directUsers = directUsers;
         this.indirectUsers = indirectUsers;
-        if (status == null || status.isEmpty()) {
-            this.status = ProjectStatus.pendiente;
-        } else {
-            this.status = ProjectStatus.valueOf(status);
-        }
+        this.status = status;
         this.requestDate = requestDate;
     }
 
-    // Getters y setters
     public int getRequestId() { return requestId; }
     public void setRequestId(int requestId) { this.requestId = requestId; }
 

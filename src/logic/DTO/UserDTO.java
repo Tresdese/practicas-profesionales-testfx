@@ -100,23 +100,6 @@ public class UserDTO {
         this.role = role;
     }
 
-    //TODO Métodos para realizar las acciones basadas en el rol
-    public void performRoleAction1() {
-        if (role != null) {
-            role.performAction1();
-        } else {
-            System.out.println("Rol no asignado");
-        }
-    }
-
-    public void performRoleAction2() {
-        if (role != null) {
-            role.performAction2();
-        } else {
-            System.out.println("Rol no asignado");
-        }
-    }
-
     @Override
     public String toString() {
         return "UserDTO{" +

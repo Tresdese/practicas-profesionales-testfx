@@ -34,7 +34,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=invalid\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        assertThrows(SQLException.class, db::connectDB);
+        assertThrows(SQLException.class, db::connectDataBase);
         db.close();
     }
 
@@ -46,7 +46,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=clave_incorrecta\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("28000", ex.getSQLState());
         db.close();
     }
@@ -59,7 +59,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=123456\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("42000", ex.getSQLState());
         db.close();
     }
@@ -84,7 +84,7 @@ class ConecctionDataBaseTest {
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
         try {
-            assertNotNull(db.connectDB());
+            assertNotNull(db.connectDataBase());
         } catch (SQLException e) {
             assertTrue(e.getMessage().contains("Access denied") || e.getMessage().contains("denegado"));
         } finally {
@@ -100,7 +100,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        assertThrows(SQLException.class, db::connectDB);
+        assertThrows(SQLException.class, db::connectDataBase);
         db.close();
     }
 
@@ -123,7 +123,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=clave_incorrecta\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("28000", ex.getSQLState());
         db.close();
     }
@@ -136,7 +136,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=123456\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("42000", ex.getSQLState());
         db.close();
     }
@@ -149,7 +149,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=123456\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("08S01", ex.getSQLState());
         db.close();
     }
@@ -162,7 +162,7 @@ class ConecctionDataBaseTest {
             writer.write("db.password=123456\n");
         }
         ConnectionDataBase db = new ConnectionDataBase(CONFIG_PATH);
-        SQLException ex = assertThrows(SQLException.class, db::connectDB);
+        SQLException ex = assertThrows(SQLException.class, db::connectDataBase);
         assertEquals("42000", ex.getSQLState());
         db.close();
     }

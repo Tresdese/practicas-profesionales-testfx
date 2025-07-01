@@ -33,7 +33,7 @@ public class ConnectionDataBase implements AutoCloseable {
         }
     }
 
-    public Connection connectDB() throws SQLException {
+    public Connection connectDataBase() throws SQLException {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             logger.info("Conexión exitosa a la base de datos.");

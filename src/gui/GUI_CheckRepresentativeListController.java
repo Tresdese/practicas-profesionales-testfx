@@ -161,6 +161,7 @@ public class GUI_CheckRepresentativeListController {
     private void setButtons() {
         searchButton.setOnAction(event -> searchRepresentative());
         registerRepresentativeButton.setOnAction(event -> openRegisterRepresentativeWindow());
+        deleteRepresentativeButton.setDisable(true);
         deleteRepresentativeButton.setOnAction(event -> handleDeleteRepresentative());
     }
 
@@ -389,17 +390,35 @@ public class GUI_CheckRepresentativeListController {
 
     private void searchRepresentative() {
         String searchQuery = searchField.getText().trim();
-        if (searchQuery.isEmpty()) {
-            loadOrganizationData();
-            return;
-        }
-
         ObservableList<RepresentativeDTO> filteredList = FXCollections.observableArrayList();
 
         try {
-            RepresentativeDTO representative = representativeService.searchRepresentativeById(searchQuery);
-            if (representative != null) {
-                filteredList.add(representative);
+            List<RepresentativeDTO> representatives = representativeService.getAllRepresentatives();
+            String selectedStatus = filterChoiceBox.getValue();
+
+            boolean found = false;
+            for (RepresentativeDTO representative : representatives) {
+                boolean matches = searchQuery.isEmpty() ||
+                        representative.getIdRepresentative().contains(searchQuery) ||
+                        representative.getNames().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                        representative.getSurnames().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                        representative.getEmail().toLowerCase().contains(searchQuery.toLowerCase());
+
+                boolean statusMatches = "Todos".equalsIgnoreCase(selectedStatus) ||
+                        ("Activos".equalsIgnoreCase(selectedStatus) && representative.getStatus() == 1) ||
+                        ("Inactivos".equalsIgnoreCase(selectedStatus) && representative.getStatus() == 0);
+
+                if (matches && statusMatches) {
+                    filteredList.add(representative);
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                statusLabel.setText("No se encontraron representantes que coincidan con la búsqueda.");
+                statusLabel.setTextFill(Color.RED);
+            } else {
+                statusLabel.setText("");
             }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();

@@ -268,7 +268,6 @@ public class GUI_CheckAcademicListController {
         String searchQuery = searchField.getText().trim();
         if (searchQuery.isEmpty()) {
             loadAcademicData();
-            return;
         }
 
         ObservableList<UserDTO> filteredList = FXCollections.observableArrayList();
@@ -292,15 +291,35 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
             } else {
-                statusLabel.setText("Error al buscar académico de la base de datos.");
+                statusLabel.setText("Error al cargar los académicos de la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                logger.error("Error al buscar académico de la base de datos: {}", e.getMessage(), e);
+                logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
             }
+        } catch (IOException e) {
+            statusLabel.setText("Error al leer el archivo de configuracion de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+        } catch (IllegalStateException e) {
+            statusLabel.setText("Error de estado al buscar académico.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de estado al buscar académico: {}", e.getMessage(), e);
+        } catch (RuntimeException e) {
+            statusLabel.setText("Error de tiempo de ejecucion al buscar académico.");
+            statusLabel.setTextFill(Color.RED);
+            logger.error("Error de tiempo de ejecucion al buscar académico: {}", e.getMessage(), e);
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al buscar académico.");
             statusLabel.setTextFill(Color.RED);
@@ -377,25 +396,33 @@ public class GUI_CheckAcademicListController {
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
-                academicCountsLabel.setText("Error de conexión con la base de datos.");
-                academicCountsLabel.setTextFill(Color.RED);
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("08S01")) {
-                academicCountsLabel.setText("Conexión interrumpida con la base de datos.");
-                academicCountsLabel.setTextFill(Color.RED);
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("42000")) {
-                academicCountsLabel.setText("Base de datos desconocida.");
-                academicCountsLabel.setTextFill(Color.RED);
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
             } else if (sqlState != null && sqlState.equals("28000")) {
-                academicCountsLabel.setText("Acceso denegado a la base de datos.");
-                academicCountsLabel.setTextFill(Color.RED);
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
                 logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
             } else {
-                academicCountsLabel.setText("Error al contar los académicos de la base de datos.");
-                academicCountsLabel.setTextFill(Color.RED);
-                logger.error("Error al contar los académicos de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al cargar los académicos de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
             }
         } catch (Exception e) {
             academicCountsLabel.setText("Error inesperado al contar los académicos.");
@@ -424,8 +451,36 @@ public class GUI_CheckAcademicListController {
                 statusLabel.setText("Eliminación cancelada.");
             }
         } catch (SQLException e) {
-            statusLabel.setText("Error al eliminar el academico.");
-            logger.error("Error al eliminar el academico: {}", e.getMessage(), e);
+            String sqlState = e.getSQLState();
+            if (sqlState != null && sqlState.equals("08001")) {
+                statusLabel.setText("Error de conexión con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("08S01")) {
+                statusLabel.setText("Conexión interrumpida con la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("42000")) {
+                statusLabel.setText("Base de datos desconocida.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if ("42S22".equals(sqlState)) {
+                logger.error("Columna desconocida en la tabla usuario en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Columna desconocida en la tabla usuario en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if ("42S02".equals(sqlState)) {
+                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Tabla desconocida en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+            } else if (sqlState != null && sqlState.equals("28000")) {
+                statusLabel.setText("Acceso denegado a la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+            } else {
+                statusLabel.setText("Error al cargar los académicos de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al cargar los académicos de la base de datos: {}", e.getMessage(), e);
+            }
         } catch (IOException e) {
             statusLabel.setText("Error al cargar el diálogo de confirmación.");
             logger.error("Error al cargar el diálogo de confirmación: {}", e.getMessage(), e);

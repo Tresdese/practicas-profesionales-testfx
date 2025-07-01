@@ -88,7 +88,7 @@ public class GUI_MenuUserController {
     public void setUserRole(Role role) {
         this.userRole = role.name();
 
-        if (role == Role.ACADEMICO_EVALUADOR) {
+        if (role == Role.EVALUATOR_ACADEMIC) {
             setButtonVisibility(viewStudentListButton, false);
             setButtonVisibility(viewAcademicListButton, false);
             setButtonVisibility(viewOrganizationListButton, false);
@@ -103,7 +103,7 @@ public class GUI_MenuUserController {
             setButtonVisibility(manageActivityButton, false);
             setButtonVisibility(ableRegisterEvaluationButton, false);
 
-        } else if (role == Role.ACADEMICO) {
+        } else if (role == Role.ACADEMIC) {
             setButtonVisibility(viewStudentListButton, true);
             setButtonVisibility(evaluatePresentationButton, false);
             setButtonVisibility(viewAcademicListButton, false);
@@ -118,7 +118,7 @@ public class GUI_MenuUserController {
             setButtonVisibility(manageActivityButton, false);
             setButtonVisibility(ableRegisterEvaluationButton, false);
 
-        } else if (role == Role.COORDINADOR) {
+        } else if (role == Role.COORDINATOR) {
             setButtonVisibility(viewStudentListButton, true);
             setButtonVisibility(evaluatePresentationButton, false);
             setButtonVisibility(viewAcademicListButton, true);

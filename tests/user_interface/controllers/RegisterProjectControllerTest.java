@@ -5,7 +5,6 @@ import gui.GUI_RegisterProjectController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
@@ -55,7 +54,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -98,7 +97,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
 
         testDepartmentId = createTestDepartment();
 
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         testUserId = insertUserAndGetId(user);
     }
 
@@ -254,7 +253,7 @@ public class RegisterProjectControllerTest extends ApplicationTest {
         assertThat(academicBox.getItems()).isNotEmpty();
 
         for (UserDTO user : academicBox.getItems()) {
-            assertThat(user.getRole()).isEqualTo(Role.ACADEMICO);
+            assertThat(user.getRole()).isEqualTo(Role.ACADEMIC);
         }
         assertThat(academicBox.getItems().size()).isGreaterThan(0);
     }

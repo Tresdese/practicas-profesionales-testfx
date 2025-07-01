@@ -22,7 +22,7 @@ class LinkedOrganizationDAOTest {
     @BeforeEach
     void setUp() throws SQLException, IOException {
         ConnectionDataBase connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
         connection.createStatement().execute("DELETE FROM organizacion_vinculada");
     }

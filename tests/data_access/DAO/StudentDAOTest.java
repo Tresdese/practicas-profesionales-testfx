@@ -26,7 +26,7 @@ class StudentDAOTest {
     static void setUpClass() {
         try {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         } catch (SQLException e) {
             fail("Error al conectar a la base de datos: " + e.getMessage());
         } catch (IOException e) {

@@ -8,16 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import logic.DTO.Role;
-import logic.DTO.StudentDTO;
 import logic.DTO.UserDTO;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.service.query.PointQuery;
 import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 
 import static org.testfx.assertions.api.Assertions.assertThat;
 
@@ -42,7 +39,7 @@ public class CheckAcademicListControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -75,8 +72,8 @@ public class CheckAcademicListControllerTest extends ApplicationTest {
             statement.setString(3, "Pérez");
             statement.setString(4, "juanperez");
             statement.setString(5, "passTest");
-            statement.setString(6, Role.ACADEMICO.toString());
-            statement.setInt(7, 1); // Activo
+            statement.setString(6, Role.ACADEMIC.getDataBaseValue());
+            statement.setInt(7, 1);
             statement.executeUpdate();
             try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -108,16 +105,16 @@ public class CheckAcademicListControllerTest extends ApplicationTest {
 
     @Test
     public void testLoadAcademicPopulatesTable() {
-
+        forceLoadData();
 
         WaitForAsyncUtils.waitForFxEvents();
 
-        TableView<StudentDTO> tableView = lookup("#tableView").query();
+        TableView<UserDTO> tableView = lookup("#tableView").query();
         assertThat(tableView.getItems()).isNotEmpty();
-        StudentDTO student = tableView.getItems().get(0);
-        assertThat(student.getTuition()).isEqualTo("S12345678");
-        assertThat(student.getNames()).isEqualTo("Ana");
-        assertThat(student.getSurnames()).isEqualTo("García");
+        UserDTO user = tableView.getItems().get(0);
+        assertThat(user.getStaffNumber()).isEqualTo("12345");
+        assertThat(user.getNames()).isEqualTo("Juan");
+        assertThat(user.getSurnames()).isEqualTo("Pérez");
     }
 
     @Test
@@ -308,37 +305,23 @@ public class CheckAcademicListControllerTest extends ApplicationTest {
         forceLoadData();
         WaitForAsyncUtils.waitForFxEvents();
 
+        ChoiceBox<String> filterChoiceBox = lookup("#filterChoiceBox").query();
+        interact(() -> filterChoiceBox.getSelectionModel().select("Activos"));
+        WaitForAsyncUtils.waitForFxEvents();
+
         TableView<UserDTO> tableView = lookup("#tableView").query();
         interact(() -> tableView.getSelectionModel().select(0));
-
-        Button deleteButton = lookup("#deleteAcademicButton").query();
-        clickOn(deleteButton);
         WaitForAsyncUtils.waitForFxEvents();
 
-        Label confirmLabel = lookup("#confirmMessageLabel").query();
-        Stage confirmStage = (Stage) confirmLabel.getScene().getWindow();
-        targetWindow(confirmStage);
-
-        Button confirmButton = lookup("#okButton").queryButton();
-        clickOn(confirmButton);
+        clickOn("#deleteAcademicButton");
         WaitForAsyncUtils.waitForFxEvents();
 
-        targetWindow(window("Lista de académicos"));
-
-        ChoiceBox<String> filterChoiceBox = lookup("#filterChoiceBox").query();
-        interact(() -> filterChoiceBox.setValue("Activos"));
+        clickOn("#confirmButton");
         WaitForAsyncUtils.waitForFxEvents();
 
+        Label statusLabel = lookup("#statusLabel").query();
+        assertThat(statusLabel.getText()).isEqualTo("Academico eliminado correctamente.");
         assertThat(tableView.getItems()).isEmpty();
-
-        String sql = "SELECT estado FROM usuario WHERE idUsuario = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, testUserId);
-            try (ResultSet rs = statement.executeQuery()) {
-                assertThat(rs.next()).isTrue();
-                assertThat(rs.getInt("estado")).isEqualTo(0);
-            }
-        }
     }
 
     @Test

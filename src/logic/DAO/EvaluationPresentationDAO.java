@@ -22,7 +22,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
 
     public int insertEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, evaluation.getIdProject());
             statement.setString(2, evaluation.getTuition());
@@ -43,7 +43,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
 
     public boolean updateEvaluationPresentation(EvaluationPresentationDTO evaluation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, evaluation.getIdProject());
             statement.setString(2, evaluation.getTuition());
@@ -57,7 +57,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
 
     public boolean deleteEvaluationPresentation(int idEvaluation) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idEvaluation);
             return statement.executeUpdate() > 0;
@@ -67,7 +67,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
     public EvaluationPresentationDTO searchEvaluationPresentationById(int idEvaluation) throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(-1, "-1", null, null, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idEvaluation);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -89,7 +89,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
     public List<EvaluationPresentationDTO> getAllEvaluationPresentations() throws SQLException, IOException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -108,7 +108,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
 
     public int getLastInsertedId() throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_LAST_INSERT_ID);
              ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
@@ -121,7 +121,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
     public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException, IOException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_TUITON)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -143,7 +143,7 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
     public List<EvaluationPresentationDTO> getEvaluationPresentationsByDate(Date date) throws SQLException, IOException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_DATE)) {
             statement.setDate(1, date);
             try (ResultSet resultSet = statement.executeQuery()) {

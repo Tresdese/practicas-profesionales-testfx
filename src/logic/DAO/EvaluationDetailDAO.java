@@ -22,7 +22,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
 
     public void insertEvaluationDetail(EvaluationDetailDTO detail) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, detail.getIdEvaluation());
             statement.setInt(2, detail.getIdCriteria());
@@ -33,7 +33,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
 
     public boolean updateEvaluationDetail(EvaluationDetailDTO detail) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, detail.getIdEvaluation());
             statement.setInt(2, detail.getIdCriteria());
@@ -45,7 +45,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
 
     public boolean deleteEvaluationDetail(int idDetail) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idDetail);
             return statement.executeUpdate() > 0;
@@ -55,7 +55,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
     public EvaluationDetailDTO searchEvaluationDetailById(int idDetail) throws SQLException, IOException {
         EvaluationDetailDTO detail = new EvaluationDetailDTO(-1, -1, -1, -1);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, idDetail);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -75,7 +75,7 @@ public class EvaluationDetailDAO implements IEvaluationDetailDAO {
     public List<EvaluationDetailDTO> getAllEvaluationDetails() throws SQLException, IOException {
         List<EvaluationDetailDTO> details = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

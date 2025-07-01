@@ -6,27 +6,27 @@ public class ProjectPresentationDTO {
     private int idPresentation;
     private String idProject;
     private Timestamp date;
-    private Tipe tipe;
+    private Type type;
 
     public ProjectPresentationDTO() {
         this.idPresentation = 0;
         this.idProject = "";
         this.date = null;
-        this.tipe = Tipe.Parcial;
+        this.type = Type.Partial;
     }
 
-    public ProjectPresentationDTO(int idPresentation, String idProject, Timestamp date, Tipe tipe) {
+    public ProjectPresentationDTO(int idPresentation, String idProject, Timestamp date, Type type) {
         this.idPresentation = idPresentation;
         this.idProject = idProject;
         this.date = date;
-        this.tipe = tipe;
+        this.type = type;
     }
 
-    public ProjectPresentationDTO (String idProject, Timestamp date, Tipe tipe) {
+    public ProjectPresentationDTO (String idProject, Timestamp date, Type type) {
         this.idPresentation = 0;
         this.idProject = idProject;
         this.date = date;
-        this.tipe = tipe;
+        this.type = type;
     }
 
     public int getIdPresentation() {
@@ -53,12 +53,12 @@ public class ProjectPresentationDTO {
         this.date = date;
     }
 
-    public Tipe getTipe() {
-        return tipe;
+    public Type getType() {
+        return type;
     }
 
-    public void setTipe(Tipe tipe) {
-        this.tipe = tipe;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ProjectPresentationDTO {
                 "idPresentation=" + idPresentation +
                 ", idProject='" + idProject + '\'' +
                 ", date=" + date +
-                ", tipe='" + tipe + '\'' +
+                ", tipe='" + type + '\'' +
                 '}';
     }
 
@@ -76,6 +76,6 @@ public class ProjectPresentationDTO {
         if (this == o) return true;
         if (!(o instanceof ProjectPresentationDTO)) return false;
         ProjectPresentationDTO that = (ProjectPresentationDTO) o;
-        return idPresentation == that.idPresentation && idProject.equals(that.idProject) && date.equals(that.date) && tipe.equals(that.tipe);
+        return idPresentation == that.idPresentation && idProject.equals(that.idProject) && date.equals(that.date) && type.equals(that.type);
     }
 }

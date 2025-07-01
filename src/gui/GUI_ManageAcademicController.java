@@ -48,7 +48,7 @@ public class GUI_ManageAcademicController implements Initializable {
         numberOfStaffField.setText(academic.getStaffNumber() != null ? academic.getStaffNumber() : "");
         namesField.setText(academic.getNames() != null ? academic.getNames() : "");
         surnamesField.setText(academic.getSurnames() != null ? academic.getSurnames() : "");
-        roleChoiceBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMICO);
+        roleChoiceBox.setValue(academic.getRole() != null ? academic.getRole() : Role.ACADEMIC);
     }
 
     @FXML
@@ -125,11 +125,11 @@ public class GUI_ManageAcademicController implements Initializable {
     private Role getRoleFromText(String text) {
         switch (text) {
             case "Académico":
-                return Role.ACADEMICO;
+                return Role.ACADEMIC;
             case "Académico Evaluador":
-                return Role.ACADEMICO_EVALUADOR;
+                return Role.EVALUATOR_ACADEMIC;
             case "Coordinador":
-                return Role.COORDINADOR;
+                return Role.COORDINATOR;
             default:
                 throw new IllegalArgumentException("Rol no válido: " + text);
         }

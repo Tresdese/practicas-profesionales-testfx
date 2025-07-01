@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 public class GUI_RegisterAcademicController {
 
@@ -150,18 +149,18 @@ public class GUI_RegisterAcademicController {
     public void setRoles() {
         roleBox.getItems().clear();
         roleBox.getItems().addAll(
-                Role.ACADEMICO,
-                Role.ACADEMICO_EVALUADOR,
-                Role.COORDINADOR
+                Role.ACADEMIC,
+                Role.EVALUATOR_ACADEMIC,
+                Role.COORDINATOR
         );
         roleBox.setConverter(new StringConverter<Role>() {
             @Override
             public String toString(Role role) {
                 if (role == null) return "";
                 return switch (role) {
-                    case ACADEMICO -> "Académico";
-                    case ACADEMICO_EVALUADOR -> "Académico Evaluador";
-                    case COORDINADOR -> "Coordinador";
+                    case ACADEMIC -> "Académico";
+                    case EVALUATOR_ACADEMIC -> "Académico Evaluador";
+                    case COORDINATOR -> "Coordinador";
                     default -> "";
                 };
             }
@@ -174,14 +173,14 @@ public class GUI_RegisterAcademicController {
 
     private Role getRoleFromText(String text) {
         return switch (text) {
-            case "Académico" -> Role.ACADEMICO;
-            case "Académico Evaluador" -> Role.ACADEMICO_EVALUADOR;
-            case "Coordinador" -> Role.COORDINADOR;
+            case "Académico" -> Role.ACADEMIC;
+            case "Académico Evaluador" -> Role.EVALUATOR_ACADEMIC;
+            case "Coordinador" -> Role.COORDINATOR;
             default -> {
                 statusLabel.setText("Rol no válido");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Rol no válido: {}", text);
-                yield Role.ACADEMICO;
+                yield Role.ACADEMIC;
             }
         };
     }

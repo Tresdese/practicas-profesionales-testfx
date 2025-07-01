@@ -49,7 +49,7 @@ public class RegisterGroupControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -102,7 +102,7 @@ public class RegisterGroupControllerTest extends ApplicationTest {
             statement.setString(3, "Apellido");
             statement.setString(4, "usuarioTest");
             statement.setString(5, "passTest");
-            statement.setString(6, Role.ACADEMICO.toString());
+            statement.setString(6, Role.ACADEMIC.toString());
             statement.executeUpdate();
             try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -206,7 +206,7 @@ public class RegisterGroupControllerTest extends ApplicationTest {
         assertThat(academicBox.getItems()).isNotEmpty();
 
         for (UserDTO user : academicBox.getItems()) {
-            assertThat(user.getRole()).isEqualTo(Role.ACADEMICO);
+            assertThat(user.getRole()).isEqualTo(Role.ACADEMIC);
         }
         assertThat(academicBox.getItems().size()).isGreaterThan(0);
     }

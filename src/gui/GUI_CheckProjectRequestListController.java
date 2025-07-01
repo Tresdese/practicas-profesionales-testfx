@@ -61,16 +61,7 @@ public class GUI_CheckProjectRequestListController {
     private ComboBox<String> filterComboBox;
 
     @FXML
-    private Button searchButton;
-
-    @FXML
-    private Button clearButton;
-
-    @FXML
-    private Button registerRequestButton;
-
-    @FXML
-    private Button refreshListButton;
+    private Button searchButton, clearButton, registerRequestButton, manageRequestButton, refreshListButton;
 
     @FXML
     private Label statusLabel;
@@ -116,7 +107,16 @@ public class GUI_CheckProjectRequestListController {
         filterComboBox.setOnAction(event -> loadRequestData());
 
         loadRequestData();
+        setButtons();
 
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedRequest = newValue;
+            manageRequestButton.setDisable(selectedRequest == null);
+            tableView.refresh();
+        });
+    }
+
+    private void setButtons() {
         searchButton.setOnAction(event -> searchRequest());
         clearButton.setOnAction(event -> {
             searchField.clear();
@@ -125,10 +125,14 @@ public class GUI_CheckProjectRequestListController {
         });
         registerRequestButton.setOnAction(event -> openRegisterRequestWindow());
         refreshListButton.setOnAction(event -> loadRequestData());
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedRequest = newValue;
-            tableView.refresh();
+        manageRequestButton.setDisable(true);
+        manageRequestButton.setOnAction(event -> {
+            if (selectedRequest != null) {
+                openManageProjectRequestWindow(selectedRequest);
+            } else {
+                statusLabel.setText("Seleccione una solicitud para gestionar.");
+                statusLabel.setTextFill(Color.RED);
+            }
         });
     }
 
@@ -138,10 +142,10 @@ public class GUI_CheckProjectRequestListController {
     }
 
     private void applyRolRestrictions() {
-        if (userRole == Role.COORDINADOR) {
-            registerRequestButton.setVisible(false);
-        } else if (userRole == Role.ACADEMICO) {
-            registerRequestButton.setVisible(false);
+        if (userRole == Role.COORDINATOR) {
+            registerRequestButton.setVisible(true);
+        } else if (userRole == Role.ACADEMIC) {
+            registerRequestButton.setVisible(true);
         } else {
             registerRequestButton.setVisible(false);
         }
@@ -216,6 +220,7 @@ public class GUI_CheckProjectRequestListController {
 
     private void setAllCellValueFactories() {
         projectNameColumn.setCellValueFactory(cellData -> {
+            SimpleStringProperty projectNameProperty = new SimpleStringProperty();
             String projectName = cellData.getValue().getProjectName();
             return new SimpleStringProperty(
                     (projectName != null && !projectName.isEmpty()) ? projectName : "N/A"
@@ -229,93 +234,100 @@ public class GUI_CheckProjectRequestListController {
                 new SimpleStringProperty(cellData.getValue().getDescription()));
 
         organizationIdColumn.setCellValueFactory(cellData -> {
+            SimpleStringProperty projectNameProperty = new SimpleStringProperty();
             try {
                 String orgId = cellData.getValue().getOrganizationId();
                 if (orgId != null && !orgId.isEmpty()) {
-                    String orgName = organizationDAO.getOrganizationNameById(orgId);
-                    return new SimpleStringProperty(orgName != null && !orgName.isEmpty() ?
-                            orgName : "No encontrado");
+                    String organizationName = organizationDAO.getOrganizationNameById(orgId);
+                    return new SimpleStringProperty(organizationName != null && !organizationName.isEmpty() ?
+                            organizationName : "No encontrado");
+                } else {
+                    return new SimpleStringProperty("N/A");
                 }
-                return new SimpleStringProperty("N/A");
             } catch (SQLException e) {
                 String sqlState = e.getSQLState();
                 if (sqlState != null && sqlState.equals("08001")) {
                     LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Error de conexión con la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de conexión con la base de datos al obtener nombre de organización.");
+                    projectNameProperty = new SimpleStringProperty("Error de conexión con la base de datos al obtener nombre de organización.");
                 } else if (sqlState != null && sqlState.equals("08S01")) {
                     LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Conexión interrumpida con la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de conexión interrumpida al obtener nombre de organización.");
+                    projectNameProperty = new SimpleStringProperty("Error de conexión interrumpida al obtener nombre de organización.");
                 } else if (sqlState != null && sqlState.equals("42000")) {
                     LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                     statusLabel.setText("Base de datos desconocida.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de base de datos desconocida al obtener nombre de organización.");
+                    projectNameProperty = new SimpleStringProperty("Error de base de datos desconocida al obtener nombre de organización.");
                 } else if (sqlState != null && sqlState.equals("28000")) {
                     LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Acceso denegado a la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de acceso denegado al obtener nombre de organización.");
+                    projectNameProperty = new SimpleStringProperty("Error de acceso denegado al obtener nombre de organización.");
                 } else {
                     LOGGER.error("Error de base de datos al obtener nombre de organización: {}", e.getMessage(), e);
                     statusLabel.setText("Error de base de datos al obtener nombre de organización.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de base de datos al obtener nombre de organización.");
+                    projectNameProperty = new SimpleStringProperty("Error de base de datos al obtener nombre de organización.");
                 }
             } catch (Exception e) {
                 LOGGER.error("Error inesperado al obtener nombre de organización: {}", e.getMessage(), e);
                 statusLabel.setText("Error inesperado al obtener nombre de organización.");
                 statusLabel.setTextFill(Color.RED);
-                return new SimpleStringProperty("Error inesperado al obtener nombre de organización.");
+                projectNameProperty = new SimpleStringProperty("Error inesperado al obtener nombre de organización.");
             }
+            return projectNameProperty;
         });
 
         representativeIdColumn.setCellValueFactory(cellData -> {
+            SimpleStringProperty projectNameProperty = new SimpleStringProperty();
             try {
-                String repId = cellData.getValue().getRepresentativeId();
-                if (repId != null && !repId.isEmpty()) {
-                    String repName = representativeDAO.getRepresentativeNameById(repId);
+                String representativeId = cellData.getValue().getRepresentativeId();
+                if (representativeId != null && !representativeId.isEmpty()) {
+                    String repName = representativeDAO.getRepresentativeNameById(representativeId);
                     return new SimpleStringProperty(repName != null && !repName.isEmpty() ?
                             repName : "No encontrado");
+                } else {
+                    return new SimpleStringProperty("N/A");
                 }
-                return new SimpleStringProperty("N/A");
             } catch (SQLException e) {
                 String sqlState = e.getSQLState();
                 if (sqlState != null && sqlState.equals("08001")) {
                     LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Error de conexión con la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de conexión con la base de datos al obtener nombre de representante.");
+                    projectNameProperty = new SimpleStringProperty("Error de conexión con la base de datos al obtener nombre de representante.");
                 } else if (sqlState != null && sqlState.equals("08S01")) {
                     LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Conexión interrumpida con la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de conexión interrumpida al obtener nombre de representante.");
+                    projectNameProperty = new SimpleStringProperty("Error de conexión interrumpida al obtener nombre de representante.");
                 } else if (sqlState != null && sqlState.equals("42000")) {
                     LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                     statusLabel.setText("Base de datos desconocida.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de base de datos desconocida al obtener nombre de representante.");
+                    projectNameProperty = new SimpleStringProperty("Error de base de datos desconocida al obtener nombre de representante.");
                 } else if (sqlState != null && sqlState.equals("28000")) {
                     LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                     statusLabel.setText("Acceso denegado a la base de datos.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de acceso denegado al obtener nombre de representante.");
+                    projectNameProperty = new SimpleStringProperty("Error de acceso denegado al obtener nombre de representante.");
                 } else {
                     LOGGER.error("Error de base de datos al obtener nombre de representante: {}", e.getMessage(), e);
                     statusLabel.setText("Error de base de datos al obtener nombre de representante.");
                     statusLabel.setTextFill(Color.RED);
-                    return new SimpleStringProperty("Error de base de datos al obtener nombre de representante.");
+                    projectNameProperty = new SimpleStringProperty("Error de base de datos al obtener nombre de representante.");
                 }
             } catch (Exception e) {
                 LOGGER.error("Error inesperado al obtener nombre de representante: {}", e.getMessage(), e);
                 statusLabel.setText("Error inesperado al obtener nombre de representante.");
                 statusLabel.setTextFill(Color.RED);
-                return new SimpleStringProperty("Error inesperado al obtener nombre de representante.");
+                projectNameProperty = new SimpleStringProperty("Error inesperado al obtener nombre de representante.");
             }
+
+            return projectNameProperty;
         });
 
         statusColumn.setCellValueFactory(cellData ->
@@ -341,6 +353,9 @@ public class GUI_CheckProjectRequestListController {
 
                 if (matches && statusMatches) {
                     filteredList.add(request);
+                } else {
+                    statusLabel.setText("No se encontraron solicitudes que coincidan con la búsqueda.");
+                    statusLabel.setTextFill(Color.RED);
                 }
             }
         } catch (SQLException e) {
@@ -357,6 +372,14 @@ public class GUI_CheckProjectRequestListController {
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("40S02")) {
+                statusLabel.setText("Tabla no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+            } else if (sqlState != null && sqlState.equals("40S22")) {
+                statusLabel.setText("Columna no encontrada en la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
             } else if (sqlState != null && sqlState.equals("28000")) {
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
@@ -394,7 +417,7 @@ public class GUI_CheckProjectRequestListController {
                     setGraphic(null);
                 } else {
                     ProjectRequestDTO request = getTableView().getItems().get(getIndex());
-                    if (request.getStatus().name().equalsIgnoreCase("pendiente")) {
+                    if (request.getStatus().name().equalsIgnoreCase("Pendiente")) {
                         setGraphic(btnManage);
                     } else {
                         setGraphic(null);

@@ -28,16 +28,22 @@ public class GUI_CheckListOfReportsController implements Initializable {
 
     @FXML
     private TableView<ReportDTO> reportsTableView;
+
     @FXML
     private TableColumn<ReportDTO, String> numberColumn;
+
     @FXML
     private TableColumn<ReportDTO, Date> dateColumn;
+
     @FXML
     private TableColumn<ReportDTO, Integer> hoursColumn;
+
     @FXML
     private TableColumn<ReportDTO, String> objectiveColumn;
+
     @FXML
     private TableColumn<ReportDTO, String> resultColumn;
+
     @FXML
     private TableColumn<ReportDTO, Void> evidenceColumn;
 

@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logic.DAO.ProjectDAO;
 import logic.DTO.ProjectDTO;
-import logic.DTO.Tipe;
+import logic.DTO.Type;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -56,7 +56,7 @@ public class RegisterPresentationControllerTest extends ApplicationTest {
     private void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -175,8 +175,8 @@ public class RegisterPresentationControllerTest extends ApplicationTest {
             TextField timeField = lookup("#timeField").query();
             timeField.setText("10:00");
 
-            ComboBox<Tipe> typeBox = lookup("#typeComboBox").query();
-            typeBox.getSelectionModel().select(Tipe.Parcial);
+            ComboBox<Type> typeBox = lookup("#typeComboBox").query();
+            typeBox.getSelectionModel().select(Type.Partial);
         });
 
         WaitForAsyncUtils.waitForFxEvents();
@@ -199,8 +199,8 @@ public class RegisterPresentationControllerTest extends ApplicationTest {
             TextField timeField = lookup("#timeField").query();
             timeField.setText("10:00");
 
-            ComboBox<Tipe> typeBox = lookup("#typeComboBox").query();
-            typeBox.getSelectionModel().select(Tipe.Parcial);
+            ComboBox<Type> typeBox = lookup("#typeComboBox").query();
+            typeBox.getSelectionModel().select(Type.Partial);
         });
 
         WaitForAsyncUtils.waitForFxEvents();

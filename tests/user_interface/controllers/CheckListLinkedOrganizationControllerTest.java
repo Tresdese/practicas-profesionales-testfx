@@ -15,7 +15,6 @@ import org.testfx.util.WaitForAsyncUtils;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.List;
 
 import static org.testfx.assertions.api.Assertions.assertThat;
 
@@ -40,7 +39,7 @@ public class CheckListLinkedOrganizationControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 

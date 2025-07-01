@@ -38,7 +38,7 @@ class EvaluationPresentationDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, Exception {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         userDAO = new UserDAO();
         departmentDAO = new DepartmentDAO();
         organizationDAO = new LinkedOrganizationDAO();
@@ -88,7 +88,7 @@ class EvaluationPresentationDAOTest {
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
         // User
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
@@ -142,7 +142,7 @@ class EvaluationPresentationDAOTest {
                 1,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         presentationDAO.insertProjectPresentation(presentation);
         presentationId = presentationDAO.getAllProjectPresentations().get(0).getIdPresentation();

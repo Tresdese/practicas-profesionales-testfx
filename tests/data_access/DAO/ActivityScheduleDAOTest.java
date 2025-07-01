@@ -22,7 +22,7 @@ class ActivityScheduleDAOTest {
 
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
-        connection = new ConnectionDataBase().connectDB();
+        connection = new ConnectionDataBase().connectDataBase();
         activityScheduleDAO = new ActivityScheduleDAO();
         clearTablesAndResetAutoIncrement();
         createBaseRecords();
@@ -320,7 +320,7 @@ class ActivityScheduleDAOTest {
     @Test
     void testOperationWithClosedConnection() throws Exception {
         ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-        Connection connection = connectionDataBase.connectDB();
+        Connection connection = connectionDataBase.connectDataBase();
         connection.close();
 
         assertThrows(SQLException.class, () -> {

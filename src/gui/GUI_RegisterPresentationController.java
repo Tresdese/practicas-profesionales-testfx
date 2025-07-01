@@ -7,7 +7,7 @@ import logic.DAO.ProjectDAO;
 import logic.DAO.ProjectPresentationDAO;
 import logic.DTO.ProjectDTO;
 import logic.DTO.ProjectPresentationDTO;
-import logic.DTO.Tipe;
+import logic.DTO.Type;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,7 @@ public class GUI_RegisterPresentationController {
     @FXML
     private TextField timeField;
     @FXML
-    private ComboBox<Tipe> typeComboBox;
+    private ComboBox<Type> typeComboBox;
     @FXML
     private Button registerButton;
     @FXML
@@ -94,7 +94,7 @@ public class GUI_RegisterPresentationController {
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error al cargar proyectos: ", e);
         }
-        typeComboBox.getItems().setAll(Tipe.values());
+        typeComboBox.getItems().setAll(Type.values());
         registerButton.setOnAction(event -> handleRegister());
     }
 
@@ -108,7 +108,7 @@ public class GUI_RegisterPresentationController {
             String idProject = selectedProject.getIdProject();
             String dateString = dateField.getValue().toString() + " " + timeField.getText().trim() + ":00";
             Timestamp date = Timestamp.valueOf(dateString);
-            Tipe type = typeComboBox.getValue();
+            Type type = typeComboBox.getValue();
 
             ProjectPresentationDTO dto = new ProjectPresentationDTO(idProject, date, type);
             boolean success = dao.insertProjectPresentation(dto);

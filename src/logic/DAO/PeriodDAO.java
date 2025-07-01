@@ -27,7 +27,7 @@ public class PeriodDAO implements IPeriodDAO {
             return false;
         }
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, period.getIdPeriod());
             statement.setString(2, period.getName());
@@ -40,7 +40,7 @@ public class PeriodDAO implements IPeriodDAO {
     @Override
     public boolean updatePeriod(PeriodDTO period) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, period.getName());
             statement.setTimestamp(2, period.getStartDate());
@@ -53,7 +53,7 @@ public class PeriodDAO implements IPeriodDAO {
     @Override
     public boolean deletePeriodById(String idPeriod) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, idPeriod);
             return statement.executeUpdate() > 0;
@@ -64,7 +64,7 @@ public class PeriodDAO implements IPeriodDAO {
     public PeriodDTO searchPeriodById(String idPeriod) throws SQLException, IOException {
         PeriodDTO period = new PeriodDTO("N/A", "N/A", java.sql.Timestamp.valueOf("0404-01-01 00:00:00"), java.sql.Timestamp.valueOf("0404-01-01 00:00:00"));
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, idPeriod);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -80,7 +80,7 @@ public class PeriodDAO implements IPeriodDAO {
     public List<PeriodDTO> getAllPeriods() throws SQLException, IOException {
         List<PeriodDTO> periods = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -94,7 +94,7 @@ public class PeriodDAO implements IPeriodDAO {
     public boolean isIdRegistered(String id) throws SQLException, IOException {
         boolean success = false;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_ID)) {
             statement.setString(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {

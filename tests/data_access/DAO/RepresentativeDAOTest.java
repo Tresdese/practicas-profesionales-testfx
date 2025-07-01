@@ -25,7 +25,7 @@ class RepresentativeDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         clearTablesAndResetAutoIncrement();
         createBaseOrganization();
     }
@@ -229,8 +229,8 @@ class RepresentativeDAOTest {
 
     // Busca por nombre y apellido que no existen y espera un resultado null
     @Test
-    void searchRepresentativeByFullnameReturnsNullWhenNotExists() throws SQLException, IOException {
-        RepresentativeDTO found = representativeDAO.searchRepresentativeByFullname("NombreInexistente", "ApellidoInexistente");
+    void searchRepresentativeByFirstNameReturnsNullWhenNotExists() throws SQLException, IOException {
+        RepresentativeDTO found = representativeDAO.searchRepresentativeByFirstName("NombreInexistente");
         assertNull(found, "Debe retornar null si no existe el representante");
     }
 

@@ -18,22 +18,22 @@ public class ServiceConfig {
     }
 
     public UserService getUserService() throws SQLException {
-        Connection connection = connectionDB.connectDB();
+        Connection connection = connectionDB.connectDataBase();
         return new UserService();
     }
 
     public LinkedOrganizationService getLinkedOrganizationService() throws SQLException {
-        Connection connection = connectionDB.connectDB();
+        Connection connection = connectionDB.connectDataBase();
         return new LinkedOrganizationService(connection);
     }
 
     public RepresentativeService getRepresentativeService() throws SQLException {
-        Connection connection = connectionDB.connectDB();
+        Connection connection = connectionDB.connectDataBase();
         return new RepresentativeService(connection);
     }
 
     public ProjectService getProjectService() throws SQLException {
-        Connection connection = connectionDB.connectDB();
+        Connection connection = connectionDB.connectDataBase();
         return new ProjectService(connection);
     }
 

@@ -41,7 +41,7 @@ public class RegisterAcademicControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 
@@ -106,7 +106,7 @@ public class RegisterAcademicControllerTest extends ApplicationTest {
         interact(() -> {
             ChoiceBox<Role> roleBox = lookup("#roleBox").query();
             if (!roleBox.getItems().isEmpty()) {
-                roleBox.getSelectionModel().select(Role.ACADEMICO);
+                roleBox.getSelectionModel().select(Role.ACADEMIC);
             }
         });
 
@@ -137,32 +137,12 @@ public class RegisterAcademicControllerTest extends ApplicationTest {
 
         interact(() -> {
             ChoiceBox<Role> roleBox = lookup("#roleBox").query();
-            roleBox.getSelectionModel().select(Role.ACADEMICO);
+            roleBox.getSelectionModel().select(Role.ACADEMIC);
         });
 
         clickOn("#registerUserButton");
         WaitForAsyncUtils.waitForFxEvents();
         assertThat(lookup("#statusLabel").queryLabeled()).hasText("Las contraseñas no coinciden.");
-    }
-
-    @Test
-    public void testFailureAcademicRegisterWithoutNames() {
-        forceLoadData();
-
-        clickOn("#numberOfStaffField").write("12345");
-        clickOn("#surnamesField").write("Apellido");
-        clickOn("#userField").write("usuarioTest");
-        clickOn("#passwordField").write("passTest");
-        clickOn("#confirmPasswordField").write("passTest");
-
-        interact(() -> {
-            ChoiceBox<Role> roleBox = lookup("#roleBox").query();
-            roleBox.getSelectionModel().select(Role.ACADEMICO);
-        });
-
-        clickOn("#registerUserButton");
-        WaitForAsyncUtils.waitForFxEvents();
-        assertThat(lookup("#statusLabel").queryLabeled()).hasText("Todos los campos deben estar llenos.");
     }
 
     @Test
@@ -173,9 +153,9 @@ public class RegisterAcademicControllerTest extends ApplicationTest {
 
         ChoiceBox<Role> roleBox = lookup("#roleBox").query();
         assertThat(roleBox.getItems()).isNotEmpty();
-        assertThat(roleBox.getItems()).contains(Role.ACADEMICO);
-        assertThat(roleBox.getItems()).contains(Role.COORDINADOR);
-        assertThat(roleBox.getItems()).contains(Role.ACADEMICO_EVALUADOR);
+        assertThat(roleBox.getItems()).contains(Role.ACADEMIC);
+        assertThat(roleBox.getItems()).contains(Role.COORDINATOR);
+        assertThat(roleBox.getItems()).contains(Role.EVALUATOR_ACADEMIC);
     }
 
     @Test

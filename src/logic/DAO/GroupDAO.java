@@ -21,7 +21,7 @@ public class GroupDAO  implements IGroupDAO {
 
     public boolean insertGroup(GroupDTO group) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, group.getNRC());
             statement.setString(2, group.getName());
@@ -33,7 +33,7 @@ public class GroupDAO  implements IGroupDAO {
 
     public boolean updateGroup(GroupDTO group) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, group.getName());
             statement.setString(2, group.getIdUser());
@@ -45,7 +45,7 @@ public class GroupDAO  implements IGroupDAO {
 
     public boolean deleteGroup(String NRC) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, NRC);
             return statement.executeUpdate() > 0;
@@ -55,7 +55,7 @@ public class GroupDAO  implements IGroupDAO {
     public GroupDTO searchGroupById(String NRC) throws SQLException, IOException {
         GroupDTO group = new GroupDTO("N/A", "N/A", "N/A", "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, NRC);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -70,7 +70,7 @@ public class GroupDAO  implements IGroupDAO {
     public List<GroupDTO> getAllGroups() throws SQLException, IOException {
         List<GroupDTO> groups = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

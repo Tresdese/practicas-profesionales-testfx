@@ -18,7 +18,7 @@ public interface IRepresentativeDAO {
 
     boolean isRepresentativeEmailRegistered(String email) throws SQLException, IOException;
 
-    RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException, IOException;
+    RepresentativeDTO searchRepresentativeByFirstName(String names) throws SQLException, IOException;
 
     String getRepresentativeNameById(String idRepresentative) throws SQLException, IOException;
 

@@ -25,7 +25,7 @@ public class DepartmentDAO implements IDeparmentDAO {
 
     public boolean insertDepartment(DepartmentDTO department) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, department.getName());
             statement.setString(2, department.getDescription());
@@ -37,7 +37,7 @@ public class DepartmentDAO implements IDeparmentDAO {
 
     public boolean updateDepartment(DepartmentDTO department) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setString(1, department.getName());
             statement.setString(2, department.getDescription());
@@ -49,7 +49,7 @@ public class DepartmentDAO implements IDeparmentDAO {
 
     public boolean updateDepartmentStatus(int departmentId, int status) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
             statement.setInt(1, status);
             statement.setInt(2, departmentId);
@@ -59,7 +59,7 @@ public class DepartmentDAO implements IDeparmentDAO {
 
     public boolean deleteDepartment(int departmentId) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, departmentId);
             return statement.executeUpdate() > 0;
@@ -69,7 +69,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     public DepartmentDTO searchDepartmentById(int departmentId) throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(-1, "N/A", "N/A", -1, 0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, departmentId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -90,7 +90,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     public int getOrganizationIdByDepartmentId(int departmentId) throws SQLException, IOException {
         int organizationId = -1;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ORGANIZATION_ID_BY_DEPARTMENT_ID)) {
             statement.setInt(1, departmentId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -105,7 +105,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     public List<DepartmentDTO> getAllDepartmentsByOrganizationId(int organizationId) throws SQLException, IOException {
         List<DepartmentDTO> departments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ORGANIZATION_ID)) {
             statement.setInt(1, organizationId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -126,7 +126,7 @@ public class DepartmentDAO implements IDeparmentDAO {
     public List<DepartmentDTO> getAllDepartments() throws SQLException, IOException {
         List<DepartmentDTO> departments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

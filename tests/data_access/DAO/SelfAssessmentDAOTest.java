@@ -28,7 +28,7 @@ class SelfAssessmentDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         clearTablesAndResetAutoIncrement();
         createBaseObjects();
         selfAssessmentDAO = new SelfAssessmentDAO();

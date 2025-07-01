@@ -27,7 +27,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean insertStudent(StudentDTO student) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setString(1, student.getTuition());
             statement.setInt(2, student.getState());
@@ -46,7 +46,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean updateStudent(StudentDTO student) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setInt(1, student.getState());
             statement.setString(2, student.getNames());
@@ -65,7 +65,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean updateStudentStatus(String tuiton, int state) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
             statement.setInt(1, state);
             statement.setString(2, tuiton);
@@ -75,7 +75,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean deleteStudent(String tuiton) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setString(1, tuiton);
             return statement.executeUpdate() > 0;
@@ -85,7 +85,7 @@ public class StudentDAO implements IStudentDAO {
     public StudentDTO searchStudentByTuition(String tuiton) throws SQLException, IOException {
         StudentDTO student = new StudentDTO("N/A", 0, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0.0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -112,7 +112,7 @@ public class StudentDAO implements IStudentDAO {
     public List<StudentDTO> getAllStudents() throws SQLException, IOException {
         List<StudentDTO> students = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -137,7 +137,7 @@ public class StudentDAO implements IStudentDAO {
     public StudentDTO searchStudentByUserAndPassword(String username, String password) throws SQLException, IOException {
         StudentDTO student = new StudentDTO("N/A", 0, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0.0);
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_USER_AND_PASSWORD)) {
             statement.setString(1, username);
             statement.setString(2, password);
@@ -164,7 +164,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean isTuitonRegistered(String tuiton) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_TUITION)) {
             statement.setString(1, tuiton);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -178,7 +178,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean isPhoneRegistered(String phone) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_PHONE)) {
             statement.setString(1, phone);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -192,7 +192,7 @@ public class StudentDAO implements IStudentDAO {
 
     public boolean isEmailRegistered(String email) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_COUNT_BY_EMAIL)) {
             statement.setString(1, email);
             try (ResultSet resultSet = statement.executeQuery()) {

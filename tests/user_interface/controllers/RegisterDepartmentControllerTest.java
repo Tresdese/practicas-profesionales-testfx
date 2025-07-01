@@ -5,8 +5,6 @@ import gui.GUI_RegisterDepartmentController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logic.DAO.DepartmentDAO;
 import logic.DAO.LinkedOrganizationDAO;
@@ -46,7 +44,7 @@ public class RegisterDepartmentControllerTest extends ApplicationTest {
     void connectToDatabase() throws SQLException, IOException {
         if (connection == null || connection.isClosed()) {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         }
     }
 

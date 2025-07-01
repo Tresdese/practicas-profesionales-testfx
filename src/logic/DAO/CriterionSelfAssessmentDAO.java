@@ -22,7 +22,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
 
     public boolean insertCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
             statement.setInt(1, criterionSelfAssessment.getIdSelfAssessment());
             statement.setInt(2, criterionSelfAssessment.getIdCriteria());
@@ -34,7 +34,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
 
     public boolean updateCriterionSelfAssessment(CriterionSelfAssessmentDTO criterionSelfAssessment) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setFloat(1, criterionSelfAssessment.getGrade());
             statement.setString(2, criterionSelfAssessment.getComments());
@@ -46,7 +46,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
 
     public boolean deleteCriterionSelfAssessment(int idSelfAssessment, int idCriteria) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
             statement.setInt(1, idSelfAssessment);
             statement.setInt(2, idCriteria);
@@ -57,7 +57,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
     public CriterionSelfAssessmentDTO searchCriterionSelfAssessmentByIdIdSelfAssessmentAndIdCriteria(int idSelfAssessment, int idCriteria) throws SQLException, IOException {
         CriterionSelfAssessmentDTO selfAssessment = new CriterionSelfAssessmentDTO(0, 0, -1f, "N/A");
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
             statement.setInt(1, idSelfAssessment);
             statement.setInt(2, idCriteria);
@@ -73,7 +73,7 @@ public class CriterionSelfAssessmentDAO implements ICriterionSelfAssessmentDAO {
     public List<CriterionSelfAssessmentDTO> getAllCriterionSelfAssessments() throws SQLException, IOException {
         List<CriterionSelfAssessmentDTO> criterionSelfAssessments = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {

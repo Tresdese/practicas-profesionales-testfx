@@ -2,6 +2,7 @@ package logic.DAO;
 
 import data_access.ConnectionDataBase;
 import logic.DTO.ProjectRequestDTO;
+import logic.DTO.ProjectStatus;
 import logic.interfaces.IProjectRequestDAO;
 
 import java.io.IOException;
@@ -21,88 +22,88 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     @Override
     public boolean insertProjectRequest(ProjectRequestDTO request) throws SQLException, IOException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_INSERT)) {
-
-            stmt.setString(1, request.getTuition());
-            stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
-            stmt.setString(3, request.getProjectName());
-            stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
-            stmt.setString(5, request.getDescription());
-            stmt.setString(6, request.getGeneralObjective());
-            stmt.setString(7, request.getImmediateObjectives());
-            stmt.setString(8, request.getMediateObjectives());
-            stmt.setString(9, request.getMethodology());
-            stmt.setString(10, request.getResources());
-            stmt.setString(11, request.getActivities());
-            stmt.setString(12, request.getResponsibilities());
-            stmt.setInt(13, request.getDuration());
-            stmt.setString(14, request.getScheduleDays());
-            stmt.setInt(15, request.getDirectUsers());
-            stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().name());
-            return stmt.executeUpdate() > 0;
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT)) {
+            statement.setString(1, request.getTuition());
+            statement.setInt(2, Integer.parseInt(request.getOrganizationId()));
+            statement.setString(3, request.getProjectName());
+            statement.setInt(4, Integer.parseInt(request.getRepresentativeId()));
+            statement.setString(5, request.getDescription());
+            statement.setString(6, request.getGeneralObjective());
+            statement.setString(7, request.getImmediateObjectives());
+            statement.setString(8, request.getMediateObjectives());
+            statement.setString(9, request.getMethodology());
+            statement.setString(10, request.getResources());
+            statement.setString(11, request.getActivities());
+            statement.setString(12, request.getResponsibilities());
+            statement.setInt(13, request.getDuration());
+            statement.setString(14, request.getScheduleDays());
+            statement.setInt(15, request.getDirectUsers());
+            statement.setInt(16, request.getIndirectUsers());
+            statement.setString(17, request.getStatus().getDataBaseValue());
+            return statement.executeUpdate() > 0;
         }
     }
 
     @Override
     public boolean updateProjectRequest(ProjectRequestDTO request) throws SQLException, IOException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE)) {
-            stmt.setString(1, request.getTuition());
-            stmt.setInt(2, Integer.parseInt(request.getOrganizationId()));
-            stmt.setString(3, request.getProjectName());
-            stmt.setInt(4, Integer.parseInt(request.getRepresentativeId()));
-            stmt.setString(5, request.getDescription());
-            stmt.setString(6, request.getGeneralObjective());
-            stmt.setString(7, request.getImmediateObjectives());
-            stmt.setString(8, request.getMediateObjectives());
-            stmt.setString(9, request.getMethodology());
-            stmt.setString(10, request.getResources());
-            stmt.setString(11, request.getActivities());
-            stmt.setString(12, request.getResponsibilities());
-            stmt.setInt(13, request.getDuration());
-            stmt.setString(14, request.getScheduleDays());
-            stmt.setInt(15, request.getDirectUsers());
-            stmt.setInt(16, request.getIndirectUsers());
-            stmt.setString(17, request.getStatus().name());
-            stmt.setInt(18, request.getRequestId());
-            return stmt.executeUpdate() > 0;
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+            statement.setString(1, request.getTuition());
+            statement.setInt(2, Integer.parseInt(request.getOrganizationId()));
+            statement.setString(3, request.getProjectName());
+            statement.setInt(4, Integer.parseInt(request.getRepresentativeId()));
+            statement.setString(5, request.getDescription());
+            statement.setString(6, request.getGeneralObjective());
+            statement.setString(7, request.getImmediateObjectives());
+            statement.setString(8, request.getMediateObjectives());
+            statement.setString(9, request.getMethodology());
+            statement.setString(10, request.getResources());
+            statement.setString(11, request.getActivities());
+            statement.setString(12, request.getResponsibilities());
+            statement.setInt(13, request.getDuration());
+            statement.setString(14, request.getScheduleDays());
+            statement.setInt(15, request.getDirectUsers());
+            statement.setInt(16, request.getIndirectUsers());
+            statement.setString(17, request.getStatus().getDataBaseValue());
+            statement.setInt(18, request.getRequestId());
+            return statement.executeUpdate() > 0;
         }
     }
 
-    public boolean updateProjectRequestStatus(int requestId, String status) throws SQLException, IOException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_UPDATE_STATUS)) {
-            stmt.setString(1, status);
-            stmt.setInt(2, requestId);
-            return stmt.executeUpdate() > 0;
+    @Override
+    public boolean updateProjectRequestStatus(int requestId, ProjectStatus status) throws SQLException, IOException {
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_STATUS)) {
+            statement.setString(1, status.getDataBaseValue());
+            statement.setInt(2, requestId);
+            return statement.executeUpdate() > 0;
         }
     }
 
     @Override
     public boolean deleteProjectRequest(int requestId) throws SQLException, IOException {
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_DELETE)) {
-            stmt.setInt(1, requestId);
-            return stmt.executeUpdate() > 0;
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_DELETE)) {
+            statement.setInt(1, requestId);
+            return statement.executeUpdate() > 0;
         }
     }
 
     @Override
     public ProjectRequestDTO searchProjectRequestById(int requestId) throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(-1, "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0, "N/A", 0, 0, null, null);
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT)) {
-            stmt.setInt(1, requestId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    request = mapResultSetToDTO(rs);
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT)) {
+            statement.setInt(1, requestId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    request = mapResultSetToDTO(resultSet);
                 }
             }
         }
@@ -111,12 +112,12 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     public List<ProjectRequestDTO> getAllProjectRequests() throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_ALL);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                requests.add(mapResultSetToDTO(rs));
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                requests.add(mapResultSetToDTO(resultSet));
             }
         }
         return requests;
@@ -124,52 +125,52 @@ public class ProjectRequestDAO implements IProjectRequestDAO {
 
     public List<ProjectRequestDTO> getProjectRequestsByTuiton(String tuiton) throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_TUITON)) {
-            stmt.setString(1, tuiton);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    requests.add(mapResultSetToDTO(rs));
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_TUITON)) {
+            statement.setString(1, tuiton);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    requests.add(mapResultSetToDTO(resultSet));
                 }
             }
         }
         return requests;
     }
 
-    public ProjectRequestDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
+    public ProjectRequestDTO mapResultSetToDTO(ResultSet resultSet) throws SQLException {
         return new ProjectRequestDTO(
-                rs.getInt("idSolicitud"),
-                rs.getString("matricula"),
-                String.valueOf(rs.getInt("idOrganizacion")),
-                String.valueOf(rs.getInt("idRepresentante")),
-                rs.getString("nombreProyecto"),
-                rs.getString("descripcion"),
-                rs.getString("objetivoGeneral"),
-                rs.getString("objetivosInmediatos"),
-                rs.getString("objetivosMediatos"),
-                rs.getString("metodologia"),
-                rs.getString("recursos"),
-                rs.getString("actividades"),
-                rs.getString("responsabilidades"),
-                rs.getInt("duracion"),
-                rs.getString("diasHorario"),
-                rs.getInt("usuariosDirectos"),
-                rs.getInt("usuariosIndirectos"),
-                rs.getString("estado"),
-                rs.getString("fechaSolicitud")
+                resultSet.getInt("idSolicitud"),
+                resultSet.getString("matricula"),
+                String.valueOf(resultSet.getInt("idOrganizacion")),
+                String.valueOf(resultSet.getInt("idRepresentante")),
+                resultSet.getString("nombreProyecto"),
+                resultSet.getString("descripcion"),
+                resultSet.getString("objetivoGeneral"),
+                resultSet.getString("objetivosInmediatos"),
+                resultSet.getString("objetivosMediatos"),
+                resultSet.getString("metodologia"),
+                resultSet.getString("recursos"),
+                resultSet.getString("actividades"),
+                resultSet.getString("responsabilidades"),
+                resultSet.getInt("duracion"),
+                resultSet.getString("diasHorario"),
+                resultSet.getInt("usuariosDirectos"),
+                resultSet.getInt("usuariosIndirectos"),
+                ProjectStatus.getValueFromDataBase(resultSet.getString("estado")),
+                resultSet.getString("fechaSolicitud")
         );
     }
 
     public List<ProjectRequestDTO> getProjectRequestsByStatus(String status) throws SQLException, IOException {
         List<ProjectRequestDTO> requests = new ArrayList<>();
-        try (ConnectionDataBase db = new ConnectionDataBase();
-             Connection conn = db.connectDB();
-             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_STATE)) {
-            stmt.setString(1, status);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    requests.add(mapResultSetToDTO(rs));
+        try (ConnectionDataBase dataBase = new ConnectionDataBase();
+             Connection connection = dataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_STATE)) {
+            statement.setString(1, status);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    requests.add(mapResultSetToDTO(resultSet));
                 }
             }
         }

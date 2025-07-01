@@ -29,7 +29,7 @@ class PeriodDAOTest {
     void setUpAll() {
         try {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
             periodDAO = new PeriodDAO();
             clearTable();
             PeriodDTO basePeriod = new PeriodDTO(baseId, baseName, baseStart, baseEnd);

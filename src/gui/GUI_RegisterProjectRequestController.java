@@ -380,7 +380,7 @@ public class GUI_RegisterProjectRequestController {
                     getScheduleDays(),
                     Integer.parseInt(directUsersField.getText()),
                     Integer.parseInt(indirectUsersField.getText()),
-                    ProjectStatus.pendiente.name(),
+                    ProjectStatus.pending,
                     ""
             );
 

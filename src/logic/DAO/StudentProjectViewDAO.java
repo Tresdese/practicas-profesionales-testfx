@@ -1,7 +1,6 @@
 package logic.DAO;
 
 import data_access.ConnectionDataBase;
-import logic.DTO.ProjectDTO;
 import logic.DTO.StudentProjectViewDTO;
 
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class StudentProjectViewDAO {
         logger.info("Ejecutando consulta para idPresentacion: " + presentationId);
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_PRESENTATION_ID)) {
 
             statement.setInt(1, presentationId);

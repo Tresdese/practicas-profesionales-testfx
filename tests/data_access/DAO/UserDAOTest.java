@@ -23,7 +23,7 @@ class UserDAOTest {
     static void setUpAll() {
         try {
             connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDB();
+            connection = connectionDB.connectDataBase();
         } catch (SQLException e) {
             fail("Error de base de datos conectando a la base de datos: " + e.getMessage());
         } catch (IOException e) {
@@ -59,7 +59,7 @@ class UserDAOTest {
                     "Pérez",
                     "juanperez",
                     "password123",
-                    Role.COORDINADOR
+                    Role.COORDINATOR
             );
 
             boolean result = userDAO.insertUser(user);
@@ -82,7 +82,7 @@ class UserDAOTest {
         try {
             UserDTO user = new UserDTO(
                     "2", 1, "54321", "María", "López", "marialopez",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
             UserDTO retrievedUser = userDAO.searchUserById("2");
@@ -102,19 +102,19 @@ class UserDAOTest {
         try {
             UserDTO user = new UserDTO(
                     "3", 1, "12345", "Carlos", "Gómez", "carlosgomez",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
 
             UserDTO updatedUser = new UserDTO(
                     "3", 1, "12345", "Carlos", "Gómez", "carlosgomez",
-                    PasswordHasher.hashPassword("nuevaclave789"), Role.ACADEMICO_EVALUADOR
+                    PasswordHasher.hashPassword("nuevaclave789"), Role.EVALUATOR_ACADEMIC
             );
             assertTrue(userDAO.updateUser(updatedUser), "Actualizacion del usuario debe ser exitosa");
 
             UserDTO retrievedUser = userDAO.searchUserById("3");
             assertEquals("carlosgomez", retrievedUser.getUserName());
-            assertEquals(Role.ACADEMICO_EVALUADOR, retrievedUser.getRole());
+            assertEquals(Role.EVALUATOR_ACADEMIC, retrievedUser.getRole());
         } catch (SQLException e) {
             fail("Error de base de datos en testUpdateUser: " + e.getMessage());
         } catch (IOException e) {
@@ -129,7 +129,7 @@ class UserDAOTest {
         UserDAO userDAO = new UserDAO();
         String idUser = "1001"; // id numérico como String
         UserDTO user = new UserDTO(
-                idUser, 1, "99999", "Test", "Delete", "deleteuser", "password", Role.ACADEMICO_EVALUADOR
+                idUser, 1, "99999", "Test", "Delete", "deleteuser", "password", Role.EVALUATOR_ACADEMIC
         );
         try {
             userDAO.insertUser(user);
@@ -146,12 +146,12 @@ class UserDAOTest {
         try {
             UserDTO user = new UserDTO(
                     "2", 1, "54321", "María", "López", "marialopez1",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
             UserDTO user2 = new UserDTO(
                     "22", 1, "54322", "María", "López", "marialopez2",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user2));
             List<UserDTO> users = userDAO.getAllUsers();
@@ -170,7 +170,7 @@ class UserDAOTest {
     void testInsertUserDuplicate() {
         try {
             UserDTO user = new UserDTO(
-                    "10", 1, "99999", "Duplicado", "Usuario", "duplicado", "clave", Role.ACADEMICO
+                    "10", 1, "99999", "Duplicado", "Usuario", "duplicado", "clave", Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user), "Primer insert debe ser exitoso");
             assertThrows(SQLException.class, () -> userDAO.insertUser(user), "No debería permitir insertar un usuario duplicado");
@@ -239,7 +239,7 @@ class UserDAOTest {
 
             UserDTO user = new UserDTO(
                     idUser, 1, "12345", "Nombre", "Apellido", username,
-                    hashedPassword, Role.ACADEMICO
+                    hashedPassword, Role.ACADEMIC
             );
             userDAO.insertUser(user);
 
@@ -278,7 +278,7 @@ class UserDAOTest {
                 "User",
                 "testuser123",
                 "password",
-                Role.COORDINADOR
+                Role.COORDINATOR
         );
         try {
             userDAO.insertUser(user);
@@ -299,7 +299,7 @@ class UserDAOTest {
         try {
             UserDTO user = new UserDTO(
                     "31", 1, "54322", "María", "López", "marialopez_test",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
             assertTrue(userDAO.isNameRegistered("marialopez_test"), "Deberia detectar nombre de usuario existente");
@@ -321,7 +321,7 @@ class UserDAOTest {
             String username = "marialopez_testid";
             UserDTO user = new UserDTO(
                     idUser, 1, "54321", "María", "López", username,
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMICO
+                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             userDAO.insertUser(user);
 
@@ -355,8 +355,8 @@ class UserDAOTest {
     @Test
     void testInsertUserDuplicateUsername() {
         try {
-            UserDTO user1 = new UserDTO("60", 1, "55555", "Nombre", "Apellido", "usuario60", "clave", Role.ACADEMICO);
-            UserDTO user2 = new UserDTO("61", 1, "55556", "Nombre2", "Apellido2", "usuario60", "clave2", Role.COORDINADOR);
+            UserDTO user1 = new UserDTO("60", 1, "55555", "Nombre", "Apellido", "usuario60", "clave", Role.ACADEMIC);
+            UserDTO user2 = new UserDTO("61", 1, "55556", "Nombre2", "Apellido2", "usuario60", "clave2", Role.COORDINATOR);
             assertTrue(userDAO.insertUser(user1), "Primer insert debe ser exitoso");
             assertThrows(SQLException.class, () -> userDAO.insertUser(user2), "No debería permitir insertar un usuario con nombre de usuario duplicado");
         } catch (SQLException e) {
@@ -381,7 +381,7 @@ class UserDAOTest {
                         "Lopez",
                         "marialopez" + i,
                         "password" + i,
-                        Role.ACADEMICO
+                        Role.ACADEMIC
                 );
                 userDAO.insertUser(user);
             }

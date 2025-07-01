@@ -39,7 +39,7 @@ class ActivityReportDAOTest {
     @BeforeAll
     void setUpAll() throws Exception {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         activityReportDAO = new ActivityReportDAO();
         organizationDAO = new LinkedOrganizationDAO();
         userDAO = new UserDAO();
@@ -111,7 +111,7 @@ class ActivityReportDAOTest {
         LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(organization));
 
-        UserDTO user = new UserDTO(null,1,"12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null,1,"12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);

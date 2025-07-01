@@ -1,55 +1,27 @@
 package logic.DTO;
 
 public enum Role {
-    ACADEMICO {
-        @Override
-        public void performAction1() {
-            System.out.println("Acción 1 realizada por ACADEMICO");
+    ACADEMIC("Academico"),
+    EVALUATOR_ACADEMIC("Academico_Evaluador"),
+    COORDINATOR("Coordinador"),
+    GUEST("Invitado");
+
+    private final String dataBaseValue;
+
+    Role(String dataBaseValue) {
+        this.dataBaseValue = dataBaseValue;
+    }
+
+    public String getDataBaseValue() {
+        return dataBaseValue;
+    }
+
+    public static Role getValueFromDataBase(String dbValue) {
+        for (Role role : values()) {
+            if (role.dataBaseValue.equalsIgnoreCase(dbValue)) {
+                return role;
+            }
         }
-
-        @Override
-        public void performAction2() {
-            System.out.println("Acción 2 realizada por ACADEMICO");
-        }
-    },
-    ACADEMICO_EVALUADOR {
-        @Override
-        public void performAction1() {
-            System.out.println("Acción 1 realizada por ACADEMICO_EVALUADOR");
-        }
-
-        @Override
-        public void performAction2() {
-            System.out.println("Acción 2 realizada por ACADEMICO_EVALUADOR");
-        }
-    },
-
-    GUEST {
-        @Override
-        public void performAction1() {
-            System.out.println("Acción 1 realizada por ACADEMICO_EVALUADOR");
-        }
-
-        @Override
-        public void performAction2() {
-            System.out.println("Acción 2 realizada por ACADEMICO_EVALUADOR");
-        }
-    },
-
-    COORDINADOR {
-        @Override
-        public void performAction1() {
-            System.out.println("Acción 1 realizada por COORDINADOR");
-        }
-
-        @Override
-        public void performAction2() {
-            System.out.println("Acción 2 realizada por COORDINADOR");
-        }
-    };
-
-
-
-    public abstract void performAction1();
-    public abstract void performAction2();
+        throw new IllegalArgumentException("Rol desconocido: " + dbValue);
+    }
 }

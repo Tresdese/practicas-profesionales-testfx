@@ -21,6 +21,7 @@ import static org.testfx.assertions.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ControllerConnectionDataBaseServiceTest extends ApplicationTest {
+    // Para este test, es necesario que el servicio de base de datos esté desconectado.
 
     @Test
     public void loadRegisterProjectWindowWithNoDataBaseService() {

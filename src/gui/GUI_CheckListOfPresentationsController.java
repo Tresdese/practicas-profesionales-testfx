@@ -1,5 +1,5 @@
 package gui;
-
+//TODO test
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -103,7 +103,7 @@ public class GUI_CheckListOfPresentationsController {
                     LOGGER.info("Presentación obtenida: ID=" + presentation.getIdPresentation() +
                             ", Proyecto=" + presentation.getIdProject() +
                             ", Fecha=" + presentation.getDate() +
-                            ", Tipo=" + presentation.getTipe());
+                            ", Tipo=" + presentation.getType());
                 }
                 LOGGER.info("Próximas presentaciones cargadas exitosamente.");
             }

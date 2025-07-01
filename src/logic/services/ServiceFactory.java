@@ -25,7 +25,7 @@ public class ServiceFactory {
 
     public static UserService getUserService() throws SQLException, IOException {
         if (userService == null) {
-            Connection connection = new ConnectionDataBase().connectDB();
+            Connection connection = new ConnectionDataBase().connectDataBase();
             userService = new UserService();
         }
         return userService;

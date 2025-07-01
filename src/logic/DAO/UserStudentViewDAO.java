@@ -22,7 +22,7 @@ public class UserStudentViewDAO {
         logger.info("Ejecutando consulta para obtener registro de vista_estudiante_usuario con matricula: " + matricula);
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_MATRICULA)) {
 
             statement.setString(1, matricula);
@@ -68,7 +68,7 @@ public class UserStudentViewDAO {
         logger.info("Ejecutando consulta para obtener todos los registros de vista_estudiante_usuario");
 
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-             Connection connection = connectionDataBase.connectDB();
+             Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_ALL);
              ResultSet resultSet = statement.executeQuery()) {
 

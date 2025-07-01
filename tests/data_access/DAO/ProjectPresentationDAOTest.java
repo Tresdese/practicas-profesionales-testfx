@@ -30,7 +30,7 @@ class ProjectPresentationDAOTest {
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
         connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDB();
+        connection = connectionDB.connectDataBase();
         userDAO = new UserDAO();
         departmentDAO = new DepartmentDAO();
         linkedOrganizationDAO = new LinkedOrganizationDAO();
@@ -71,7 +71,7 @@ class ProjectPresentationDAOTest {
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMICO);
+        UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
         ProjectDTO project = new ProjectDTO(
@@ -130,7 +130,7 @@ class ProjectPresentationDAOTest {
                 1,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         boolean inserted = projectPresentationDAO.insertProjectPresentation(presentation);
         assertTrue(inserted);
@@ -146,7 +146,7 @@ class ProjectPresentationDAOTest {
                 1,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Final
+                Type.Final
         );
         projectPresentationDAO.insertProjectPresentation(presentation);
 
@@ -156,7 +156,7 @@ class ProjectPresentationDAOTest {
 
         ProjectPresentationDTO found = projectPresentationDAO.searchProjectPresentationById(id);
         assertNotNull(found);
-        assertEquals(Tipe.Final, found.getTipe());
+        assertEquals(Type.Final, found.getType());
     }
 
     @Test
@@ -165,24 +165,24 @@ class ProjectPresentationDAOTest {
                 1,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         projectPresentationDAO.insertProjectPresentation(presentation);
 
         List<ProjectPresentationDTO> presentations = projectPresentationDAO.getAllProjectPresentations();
         ProjectPresentationDTO toUpdate = presentations.get(0);
-        toUpdate.setTipe(Tipe.Final);
+        toUpdate.setType(Type.Final);
 
         boolean updated = projectPresentationDAO.updateProjectPresentation(toUpdate);
         assertTrue(updated);
 
         ProjectPresentationDTO updatedPresentation = projectPresentationDAO.searchProjectPresentationById(toUpdate.getIdPresentation());
-        assertEquals(Tipe.Final, updatedPresentation.getTipe());
+        assertEquals(Type.Final, updatedPresentation.getType());
     }
 
     @Test
     void deleteProjectPresentationSuccessfully() throws SQLException, IOException {
-        ProjectPresentationDTO presentation = new ProjectPresentationDTO(1, projectId, new Timestamp(System.currentTimeMillis()), Tipe.Parcial);
+        ProjectPresentationDTO presentation = new ProjectPresentationDTO(1, projectId, new Timestamp(System.currentTimeMillis()), Type.Partial);
         assertTrue(projectPresentationDAO.insertProjectPresentation(presentation));
 
         assertTrue(projectPresentationDAO.deleteProjectPresentation(presentation.getIdPresentation()));
@@ -192,7 +192,7 @@ class ProjectPresentationDAOTest {
         assertEquals(-1, deleted.getIdPresentation());
         assertEquals("N/A", deleted.getIdProject());
         assertNull(deleted.getDate());
-        assertNull(deleted.getTipe());
+        assertNull(deleted.getType());
     }
 
     @Test
@@ -201,13 +201,13 @@ class ProjectPresentationDAOTest {
                 1,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         ProjectPresentationDTO presentation2 = new ProjectPresentationDTO(
                 2,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Final
+                Type.Final
         );
         projectPresentationDAO.insertProjectPresentation(presentation1);
         projectPresentationDAO.insertProjectPresentation(presentation2);
@@ -222,7 +222,7 @@ class ProjectPresentationDAOTest {
                 1,
                 "9999",
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         assertThrows(SQLException.class, () -> {
             projectPresentationDAO.insertProjectPresentation(invalidPresentation);
@@ -255,7 +255,7 @@ class ProjectPresentationDAOTest {
                 9999,
                 projectId,
                 new java.sql.Timestamp(System.currentTimeMillis()),
-                Tipe.Parcial
+                Type.Partial
         );
         boolean updated = projectPresentationDAO.updateProjectPresentation(nonExistent);
         assertFalse(updated);
@@ -270,11 +270,11 @@ class ProjectPresentationDAOTest {
     @Test
     void insertDuplicateProjectPresentation() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Partial
         );
         assertTrue(projectPresentationDAO.insertProjectPresentation(presentation));
         ProjectPresentationDTO duplicate = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Partial
         );
         assertThrows(SQLException.class, () -> {
             projectPresentationDAO.insertProjectPresentation(duplicate);
@@ -284,17 +284,17 @@ class ProjectPresentationDAOTest {
     @Test
     void searchProjectPresentationsByTypeSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO parcial = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Partial
         );
         ProjectPresentationDTO fin = new ProjectPresentationDTO(
-                2, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Final
+                2, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Final
         );
         projectPresentationDAO.insertProjectPresentation(parcial);
         projectPresentationDAO.insertProjectPresentation(fin);
 
         List<ProjectPresentationDTO> all = projectPresentationDAO.getAllProjectPresentations();
-        long countParcial = all.stream().filter(p -> p.getTipe() == Tipe.Parcial).count();
-        long countFinal = all.stream().filter(p -> p.getTipe() == Tipe.Final).count();
+        long countParcial = all.stream().filter(p -> p.getType() == Type.Partial).count();
+        long countFinal = all.stream().filter(p -> p.getType() == Type.Final).count();
         assertEquals(1, countParcial);
         assertEquals(1, countFinal);
     }
@@ -303,10 +303,10 @@ class ProjectPresentationDAOTest {
     void getUpcomingPresentationsOrderByDateSuccessfully() throws SQLException, IOException {
         long now = System.currentTimeMillis();
         ProjectPresentationDTO future1 = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(now + 86400000), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(now + 86400000), Type.Partial
         );
         ProjectPresentationDTO future2 = new ProjectPresentationDTO(
-                2, projectId, new java.sql.Timestamp(now + 172800000), Tipe.Final
+                2, projectId, new java.sql.Timestamp(now + 172800000), Type.Final
         );
         projectPresentationDAO.insertProjectPresentation(future2);
         projectPresentationDAO.insertProjectPresentation(future1);
@@ -319,7 +319,7 @@ class ProjectPresentationDAOTest {
     @Test
     void insertProjectPresentationWithNullDate() {
         ProjectPresentationDTO nullDate = new ProjectPresentationDTO(
-                1, projectId, null, Tipe.Parcial
+                1, projectId, null, Type.Partial
         );
         assertThrows(SQLException.class, () -> {
             projectPresentationDAO.insertProjectPresentation(nullDate);
@@ -329,19 +329,19 @@ class ProjectPresentationDAOTest {
     @Test
     void partialUpdateProjectPresentationSuccessfully() throws SQLException, IOException {
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
-                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Tipe.Parcial
+                1, projectId, new java.sql.Timestamp(System.currentTimeMillis()), Type.Partial
         );
         projectPresentationDAO.insertProjectPresentation(presentation);
 
         List<ProjectPresentationDTO> list = projectPresentationDAO.getAllProjectPresentations();
         ProjectPresentationDTO toUpdate = list.get(0);
         Timestamp oldDate = toUpdate.getDate();
-        toUpdate.setTipe(Tipe.Final);
+        toUpdate.setType(Type.Final);
         boolean updated = projectPresentationDAO.updateProjectPresentation(toUpdate);
         assertTrue(updated);
 
         ProjectPresentationDTO updatedPresentation = projectPresentationDAO.searchProjectPresentationById(toUpdate.getIdPresentation());
-        assertEquals(Tipe.Final, updatedPresentation.getTipe());
+        assertEquals(Type.Final, updatedPresentation.getType());
         assertEquals(oldDate, updatedPresentation.getDate());
     }
 
@@ -350,7 +350,7 @@ class ProjectPresentationDAOTest {
         int count = 10;
         for (int i = 1; i <= count; i++) {
             ProjectPresentationDTO pres = new ProjectPresentationDTO(
-                    i, projectId, new java.sql.Timestamp(System.currentTimeMillis() + i * 1000), Tipe.Parcial
+                    i, projectId, new java.sql.Timestamp(System.currentTimeMillis() + i * 1000), Type.Partial
             );
             assertTrue(projectPresentationDAO.insertProjectPresentation(pres));
         }

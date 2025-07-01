@@ -61,7 +61,7 @@ public class RepresentativeService {
         return representativeDAO.searchRepresentativeById(id);
     }
 
-    public RepresentativeDTO searchRepresentativeByFullname(String names, String surnames) throws SQLException, IOException {
-        return representativeDAO.searchRepresentativeByFullname(names, surnames);
+    public RepresentativeDTO searchRepresentativeByFirstname(String names) throws SQLException, IOException {
+        return representativeDAO.searchRepresentativeByFirstName(names);
     }
 }
