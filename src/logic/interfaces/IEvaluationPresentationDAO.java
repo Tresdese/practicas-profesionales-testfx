@@ -21,7 +21,7 @@ public interface IEvaluationPresentationDAO {
 
     int getLastInsertedId() throws SQLException, IOException;
 
-    List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException, IOException;
+    List<EvaluationPresentationDTO> getEvaluationPresentationsByTuition(String tuiton) throws SQLException, IOException;
 
     List<EvaluationPresentationDTO> getEvaluationPresentationsByDate(Date date) throws SQLException, IOException;
 

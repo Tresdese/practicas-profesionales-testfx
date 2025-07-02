@@ -183,6 +183,10 @@ public class GUI_LinkActivityToScheduleController implements Initializable {
                 statusLabel.setTextFill(Color.RED);
                 LOGGER.error("Error al vincular la actividad: {}", e.getMessage(), e);
             }
+        } catch (IllegalArgumentException e) {
+            statusLabel.setText(e.getMessage());
+            statusLabel.setTextFill(Color.RED);
+            LOGGER.warn("Validación: {}", e.getMessage());
         } catch (Exception e) {
             statusLabel.setText("Error inesperado al vincular la actividad.");
             statusLabel.setTextFill(Color.RED);

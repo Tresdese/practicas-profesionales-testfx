@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import logic.DAO.SelfAssessmentDAO;
+import logic.DTO.Role;
 import org.junit.jupiter.api.*;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
@@ -97,6 +98,7 @@ public class CheckSelfAssessmentControllerTest extends ApplicationTest {
             statement.setDate(4, java.sql.Date.valueOf("2024-06-30"));
             statement.executeUpdate();
         }
+
         String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sqlUser)) {
             statement.setString(1, testUserId);
@@ -105,7 +107,7 @@ public class CheckSelfAssessmentControllerTest extends ApplicationTest {
             statement.setString(4, "Pérez");
             statement.setString(5, "juanp");
             statement.setString(6, "1234567890123456789012345678901234567890123456789012345678901234");
-            statement.setString(7, "Academico");
+            statement.setString(7, Role.ACADEMIC.getDataBaseValue());
             statement.executeUpdate();
         }
 
@@ -171,8 +173,8 @@ public class CheckSelfAssessmentControllerTest extends ApplicationTest {
             }
         }
 
-        String sqlSelf = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sqlSelf)) {
+        String sqlSelfAssessmentQuery = "INSERT INTO autoevaluacion (comentarios, calificacion, matricula, idProyecto, idEvidencia, fecha_registro, estado, comentarios_generales) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sqlSelfAssessmentQuery)) {
             statement.setString(1, "Buen trabajo");
             statement.setDouble(2, 9.5);
             statement.setString(3, testStudentTuition);
@@ -222,5 +224,10 @@ public class CheckSelfAssessmentControllerTest extends ApplicationTest {
 
         Label noSelfAssessmentLabel = lookup("#noSelfAssessmentLabel").query();
         assertThat(noSelfAssessmentLabel.isVisible()).isTrue();
+    }
+
+    @Test
+    public void testFailureOpenEvidences() {
+
     }
 }

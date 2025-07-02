@@ -29,7 +29,7 @@ class ProjectRequestDAOTest {
     private int organizationId;
     private int userId;
     private int projectId;
-    private String studentTuiton;
+    private String studentTuition;
     private String representativeId;
     private String projectName;
     private int departmentId;
@@ -139,8 +139,8 @@ class ProjectRequestDAOTest {
         List<ProjectDTO> projects = projectDAO.getAllProjects();
         projectId = Integer.parseInt(projects.get(0).getIdProject());
 
-        studentTuiton = "S12345678";
-        StudentDTO student = new StudentDTO(studentTuiton, 1, "Juan", "Perez", "1234567890", "juan.perez@example.com", "juanperez", "password", String.valueOf(TEST_NRC), "50", 0.0);
+        studentTuition = "S12345678";
+        StudentDTO student = new StudentDTO(studentTuition, 1, "Juan", "Perez", "1234567890", "juan.perez@example.com", "juanperez", "password", String.valueOf(TEST_NRC), "50", 0.0);
         studentDAO.insertStudent(student);
     }
 
@@ -167,7 +167,7 @@ class ProjectRequestDAOTest {
     void insertProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0,
-                studentTuiton,
+                studentTuition,
                 String.valueOf(organizationId),
                 String.valueOf(representativeId),
                 projectName,
@@ -194,7 +194,7 @@ class ProjectRequestDAOTest {
         assertFalse(requests.isEmpty(), "Debe haber al menos una solicitud de proyecto");
 
         ProjectRequestDTO insertedRequest = requests.get(0);
-        assertEquals(studentTuiton, insertedRequest.getTuition());
+        assertEquals(studentTuition, insertedRequest.getTuition());
         assertEquals(projectName, insertedRequest.getProjectName());
         assertEquals("Descripción de la solicitud de proyecto", insertedRequest.getDescription());
         assertEquals("Objetivo general de la solicitud", insertedRequest.getGeneralObjective());
@@ -204,7 +204,7 @@ class ProjectRequestDAOTest {
     @Test
     void updateProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
@@ -228,7 +228,7 @@ class ProjectRequestDAOTest {
     void deleteProjectRequestSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
                 0,
-                studentTuiton,
+                studentTuition,
                 String.valueOf(organizationId),
                 String.valueOf(representativeId),
                 "Nombre de prueba",
@@ -269,7 +269,7 @@ class ProjectRequestDAOTest {
     @Test
     void searchProjectRequestByIdSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
@@ -280,18 +280,18 @@ class ProjectRequestDAOTest {
         ProjectRequestDTO found = projectRequestDAO.searchProjectRequestById(id);
         assertNotNull(found);
         assertEquals(id, found.getRequestId());
-        assertEquals(studentTuiton, found.getTuition());
+        assertEquals(studentTuition, found.getTuition());
     }
 
     @Test
     void getAllProjectRequestsSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
         ProjectRequestDTO req2 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName + " 2", "desc2", "objGen2", "objInm2", "objMed2", "met2", "rec2", "act2", "resp2",
                 200, "Martes", 15, 20, ProjectStatus.pending, null
         );
@@ -305,7 +305,7 @@ class ProjectRequestDAOTest {
     @Test
     void updateProjectRequestStatusSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
@@ -330,22 +330,22 @@ class ProjectRequestDAOTest {
     @Test
     void getProjectRequestsByTuitonSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
         ProjectRequestDTO req2 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName + " 2", "desc2", "objGen2", "objInm2", "objMed2", "met2", "rec2", "act2", "resp2",
                 200, "Martes", 15, 20, ProjectStatus.pending, null
         );
         projectRequestDAO.insertProjectRequest(req1);
         projectRequestDAO.insertProjectRequest(req2);
 
-        List<ProjectRequestDTO> requests = projectRequestDAO.getProjectRequestsByTuiton(studentTuiton);
+        List<ProjectRequestDTO> requests = projectRequestDAO.getProjectRequestsByTuiton(studentTuition);
         assertEquals(2, requests.size());
         for (ProjectRequestDTO req : requests) {
-            assertEquals(studentTuiton, req.getTuition());
+            assertEquals(studentTuition, req.getTuition());
         }
     }
 
@@ -360,7 +360,7 @@ class ProjectRequestDAOTest {
     @Test
     void updateNonExistentProjectRequest() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                9999, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                9999, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
@@ -377,12 +377,12 @@ class ProjectRequestDAOTest {
     @Test
     void getProjectRequestsByStatusSuccessfully() throws SQLException, IOException {
         ProjectRequestDTO req1 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc1", "objGen1", "objInm1", "objMed1", "met1", "rec1", "act1", "resp1",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );
         ProjectRequestDTO req2 = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName + " 2", "desc2", "objGen2", "objInm2", "objMed2", "met2", "rec2", "act2", "resp2",
                 200, "Martes", 15, 20, ProjectStatus.approved, null
         );
@@ -401,7 +401,7 @@ class ProjectRequestDAOTest {
     @Test
     void insertDuplicateProjectRequest() throws SQLException, IOException {
         ProjectRequestDTO request = new ProjectRequestDTO(
-                0, studentTuiton, String.valueOf(organizationId), String.valueOf(representativeId),
+                0, studentTuition, String.valueOf(organizationId), String.valueOf(representativeId),
                 projectName, "desc", "objGen", "objInm", "objMed", "met", "rec", "act", "resp",
                 100, "Lunes", 5, 10, ProjectStatus.pending, null
         );

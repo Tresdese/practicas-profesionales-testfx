@@ -60,34 +60,33 @@ class EvaluationPresentationDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE evaluacion_presentacion");
-        stmt.execute("TRUNCATE TABLE presentacion_proyecto");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("ALTER TABLE evaluacion_presentacion AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE evaluacion_presentacion");
+        statement.execute("TRUNCATE TABLE presentacion_proyecto");
+        statement.execute("TRUNCATE TABLE proyecto");
+        statement.execute("TRUNCATE TABLE estudiante");
+        statement.execute("TRUNCATE TABLE grupo");
+        statement.execute("TRUNCATE TABLE periodo");
+        statement.execute("TRUNCATE TABLE usuario");
+        statement.execute("TRUNCATE TABLE departamento");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("ALTER TABLE evaluacion_presentacion AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE presentacion_proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBaseData() throws SQLException, IOException {
-        // Organization
+
         LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
         organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(org));
 
-        // User
         UserDTO user = new UserDTO(null, 1, "12345", "Nombre", "Apellido", "usuarioTest", "passTest", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
@@ -96,17 +95,14 @@ class EvaluationPresentationDAOTest {
         List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
         departmentId = departments.get(0).getDepartmentId();
 
-        // Period
         periodId = 20241;
         PeriodDTO period = new PeriodDTO(String.valueOf(periodId), "2024-1", new java.sql.Timestamp(System.currentTimeMillis()), new java.sql.Timestamp(System.currentTimeMillis() + 1000000));
         periodDAO.insertPeriod(period);
 
-        // Group
         nrc = 12345;
         GroupDTO group = new GroupDTO(String.valueOf(nrc), "Grupo Test", String.valueOf(userId), String.valueOf(periodId));
         groupDAO.insertGroup(group);
 
-        // Student
         StudentDTO student = new StudentDTO(
                 "A12345678",
                 1,
@@ -123,7 +119,6 @@ class EvaluationPresentationDAOTest {
         studentDAO.insertStudent(student);
         studentMatricula = "A12345678";
 
-        // Project
         ProjectDTO project = new ProjectDTO(
                 null,
                 "Proyecto Test",
@@ -137,7 +132,6 @@ class EvaluationPresentationDAOTest {
         projectDAO.insertProject(project);
         projectId = projectDAO.getAllProjects().get(0).getIdProject();
 
-        // Presentation
         ProjectPresentationDTO presentation = new ProjectPresentationDTO(
                 1,
                 projectId,
@@ -149,18 +143,18 @@ class EvaluationPresentationDAOTest {
     }
 
     private int insertUserAndGetId(UserDTO user) throws SQLException {
-        String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, user.getStaffNumber());
-            stmt.setString(2, user.getNames());
-            stmt.setString(3, user.getSurnames());
-            stmt.setString(4, user.getUserName());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        String sqlQuery = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, user.getStaffNumber());
+            statement.setString(2, user.getNames());
+            statement.setString(3, user.getSurnames());
+            statement.setString(4, user.getUserName());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getRole().getDataBaseValue());
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -213,8 +207,8 @@ class EvaluationPresentationDAOTest {
         boolean updated = evaluationDAO.updateEvaluationPresentation(toUpdate);
         assertTrue(updated);
 
-        EvaluationPresentationDTO updatedEval = evaluationDAO.searchEvaluationPresentationById(id);
-        assertEquals(9.0, updatedEval.getAverage());
+        EvaluationPresentationDTO updatedEvaluation = evaluationDAO.searchEvaluationPresentationById(id);
+        assertEquals(9.0, updatedEvaluation.getAverage());
     }
 
     @Test
@@ -273,14 +267,14 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getEvaluationPresentationsByTuiton() throws SQLException, IOException {
+    void getEvaluationPresentationsByTuition() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 9.0
         );
         evaluationDAO.insertEvaluationPresentation(evaluation);
 
-        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuiton(studentMatricula);
+        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuition(studentMatricula);
         assertFalse(list.isEmpty());
         assertEquals(studentMatricula, list.get(0).getTuition());
     }
@@ -295,7 +289,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void updateEvaluationPresentation_notExisting() throws SQLException, IOException {
+    void updateNotExistingEvaluationPresentation() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 9999, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0
@@ -305,26 +299,26 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void deleteEvaluationPresentation_notExisting() throws SQLException, IOException {
+    void deleteNotExistingEvaluationPresentation() throws SQLException, IOException {
         boolean deleted = evaluationDAO.deleteEvaluationPresentation(9999);
         assertFalse(deleted);
     }
 
     @Test
-    void getAllEvaluationPresentations_empty() throws SQLException, IOException {
+    void getAllEvaluationPresentationsWithNoData() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
         List<EvaluationPresentationDTO> list = evaluationDAO.getAllEvaluationPresentations();
         assertTrue(list.isEmpty());
     }
 
     @Test
-    void getEvaluationPresentationsByTuiton_noResults() throws SQLException, IOException {
-        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuiton("NOEXISTE");
+    void getNoResultsEvaluationPresentationsByTuition() throws SQLException, IOException {
+        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuition("NOEXISTE");
         assertTrue(list.isEmpty());
     }
 
     @Test
-    void insertEvaluationPresentation_nullDate() {
+    void insertNullDateEvaluationPresentation() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, null,
                 "Comentario de prueba", 8.0
@@ -333,14 +327,14 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void searchEvaluationPresentationById_notExisting() throws SQLException, IOException {
+    void searchNotExistingEvaluationPresentationById() throws SQLException, IOException {
         int nonExistentId = 99999;
         EvaluationPresentationDTO result = evaluationDAO.searchEvaluationPresentationById(nonExistentId);
         assertEquals(0, result.getIdEvaluation());
     }
 
     @Test
-    void insertEvaluationPresentation_upperLimitAverage() throws SQLException, IOException {
+    void insertEvaluationPresentationWithUpperLimitAverage() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 10.0
@@ -352,7 +346,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void insertEvaluationPresentation_lowerLimitAverage() throws SQLException, IOException {
+    void insertEvaluationPresentationWithLowerLimitAverage() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 0.0
@@ -364,7 +358,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void getEvaluationPresentationsByTuitonMultipleRecords() throws SQLException, IOException {
+    void getEvaluationPresentationsByTuitionMultipleRecords() throws SQLException, IOException {
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                     0, presentationId, studentMatricula, new java.util.Date(),
@@ -372,12 +366,12 @@ class EvaluationPresentationDAOTest {
             );
             evaluationDAO.insertEvaluationPresentation(evaluation);
         }
-        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuiton(studentMatricula);
+        List<EvaluationPresentationDTO> list = evaluationDAO.getEvaluationPresentationsByTuition(studentMatricula);
         assertEquals(3, list.size());
     }
 
     @Test
-    void deleteEvaluationPresentationMultipleRecords() throws SQLException, IOException {
+    void deleteEvaluationPresentationWithMultipleRecords() throws SQLException, IOException {
         int[] ids = new int[3];
         for (int i = 0; i < 3; i++) {
             EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
@@ -399,7 +393,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void insertEvaluationPresentation_nullMatricula() {
+    void insertNullTuitionEvaluationPresentation() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, null, new java.util.Date(),
                 "Comentario de prueba", 8.0
@@ -408,7 +402,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void insertEvaluationPresentation_invalidPresentationId() {
+    void insertInvalidPresentationIdEvaluationPresentation() {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, 9999, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0
@@ -417,7 +411,7 @@ class EvaluationPresentationDAOTest {
     }
 
     @Test
-    void updateEvaluationPresentation_nullDate() throws SQLException, IOException {
+    void updateNullDateEvaluationPresentation() throws SQLException, IOException {
         EvaluationPresentationDTO evaluation = new EvaluationPresentationDTO(
                 0, presentationId, studentMatricula, new java.util.Date(),
                 "Comentario de prueba", 8.0

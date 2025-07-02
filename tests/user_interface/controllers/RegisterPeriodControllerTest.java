@@ -108,6 +108,22 @@ public class RegisterPeriodControllerTest extends ApplicationTest {
     }
 
     @Test
+    public void testFailureRegisterWithInvalidId() {
+        clickOn("#periodLabel").write("abc123");
+        clickOn("#nameField").write("Periodo Invalido");
+
+        interact(() -> {
+            ((DatePicker) lookup("#startDateLabel").query()).setValue(LocalDate.of(2025, 1, 1));
+            ((DatePicker) lookup("#endDateField").query()).setValue(LocalDate.of(2025, 6, 30));
+        });
+
+        clickOn("#registerButton");
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertThat(lookup("#statusLabel").queryLabeled()).hasText("El ID del periodo solo puede contener números.");
+    }
+
+    @Test
     public void testFailureRegisterWithoutFields() {
         clickOn("#registerButton");
         WaitForAsyncUtils.waitForFxEvents();

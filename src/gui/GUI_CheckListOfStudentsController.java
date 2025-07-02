@@ -100,42 +100,42 @@ public class GUI_CheckListOfStudentsController {
     }
 
     public void initialize() {
+        boolean hasInitializationError = false;
+
         try {
             this.studentService = ServiceFactory.getStudentService();
-        } catch (RuntimeException e) {
-            logger.error("Error al inicializar StudentService: {}", e.getMessage(), e);
+        } catch (RuntimeException exception) {
+            logger.error("Error al inicializar StudentService: {}", exception.getMessage(), exception);
             statusLabel.setText("Error interno. Intente más tarde.");
             statusLabel.setTextFill(Color.RED);
-            return;
-        } catch (Exception e) {
-            logger.error("Error inesperado al inicializar StudentService: {}", e.getMessage(), e);
+            hasInitializationError = true;
+        } catch (Exception exception) {
+            logger.error("Error inesperado al inicializar StudentService: {}", exception.getMessage(), exception);
             statusLabel.setText("Error inesperado al inicializar.");
             statusLabel.setTextFill(Color.RED);
-            return;
+            hasInitializationError = true;
         }
 
-        filterChoiceBox.getItems().addAll("Todos", "Mis estudiantes", "Activos", "Inactivos");
-        filterChoiceBox.setValue("Todos");
-        filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> loadStudentData());
+        if (!hasInitializationError) {
+            filterChoiceBox.getItems().addAll("Todos", "Mis estudiantes", "Activos", "Inactivos");
+            filterChoiceBox.setValue("Todos");
+            filterChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> loadStudentData());
 
-        setColumns();
+            setColumns();
+            addDetailsButtonToTable();
+            addManagementButtonToTable();
+            loadStudentData();
+            updateStudentCounts();
+            setButtons();
 
-        addDetailsButtonToTable();
-        addManagementButtonToTable();
-
-        loadStudentData();
-        updateStudentCounts();
-
-        setButtons();
-
-
-        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            selectedStudent = newValue;
-            assignProjectButton.setDisable(selectedStudent == null);
-            reassignProjectButton.setDisable(selectedStudent == null);
-            deleteStudentButton.setDisable(selectedStudent == null);
-            tableView.refresh();
-        });
+            tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                selectedStudent = newValue;
+                assignProjectButton.setDisable(selectedStudent == null);
+                reassignProjectButton.setDisable(selectedStudent == null);
+                deleteStudentButton.setDisable(selectedStudent == null);
+                tableView.refresh();
+            });
+        }
     }
 
     public TableView<StudentDTO> getTableView() {
@@ -187,7 +187,7 @@ public class GUI_CheckListOfStudentsController {
             setButtonVisibilityByRole(registerStudentButton, false);
             setButtonVisibilityByRole(assignProjectButton, true);
             setButtonVisibilityByRole(reassignProjectButton, true);
-            managementColumn.setVisible(false);
+            managementColumn.setVisible(true);
         }
     }
 
@@ -218,99 +218,99 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private void openAssignProjectWindow() {
-        if (selectedStudent == null) {
+        if (selectedStudent != null) {
+            try {
+                GUI_AssignProject.setStudent(selectedStudent);
+                GUI_AssignProject assignProjectApp = new GUI_AssignProject();
+                Stage stage = new Stage();
+                assignProjectApp.start(stage);
+            } catch (NullPointerException e) {
+                logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
+                statusLabel.setText("Error interno: recurso no encontrado");
+                statusLabel.setTextFill(Color.RED);
+            } catch (IllegalStateException e) {
+                logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
+                statusLabel.setText("Error de estado al abrir la ventana");
+                statusLabel.setTextFill(Color.RED);
+            } catch (Exception e) {
+                logger.error("Error inesperado al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
+                statusLabel.setText("Error inesperado al abrir la ventana de asignación de proyecto");
+                statusLabel.setTextFill(Color.RED);
+            }
+        } else {
             statusLabel.setText("Debe seleccionar un estudiante para asignar un proyecto");
-            return;
-        }
-
-        try {
-            GUI_AssignProject.setStudent(selectedStudent);
-            GUI_AssignProject assignProjectApp = new GUI_AssignProject();
-            Stage stage = new Stage();
-            assignProjectApp.start(stage);
-        } catch (NullPointerException e) {
-            logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
-            statusLabel.setText("Error interno: recurso no encontrado");
-            statusLabel.setTextFill(Color.RED);
-        } catch (IllegalStateException e) {
-            logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
-            statusLabel.setText("Error de estado al abrir la ventana");
-            statusLabel.setTextFill(Color.RED);
-        } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de asignación de proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error inesperado al abrir la ventana de asignación de proyecto");
             statusLabel.setTextFill(Color.RED);
         }
     }
 
     private void openReassignProjectWindow() {
-        if (selectedStudent == null) {
+        if (selectedStudent != null) {
+            try {
+                StudentProjectDTO studentProjectDTO = new StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuition());
+                if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
+                    currentProject = new ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
+                }
+                gui.GUI_ReassignProject.setProjectStudent(selectedStudent, currentProject);
+                gui.GUI_ReassignProject reassignProjectApp = new gui.GUI_ReassignProject();
+                Stage stage = new Stage();
+                reassignProjectApp.start(stage);
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("08S01".equals(sqlState)) {
+                    logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("42S22".equals(sqlState)) {
+                    logger.error("Columna desconocida en la tabla proyecto a estudiante base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Columna desconocida en la tabla proyecto a estudiante base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("42S02".equals(sqlState)) {
+                    logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Tabla desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("HY000".equals(sqlState)) {
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("42000".equals(sqlState)) {
+                    logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                } else if ("28000".equals(sqlState)) {
+                    logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                } else {
+                    logger.error("Error de base de datos al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
+                    statusLabel.setText("Error de base de datos al abrir la ventana de reasignación de proyecto");
+                    statusLabel.setTextFill(Color.RED);
+                }
+            } catch (NullPointerException e) {
+                logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
+                statusLabel.setText("Error interno: recurso no encontrado");
+                statusLabel.setTextFill(Color.RED);
+            } catch (IllegalStateException e) {
+                logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
+                statusLabel.setText("Error de estado al abrir la ventana");
+                statusLabel.setTextFill(Color.RED);
+            } catch (IOException e) {
+                logger.error("Error al abrir el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
+                statusLabel.setText("Error al abrir el archivo de configuracion de la base de datos");
+                statusLabel.setTextFill(Color.RED);
+            } catch (Exception e) {
+                logger.error("Error inesperado al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
+                statusLabel.setText("Error inesperado al abrir la ventana de reasignación de proyecto");
+                statusLabel.setTextFill(Color.RED);
+            }
+        } else {
             statusLabel.setText("Debe seleccionar un estudiante para reasignar proyecto");
-            return;
-        }
-        try {
-            StudentProjectDTO studentProjectDTO = new StudentProjectDAO().searchStudentProjectByIdTuiton(selectedStudent.getTuition());
-            if (studentProjectDTO != null && studentProjectDTO.getIdProject() != null && !studentProjectDTO.getIdProject().isEmpty()) {
-                currentProject = new ProjectDAO().searchProjectById(studentProjectDTO.getIdProject());
-            }
-            gui.GUI_ReassignProject.setProjectStudent(selectedStudent, currentProject);
-            gui.GUI_ReassignProject reassignProjectApp = new gui.GUI_ReassignProject();
-            Stage stage = new Stage();
-            reassignProjectApp.start(stage);
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("08S01".equals(sqlState)) {
-                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("42S22".equals(sqlState)) {
-                logger.error("Columna desconocida en la tabla proyecto a estudiante base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Columna desconocida en la tabla proyecto a estudiante base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("42S02".equals(sqlState)) {
-                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Tabla desconocida en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("HY000".equals(sqlState)) {
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("42000".equals(sqlState)) {
-                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-            } else if ("28000".equals(sqlState)) {
-                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-            } else {
-                logger.error("Error de base de datos al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
-                statusLabel.setText("Error de base de datos al abrir la ventana de reasignación de proyecto");
-                statusLabel.setTextFill(Color.RED);
-            }
-        } catch (NullPointerException e) {
-            logger.error("Recurso nulo al abrir la ventana: {}", e.getMessage(), e);
-            statusLabel.setText("Error interno: recurso no encontrado");
-            statusLabel.setTextFill(Color.RED);
-        } catch (IllegalStateException e) {
-            logger.error("Estado ilegal al abrir la ventana: {}", e.getMessage(), e);
-            statusLabel.setText("Error de estado al abrir la ventana");
-            statusLabel.setTextFill(Color.RED);
-        } catch (IOException e) {
-            logger.error("Error al abrir el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
-            statusLabel.setText("Error al abrir el archivo de configuracion de la base de datos");
-            statusLabel.setTextFill(Color.RED);
-        } catch (Exception e) {
-            logger.error("Error inesperado al abrir la ventana de reasignación de proyecto: {}", e.getMessage(), e);
-            statusLabel.setText("Error inesperado al abrir la ventana de reasignación de proyecto");
             statusLabel.setTextFill(Color.RED);
         }
     }
-
 
     public void loadStudentData() {
         ObservableList<StudentDTO> studentList = FXCollections.observableArrayList();
@@ -398,64 +398,64 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private void searchStudent() {
+        ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
         String searchQuery = searchField.getText().trim();
-        if (searchQuery.isEmpty()) {
+
+        if (!searchQuery.isEmpty()) {
+            try {
+                UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
+                UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
+                if (userStudentView != null && userStudentView.getStatus() == 1 &&
+                        (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
+                    filteredList.add(buildStudent(userStudentView));
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                } else if ("HY000".equals(sqlState)) {
+                    statusLabel.setText("Error general de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error general de la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error de base de datos al buscar estudiante.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de base de datos al buscar estudiante: {}", e.getMessage(), e);
+                }
+            } catch (IOException e) {
+                statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            } catch (Exception e) {
+                statusLabel.setText("Error inesperado al buscar estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error inesperado al buscar estudiante: {}", e.getMessage(), e);
+            }
+        } else {
             loadStudentData();
             return;
-        }
-
-        ObservableList<StudentDTO> filteredList = FXCollections.observableArrayList();
-
-        try {
-            UserStudentViewDAO userStudentViewDAO = new UserStudentViewDAO();
-            UserStudentViewDTO userStudentView = userStudentViewDAO.getUserStudentViewByMatricula(searchQuery);
-            if (userStudentView != null && userStudentView.getStatus() == 1 &&
-                    (idUserAcademic == -1 || userStudentView.getUserId() == idUserAcademic)) {
-                filteredList.add(buildStudent(userStudentView));
-            }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if ("42S22".equals(sqlState)) {
-                statusLabel.setText("Columna desconocida en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
-            } else if ("42S02".equals(sqlState)) {
-                statusLabel.setText("Tabla desconocida en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
-            } else if ("HY000".equals(sqlState)) {
-                statusLabel.setText("Error general de la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
-            } else if ("42000".equals(sqlState)) {
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error de base de datos al buscar estudiante.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de base de datos al buscar estudiante: {}", e.getMessage(), e);
-            }
-        } catch (IOException e) {
-            statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
-        } catch (Exception e) {
-            statusLabel.setText("Error inesperado al buscar estudiante.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error inesperado al buscar estudiante: {}", e.getMessage(), e);
         }
 
         tableView.setItems(filteredList);
@@ -593,6 +593,7 @@ public class GUI_CheckListOfStudentsController {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || selectedStudent == null || getTableView().getItems().get(getIndex()) != selectedStudent) {
                     setGraphic(null);
                 } else {
@@ -670,72 +671,76 @@ public class GUI_CheckListOfStudentsController {
     }
 
     private void handleDeleteStudent() {
+        boolean canDelete = true;
+
         if (selectedStudent == null) {
             statusLabel.setText("Debe seleccionar un estudiante para eliminar");
-            return;
+            canDelete = false;
         }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
-            Parent root = loader.load();
-            GUI_ConfirmDialogController confirmController = loader.getController();
-            confirmController.setInformationMessage("Al borrar un estudiante, se cambiará su estado a inactivo y no podrá realizar ninguna actividad.");
-            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar al estudiante " + selectedStudent.getNames() + " " + selectedStudent.getSurnames() + "?");
-            Stage confirmStage = new Stage();
-            confirmStage.setTitle("Confirmar Eliminación");
-            confirmStage.setScene(new Scene(root));
-            confirmStage.showAndWait();
-            if (confirmController.isConfirmed()) {
-                studentService.updateStudentStatus(selectedStudent.getTuition(), 0);
-                statusLabel.setText("Estudiante eliminado correctamente.");
-                loadStudentData();
-                updateStudentCounts();
-            } else {
-                statusLabel.setText("Eliminación cancelada.");
+        if (canDelete) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+                Parent root = loader.load();
+                GUI_ConfirmDialogController confirmController = loader.getController();
+                confirmController.setInformationMessage("Al borrar un estudiante, se cambiará su estado a inactivo y no podrá realizar ninguna actividad.");
+                confirmController.setConfirmMessage("¿Está seguro de que desea eliminar al estudiante " + selectedStudent.getNames() + " " + selectedStudent.getSurnames() + "?");
+                Stage confirmStage = new Stage();
+                confirmStage.setTitle("Confirmar Eliminación");
+                confirmStage.setScene(new Scene(root));
+                confirmStage.showAndWait();
+                if (confirmController.isConfirmed()) {
+                    studentService.updateStudentStatus(selectedStudent.getTuition(), 0);
+                    statusLabel.setText("Estudiante eliminado correctamente.");
+                    loadStudentData();
+                    updateStudentCounts();
+                } else {
+                    statusLabel.setText("Eliminación cancelada.");
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla desconocida en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                } else if ("HY000".equals(sqlState)) {
+                    statusLabel.setText("Error general de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error general de la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error de base de datos al eliminar el estudiante.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de base de datos al eliminar el estudiante: {}", e.getMessage(), e);
+                }
+            } catch (IOException e) {
+                statusLabel.setText("Error al cargar el archivo de configuración de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
+            } catch (Exception e) {
+                statusLabel.setText("Error inesperado al eliminar el estudiante.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error inesperado al eliminar el estudiante: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if ("42S22".equals(sqlState)) {
-                statusLabel.setText("Columna desconocida en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
-            } else if ("42S02".equals(sqlState)) {
-                statusLabel.setText("Tabla desconocida en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
-            } else if ("HY000".equals(sqlState)) {
-                statusLabel.setText("Error general de la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
-            } else if ("42000".equals(sqlState)) {
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error de base de datos al eliminar el estudiante.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de base de datos al eliminar el estudiante: {}", e.getMessage(), e);
-            }
-        } catch (IOException e) {
-            statusLabel.setText("Error al cargar el archivo de configuración de la base de datos.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error al cargar el archivo de configuración de la base de datos: {}", e.getMessage(), e);
-        } catch (Exception e) {
-            statusLabel.setText("Error inesperado al eliminar el estudiante.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error inesperado al eliminar el estudiante: {}", e.getMessage(), e);
         }
     }
 }

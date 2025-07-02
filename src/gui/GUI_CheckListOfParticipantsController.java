@@ -1,5 +1,5 @@
 package gui;
-//TODO test
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -59,77 +59,68 @@ public class GUI_CheckListOfParticipantsController {
     }
 
     private void loadStudentProjectData() {
-        if (presentationId <= 0) {
+        ObservableList<StudentProjectViewDTO> data = FXCollections.observableArrayList();
+
+        if (presentationId > 0) {
+            logger.info("Cargando datos para la presentación con ID: " + presentationId);
+            try {
+                List<StudentProjectViewDTO> studentProjectData = studentProjectViewDAO.getStudentProjectViewByPresentationId(presentationId);
+                data.addAll(studentProjectData);
+                if (studentProjectData.isEmpty()) {
+                    logger.warn("No se encontraron datos para la presentación con ID: " + presentationId);
+                } else {
+                    logger.info("Datos cargados exitosamente en la tabla.");
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    logger.error("Error de conexión con la base de datos: " + e.getMessage(), e);
+                    showAlert("Error de conexión con la base de datos.");
+                    participantCountsLabel.setText("Error de conexión");
+                } else if ("08S01".equals(sqlState)) {
+                    logger.error("Error de interrupcion de conexión con la base de datos: " + e.getMessage(), e);
+                    showAlert("Error de interrupcion de conexión con la base de datos.");
+                    participantCountsLabel.setText("Error de conexión");
+                } else if ("42S02".equals(sqlState)) {
+                    logger.error("Tabla no encontrada en la base de datos: " + e.getMessage(), e);
+                    showAlert("Tabla no encontrada en la base de datos. Por favor, verifica la configuración.");
+                    participantCountsLabel.setText("Tabla no encontrada");
+                } else if ("42S22".equals(sqlState)) {
+                    logger.error("Columna no encontrada en la base de datos: " + e.getMessage(), e);
+                    showAlert("Columna no encontrada en la base de datos. Por favor, verifica la configuración.");
+                    participantCountsLabel.setText("Columna no encontrada");
+                } else if ("HY000".equals(sqlState)) {
+                    logger.error("Error general de la base de datos: " + e.getMessage(), e);
+                    showAlert("Error general de la base de datos. Por favor, intenta nuevamente.");
+                    participantCountsLabel.setText("Error general");
+                } else if ("42000".equals(sqlState)) {
+                    logger.error("Base de datos desconocida: " + e.getMessage(), e);
+                    showAlert("Base de datos desconocida. Por favor, verifica la configuración.");
+                    participantCountsLabel.setText("Base de datos desconocida");
+                } else if ("28000".equals(sqlState)) {
+                    logger.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
+                    showAlert("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
+                    participantCountsLabel.setText("Acceso denegado");
+                } else {
+                    logger.error("Error de base de datos al cargar los datos de la presentación: " + e.getMessage(), e);
+                    showAlert("Error de base de datos al cargar los datos de la presentación. Por favor, intenta nuevamente.");
+                    participantCountsLabel.setText("Error al cargar los datos");
+                }
+            } catch (IOException e) {
+                logger.error("Error al leer la configuracion de la base de datos: " + e.getMessage(), e);
+                showAlert("Error al leer la configuracion de la base de datos.");
+                participantCountsLabel.setText("Error al leer la configuracion de la base de datos.");
+            } catch (Exception e) {
+                logger.error("Error inesperado al cargar los datos de la presentación: " + e.getMessage(), e);
+                showAlert("Error inesperado al cargar los datos de la presentación.");
+                participantCountsLabel.setText("Error inesperado");
+            }
+        } else {
             logger.warn("El ID de la presentación no es válido: " + presentationId);
-            participantsTableView.setItems(FXCollections.observableArrayList());
-            updateParticipantCounts(FXCollections.observableArrayList());
-            return;
         }
 
-        logger.info("Cargando datos para la presentación con ID: " + presentationId);
-
-        try {
-            List<StudentProjectViewDTO> studentProjectData = studentProjectViewDAO.getStudentProjectViewByPresentationId(presentationId);
-            ObservableList<StudentProjectViewDTO> data = FXCollections.observableArrayList(studentProjectData);
-            participantsTableView.setItems(data);
-            updateParticipantCounts(data);
-            if (studentProjectData.isEmpty()) {
-                logger.warn("No se encontraron datos para la presentación con ID: " + presentationId);
-            } else {
-                logger.info("Datos cargados exitosamente en la tabla.");
-            }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                logger.error("Error de conexión con la base de datos: " + e.getMessage(), e);
-                showAlert("Error de conexión con la base de datos.");
-                participantCountsLabel.setText("Error de conexión");
-            } else if ("08S01".equals(sqlState)) {
-                logger.error("Error de interrupcion de conexión con la base de datos: " + e.getMessage(), e);
-                showAlert("Error de interrupcion de conexión con la base de datos.");
-                participantCountsLabel.setText("Error de conexión");
-            } else if ("42S02".equals(sqlState)) {
-                logger.error("Tabla no encontrada en la base de datos: " + e.getMessage(), e);
-                showAlert("Tabla no encontrada en la base de datos. Por favor, verifica la configuración.");
-                participantCountsLabel.setText("Tabla no encontrada");
-            } else if ("42S22".equals(sqlState)) {
-                logger.error("Columna no encontrada en la base de datos: " + e.getMessage(), e);
-                showAlert("Columna no encontrada en la base de datos. Por favor, verifica la configuración.");
-                participantCountsLabel.setText("Columna no encontrada");
-            } else if ("HY000".equals(sqlState)) {
-                logger.error("Error general de la base de datos: " + e.getMessage(), e);
-                showAlert("Error general de la base de datos. Por favor, intenta nuevamente.");
-                participantCountsLabel.setText("Error general");
-            } else if ("42000".equals(sqlState)) {
-                logger.error("Base de datos desconocida: " + e.getMessage(), e);
-                showAlert("Base de datos desconocida. Por favor, verifica la configuración.");
-                participantCountsLabel.setText("Base de datos desconocida");
-            } else if ("42S02".equals(sqlState)) {
-                logger.error("Tabla de estudiante a proyecto no encontrada en la base de datos: " + e.getMessage(), e);
-                showAlert("Tabla de estudiante a proyecto no encontrada en la base de datos.");
-                participantCountsLabel.setText("Tabla no encontrada");
-            } else if ("42S22".equals(sqlState)) {
-                logger.error("Columna no encontrada en la tabla de estudiante a proyecto: " + e.getMessage(), e);
-                showAlert("Columna no encontrada en la tabla de estudiante a proyecto.");
-                participantCountsLabel.setText("Columna no encontrada");
-            } else if ("28000".equals(sqlState)) {
-                logger.error("Acceso denegado a la base de datos: " + e.getMessage(), e);
-                showAlert("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
-                participantCountsLabel.setText("Acceso denegado");
-            } else {
-                logger.error("Error de base de datos al cargar los datos de la presentación: " + e.getMessage(), e);
-                showAlert("Error de base de datos al cargar los datos de la presentación. Por favor, intenta nuevamente.");
-                participantCountsLabel.setText("Error al cargar los datos");
-            }
-        } catch (IOException e) {
-            logger.error("Error al leer la configuracion de la base de datos: " + e.getMessage(), e);
-            showAlert("Error al leer la configuracion de la base de datos.");
-            participantCountsLabel.setText("Error al leer la configuracion de la base de datos.");
-        } catch (Exception e) {
-            logger.error("Error inesperado al cargar los datos de la presentación: " + e.getMessage(), e);
-            showAlert("Error inesperado al cargar los datos de la presentación.");
-            participantCountsLabel.setText("Error inesperado");
-        }
+        participantsTableView.setItems(data);
+        updateParticipantCounts(data);
     }
 
     private void updateParticipantCounts(ObservableList<StudentProjectViewDTO> list) {

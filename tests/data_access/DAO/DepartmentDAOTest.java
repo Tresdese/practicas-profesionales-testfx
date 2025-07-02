@@ -18,77 +18,77 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DepartmentDAOTest {
 
-    private Connection connection;
-    private DepartmentDAO departmentDAO;
-    private LinkedOrganizationDAO linkedOrganizationDAO;
+    private Connection databaseConnection;
+    private DepartmentDAO departmentDataAccessObject;
+    private LinkedOrganizationDAO linkedOrganizationDataAccessObject;
     private String organizationId;
 
     @BeforeAll
     void setUpAll() throws SQLException, IOException {
-        connection = new ConnectionDataBase().connectDataBase();
-        departmentDAO = new DepartmentDAO();
-        linkedOrganizationDAO = new LinkedOrganizationDAO();
+        databaseConnection = new ConnectionDataBase().connectDataBase();
+        departmentDataAccessObject = new DepartmentDAO();
+        linkedOrganizationDataAccessObject = new LinkedOrganizationDAO();
 
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = databaseConnection.createStatement()) {
             statement.execute("DELETE FROM departamento");
             statement.execute("DELETE FROM organizacion_vinculada");
             statement.execute("ALTER TABLE departamento AUTO_INCREMENT = 1");
             statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
         }
 
-        LinkedOrganizationDTO org = new LinkedOrganizationDTO(null, "Org Test", "Address Test", 1);
-        organizationId = linkedOrganizationDAO.insertLinkedOrganizationAndGetId(org);
+        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Address Test", 1);
+        organizationId = linkedOrganizationDataAccessObject.insertLinkedOrganizationAndGetId(organization);
     }
 
     @BeforeEach
     void setUp() throws SQLException {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = databaseConnection.createStatement()) {
             statement.execute("DELETE FROM departamento");
         }
     }
 
     @AfterAll
     void tearDownAll() throws SQLException, IOException {
-        connection.close();
+        databaseConnection.close();
     }
 
     @Test
     void insertDepartment() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Desc", Integer.parseInt(organizationId), 1);
-        boolean inserted = departmentDAO.insertDepartment(department);
-        assertTrue(inserted);
+        boolean wasInserted = departmentDataAccessObject.insertDepartment(department);
+        assertTrue(wasInserted);
     }
 
     @Test
     void getAllDepartmentsByOrganizationId() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Desc", Integer.parseInt(organizationId), 1);
-        departmentDAO.insertDepartment(department);
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
+        departmentDataAccessObject.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
         assertEquals(1, departments.size());
     }
 
     @Test
     void updateDepartmentSuccessfully() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Desc", Integer.parseInt(organizationId), 1);
-        departmentDAO.insertDepartment(department);
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
+        departmentDataAccessObject.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
         DepartmentDTO toUpdate = departments.get(0);
         toUpdate.setName("Updated Name");
-        boolean updated = departmentDAO.updateDepartment(toUpdate);
-        assertTrue(updated);
-        DepartmentDTO found = departmentDAO.searchDepartmentById(toUpdate.getDepartmentId());
+        boolean wasUpdated = departmentDataAccessObject.updateDepartment(toUpdate);
+        assertTrue(wasUpdated);
+        DepartmentDTO found = departmentDataAccessObject.searchDepartmentById(toUpdate.getDepartmentId());
         assertEquals("Updated Name", found.getName());
     }
 
     @Test
     void deleteDepartmentSuccessfully() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Desc", Integer.parseInt(organizationId), 1);
-        departmentDAO.insertDepartment(department);
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
+        departmentDataAccessObject.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
         int id = departments.get(0).getDepartmentId();
-        boolean deleted = departmentDAO.deleteDepartment(id);
-        assertTrue(deleted);
-        DepartmentDTO result = departmentDAO.searchDepartmentById(id);
+        boolean wasDeleted = departmentDataAccessObject.deleteDepartment(id);
+        assertTrue(wasDeleted);
+        DepartmentDTO result = departmentDataAccessObject.searchDepartmentById(id);
         assertEquals(-1, result.getDepartmentId());
         assertEquals("N/A", result.getName());
         assertEquals("N/A", result.getDescription());
@@ -97,8 +97,8 @@ class DepartmentDAOTest {
 
     @Test
     void searchDepartmentByIdReturnsNullWhenNotExists() throws SQLException, IOException {
-        DepartmentDAO departmentDAO = new DepartmentDAO();
-        DepartmentDTO result = departmentDAO.searchDepartmentById(-999);
+        DepartmentDAO departmentDataAccessObject = new DepartmentDAO();
+        DepartmentDTO result = departmentDataAccessObject.searchDepartmentById(-999);
         assertNotNull(result);
         assertEquals(-1, result.getDepartmentId());
         assertEquals("N/A", result.getName());
@@ -109,53 +109,53 @@ class DepartmentDAOTest {
     @Test
     void getOrganizationIdByDepartmentIdReturnsCorrectId() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Desc", Integer.parseInt(organizationId), 1);
-        departmentDAO.insertDepartment(department);
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
+        departmentDataAccessObject.insertDepartment(department);
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartmentsByOrganizationId(Integer.parseInt(organizationId));
         int id = departments.get(0).getDepartmentId();
-        int organizationIdByDepartmentId = departmentDAO.getOrganizationIdByDepartmentId(id);
+        int organizationIdByDepartmentId = departmentDataAccessObject.getOrganizationIdByDepartmentId(id);
         assertEquals(Integer.parseInt(this.organizationId), organizationIdByDepartmentId);
     }
 
     @Test
     void getAllDepartmentsReturnsList() throws SQLException, IOException {
-        departmentDAO.insertDepartment(new DepartmentDTO(0, "Dept1", "Desc1", Integer.parseInt(organizationId), 1));
-        departmentDAO.insertDepartment(new DepartmentDTO(0, "Dept2", "Desc2", Integer.parseInt(organizationId), 1));
-        List<DepartmentDTO> all = departmentDAO.getAllDepartments();
+        departmentDataAccessObject.insertDepartment(new DepartmentDTO(0, "Dept1", "Desc1", Integer.parseInt(organizationId), 1));
+        departmentDataAccessObject.insertDepartment(new DepartmentDTO(0, "Dept2", "Desc2", Integer.parseInt(organizationId), 1));
+        List<DepartmentDTO> all = departmentDataAccessObject.getAllDepartments();
         assertTrue(all.size() >= 2);
     }
 
     @Test
     void insertDepartmentFailsWithInvalidOrganizationId() {
         DepartmentDTO department = new DepartmentDTO(0, "Dept Inválido", "Desc", 99999, 0);
-        assertThrows(SQLException.class, () -> departmentDAO.insertDepartment(department));
+        assertThrows(SQLException.class, () -> departmentDataAccessObject.insertDepartment(department));
     }
 
     @Test
     void updateDepartmentFailsWhenNotExists() throws SQLException, IOException {
         DepartmentDTO department = new DepartmentDTO(9999, "No existe", "Desc", Integer.parseInt(organizationId), 0);
-        boolean updated = departmentDAO.updateDepartment(department);
-        assertFalse(updated);
+        boolean wasUpdated = departmentDataAccessObject.updateDepartment(department);
+        assertFalse(wasUpdated);
     }
 
     @Test
     void deleteDepartmentFailsWhenNotExists() throws SQLException, IOException {
-        boolean deleted = departmentDAO.deleteDepartment(9999);
-        assertFalse(deleted);
+        boolean wasDeleted = departmentDataAccessObject.deleteDepartment(9999);
+        assertFalse(wasDeleted);
     }
 
     @Test
     void getAllDepartmentsByOrganizationIdReturnsEmptyList() throws SQLException, IOException {
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(9999);
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartmentsByOrganizationId(9999);
         assertNotNull(departments);
         assertTrue(departments.isEmpty());
     }
 
     @Test
     void getAllDepartmentsReturnsEmptyListWhenNoDepartmentsExist() throws SQLException, IOException {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = databaseConnection.createStatement()) {
             statement.execute("DELETE FROM departamento");
         }
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartments();
+        List<DepartmentDTO> departments = departmentDataAccessObject.getAllDepartments();
         assertNotNull(departments);
         assertTrue(departments.isEmpty());
     }

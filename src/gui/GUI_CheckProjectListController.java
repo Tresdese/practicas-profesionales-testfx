@@ -196,12 +196,12 @@ public class GUI_CheckProjectListController {
         try {
             if (organizationId == null || organizationId.isEmpty() || organizationId.equals("0")) {
                 organizationName = "No asignado";
+            } else {
+                LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
+                        .searchLinkedOrganizationById(organizationId);
+
+                organizationName = (organization != null) ? organization.getName() : "Organización no encontrada";
             }
-
-            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
-                    .searchLinkedOrganizationById(organizationId);
-
-            organizationName = (organization != null) ? organization.getName() : "Organización no encontrada";
         } catch (IllegalArgumentException e) {
             LOGGER.error("ID de organización inválido: {}", e.getMessage(), e);
             statusLabel.setText("ID de organización inválido");
@@ -221,11 +221,11 @@ public class GUI_CheckProjectListController {
         try {
             if (academicId == null || academicId.isEmpty()) {
                 academicName = "No asignado";
+            } else {
+                UserDTO academic = serviceConfig.getUserService().searchUserByStaffNumber(academicId);
+                academicName = (academic != null) ? academic.getNames() + " " + academic.getSurnames() : "Académico no encontrado";
             }
-
-            UserDTO academic = serviceConfig.getUserService().searchUserById(academicId);
-            academicName = (academic != null) ? academic.getNames() + " " + academic.getSurnames() : "Académico no encontrado";
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
@@ -273,9 +273,10 @@ public class GUI_CheckProjectListController {
         try {
             if (departmentId == 0) {
                 departmentName = "No asignado";
+            } else {
+                DepartmentDTO department = departmentDAO.searchDepartmentById(departmentId);
+                departmentName = (department != null) ? department.getName() : "Departamento no encontrado";
             }
-            DepartmentDTO department = departmentDAO.searchDepartmentById(departmentId);
-            departmentName = (department != null) ? department.getName() : "Departamento no encontrado";
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if (sqlState != null && sqlState.equals("08001")) {
@@ -359,6 +360,7 @@ public class GUI_CheckProjectListController {
             LOGGER.error("El servicio de proyectos no está disponible (projectService es null).");
             tableView.setItems(projectList);
             updateProjectCounts(projectList);
+            return;
         }
 
         try {
@@ -423,6 +425,7 @@ public class GUI_CheckProjectListController {
         String searchQuery = searchField.getText().trim();
         if (searchQuery.isEmpty()) {
             loadProjectData();
+            return;
         }
 
         ObservableList<ProjectDTO> filteredList = FXCollections.observableArrayList();
@@ -433,6 +436,7 @@ public class GUI_CheckProjectListController {
             LOGGER.error("El servicio de proyectos no está disponible (projectService es null).");
             tableView.setItems(filteredList);
             updateProjectCounts(filteredList);
+            return;
         }
 
         try {

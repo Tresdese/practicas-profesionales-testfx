@@ -217,61 +217,59 @@ public class GUI_CheckListLinkedOrganizationController {
     }
 
     private void searchOrganization() {
+        ObservableList<LinkedOrganizationDTO> filteredList = FXCollections.observableArrayList();
         String searchQuery = searchField.getText().trim();
+
         if (searchQuery.isEmpty()) {
             loadOrganizationData();
-            return;
-        }
-
-        ObservableList<LinkedOrganizationDTO> filteredList = FXCollections.observableArrayList();
-
-        try {
-            LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(searchQuery);
-            if (organization != null) {
-                filteredList.add(organization);
-            } else {
-                List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
-                for (LinkedOrganizationDTO org : organizations) {
-                    if (org.getName().equalsIgnoreCase(searchQuery)) {
-                        filteredList.add(org);
+        } else {
+            try {
+                LinkedOrganizationDTO organization = linkedOrganizationService.searchLinkedOrganizationById(searchQuery);
+                if (organization != null) {
+                    filteredList.add(organization);
+                } else {
+                    List<LinkedOrganizationDTO> organizations = linkedOrganizationService.getAllLinkedOrganizations();
+                    for (LinkedOrganizationDTO org : organizations) {
+                        if (org.getName().equalsIgnoreCase(searchQuery)) {
+                            filteredList.add(org);
+                        }
                     }
                 }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("40S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla de organizaciones no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Tabla de organizaciones no encontrada: {}", e.getMessage(), e);
+                } else if ("40S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al inicializar el servicio de estudiantes.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
+                }
+            } catch (Exception e) {
+                statusLabel.setText("Ocurrió un error inesperado al buscar la organización.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error inesperado al buscar la organización: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("40S02")) {
-                statusLabel.setText("Tabla de organizaciones no encontrada.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Tabla de organizaciones no encontrada: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("40S22")) {
-                statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al inicializar el servicio de estudiantes.");
-                LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
-                statusLabel.setTextFill(Color.RED);
-            }
-        } catch (Exception e) {
-            statusLabel.setText("Ocurrió un error inesperado al buscar la organización.");
-            statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error inesperado al buscar la organización: {}", e.getMessage(), e);
+            tableView.setItems(filteredList);
+            updateOrganizationCounts();
         }
-
-        tableView.setItems(filteredList);
-        updateOrganizationCounts();
     }
 
     private void updateOrganizationCounts() {
@@ -374,84 +372,90 @@ public class GUI_CheckListLinkedOrganizationController {
     }
 
     private void handleDeleteOrganization() {
+        boolean canProceed = true;
         if (selectedLinkedOrganization == null) {
             statusLabel.setText("Debe seleccionar una organización para eliminar");
-            return;
+            canProceed = false;
         }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
-            Parent root = loader.load();
-            GUI_ConfirmDialogController confirmController = loader.getController();
-            confirmController.setInformationMessage("Al borrar una organizacion, se eliminarán los departamentos y representantes asociados a ella.");
-            confirmController.setConfirmMessage("¿Está seguro de que desea eliminar la organizacion " + selectedLinkedOrganization.getName() + "?");
-            Stage confirmStage = new Stage();
-            confirmStage.setTitle("Confirmar Eliminación");
-            confirmStage.setScene(new Scene(root));
-            confirmStage.showAndWait();
-            if (confirmController.isConfirmed()) {
-                linkedOrganizationService.updateLinkedOrganizationStatus(selectedLinkedOrganization.getIdOrganization(), 0);
-                statusLabel.setText("Organizacion eliminada correctamente.");
-                loadOrganizationData();
-                updateOrganizationCounts();
-            } else {
-                statusLabel.setText("Eliminación cancelada.");
+        if (canProceed) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_ConfirmDialog.fxml"));
+                Parent root = loader.load();
+                GUI_ConfirmDialogController confirmController = loader.getController();
+                confirmController.setInformationMessage("Al borrar una organizacion, se eliminarán los departamentos y representantes asociados a ella.");
+                confirmController.setConfirmMessage("¿Está seguro de que desea eliminar la organizacion " + selectedLinkedOrganization.getName() + "?");
+                Stage confirmStage = new Stage();
+                confirmStage.setTitle("Confirmar Eliminación");
+                confirmStage.setScene(new Scene(root));
+                confirmStage.showAndWait();
+                if (confirmController.isConfirmed()) {
+                    linkedOrganizationService.updateLinkedOrganizationStatus(selectedLinkedOrganization.getIdOrganization(), 0);
+                    statusLabel.setText("Organizacion eliminada correctamente.");
+                    loadOrganizationData();
+                    updateOrganizationCounts();
+                } else {
+                    statusLabel.setText("Eliminación cancelada.");
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if (sqlState != null && sqlState.equals("08001")) {
+                    statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("42000")) {
+                    statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("40S02")) {
+                    statusLabel.setText("Tabla de organizaciones no encontrada.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Tabla de organizaciones no encontrada: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("40S22")) {
+                    statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("28000")) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al inicializar el servicio de estudiantes.");
+                    LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
+                    statusLabel.setTextFill(Color.RED);
+                }
+            } catch (IOException e) {
+                statusLabel.setText("No se pudo leer la ventana especificada");
+                LOGGER.error("No se pudo leer la ventana especificada: {}", e.getMessage(), e);
+            } catch (Exception e) {
+                statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");
+                LOGGER.error("Error inesperado al eliminar la organización: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                statusLabel.setText("Error de conexión con la base de datos. Por favor, intente más tarde.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida. Por favor, verifique la configuración.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("40S02")) {
-                statusLabel.setText("Tabla de organizaciones no encontrada.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Tabla de organizaciones no encontrada: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("40S22")) {
-                statusLabel.setText("Columna no encontrada en la tabla de organizaciones.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Columna no encontrada en la tabla de organizaciones: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al inicializar el servicio de estudiantes.");
-                LOGGER.error("Error al inicializar el servicio de estudiantes: {}", e.getMessage(), e);
-                statusLabel.setTextFill(Color.RED);
-            }
-        } catch (IOException e) {
-            statusLabel.setText("No se pudo leer la ventana especificada");
-            LOGGER.error("No se pudo leer la ventana especificada: {}", e.getMessage(), e);
-        } catch (Exception e) {
-            statusLabel.setText("Ocurrió un error inesperado al eliminar la organización.");
-            LOGGER.error("Error inesperado al eliminar la organización: {}", e.getMessage(), e);
         }
     }
 
     private void handleDeleteDepartment() {
+        boolean canProceed = true;
         if (selectedLinkedOrganization == null) {
             statusLabel.setText("Debe seleccionar una organización para eliminar un departamento.");
             statusLabel.setTextFill(Color.RED);
-            return;
+            canProceed = false;
         }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DeleteDepartment.fxml"));
-            Parent root = loader.load();
-            GUI_DeleteDepartmentController deleteController = loader.getController();
-            deleteController.setOrganizationId(selectedLinkedOrganization.getIdOrganization());
-            Stage stage = new Stage();
-            stage.setTitle("Eliminar Departamento");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            statusLabel.setText("No se pudo leer la ventana especificada");
-            statusLabel.setTextFill(Color.RED);
-            LOGGER.error("No se pudo leer la ventana especificada: {}", e.getMessage(), e);
+        if (canProceed) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/GUI_DeleteDepartment.fxml"));
+                Parent root = loader.load();
+                GUI_DeleteDepartmentController deleteController = loader.getController();
+                deleteController.setOrganizationId(selectedLinkedOrganization.getIdOrganization());
+                Stage stage = new Stage();
+                stage.setTitle("Eliminar Departamento");
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (IOException e) {
+                statusLabel.setText("No se pudo leer la ventana especificada");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("No se pudo leer la ventana especificada: {}", e.getMessage(), e);
+            }
         }
     }
 }

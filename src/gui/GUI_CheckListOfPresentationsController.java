@@ -1,5 +1,5 @@
 package gui;
-//TODO test
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -134,52 +134,50 @@ public class GUI_CheckListOfPresentationsController {
     }
 
     private void searchPresentation() {
+        ObservableList<ProjectPresentationDTO> filteredList = FXCollections.observableArrayList();
         String searchQuery = searchField.getText().trim();
+
         if (searchQuery.isEmpty()) {
             loadUpcomingPresentations();
-            return;
-        }
-
-        ObservableList<ProjectPresentationDTO> filteredList = FXCollections.observableArrayList();
-
-        try {
+        } else {
             try {
-                int id = Integer.parseInt(searchQuery);
-                ProjectPresentationDTO presentation = projectPresentationDAO.searchProjectPresentationById(id);
-                if (presentation != null) {
-                    filteredList.add(presentation);
+                try {
+                    int id = Integer.parseInt(searchQuery);
+                    ProjectPresentationDTO presentation = projectPresentationDAO.searchProjectPresentationById(id);
+                    if (presentation != null) {
+                        filteredList.add(presentation);
+                    }
+                } catch (NumberFormatException e) {
+                    List<ProjectPresentationDTO> presentations = projectPresentationDAO.searchProjectPresentationsByProjectId(searchQuery);
+                    filteredList.addAll(presentations);
                 }
-            } catch (NumberFormatException e) {
-                List<ProjectPresentationDTO> presentations = projectPresentationDAO.searchProjectPresentationsByProjectId(searchQuery);
-                filteredList.addAll(presentations);
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if (sqlState != null && sqlState.equals("08001")) {
+                    statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("42000")) {
+                    statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if (sqlState != null && sqlState.equals("28000")) {
+                    statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error de base de datos al buscar presentaciones.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de base de datos al buscar presentaciones: {}", e.getMessage(), e);
+                }
+            } catch (Exception e) {
+                statusLabel.setText("Error inesperado al buscar presentaciones.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error inesperado al buscar presentaciones: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
-                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("42000")) {
-                statusLabel.setText("Base de datos desconocida. Por favor, verifica la configuración.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if (sqlState != null && sqlState.equals("28000")) {
-                statusLabel.setText("Acceso denegado a la base de datos. Por favor, verifica tus credenciales.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error de base de datos al buscar presentaciones.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de base de datos al buscar presentaciones: {}", e.getMessage(), e);
-            }
-        } catch (Exception e) {
-            statusLabel.setText("Error inesperado al buscar presentaciones.");
-            statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error inesperado al buscar presentaciones: {}", e.getMessage(), e);
+            presentationsTableView.setItems(filteredList);
+            updatePresentationCounts(filteredList);
         }
-
-        presentationsTableView.setItems(filteredList);
-        updatePresentationCounts(filteredList);
     }
 
     private void updatePresentationCounts(ObservableList<ProjectPresentationDTO> list) {

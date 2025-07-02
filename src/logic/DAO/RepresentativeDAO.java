@@ -24,6 +24,7 @@ public class RepresentativeDAO implements IRepresentativeDAO {
     private final static String SQL_SELECT_ALL = "SELECT * FROM representante";
 
     public boolean insertRepresentative(RepresentativeDTO representative) throws SQLException, IOException {
+        boolean response = false;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
@@ -48,10 +49,10 @@ public class RepresentativeDAO implements IRepresentativeDAO {
                         representative.setIdRepresentative(String.valueOf(generatedKeys.getInt(1)));
                     }
                 }
-                return true;
+                response = true;
             }
-            return false;
         }
+        return response;
     }
 
     public boolean updateRepresentative(RepresentativeDTO representative) throws SQLException, IOException {
@@ -97,23 +98,26 @@ public class RepresentativeDAO implements IRepresentativeDAO {
 
     @Override
     public RepresentativeDTO searchRepresentativeById(String idRepresentative) throws SQLException, IOException {
-        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0);        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
-                                                                                                                           Connection connection = connectionDataBase.connectDataBase();
-                                                                                                                           PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
+        RepresentativeDTO representative = new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0);
+        try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
+             Connection connection = connectionDataBase.connectDataBase();
+             PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID)) {
             statement.setInt(1, Integer.parseInt(idRepresentative));
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                representative = new RepresentativeDTO(
-                        String.valueOf(resultSet.getInt("idRepresentante")),
-                        resultSet.getString("nombres"),
-                        resultSet.getString("apellidos"),
-                        resultSet.getString("correo"),
-                        resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
-                        resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
-                        resultSet.getInt("estado")
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    representative = new RepresentativeDTO(
+                            String.valueOf(resultSet.getInt("idRepresentante")),
+                            resultSet.getString("nombres"),
+                            resultSet.getString("apellidos"),
+                            resultSet.getString("correo"),
+                            resultSet.getObject("idOrganizacion") != null ? String.valueOf(resultSet.getInt("idOrganizacion")) : "",
+                            resultSet.getObject("idDepartamento") != null ? String.valueOf(resultSet.getInt("idDepartamento")) : "",
+                            resultSet.getInt("estado")
+                    );
+                }
             }
         }
+
         return representative;
     }
 

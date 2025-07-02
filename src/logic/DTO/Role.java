@@ -24,4 +24,13 @@ public enum Role {
         }
         throw new IllegalArgumentException("Rol desconocido: " + dbValue);
     }
+
+    public String getDisplayName() {
+        switch (this) {
+            case ACADEMIC: return "Académico";
+            case EVALUATOR_ACADEMIC: return "Académico evaluador";
+            case COORDINATOR: return "Coordinador";
+            default: return "";
+        }
+    }
 }

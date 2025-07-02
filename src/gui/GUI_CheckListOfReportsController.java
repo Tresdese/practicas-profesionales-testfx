@@ -90,65 +90,68 @@ public class GUI_CheckListOfReportsController implements Initializable {
     }
 
     private void loadReports() {
-        if (studentTuition == null) {
-            LOGGER.warn("No se ha asignado matrícula para filtrar reportes.");
-            reportsTableView.getItems().clear();
-            return;
-        }
-        try {
-            ReportDAO reportDAO = new ReportDAO();
-            List<ReportDTO> allReports = reportDAO.getAllReports();
-            List<ReportDTO> studentReports = allReports.stream()
-                    .filter(r -> {
-                        String reportTuition = (r.getTuition() != null) ? r.getTuition().trim() : "";
-                        return reportTuition.equalsIgnoreCase(studentTuition);
-                    })
-                    .collect(Collectors.toList());
-            reportsTableView.getItems().setAll(studentReports);
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-                showAlert("Error de conexión con la base de datos.");
-            } else if ("08S01".equals(sqlState)) {
-                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-                showAlert("Conexión interrumpida con la base de datos.");
-            } else if ("42S22".equals(sqlState)) {
-                LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
-                showAlert("Columna desconocida en la base de datos.");
-            } else if ("42S02".equals(sqlState)) {
-                LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
-                showAlert("Tabla desconocida en la base de datos.");
-            } else if ("HY000".equals(sqlState)) {
-                LOGGER.error("Error general de conexión con la base de datos: {}", e.getMessage(), e);
-                showAlert("Error general de conexión con la base de datos.");
-            } else if ("42000".equals(sqlState)) {
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-                showAlert("Base de datos desconocida.");
-            } else if ("28000".equals(sqlState)) {
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-                showAlert("Acceso denegado a la base de datos.");
-            } else {
-                LOGGER.error("Error al cargar reportes de la base de datos: {}", e.getMessage(), e);
-                showAlert("Error al cargar reportes de la base de datos: ");
+        List<ReportDTO> studentReports = java.util.Collections.emptyList();
+
+        if (studentTuition != null) {
+            try {
+                ReportDAO reportDAO = new ReportDAO();
+                List<ReportDTO> allReports = reportDAO.getAllReports();
+                studentReports = allReports.stream()
+                        .filter(r -> {
+                            String reportTuition = (r.getTuition() != null) ? r.getTuition().trim() : "";
+                            return reportTuition.equalsIgnoreCase(studentTuition);
+                        })
+                        .collect(Collectors.toList());
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                    showAlert("Error de conexión con la base de datos.");
+                } else if ("08S01".equals(sqlState)) {
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                    showAlert("Conexión interrumpida con la base de datos.");
+                } else if ("42S22".equals(sqlState)) {
+                    LOGGER.error("Columna desconocida en la base de datos: {}", e.getMessage(), e);
+                    showAlert("Columna desconocida en la base de datos.");
+                } else if ("42S02".equals(sqlState)) {
+                    LOGGER.error("Tabla desconocida en la base de datos: {}", e.getMessage(), e);
+                    showAlert("Tabla desconocida en la base de datos.");
+                } else if ("HY000".equals(sqlState)) {
+                    LOGGER.error("Error general de conexión con la base de datos: {}", e.getMessage(), e);
+                    showAlert("Error general de conexión con la base de datos.");
+                } else if ("42000".equals(sqlState)) {
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                    showAlert("Base de datos desconocida.");
+                } else if ("28000".equals(sqlState)) {
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                    showAlert("Acceso denegado a la base de datos.");
+                } else {
+                    LOGGER.error("Error al cargar reportes de la base de datos: {}", e.getMessage(), e);
+                    showAlert("Error al cargar reportes de la base de datos: ");
+                }
+            } catch (NullPointerException e) {
+                LOGGER.error("Se encontró un valor nulo inesperado al cargar reportes: {}", e.getMessage(), e);
+                showAlert("Error de valor nulo al cargar reportes. Por favor, intente más tarde.");
+            } catch (IOException e) {
+                LOGGER.error("Error al leer el archivo de la configuracion de la base de datos: {}", e.getMessage(), e);
+                showAlert("Error al leer el archivo de la configuracion de la base de datos.");
+            } catch (Exception e) {
+                LOGGER.error("Error inesperado al cargar reportes: {}", e.getMessage(), e);
+                showAlert("Ocurrió un error inesperado al cargar los reportes. Por favor, intente más tarde.");
             }
-        } catch (NullPointerException e) {
-            LOGGER.error("Se encontró un valor nulo inesperado al cargar reportes: {}", e.getMessage(), e);
-            showAlert("Error de valor nulo al cargar reportes. Por favor, intente más tarde.");
-        } catch (IOException e) {
-            LOGGER.error("Error al leer el archivo de la configuracion de la base de datos: {}", e.getMessage(), e);
-            showAlert("Error al leer el archivo de la configuracion de la base de datos.");
-        } catch (Exception e) {
-            LOGGER.error("Error inesperado al cargar reportes: {}", e.getMessage(), e);
-            showAlert("Ocurrió un error inesperado al cargar los reportes. Por favor, intente más tarde.");
+        } else {
+            LOGGER.warn("No se ha asignado matrícula para filtrar reportes.");
         }
+
+        reportsTableView.getItems().setAll(studentReports);
     }
 
     private String getEvidenceUrlById(String idEvidence) {
+        String url = "invalido";
         try {
             EvidenceDAO evidenceDAO = new EvidenceDAO();
             int id = Integer.parseInt(idEvidence);
-            return evidenceDAO.searchEvidenceById(id).getRoute();
+            url = evidenceDAO.searchEvidenceById(id).getRoute();
         } catch (NumberFormatException e) {
             LOGGER.error("El id de evidencia no es un número válido: {} - {}", idEvidence, e.getMessage(), e);
             showAlert("El ID de evidencia no es válido.");
@@ -189,7 +192,7 @@ public class GUI_CheckListOfReportsController implements Initializable {
             LOGGER.error("Error inesperado: No se pudo obtener la URL de la evidencia para id {}: {}", idEvidence, e.getMessage(), e);
             showAlert("Ocurrió un error inesperado al obtener la URL de la evidencia.");
         }
-        return "invalido";
+        return url;
     }
 
     private void openEvidenceUrl(String url) {

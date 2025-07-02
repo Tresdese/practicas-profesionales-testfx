@@ -157,74 +157,72 @@ public class GUI_CheckListOfPeriodsController {
     }
 
     public void searchPeriod() {
+        ObservableList<PeriodDTO> filteredList = FXCollections.observableArrayList();
         String searchQuery = searchField.getText().trim();
+
         if (searchQuery.isEmpty()) {
             loadPeriodData();
-            return;
-        }
-
-        ObservableList<PeriodDTO> filteredList = FXCollections.observableArrayList();
-
-        try {
-            PeriodDTO period = periodDAO.searchPeriodById(searchQuery);
-            if (period != null && !"N/A".equals(period.getIdPeriod())) {
-                filteredList.add(period);
+        } else {
+            try {
+                PeriodDTO period = periodDAO.searchPeriodById(searchQuery);
+                if (period != null && !"N/A".equals(period.getIdPeriod())) {
+                    filteredList.add(period);
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla no encontrada en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
+                } else if ("HY000".equals(sqlState)) {
+                    statusLabel.setText("Error general de la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error general de la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("La base de datos no está disponible.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("42S02".equals(sqlState)) {
+                    statusLabel.setText("Tabla de periodo no encontrada en la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Tabla de periodo no encontrada en la base de datos: " + e.getMessage(), e);
+                } else if ("42S22".equals(sqlState)) {
+                    statusLabel.setText("Columna no encontrada en la tabla de periodo.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Columna no encontrada en la tabla de periodo: " + e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al buscar el periodo.");
+                    statusLabel.setTextFill(Color.RED);
+                    logger.error("Error al buscar el periodo: {}", e.getMessage(), e);
+                }
+            } catch (IOException e) {
+                statusLabel.setText("Error al leer la configuración de la base de datos.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
+            } catch (Exception e) {
+                statusLabel.setText("Error inesperado al buscar el periodo.");
+                statusLabel.setTextFill(Color.RED);
+                logger.error("Error inesperado al buscar el periodo: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos. Por favor, verifica tu conexión.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
-                statusLabel.setText("Acceso denegado a la base de datos. Verifica tus credenciales.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else if ("42S02".equals(sqlState)) {
-                statusLabel.setText("Tabla no encontrada en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
-            } else if ("42S22".equals(sqlState)) {
-                statusLabel.setText("Columna no encontrada en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
-            } else if ("HY000".equals(sqlState)) {
-                statusLabel.setText("Error general de la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error general de la base de datos: {}", e.getMessage(), e);
-            } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if ("42000".equals(sqlState)) {
-                statusLabel.setText("La base de datos no está disponible.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if ("42S02".equals(sqlState)) {
-                statusLabel.setText("Tabla de periodo no encontrada en la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Tabla de periodo no encontrada en la base de datos: " + e.getMessage(), e);
-            } else if ("42S22".equals(sqlState)) {
-                statusLabel.setText("Columna no encontrada en la tabla de periodo.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Columna no encontrada en la tabla de periodo: " + e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al buscar el periodo.");
-                statusLabel.setTextFill(Color.RED);
-                logger.error("Error al buscar el periodo: {}", e.getMessage(), e);
-            }
-        } catch (IOException e) {
-            statusLabel.setText("Error al leer la configuración de la base de datos.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
-        } catch (Exception e) {
-            statusLabel.setText("Error inesperado al buscar el periodo.");
-            statusLabel.setTextFill(Color.RED);
-            logger.error("Error inesperado al buscar el periodo: {}", e.getMessage(), e);
+            periodsTableView.setItems(filteredList);
+            updatePeriodCounts(filteredList);
         }
-
-        periodsTableView.setItems(filteredList);
-        updatePeriodCounts(filteredList);
     }
 
     private void updatePeriodCounts(ObservableList<PeriodDTO> list) {

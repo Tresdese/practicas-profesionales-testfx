@@ -102,7 +102,7 @@ public class RegisterGroupControllerTest extends ApplicationTest {
             statement.setString(3, "Apellido");
             statement.setString(4, "usuarioTest");
             statement.setString(5, "passTest");
-            statement.setString(6, Role.ACADEMIC.toString());
+            statement.setString(6, Role.ACADEMIC.getDataBaseValue());
             statement.executeUpdate();
             try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {

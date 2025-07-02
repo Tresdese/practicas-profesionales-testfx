@@ -1,9 +1,9 @@
 package logic.DTO;
 
 public enum ProjectStatus {
-    pending("Pendiente"),
-    approved("Aprobado"),
-    refused("Rechazado");
+    pending("pendiente"),
+    approved("aprobada"),
+    refused("rechazada");
 
     private final String dataBaseValue;
 
@@ -15,12 +15,12 @@ public enum ProjectStatus {
         return dataBaseValue;
     }
 
-    public static ProjectStatus getValueFromDataBase(String dbValue) {
+    public static ProjectStatus getValueFromDataBase(String dataBaseValue) {
         for (ProjectStatus status : values()) {
-            if (status.dataBaseValue.equalsIgnoreCase(dbValue)) {
+            if (status.dataBaseValue.equalsIgnoreCase(dataBaseValue)) {
                 return status;
             }
         }
-        throw new IllegalArgumentException("Estado de proyecto desconocido: " + dbValue);
+        throw new IllegalArgumentException("Estado de proyecto desconocido: " + dataBaseValue);
     }
 }

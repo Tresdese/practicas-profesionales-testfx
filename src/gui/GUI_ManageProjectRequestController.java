@@ -1,7 +1,9 @@
 package gui;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -36,9 +38,26 @@ public class GUI_ManageProjectRequestController {
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private Button saveButton, cancelButton;
+
     private GUI_CheckProjectRequestListController parentController;
     private ProjectRequestDTO projectRequest;
     private ProjectRequestDAO projectRequestDAO;
+
+    private String originalTuition = "";
+    private String originalOrganizationId = "";
+    private String originalProjectId = "";
+    private String originalRepresentativeId = "";
+    private String originalDescription = "";
+    private String originalGeneralObjective = "";
+    private String originalDuration = "";
+    private String originalScheduleDays = "";
+    private String originalDirectUsers = "";
+    private String originalIndirectUsers = "";
+    private String originalStatus = "";
+
+    private final ChangeListener<Object> changeListener = (obs, oldVal, newVal) -> checkIfChanged();
 
     public void setParentController(GUI_CheckProjectRequestListController parentController) {
         this.parentController = parentController;
@@ -54,6 +73,17 @@ public class GUI_ManageProjectRequestController {
         if (projectRequestDAO == null) {
             projectRequestDAO = new ProjectRequestDAO();
         }
+        setButtons();
+    }
+
+    private void setButtons() {
+        if (saveButton != null) {
+            saveButton.setOnAction(event -> handleSaveChanges());
+            saveButton.setDisable(true);
+        }
+        if (cancelButton != null) {
+            cancelButton.setOnAction(event -> handleCancel());
+        }
     }
 
     public void setProjectRequestData(ProjectRequestDTO projectRequest) {
@@ -63,6 +93,8 @@ public class GUI_ManageProjectRequestController {
             statusLabel.setTextFill(Color.RED);
             return;
         }
+
+        removeFieldListeners();
 
         this.projectRequest = projectRequest;
 
@@ -77,6 +109,75 @@ public class GUI_ManageProjectRequestController {
         directUsersField.setText(String.valueOf(projectRequest.getDirectUsers()));
         indirectUsersField.setText(String.valueOf(projectRequest.getIndirectUsers()));
         statusCombo.setValue(mapStatusToCombo(projectRequest.getStatus()));
+
+        setOriginalValues();
+
+        addFieldListeners();
+
+        checkIfChanged();
+    }
+
+    private void setOriginalValues() {
+        originalTuition = fieldTuition.getText();
+        originalOrganizationId = organizationIdField.getText();
+        originalProjectId = projectIdField.getText();
+        originalRepresentativeId = representativeIdField.getText();
+        originalDescription = descriptionField.getText();
+        originalGeneralObjective = generalObjectiveField.getText();
+        originalDuration = durationField.getText();
+        originalScheduleDays = scheduleDaysField.getText();
+        originalDirectUsers = directUsersField.getText();
+        originalIndirectUsers = indirectUsersField.getText();
+        originalStatus = statusCombo.getValue();
+    }
+
+    private void addFieldListeners() {
+        fieldTuition.textProperty().addListener(changeListener);
+        organizationIdField.textProperty().addListener(changeListener);
+        projectIdField.textProperty().addListener(changeListener);
+        representativeIdField.textProperty().addListener(changeListener);
+        descriptionField.textProperty().addListener(changeListener);
+        generalObjectiveField.textProperty().addListener(changeListener);
+        durationField.textProperty().addListener(changeListener);
+        scheduleDaysField.textProperty().addListener(changeListener);
+        directUsersField.textProperty().addListener(changeListener);
+        indirectUsersField.textProperty().addListener(changeListener);
+        statusCombo.valueProperty().addListener(changeListener);
+    }
+
+    private void removeFieldListeners() {
+        fieldTuition.textProperty().removeListener(changeListener);
+        organizationIdField.textProperty().removeListener(changeListener);
+        projectIdField.textProperty().removeListener(changeListener);
+        representativeIdField.textProperty().removeListener(changeListener);
+        descriptionField.textProperty().removeListener(changeListener);
+        generalObjectiveField.textProperty().removeListener(changeListener);
+        durationField.textProperty().removeListener(changeListener);
+        scheduleDaysField.textProperty().removeListener(changeListener);
+        directUsersField.textProperty().removeListener(changeListener);
+        indirectUsersField.textProperty().removeListener(changeListener);
+        statusCombo.valueProperty().removeListener(changeListener);
+    }
+
+    private void checkIfChanged() {
+        boolean changed =
+                !fieldTuition.getText().equals(originalTuition) ||
+                        !organizationIdField.getText().equals(originalOrganizationId) ||
+                        !projectIdField.getText().equals(originalProjectId) ||
+                        !representativeIdField.getText().equals(originalRepresentativeId) ||
+                        !descriptionField.getText().equals(originalDescription) ||
+                        !generalObjectiveField.getText().equals(originalGeneralObjective) ||
+                        !durationField.getText().equals(originalDuration) ||
+                        !scheduleDaysField.getText().equals(originalScheduleDays) ||
+                        !directUsersField.getText().equals(originalDirectUsers) ||
+                        !indirectUsersField.getText().equals(originalIndirectUsers) ||
+                        (statusCombo.getValue() != null && !statusCombo.getValue().equals(originalStatus));
+
+        boolean filled = areFieldsFilled();
+
+        if (saveButton != null) {
+            saveButton.setDisable(!(changed && filled));
+        }
     }
 
     private ProjectStatus mapStatusFromCombo(String value) {
@@ -131,6 +232,10 @@ public class GUI_ManageProjectRequestController {
                 statusLabel.setText("¡Solicitud de proyecto actualizada exitosamente!");
                 statusLabel.setTextFill(Color.GREEN);
 
+                setOriginalValues();
+                if (saveButton != null) {
+                    saveButton.setDisable(true);
+                }
                 if (parentController != null) {
                     parentController.loadRequestData();
                 }
@@ -139,7 +244,7 @@ public class GUI_ManageProjectRequestController {
                 statusLabel.setTextFill(Color.RED);
             }
 
-        } catch (NumberFormatException e) {
+        }  catch (NumberFormatException e) {
             statusLabel.setText("Los campos numéricos deben contener solo números.");
             statusLabel.setTextFill(Color.RED);
             LOGGER.error("Error de formato numérico: {}", e.getMessage(), e);
@@ -204,6 +309,7 @@ public class GUI_ManageProjectRequestController {
                 !organizationIdField.getText().isEmpty() &&
                 !projectIdField.getText().isEmpty() &&
                 !representativeIdField.getText().isEmpty() &&
+                !descriptionField.getText().isEmpty() &&
                 !generalObjectiveField.getText().isEmpty() &&
                 !durationField.getText().isEmpty() &&
                 !scheduleDaysField.getText().isEmpty() &&

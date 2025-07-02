@@ -21,8 +21,8 @@
         <TextField fx:id="creditAdvanceField" layoutX="210.0" layoutY="178.0" />
         <HBox alignment="CENTER" layoutX="60.0" layoutY="247.0" prefWidth="380.0" spacing="20.0">
             <children>
-                <Button onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
-                <Button onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
+                <Button fx:id="saveGradeButton" onAction="#handleSaveChanges" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+                <Button fx:id="assignFinalGradeButton" onAction="#handleAssignFinalGrade" style="-fx-background-color: #2772d3;" text="Asignar Calificación" textFill="WHITE" />
             </children>
         </HBox>
         <Label fx:id="statusLabel" layoutX="20.0" layoutY="290.0" textFill="RED" />

@@ -85,27 +85,27 @@ class ReportDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE reporte");
-        stmt.execute("TRUNCATE TABLE evidencia");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("ALTER TABLE reporte AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE reporte");
+        statement.execute("TRUNCATE TABLE evidencia");
+        statement.execute("TRUNCATE TABLE estudiante");
+        statement.execute("TRUNCATE TABLE grupo");
+        statement.execute("TRUNCATE TABLE departamento");
+        statement.execute("TRUNCATE TABLE periodo");
+        statement.execute("TRUNCATE TABLE proyecto");
+        statement.execute("TRUNCATE TABLE usuario");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("ALTER TABLE reporte AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE estudiante AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE grupo AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE periodo AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBasePeriod() throws SQLException, IOException {
@@ -140,18 +140,18 @@ class ReportDAOTest {
 
     private int insertUserAndGetId(UserDTO user) throws SQLException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol, estado) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, user.getStaffNumber());
-            stmt.setString(2, user.getNames());
-            stmt.setString(3, user.getSurnames());
-            stmt.setString(4, user.getUserName());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
-            stmt.setInt(7, user.getStatus());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, user.getStaffNumber());
+            preparedStatement.setString(2, user.getNames());
+            preparedStatement.setString(3, user.getSurnames());
+            preparedStatement.setString(4, user.getUserName());
+            preparedStatement.setString(5, user.getPassword());
+            preparedStatement.setString(6, user.getRole().getDataBaseValue());
+            preparedStatement.setInt(7, user.getStatus());
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -160,15 +160,15 @@ class ReportDAOTest {
 
     private int createTestDepartment() throws SQLException {
         String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion, estado) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Dept test");
-            stmt.setString(2, "Description test");
-            stmt.setInt(3, organizationId);
-            stmt.setInt(4, 1);
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Dept test");
+            preparedStatement.setString(2, "Description test");
+            preparedStatement.setInt(3, organizationId);
+            preparedStatement.setInt(4, 1);
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -214,14 +214,14 @@ class ReportDAOTest {
 
     private void createBaseEvidence() throws SQLException {
         String sql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Evidencia Test");
-            stmt.setDate(2, java.sql.Date.valueOf("2024-06-01"));
-            stmt.setString(3, "/ruta/evidencia.pdf");
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    testEvidenceId = rs.getInt(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Evidencia Test");
+            preparedStatement.setDate(2, java.sql.Date.valueOf("2024-06-01"));
+            preparedStatement.setString(3, "/ruta/evidencia.pdf");
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    testEvidenceId = resultSet.getInt(1);
                 }
             }
         }
@@ -339,9 +339,9 @@ class ReportDAOTest {
     void insertReportWithNullRequiredFields() {
         ReportDTO report = new ReportDTO(
                 null,
-                null, // Null date
+                null,
                 10,
-                null, // Null objective
+                null,
                 "Metodología",
                 "Resultado",
                 projectId,

@@ -19,7 +19,7 @@ public class UserDAO implements IUserDAO {
     private static final String SQL_UPDATE = "UPDATE usuario SET numeroDePersonal = ?, nombres = ?, apellidos = ?, nombreUsuario = ?, contraseña = ?, rol = ? WHERE idUsuario = ?";
     private static final String SQL_UPDATE_STATUS = "UPDATE usuario SET estado = ? WHERE idUsuario = ?";
     private static final String SQL_DELETE = "DELETE FROM usuario WHERE idUsuario = ?";
-    private static final String SQL_SELECT_BY_ID = "SELECT * FROM usuario WHERE idUsuario = ?";
+    private static final String SQL_SELECT_BY_STAFF_NUMBER = "SELECT * FROM usuario WHERE numeroDePersonal = ?";
     private static final String SQL_SELECT_BY_USERNAME = "SELECT * FROM usuario WHERE nombreUsuario = ?";
     private static final String SQL_SELECT_BY_USER_AND_PASSWORD = "SELECT * FROM usuario WHERE nombreUsuario = ? AND contraseña = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM usuario";
@@ -75,11 +75,11 @@ public class UserDAO implements IUserDAO {
     }
 
 
-    public UserDTO searchUserById(String idUser) throws SQLException, IOException {
+    public UserDTO searchUserByStaffNumber(String idUser) throws SQLException, IOException {
         UserDTO user;
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDataBase();
-            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_STAFF_NUMBER);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
@@ -129,7 +129,7 @@ public class UserDAO implements IUserDAO {
     public boolean isUserRegistered(String idUser) throws SQLException, IOException {
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase()) {
             Connection connection = connectionDataBase.connectDataBase();
-            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_ID);
+            PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_STAFF_NUMBER);
             statement.setString(1, idUser);
             try (ResultSet resultSet = statement.executeQuery()) {
                 return resultSet.next();

@@ -54,10 +54,8 @@ class SelfAssessmentCriteriaDAOTest {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO(
                     "1", "Criterio de Prueba"
             );
-
             boolean result = selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria);
             assertTrue(result, "La inserción debería ser exitosa");
-
             List<SelfAssessmentCriteriaDTO> criteriaList = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertNotNull(criteriaList, "La lista de criterios no debería ser nula");
             assertEquals(1, criteriaList.size(), "Debería haber un criterio en la base de datos");
@@ -78,7 +76,6 @@ class SelfAssessmentCriteriaDAOTest {
                     "2", "Criterio de Consulta"
             );
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria);
-
             SelfAssessmentCriteriaDTO found = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById("2");
             assertNotNull(found, "El criterio buscado no debe ser nulo");
             assertEquals("Criterio de Consulta", found.getNameCriteria(), "El nombre debe coincidir");
@@ -98,13 +95,11 @@ class SelfAssessmentCriteriaDAOTest {
                     "3", "Criterio Original"
             );
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(original);
-
             SelfAssessmentCriteriaDTO updated = new SelfAssessmentCriteriaDTO(
                     "3", "Criterio Actualizado"
             );
             boolean result = selfAssessmentCriteriaDAO.updateSelfAssessmentCriteria(updated);
             assertTrue(result, "La actualización debería ser exitosa");
-
             SelfAssessmentCriteriaDTO found = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById("3");
             assertEquals("Criterio Actualizado", found.getNameCriteria(), "El nombre debe actualizarse");
         } catch (SQLException e) {
@@ -123,10 +118,8 @@ class SelfAssessmentCriteriaDAOTest {
                     "4", "Criterio a Eliminar"
             );
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria);
-
             boolean result = selfAssessmentCriteriaDAO.deleteSelfAssessmentCriteria(criteria);
             assertTrue(result, "La eliminación debería ser exitosa");
-
             SelfAssessmentCriteriaDTO found = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById("4");
             assertEquals("N/A", found.getIdCriteria(), "El criterio eliminado no debería existir");
         } catch (SQLException e) {
@@ -144,14 +137,11 @@ class SelfAssessmentCriteriaDAOTest {
             SelfAssessmentCriteriaDTO criteria1 = new SelfAssessmentCriteriaDTO(
                     "5", "Criterio 1"
             );
-
             SelfAssessmentCriteriaDTO criteria2 = new SelfAssessmentCriteriaDTO(
                     "6", "Criterio 2"
             );
-
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria1);
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria2);
-
             List<SelfAssessmentCriteriaDTO> criteriaList = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertNotNull(criteriaList, "La lista de criterios no debería ser nula");
             assertEquals(2, criteriaList.size(), "Deberían existir dos criterios en la base de datos");
@@ -169,7 +159,6 @@ class SelfAssessmentCriteriaDAOTest {
         try {
             SelfAssessmentCriteriaDTO criteria = new SelfAssessmentCriteriaDTO("10", "Criterio Único");
             assertTrue(selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(criteria));
-
             SelfAssessmentCriteriaDTO duplicate = new SelfAssessmentCriteriaDTO("10", "Criterio Duplicado");
             assertThrows(SQLException.class, () -> selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(duplicate));
         } catch (SQLException e) {
@@ -249,7 +238,6 @@ class SelfAssessmentCriteriaDAOTest {
             SelfAssessmentCriteriaDTO nullFields = new SelfAssessmentCriteriaDTO(null, null);
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(nullFields);
         });
-
         assertThrows(SQLException.class, () -> {
             SelfAssessmentCriteriaDTO emptyFields = new SelfAssessmentCriteriaDTO("", "");
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(emptyFields);
@@ -262,10 +250,8 @@ class SelfAssessmentCriteriaDAOTest {
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO("1", "A"));
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO("2", "B"));
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO("3", "C"));
-
             List<SelfAssessmentCriteriaDTO> list = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertEquals(3, list.size());
-            // Verifica orden por id (ajusta si tu consulta tiene ORDER BY)
             assertEquals("1", list.get(0).getIdCriteria());
             assertEquals("2", list.get(1).getIdCriteria());
             assertEquals("3", list.get(2).getIdCriteria());
@@ -302,10 +288,9 @@ class SelfAssessmentCriteriaDAOTest {
         try {
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO("50", "A"));
             selfAssessmentCriteriaDAO.insertSelfAssessmentCriteria(new SelfAssessmentCriteriaDTO("51", "B"));
-
             List<SelfAssessmentCriteriaDTO> list = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
-            for (SelfAssessmentCriteriaDTO c : list) {
-                selfAssessmentCriteriaDAO.deleteSelfAssessmentCriteria(c);
+            for (SelfAssessmentCriteriaDTO criteria : list) {
+                selfAssessmentCriteriaDAO.deleteSelfAssessmentCriteria(criteria);
             }
             List<SelfAssessmentCriteriaDTO> afterDelete = selfAssessmentCriteriaDAO.getAllSelfAssessmentCriteria();
             assertTrue(afterDelete.isEmpty());
@@ -324,7 +309,6 @@ class SelfAssessmentCriteriaDAOTest {
             SelfAssessmentCriteriaDTO foundNull = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById(null);
             assertNotNull(foundNull);
             assertEquals("N/A", foundNull.getIdCriteria());
-
             SelfAssessmentCriteriaDTO foundEmpty = selfAssessmentCriteriaDAO.searchSelfAssessmentCriteriaById("");
             assertNotNull(foundEmpty);
             assertEquals("N/A", foundEmpty.getIdCriteria());

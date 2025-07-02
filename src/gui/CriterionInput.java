@@ -30,7 +30,8 @@ public class CriterionInput {
         commentsField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
             if (newText.length() > MAX_COMMENTS_LENGTH) {
-                change.setText(newText.substring(change.getRangeStart(), change.getRangeStart() + MAX_COMMENTS_LENGTH - change.getControlText().length()));
+                change.setText(newText.substring(0, MAX_COMMENTS_LENGTH));
+                change.setRange(0, change.getControlText().length());
                 change.setAnchor(MAX_COMMENTS_LENGTH);
                 change.setCaretPosition(MAX_COMMENTS_LENGTH);
             }

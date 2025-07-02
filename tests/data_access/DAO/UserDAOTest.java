@@ -65,7 +65,8 @@ class UserDAOTest {
             boolean result = userDAO.insertUser(user);
             assertTrue(result, "La inserción del usuario debe ser exitosa");
 
-            UserDTO insertedUser = userDAO.searchUserById("1");
+            // Corregido: buscar por numeroDePersonal
+            UserDTO insertedUser = userDAO.searchUserByStaffNumber("12345");
             assertNotNull(insertedUser, "Usuario debe existir en la base de datos");
             assertEquals("Juan", insertedUser.getNames(), "Nombre debe coincidir");
         } catch (SQLException e) {
@@ -78,14 +79,15 @@ class UserDAOTest {
     }
 
     @Test
-    void testSearchUserById() {
+    void testSearchUserByStaffNumber() {
         try {
             UserDTO user = new UserDTO(
                     "2", 1, "54321", "María", "López", "marialopez",
                     PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
-            UserDTO retrievedUser = userDAO.searchUserById("2");
+            // Corregido: buscar por numeroDePersonal
+            UserDTO retrievedUser = userDAO.searchUserByStaffNumber("54321");
             assertNotNull(retrievedUser, "Usuario debe existir en la base de datos");
             assertEquals("María", retrievedUser.getNames(), "Nombre debe coincidir");
         } catch (SQLException e) {
@@ -101,18 +103,17 @@ class UserDAOTest {
     void testUpdateUser() {
         try {
             UserDTO user = new UserDTO(
-                    "3", 1, "12345", "Carlos", "Gómez", "carlosgomez",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
+                    "3", 1, "12345", "Carlos", "Gómez", "carlosg", "pass", Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
 
             UserDTO updatedUser = new UserDTO(
-                    "3", 1, "12345", "Carlos", "Gómez", "carlosgomez",
-                    PasswordHasher.hashPassword("nuevaclave789"), Role.EVALUATOR_ACADEMIC
+                    "3", 1, "12345", "Carlos", "Gómez", "carlosgomez", "pass", Role.EVALUATOR_ACADEMIC
             );
             assertTrue(userDAO.updateUser(updatedUser), "Actualizacion del usuario debe ser exitosa");
 
-            UserDTO retrievedUser = userDAO.searchUserById("3");
+            UserDTO retrievedUser = userDAO.searchUserByStaffNumber("12345");
+            assertNotNull(retrievedUser, "Usuario debe existir en la base de datos");
             assertEquals("carlosgomez", retrievedUser.getUserName());
             assertEquals(Role.EVALUATOR_ACADEMIC, retrievedUser.getRole());
         } catch (SQLException e) {
@@ -127,7 +128,7 @@ class UserDAOTest {
     @Test
     void testDeleteUser() {
         UserDAO userDAO = new UserDAO();
-        String idUser = "1001"; // id numérico como String
+        String idUser = "1001";
         UserDTO user = new UserDTO(
                 idUser, 1, "99999", "Test", "Delete", "deleteuser", "password", Role.EVALUATOR_ACADEMIC
         );
@@ -145,13 +146,11 @@ class UserDAOTest {
     void testGetAllUsers() {
         try {
             UserDTO user = new UserDTO(
-                    "2", 1, "54321", "María", "López", "marialopez1",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
+                    "4", 1, "11111", "Ana", "Martínez", "anam", "pass", Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
             UserDTO user2 = new UserDTO(
-                    "22", 1, "54322", "María", "López", "marialopez2",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
+                    "5", 1, "22222", "Luis", "Ramírez", "luisr", "pass", Role.COORDINATOR
             );
             assertTrue(userDAO.insertUser(user2));
             List<UserDTO> users = userDAO.getAllUsers();
@@ -170,7 +169,7 @@ class UserDAOTest {
     void testInsertUserDuplicate() {
         try {
             UserDTO user = new UserDTO(
-                    "10", 1, "99999", "Duplicado", "Usuario", "duplicado", "clave", Role.ACADEMIC
+                    "6", 1, "33333", "Pedro", "Sánchez", "pedros", "pass", Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user), "Primer insert debe ser exitoso");
             assertThrows(SQLException.class, () -> userDAO.insertUser(user), "No debería permitir insertar un usuario duplicado");
@@ -187,7 +186,7 @@ class UserDAOTest {
     void testUpdateUserNotExists() {
         try {
             UserDTO user = new UserDTO(
-                    "999", 1, "00000", "No", "Existe", "noexiste", "clave", Role.GUEST
+                    "7", 1, "44444", "No", "Existe", "noexiste", "pass", Role.ACADEMIC
             );
             boolean result = userDAO.updateUser(user);
             assertFalse(result, "No debería actualizar un usuario que no existe");
@@ -215,9 +214,9 @@ class UserDAOTest {
     }
 
     @Test
-    void testSearchUserByIdNotExists() {
+    void testSearchUserByStaffNumberNotExists() {
         try {
-            UserDTO user = userDAO.searchUserById("99999");
+            UserDTO user = userDAO.searchUserByStaffNumber("99999");
             assertNull(user, "Debe retornar null si el usuario no existe");
         } catch (SQLException e) {
             fail("Error en testSearchUserByIdNotExists: " + e.getMessage());
@@ -238,8 +237,7 @@ class UserDAOTest {
             String hashedPassword = PasswordHasher.hashPassword(password);
 
             UserDTO user = new UserDTO(
-                    idUser, 1, "12345", "Nombre", "Apellido", username,
-                    hashedPassword, Role.ACADEMIC
+                    idUser, 1, "77777", "Nombre", "Apellido", username, hashedPassword, Role.ACADEMIC
             );
             userDAO.insertUser(user);
 
@@ -269,7 +267,7 @@ class UserDAOTest {
     @Test
     void testIsUserRegistered() {
         UserDAO userDAO = new UserDAO();
-        String idUser = "12345"; // id numérico como String
+        String idUser = "12345";
         UserDTO user = new UserDTO(
                 idUser,
                 1,
@@ -282,15 +280,9 @@ class UserDAOTest {
         );
         try {
             userDAO.insertUser(user);
-            assertTrue(userDAO.isUserRegistered(idUser), "Deberia detectar usuario existente");
+            assertTrue(userDAO.isUserRegistered("12345"), "Deberia detectar usuario existente");
         } catch (Exception e) {
             fail("Error en testIsUserRegistered: " + e.getMessage());
-        } finally {
-            try {
-                userDAO.deleteUser(idUser);
-            } catch (Exception e) {
-                fail("Error al limpiar el usuario de prueba: " + e.getMessage());
-            }
         }
     }
 
@@ -298,8 +290,7 @@ class UserDAOTest {
     void testIsNameRegistered() {
         try {
             UserDTO user = new UserDTO(
-                    "31", 1, "54322", "María", "López", "marialopez_test",
-                    PasswordHasher.hashPassword("clave123"), Role.ACADEMIC
+                    "8", 1, "55555", "María", "López", "marialopez_test", "clave", Role.ACADEMIC
             );
             assertTrue(userDAO.insertUser(user));
             assertTrue(userDAO.isNameRegistered("marialopez_test"), "Deberia detectar nombre de usuario existente");
@@ -387,7 +378,7 @@ class UserDAOTest {
             }
 
             List<UserDTO> users = userDAO.getAllUsers();
-            long count = users.stream().filter(u -> u.getUserName().startsWith("marialopez")).count();
+            long count = users.stream().filter(user -> user.getUserName().startsWith("marialopez")).count();
             Assertions.assertEquals(3, count);
 
         } catch (Exception e) {

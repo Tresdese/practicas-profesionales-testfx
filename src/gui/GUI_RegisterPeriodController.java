@@ -44,6 +44,14 @@ public class GUI_RegisterPeriodController {
                 return;
             }
 
+            // Validación: el ID solo puede contener números
+            String periodId = periodLabel.getText().trim();
+            if (!periodId.matches("\\d+")) {
+                statusLabel.setText("El ID del periodo solo puede contener números.");
+                statusLabel.setTextFill(Color.RED);
+                return;
+            }
+
             LocalDate startLocalDate = startDateLabel.getValue();
             LocalDate endLocalDate = endDateField.getValue();
 
@@ -51,7 +59,7 @@ public class GUI_RegisterPeriodController {
             Timestamp endDate = Timestamp.valueOf(endLocalDate.atStartOfDay());
 
             PeriodDTO period = new PeriodDTO(
-                    periodLabel.getText(),
+                    periodId,
                     nameField.getText(),
                     startDate,
                     endDate
@@ -117,6 +125,10 @@ public class GUI_RegisterPeriodController {
         } catch (IOException e) {
             LOGGER.error("Error al leer el archivo de configuracion de la base de datos: {}", e.getMessage(), e);
             statusLabel.setText("Error al leer la configuración de la base de datos.");
+            statusLabel.setTextFill(Color.RED);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e);
+            statusLabel.setText(e.getMessage());
             statusLabel.setTextFill(Color.RED);
         } catch (Exception e) {
             LOGGER.error("Error inesperado al registrar el periodo: {}", e.getMessage(), e);

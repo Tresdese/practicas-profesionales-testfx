@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -7,7 +6,7 @@
     <children>
         <Label layoutX="50.0" layoutY="50.0" text="Calificación Final:" />
         <TextField fx:id="finalGradeField" layoutX="150.0" layoutY="50.0" prefWidth="200.0" />
-        <Button layoutX="150.0" layoutY="100.0" text="Guardar" onAction="#handleSaveFinalGrade" />
+        <Button fx:id="saveGradeButton" layoutX="150.0" layoutY="100.0" prefWidth="100.0" text="Guardar" />
         <Label fx:id="statusLabel" layoutX="50.0" layoutY="150.0" textFill="RED" />
     </children>
 </AnchorPane>

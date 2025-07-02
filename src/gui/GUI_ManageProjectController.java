@@ -421,7 +421,7 @@ public class GUI_ManageProjectController {
         try {
             String userId = project.getIdUser();
             if (userId != null && !userId.isEmpty()) {
-                UserDTO academic = userService.searchUserById(userId);
+                UserDTO academic = userService.searchUserByStaffNumber(userId);
                 if (academic != null) {
                     academicChoiceBox.setValue(academic.getNames() + " " + academic.getSurnames());
                 }

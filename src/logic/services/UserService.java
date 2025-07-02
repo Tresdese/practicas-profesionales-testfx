@@ -6,7 +6,6 @@ import logic.exceptions.RepeatedId;
 import logic.exceptions.RepeatedName;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -50,8 +49,8 @@ public class UserService {
         return success;
     }
 
-    public UserDTO searchUserById(String id) throws SQLException, IOException {
-        return userDAO.searchUserById(id);
+    public UserDTO searchUserByStaffNumber(String id) throws SQLException, IOException {
+        return userDAO.searchUserByStaffNumber(id);
     }
 
     public String getUserIdByUsername(String username) throws SQLException, IOException {

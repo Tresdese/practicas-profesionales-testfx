@@ -109,11 +109,11 @@ public class RegisterProjectControllerTest extends ApplicationTest {
             statement.setString(3, user.getSurnames());
             statement.setString(4, user.getUserName());
             statement.setString(5, user.getPassword());
-            statement.setString(6, user.getRole().toString());
+            statement.setString(6, user.getRole().getDataBaseValue());
             statement.executeUpdate();
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -127,9 +127,9 @@ public class RegisterProjectControllerTest extends ApplicationTest {
             statement.setString(2, "Description test");
             statement.setInt(3, testOrganizationId);
             statement.executeUpdate();
-            try (ResultSet rs = statement.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }

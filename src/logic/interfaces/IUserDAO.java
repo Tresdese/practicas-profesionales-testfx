@@ -1,7 +1,6 @@
 package logic.interfaces;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import logic.DTO.UserDTO;
@@ -18,7 +17,7 @@ public interface IUserDAO {
 
     String getUserIdByUsername(String username) throws SQLException, IOException;
 
-    UserDTO searchUserById(String idUser) throws SQLException, IOException;
+    UserDTO searchUserByStaffNumber(String idUser) throws SQLException, IOException;
 
     UserDTO searchUserByUsernameAndPassword(String username, String hashedPassword) throws SQLException, IOException;
 

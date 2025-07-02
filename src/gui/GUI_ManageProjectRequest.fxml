@@ -49,8 +49,8 @@
         <Label layoutX="69.0" layoutY="450.0" text="Estado:" />
         <ComboBox fx:id="statusCombo" layoutX="220.0" layoutY="446.0" prefWidth="200.0" />
 
-        <Button layoutX="141.0" layoutY="500.0" onAction="#handleSaveChanges" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
-        <Button layoutX="141.0" layoutY="540.0" onAction="#handleCancel" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #c0c0c0;" text="Cancelar" textFill="BLACK" />
+        <Button fx:id="saveButton" layoutX="141.0" layoutY="500.0" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #2772d3;" text="Guardar Cambios" textFill="WHITE" />
+        <Button fx:id="cancelButton" layoutX="141.0" layoutY="540.0" prefHeight="30.0" prefWidth="220.0" style="-fx-background-color: #c0c0c0;" text="Cancelar" textFill="BLACK" />
 
         <Label fx:id="statusLabel" layoutX="69.0" layoutY="480.0" prefHeight="17.0" prefWidth="350.0" textFill="RED" />
     </children>

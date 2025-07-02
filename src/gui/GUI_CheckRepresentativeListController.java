@@ -229,72 +229,76 @@ public class GUI_CheckRepresentativeListController {
     }
 
     private String getOrganizationNameByDepartmentId(String departmentId) {
+        String result;
         try {
             if (departmentId == null || departmentId.isEmpty()) {
-                return "No asignado";
+                result = "No asignado";
+            } else {
+                DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(departmentId));
+                if (department == null) {
+                    result = "Departamento no encontrado";
+                } else {
+                    ServiceConfig serviceConfig = new ServiceConfig();
+                    LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
+                            .searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
+                    result = (organization != null) ? organization.getName() : "Organización no encontrada";
+                }
             }
-            DepartmentDTO department = departmentDAO.searchDepartmentById(Integer.parseInt(departmentId));
-            if (department == null) {
-                return "Departamento no encontrado";
-            }
-            ServiceConfig serviceConfig = new ServiceConfig();
-            LinkedOrganizationDTO organization = serviceConfig.getLinkedOrganizationService()
-                    .searchLinkedOrganizationById(String.valueOf(department.getOrganizationId()));
-            return (organization != null) ? organization.getName() : "Organización no encontrada";
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {
                 LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error de conexión con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Error de conexión";
+                result = "Error de conexión";
             } else if ("08S01".equals(sqlState)) {
                 LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Conexión interrumpida con la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Conexión interrumpida";
+                result = "Conexión interrumpida";
             } else if ("42S02".equals(sqlState)) {
                 LOGGER.error("Tabla no encontrada en la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Tabla no encontrada en la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Tabla no encontrada";
+                result = "Tabla no encontrada";
             } else if ("42S22".equals(sqlState)) {
                 LOGGER.error("Columna no encontrada en la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Columna no encontrada en la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Columna no encontrada";
+                result = "Columna no encontrada";
             } else if ("HY000".equals(sqlState)) {
                 LOGGER.error("Error general de la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Error general de la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Error general de la base de datos";
+                result = "Error general de la base de datos";
             } else if ("42000".equals(sqlState)) {
                 LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
                 statusLabel.setText("Base de datos desconocida.");
                 statusLabel.setTextFill(Color.RED);
-                return "Base de datos desconocida";
+                result = "Base de datos desconocida";
             } else if ("28000".equals(sqlState)) {
                 LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 statusLabel.setText("Acceso denegado a la base de datos.");
                 statusLabel.setTextFill(Color.RED);
-                return "Acceso denegado";
+                result = "Acceso denegado";
             } else {
                 LOGGER.error("Error de base de datos al obtener organización por departamento: {}", e.getMessage(), e);
                 statusLabel.setText("Error de base de datos al obtener organización por departamento.");
                 statusLabel.setTextFill(Color.RED);
-                return "Error de base de datos al obtener organización por departamento";
+                result = "Error de base de datos al obtener organización por departamento";
             }
         } catch (IOException e) {
             LOGGER.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
             statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
-            return "Error al leer archivo de configuración";
+            result = "Error al leer archivo de configuración";
         } catch (Exception e) {
             LOGGER.error("Error inesperado al obtener nombre de organización por departamento: {}", e.getMessage(), e);
             statusLabel.setText("Error inesperado al obtener la organización por departamento.");
             statusLabel.setTextFill(Color.RED);
-            return "Error";
+            result = "Error";
         }
+        return result;
     }
 
     private void openRegisterRepresentativeWindow() {

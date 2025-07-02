@@ -48,78 +48,78 @@ class ScheduleOfActivitiesDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM cronograma_de_actividades");
-            stmt.execute("ALTER TABLE cronograma_de_actividades AUTO_INCREMENT = 1");
-            stmt.execute("DELETE FROM estudiante");
-            stmt.execute("DELETE FROM grupo");
-            stmt.execute("DELETE FROM periodo");
-            stmt.execute("DELETE FROM evidencia");
-            stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
-            stmt.execute("DELETE FROM usuario");
-            stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("DELETE FROM cronograma_de_actividades");
+            statement.execute("ALTER TABLE cronograma_de_actividades AUTO_INCREMENT = 1");
+            statement.execute("DELETE FROM estudiante");
+            statement.execute("DELETE FROM grupo");
+            statement.execute("DELETE FROM periodo");
+            statement.execute("DELETE FROM evidencia");
+            statement.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
+            statement.execute("DELETE FROM usuario");
+            statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
         }
     }
 
     private void createBaseRecords() throws SQLException {
         String userSql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, 1001);
-            ps.setString(2, "Academico");
-            ps.setString(3, "Prueba");
-            ps.setString(4, "academico1");
-            ps.setString(5, "password123");
-            ps.setString(6, "Academico");
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    baseUserId = rs.getInt(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setInt(1, 1001);
+            preparedStatement.setString(2, "Academico");
+            preparedStatement.setString(3, "Prueba");
+            preparedStatement.setString(4, "academico1");
+            preparedStatement.setString(5, "password123");
+            preparedStatement.setString(6, "Academico");
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    baseUserId = resultSet.getInt(1);
                 }
             }
         }
         String periodSql = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
         basePeriodId = "1";
-        try (PreparedStatement ps = connection.prepareStatement(periodSql)) {
-            ps.setString(1, basePeriodId);
-            ps.setString(2, "Periodo Base");
-            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
-            ps.setDate(4, new java.sql.Date(System.currentTimeMillis()));
-            ps.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(periodSql)) {
+            preparedStatement.setString(1, basePeriodId);
+            preparedStatement.setString(2, "Periodo Base");
+            preparedStatement.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+            preparedStatement.setDate(4, new java.sql.Date(System.currentTimeMillis()));
+            preparedStatement.executeUpdate();
         }
         String groupSql = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
         baseNrc = "101";
-        try (PreparedStatement ps = connection.prepareStatement(groupSql)) {
-            ps.setString(1, baseNrc);
-            ps.setString(2, "Grupo Base");
-            ps.setInt(3, baseUserId);
-            ps.setString(4, basePeriodId);
-            ps.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(groupSql)) {
+            preparedStatement.setString(1, baseNrc);
+            preparedStatement.setString(2, "Grupo Base");
+            preparedStatement.setInt(3, baseUserId);
+            preparedStatement.setString(4, basePeriodId);
+            preparedStatement.executeUpdate();
         }
         String studentSql = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         baseTuition = "A12345678";
-        try (PreparedStatement ps = connection.prepareStatement(studentSql)) {
-            ps.setString(1, baseTuition);
-            ps.setInt(2, 1);
-            ps.setString(3, "Juan");
-            ps.setString(4, "Pérez");
-            ps.setString(5, "1234567890");
-            ps.setString(6, "juan.perez@example.com");
-            ps.setString(7, "juanperez");
-            ps.setString(8, "password123");
-            ps.setString(9, baseNrc);
-            ps.setInt(10, 50);
-            ps.setDouble(11, 85.5);
-            ps.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(studentSql)) {
+            preparedStatement.setString(1, baseTuition);
+            preparedStatement.setInt(2, 1);
+            preparedStatement.setString(3, "Juan");
+            preparedStatement.setString(4, "Pérez");
+            preparedStatement.setString(5, "1234567890");
+            preparedStatement.setString(6, "juan.perez@example.com");
+            preparedStatement.setString(7, "juanperez");
+            preparedStatement.setString(8, "password123");
+            preparedStatement.setString(9, baseNrc);
+            preparedStatement.setInt(10, 50);
+            preparedStatement.setDouble(11, 85.5);
+            preparedStatement.executeUpdate();
         }
         String evidenceSql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(evidenceSql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, "Evidencia Base");
-            ps.setDate(2, new java.sql.Date(System.currentTimeMillis()));
-            ps.setString(3, "/ruta/evidencia/base");
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    baseEvidenceId = String.valueOf(rs.getInt(1));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(evidenceSql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Evidencia Base");
+            preparedStatement.setDate(2, new java.sql.Date(System.currentTimeMillis()));
+            preparedStatement.setString(3, "/ruta/evidencia/base");
+            preparedStatement.executeUpdate();
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    baseEvidenceId = String.valueOf(resultSet.getInt(1));
                 }
             }
         }
@@ -226,9 +226,9 @@ class ScheduleOfActivitiesDAOTest {
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule1);
             scheduleOfActivitiesDAO.insertScheduleOfActivities(schedule2);
 
-            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
-            assertNotNull(schedules, "La lista no debería ser nula");
-            assertTrue(schedules.size() >= 2, "Deberían existir al menos dos cronogramas en la lista");
+            List<ScheduleOfActivitiesDTO> scheduleList = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
+            assertNotNull(scheduleList, "La lista no debería ser nula");
+            assertTrue(scheduleList.size() >= 2, "Deberían existir al menos dos cronogramas en la lista");
         } catch (SQLException e) {
             fail("Error en testGetAllSchedulesOfActivities: " + e.getMessage());
         } catch (IOException e) {
@@ -309,9 +309,9 @@ class ScheduleOfActivitiesDAOTest {
     void testGetAllSchedulesOfActivities_EmptyTable() {
         try {
             clearTablesAndResetAutoIncrement();
-            List<ScheduleOfActivitiesDTO> schedules = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
-            assertNotNull(schedules, "La lista no debe ser nula");
-            assertEquals(0, schedules.size(), "La lista debe estar vacía si no hay cronogramas");
+            List<ScheduleOfActivitiesDTO> scheduleList = scheduleOfActivitiesDAO.getAllSchedulesOfActivities();
+            assertNotNull(scheduleList, "La lista no debe ser nula");
+            assertEquals(0, scheduleList.size(), "La lista debe estar vacía si no hay cronogramas");
         } catch (SQLException e) {
             fail("Error en testGetAllSchedulesOfActivities_EmptyTable: " + e.getMessage());
         } catch (IOException e) {

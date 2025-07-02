@@ -28,20 +28,28 @@ public class GUI_DetailsStudentController {
 
     @FXML
     private Label tuitionLabel;
+
     @FXML
     private Label namesLabel;
+
     @FXML
     private Label surnamesLabel;
+
     @FXML
     private Label emailLabel;
+
     @FXML
     private Label NRCLabel;
+
     @FXML
     private Label projectNameLabel;
+
     @FXML
     private Label projectDescriptionLabel;
+
     @FXML
     private Label projectOrganizationLabel;
+
     @FXML
     private Button checkSelfAssessmentButton;
 

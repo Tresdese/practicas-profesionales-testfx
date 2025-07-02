@@ -153,7 +153,7 @@ class EvaluationDetailDAOTest {
             statement.setString(3, user.getSurnames());
             statement.setString(4, user.getUserName());
             statement.setString(5, user.getPassword());
-            statement.setString(6, user.getRole().toString());
+            statement.setString(6, user.getRole().getDataBaseValue());
             statement.executeUpdate();
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {

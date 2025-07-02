@@ -17,7 +17,7 @@ public class StudentProjectViewDAO {
 
     private static final Logger logger = LogManager.getLogger(StudentProjectViewDAO.class);
 
-    private static final String SQL_SELECT_BY_PRESENTATION_ID = "SELECT idPresentacion, fecha_presentacion, tipo_presentacion, idProyecto, " + "       nombre_proyecto, matricula, nombre_estudiante " + "FROM vista_estudiantes_por_presentacion " + "WHERE idPresentacion = ?";
+    private static final String SQL_SELECT_BY_PRESENTATION_ID = "SELECT idPresentacion, fecha_presentacion, tipo_presentacion, idProyecto," + " nombre_proyecto, matricula, nombre_estudiante " + "FROM vista_estudiantes_por_presentacion " + "WHERE idPresentacion = ?";
 
     public List<StudentProjectViewDTO> getStudentProjectViewByPresentationId(int presentationId) throws SQLException, IOException {
         List<StudentProjectViewDTO> studentProjectViews = new ArrayList<>();

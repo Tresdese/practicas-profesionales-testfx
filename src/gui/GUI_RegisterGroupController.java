@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 
 public class GUI_RegisterGroupController {
 
+    private static final int MAX_NRC_DIGITS = 5;
+
     private static final Logger LOGGER = LogManager.getLogger(GUI_RegisterGroupController.class);
 
     @FXML
@@ -44,6 +46,7 @@ public class GUI_RegisterGroupController {
 
     @FXML
     public void initialize() {
+        configureTextFormatters();
         loadAcademics();
         loadPeriods();
         registerButton.setOnAction(event -> handleRegisterGroup());
@@ -52,6 +55,29 @@ public class GUI_RegisterGroupController {
         nameCharCountLabel.setText("0/50");
         nameField.textProperty().addListener((observable, oldText, newText) ->
                 nameCharCountLabel.setText(newText.length() + "/50")
+        );
+    }
+
+    private void configureFieldToNumbers(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String onlyNumbers = newValue.replaceAll("[^\\d]", "");
+            if (onlyNumbers.length() > MAX_NRC_DIGITS) {
+                onlyNumbers = onlyNumbers.substring(0, MAX_NRC_DIGITS);
+            }
+            if (!newValue.equals(onlyNumbers)) {
+                textField.setText(onlyNumbers);
+            }
+        });
+    }
+
+    private void configureTextFormatters() {
+        nrcField.setTextFormatter(createTextFormatter(MAX_NRC_DIGITS));
+        configureFieldToNumbers(nrcField);
+    }
+
+    private TextFormatter<String> createTextFormatter(int maxLength) {
+        return new TextFormatter<>(change ->
+                change.getControlNewText().length() <= maxLength ? change : null
         );
     }
 
@@ -127,6 +153,7 @@ public class GUI_RegisterGroupController {
         try {
             PeriodDAO periodDAO = new PeriodDAO();
             List<PeriodDTO> periods = periodDAO.getAllPeriods();
+            LOGGER.info("Periodos obtenidos: " + periods.size());
             periodList.setAll(periods);
             periodChoiceBox.setItems(periodList);
             periodChoiceBox.setConverter(new javafx.util.StringConverter<PeriodDTO>() {

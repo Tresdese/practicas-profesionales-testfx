@@ -56,83 +56,83 @@ class StudentProjectDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE proyecto_estudiante");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE proyecto_estudiante");
+        statement.execute("TRUNCATE TABLE proyecto");
+        statement.execute("TRUNCATE TABLE estudiante");
+        statement.execute("TRUNCATE TABLE grupo");
+        statement.execute("TRUNCATE TABLE periodo");
+        statement.execute("TRUNCATE TABLE usuario");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBaseObjects() throws SQLException {
         String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (1, '2024-1', '2024-01-01', '2024-06-30')";
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sqlPeriod);
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sqlPeriod);
             testPeriodId = 1;
         }
 
         String sqlUser = "INSERT INTO usuario (idUsuario, numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (1, 1001, 'Juan', 'Pérez', 'juanp', '1234567890123456789012345678901234567890123456789012345678901234', 'Academico')";
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sqlUser);
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sqlUser);
             testUserId = 1;
         }
 
         String sqlOrg = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES ('Org Test', 'Direccion Test')";
-        try (Statement stmt = connection.createStatement()) {
-            stmt.executeUpdate(sqlOrg, Statement.RETURN_GENERATED_KEYS);
-            var rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                testOrganizationId = rs.getInt(1);
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sqlOrg, Statement.RETURN_GENERATED_KEYS);
+            var resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                testOrganizationId = resultSet.getInt(1);
             }
         }
 
         testGroupNRC = "12345";
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
-            stmt.setString(1, testGroupNRC);
-            stmt.setString(2, "Grupo Test");
-            stmt.setInt(3, testUserId);
-            stmt.setInt(4, testPeriodId);
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlGroup)) {
+            preparedStatement.setString(1, testGroupNRC);
+            preparedStatement.setString(2, "Grupo Test");
+            preparedStatement.setInt(3, testUserId);
+            preparedStatement.setInt(4, testPeriodId);
+            preparedStatement.executeUpdate();
         }
 
         testStudentTuition = "S12345";
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
-            stmt.setString(1, testStudentTuition);
-            stmt.setInt(2, 1);
-            stmt.setString(3, "Estudiante");
-            stmt.setString(4, "Prueba");
-            stmt.setString(5, "5555555555");
-            stmt.setString(6, "estu@test.com");
-            stmt.setString(7, "estuuser");
-            stmt.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
-            stmt.setString(9, testGroupNRC);
-            stmt.setString(10, "100");
-            stmt.setDouble(11, 0.0);
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStudent)) {
+            preparedStatement.setString(1, testStudentTuition);
+            preparedStatement.setInt(2, 1);
+            preparedStatement.setString(3, "Estudiante");
+            preparedStatement.setString(4, "Prueba");
+            preparedStatement.setString(5, "5555555555");
+            preparedStatement.setString(6, "estu@test.com");
+            preparedStatement.setString(7, "estuuser");
+            preparedStatement.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
+            preparedStatement.setString(9, testGroupNRC);
+            preparedStatement.setString(10, "100");
+            preparedStatement.setDouble(11, 0.0);
+            preparedStatement.executeUpdate();
         }
 
         String sqlProject = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlProject, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Proyecto Test");
-            stmt.setString(2, "Descripción de prueba");
-            stmt.setDate(3, java.sql.Date.valueOf("2024-05-01"));
-            stmt.setDate(4, java.sql.Date.valueOf("2024-04-01"));
-            stmt.setInt(5, testUserId);
-            stmt.setInt(6, testOrganizationId);
-            stmt.executeUpdate();
-            var rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                testProjectId = rs.getInt(1);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlProject, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Proyecto Test");
+            preparedStatement.setString(2, "Descripción de prueba");
+            preparedStatement.setDate(3, java.sql.Date.valueOf("2024-05-01"));
+            preparedStatement.setDate(4, java.sql.Date.valueOf("2024-04-01"));
+            preparedStatement.setInt(5, testUserId);
+            preparedStatement.setInt(6, testOrganizationId);
+            preparedStatement.executeUpdate();
+            var resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                testProjectId = resultSet.getInt(1);
             }
         }
     }
@@ -143,18 +143,18 @@ class StudentProjectDAOTest {
         boolean result = studentProjectDAO.insertStudentProject(studentProject);
         assertTrue(result, "La inserción debería ser exitosa");
 
-        StudentProjectDTO insertedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
-        assertNotNull(insertedProject, "El proyecto de estudiante debería existir en la base de datos");
-        assertEquals(testStudentTuition, insertedProject.getTuition(), "La matrícula debería coincidir");
+        StudentProjectDTO insertedStudentProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
+        assertNotNull(insertedStudentProject, "El proyecto de estudiante debería existir en la base de datos");
+        assertEquals(testStudentTuition, insertedStudentProject.getTuition(), "La matrícula debería coincidir");
     }
 
     @Test
     void testSearchStudentProjectByIdProject() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
-        StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
-        assertNotNull(retrievedProject, "Debería encontrar el proyecto de estudiante");
-        assertEquals(testStudentTuition, retrievedProject.getTuition(), "La matrícula debería coincidir");
+        StudentProjectDTO retrievedStudentProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
+        assertNotNull(retrievedStudentProject, "Debería encontrar el proyecto de estudiante");
+        assertEquals(testStudentTuition, retrievedStudentProject.getTuition(), "La matrícula debería coincidir");
     }
 
     @Test
@@ -163,59 +163,59 @@ class StudentProjectDAOTest {
 
         String newProjectId = String.valueOf(testProjectId + 1);
         String sqlProject = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlProject, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, "Proyecto Nuevo");
-            stmt.setString(2, "Descripción nueva");
-            stmt.setDate(3, java.sql.Date.valueOf("2024-06-01"));
-            stmt.setDate(4, java.sql.Date.valueOf("2024-05-01"));
-            stmt.setInt(5, testUserId);
-            stmt.setInt(6, testOrganizationId);
-            stmt.executeUpdate();
-            var rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                newProjectId = String.valueOf(rs.getInt(1));
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlProject, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Proyecto Nuevo");
+            preparedStatement.setString(2, "Descripción nueva");
+            preparedStatement.setDate(3, java.sql.Date.valueOf("2024-06-01"));
+            preparedStatement.setDate(4, java.sql.Date.valueOf("2024-05-01"));
+            preparedStatement.setInt(5, testUserId);
+            preparedStatement.setInt(6, testOrganizationId);
+            preparedStatement.executeUpdate();
+            var resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                newProjectId = String.valueOf(resultSet.getInt(1));
             }
         }
 
-        StudentProjectDTO updatedProject = new StudentProjectDTO(newProjectId, testStudentTuition);
-        boolean result = studentProjectDAO.updateStudentProject(updatedProject);
+        StudentProjectDTO updatedStudentProject = new StudentProjectDTO(newProjectId, testStudentTuition);
+        boolean result = studentProjectDAO.updateStudentProject(updatedStudentProject);
         assertTrue(result, "La actualización debería ser exitosa");
 
-        StudentProjectDTO retrievedProject = studentProjectDAO.searchStudentProjectByIdProject(newProjectId);
-        assertNotNull(retrievedProject, "El proyecto de estudiante debería existir después de actualizar");
-        assertEquals(testStudentTuition, retrievedProject.getTuition(), "La matrícula debería seguir siendo la misma");
+        StudentProjectDTO retrievedStudentProject = studentProjectDAO.searchStudentProjectByIdProject(newProjectId);
+        assertNotNull(retrievedStudentProject, "El proyecto de estudiante debería existir después de actualizar");
+        assertEquals(testStudentTuition, retrievedStudentProject.getTuition(), "La matrícula debería seguir siendo la misma");
     }
 
     @Test
     void testDeleteStudentProject() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
-        StudentProjectDTO projectToDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
-        boolean result = studentProjectDAO.deleteStudentProject(projectToDelete);
+        StudentProjectDTO studentProjectToDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
+        boolean result = studentProjectDAO.deleteStudentProject(studentProjectToDelete);
         assertTrue(result, "La eliminación debería ser exitosa");
 
-        StudentProjectDTO deletedProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
-        assertEquals("N/A", deletedProject.getIdProject(), "El proyecto eliminado no debería existir");
+        StudentProjectDTO deletedStudentProject = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
+        assertEquals("N/A", deletedStudentProject.getIdProject(), "El proyecto eliminado no debería existir");
     }
 
     @Test
     void testGetAllStudentProjects() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
-        List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
-        assertNotNull(projects, "La lista no debería ser nula");
-        assertFalse(projects.isEmpty(), "La lista no debería estar vacía");
-        boolean found = projects.stream()
-                .anyMatch(p -> p.getIdProject().equals(String.valueOf(testProjectId)) && p.getTuition().equals(testStudentTuition));
+        List<StudentProjectDTO> studentProjectList = studentProjectDAO.getAllStudentProjects();
+        assertNotNull(studentProjectList, "La lista no debería ser nula");
+        assertFalse(studentProjectList.isEmpty(), "La lista no debería estar vacía");
+        boolean found = studentProjectList.stream()
+                .anyMatch(studentProject -> studentProject.getIdProject().equals(String.valueOf(testProjectId)) && studentProject.getTuition().equals(testStudentTuition));
         assertTrue(found, "El proyecto de estudiante de prueba debería estar en la lista");
     }
 
     private void insertTestStudentProject(String idProject, String tuition) throws SQLException {
         String sql = "INSERT INTO proyecto_estudiante (idProyecto, matricula) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, idProject);
-            stmt.setString(2, tuition);
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, idProject);
+            preparedStatement.setString(2, tuition);
+            preparedStatement.executeUpdate();
         }
     }
 
@@ -237,9 +237,9 @@ class StudentProjectDAOTest {
     void testSearchStudentProjectByIdTuiton() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
 
-        StudentProjectDTO retrieved = studentProjectDAO.searchStudentProjectByIdTuiton(testStudentTuition);
-        assertNotNull(retrieved, "Debe encontrar el proyecto por matrícula");
-        assertEquals(String.valueOf(testProjectId), retrieved.getIdProject(), "El idProyecto debe coincidir");
+        StudentProjectDTO retrievedStudentProject = studentProjectDAO.searchStudentProjectByIdTuiton(testStudentTuition);
+        assertNotNull(retrievedStudentProject, "Debe encontrar el proyecto por matrícula");
+        assertEquals(String.valueOf(testProjectId), retrievedStudentProject.getIdProject(), "El idProyecto debe coincidir");
     }
 
     @Test
@@ -252,16 +252,16 @@ class StudentProjectDAOTest {
 
     @Test
     void testGetAllStudentProjectsEmpty() throws SQLException, IOException {
-        List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
-        assertNotNull(projects, "La lista no debe ser nula");
-        assertTrue(projects.isEmpty(), "La lista debe estar vacía si no hay registros");
+        List<StudentProjectDTO> studentProjectList = studentProjectDAO.getAllStudentProjects();
+        assertNotNull(studentProjectList, "La lista no debe ser nula");
+        assertTrue(studentProjectList.isEmpty(), "La lista debe estar vacía si no hay registros");
     }
 
     @Test
     void testInsertStudentProjectWithNullTuiton() {
-        StudentProjectDTO invalidProject = new StudentProjectDTO(String.valueOf(testProjectId), null);
+        StudentProjectDTO invalidStudentProject = new StudentProjectDTO(String.valueOf(testProjectId), null);
         assertThrows(SQLException.class, () -> {
-            studentProjectDAO.insertStudentProject(invalidProject);
+            studentProjectDAO.insertStudentProject(invalidStudentProject);
         }, "Debe lanzar excepción por matrícula nula");
     }
 
@@ -274,8 +274,8 @@ class StudentProjectDAOTest {
     @Test
     void testDeleteStudentProjectSuccess() throws SQLException, IOException {
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
-        StudentProjectDTO toDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
-        boolean deleted = studentProjectDAO.deleteStudentProject(toDelete);
+        StudentProjectDTO studentProjectToDelete = new StudentProjectDTO(String.valueOf(testProjectId), testStudentTuition);
+        boolean deleted = studentProjectDAO.deleteStudentProject(studentProjectToDelete);
         assertTrue(deleted, "La eliminación debe ser exitosa");
         StudentProjectDTO result = studentProjectDAO.searchStudentProjectByIdProject(String.valueOf(testProjectId));
         assertEquals("N/A", result.getIdProject(), "El registro debe haber sido eliminado");
@@ -293,28 +293,28 @@ class StudentProjectDAOTest {
     void testGetAllStudentProjectsWithMultipleRecords() throws SQLException, IOException {
         String tuition2 = "S54321";
         String sqlStudent = "INSERT INTO estudiante (matricula, estado, nombres, apellidos, telefono, correo, usuario, contraseña, NRC, avanceCrediticio, calificacionFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlStudent)) {
-            stmt.setString(1, tuition2);
-            stmt.setInt(2, 1);
-            stmt.setString(3, "Otro");
-            stmt.setString(4, "Estudiante");
-            stmt.setString(5, "5555555556");
-            stmt.setString(6, "otro@test.com");
-            stmt.setString(7, "otrousuario");
-            stmt.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
-            stmt.setString(9, testGroupNRC);
-            stmt.setString(10, "100");
-            stmt.setDouble(11, 0.0);
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStudent)) {
+            preparedStatement.setString(1, tuition2);
+            preparedStatement.setInt(2, 1);
+            preparedStatement.setString(3, "Otro");
+            preparedStatement.setString(4, "Estudiante");
+            preparedStatement.setString(5, "5555555556");
+            preparedStatement.setString(6, "otro@test.com");
+            preparedStatement.setString(7, "otrousuario");
+            preparedStatement.setString(8, "1234567890123456789012345678901234567890123456789012345678901234");
+            preparedStatement.setString(9, testGroupNRC);
+            preparedStatement.setString(10, "100");
+            preparedStatement.setDouble(11, 0.0);
+            preparedStatement.executeUpdate();
         }
         insertTestStudentProject(String.valueOf(testProjectId), testStudentTuition);
         insertTestStudentProject(String.valueOf(testProjectId), tuition2);
 
-        List<StudentProjectDTO> projects = studentProjectDAO.getAllStudentProjects();
-        assertNotNull(projects, "La lista no debe ser nula");
-        assertTrue(projects.size() >= 2, "Debe haber al menos dos registros");
-        boolean found1 = projects.stream().anyMatch(p -> p.getTuition().equals(testStudentTuition));
-        boolean found2 = projects.stream().anyMatch(p -> p.getTuition().equals(tuition2));
+        List<StudentProjectDTO> studentProjectList = studentProjectDAO.getAllStudentProjects();
+        assertNotNull(studentProjectList, "La lista no debe ser nula");
+        assertTrue(studentProjectList.size() >= 2, "Debe haber al menos dos registros");
+        boolean found1 = studentProjectList.stream().anyMatch(studentProject -> studentProject.getTuition().equals(testStudentTuition));
+        boolean found2 = studentProjectList.stream().anyMatch(studentProject -> studentProject.getTuition().equals(tuition2));
         assertTrue(found1 && found2, "Ambos proyectos deben estar en la lista");
     }
 }

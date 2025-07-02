@@ -70,9 +70,9 @@ class RepresentativeDAOTest {
         String sql = "INSERT INTO organizacion_vinculada (nombre, direccion) VALUES ('Org Test', 'Direccion Test')";
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-            var rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                testOrganizationId = rs.getInt(1);
+            var resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                testOrganizationId = resultSet.getInt(1);
             } else {
                 throw new SQLException("No se pudo obtener el id de la organización de prueba");
             }
@@ -81,14 +81,14 @@ class RepresentativeDAOTest {
 
     private int createTestDepartment() throws SQLException {
         String sql = "INSERT INTO departamento (nombre, descripcion, idOrganizacion) VALUES (?, ?, ?)";
-        try (var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, "Dept test");
-            statement.setString(2, "Description test");
-            statement.setInt(3, testOrganizationId);
-            statement.executeUpdate();
-            var rs = statement.getGeneratedKeys();
-            if (rs.next()) {
-                testDepartmentId = rs.getInt(1);
+        try (var preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, "Dept test");
+            preparedStatement.setString(2, "Description test");
+            preparedStatement.setInt(3, testOrganizationId);
+            preparedStatement.executeUpdate();
+            var resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                testDepartmentId = resultSet.getInt(1);
                 return testDepartmentId;
             } else {
                 throw new SQLException("No se pudo obtener el id del departamento de prueba");
@@ -105,75 +105,75 @@ class RepresentativeDAOTest {
         boolean result = representativeDAO.insertRepresentative(representative);
         assertTrue(result, "La inserción debería ser exitosa");
 
-        RepresentativeDTO insertedRep = representativeDAO.searchRepresentativeById("1");
-        assertNotNull(insertedRep, "El representante debería existir en la base de datos");
-        assertEquals("Nombre Test", insertedRep.getNames());
-        assertEquals("Apellido Test", insertedRep.getSurnames());
-        assertEquals("test@example.com", insertedRep.getEmail());
-        assertEquals(String.valueOf(testOrganizationId), insertedRep.getIdOrganization());
+        RepresentativeDTO insertedRepresentative = representativeDAO.searchRepresentativeById("1");
+        assertNotNull(insertedRepresentative, "El representante debería existir en la base de datos");
+        assertEquals("Nombre Test", insertedRepresentative.getNames());
+        assertEquals("Apellido Test", insertedRepresentative.getSurnames());
+        assertEquals("test@example.com", insertedRepresentative.getEmail());
+        assertEquals(String.valueOf(testOrganizationId), insertedRepresentative.getIdOrganization());
     }
 
     @Test
     void searchRepresentativeByIdSuccessfully() throws SQLException, IOException {
         insertTestRepresentative("2", "Nombre Consulta", "Apellido Consulta", "consulta@example.com", String.valueOf(testOrganizationId));
-        RepresentativeDTO rep = representativeDAO.searchRepresentativeById("2");
-        assertNotNull(rep, "Debería encontrar el representante");
-        assertEquals("Nombre Consulta", rep.getNames());
-        assertEquals("Apellido Consulta", rep.getSurnames());
-        assertEquals("consulta@example.com", rep.getEmail());
-        assertEquals(String.valueOf(testOrganizationId), rep.getIdOrganization());
+        RepresentativeDTO representative = representativeDAO.searchRepresentativeById("2");
+        assertNotNull(representative, "Debería encontrar el representante");
+        assertEquals("Nombre Consulta", representative.getNames());
+        assertEquals("Apellido Consulta", representative.getSurnames());
+        assertEquals("consulta@example.com", representative.getEmail());
+        assertEquals(String.valueOf(testOrganizationId), representative.getIdOrganization());
     }
 
     @Test
     void updateRepresentativeSuccessfully() throws SQLException, IOException {
         insertTestRepresentative("3", "Nombre Original", "Apellido Original", "original@example.com", String.valueOf(testOrganizationId));
-        RepresentativeDTO repToUpdate = new RepresentativeDTO(
+        RepresentativeDTO representativeToUpdate = new RepresentativeDTO(
                 "3", "Nombre Actualizado", "Apellido Actualizado", "actualizado@example.com", String.valueOf(testOrganizationId), String.valueOf(testDepartmentId), 1
         );
-        boolean updateResult = representativeDAO.updateRepresentative(repToUpdate);
+        boolean updateResult = representativeDAO.updateRepresentative(representativeToUpdate);
         assertTrue(updateResult, "La actualización debería ser exitosa");
 
-        RepresentativeDTO updatedRep = representativeDAO.searchRepresentativeById("3");
-        assertNotNull(updatedRep, "El representante debería existir después de actualizar");
-        assertEquals("Nombre Actualizado", updatedRep.getNames());
-        assertEquals("Apellido Actualizado", updatedRep.getSurnames());
-        assertEquals("actualizado@example.com", updatedRep.getEmail());
-        assertEquals(String.valueOf(testOrganizationId), updatedRep.getIdOrganization());
+        RepresentativeDTO updatedRepresentative = representativeDAO.searchRepresentativeById("3");
+        assertNotNull(updatedRepresentative, "El representante debería existir después de actualizar");
+        assertEquals("Nombre Actualizado", updatedRepresentative.getNames());
+        assertEquals("Apellido Actualizado", updatedRepresentative.getSurnames());
+        assertEquals("actualizado@example.com", updatedRepresentative.getEmail());
+        assertEquals(String.valueOf(testOrganizationId), updatedRepresentative.getIdOrganization());
     }
 
     @Test
     void deleteRepresentativeSuccessfully() throws SQLException, IOException {
         insertTestRepresentative("4", "Nombre Delete", "Apellido Delete", "delete@example.com", String.valueOf(testOrganizationId));
-        RepresentativeDTO beforeDelete = representativeDAO.searchRepresentativeById("4");
-        assertNotNull(beforeDelete, "El representante debería existir antes de eliminarlo");
+        RepresentativeDTO representativeBeforeDelete = representativeDAO.searchRepresentativeById("4");
+        assertNotNull(representativeBeforeDelete, "El representante debería existir antes de eliminarlo");
 
         boolean deleteResult = representativeDAO.deleteRepresentative("4");
         assertTrue(deleteResult, "La eliminación debería ser exitosa");
 
-        RepresentativeDTO afterDelete = representativeDAO.searchRepresentativeById("4");
-        assertEquals("N/A", afterDelete.getIdRepresentative(), "El representante eliminado no debería existir");
+        RepresentativeDTO representativeAfterDelete = representativeDAO.searchRepresentativeById("4");
+        assertEquals("N/A", representativeAfterDelete.getIdRepresentative(), "El representante eliminado no debería existir");
     }
 
     @Test
     void getAllRepresentativesSuccessfully() throws SQLException, IOException {
         insertTestRepresentative("5", "Nombre Lista", "Apellido Lista", "lista@example.com", String.valueOf(testOrganizationId));
-        List<RepresentativeDTO> representatives = representativeDAO.getAllRepresentatives();
-        assertNotNull(representatives, "La lista no debería ser nula");
-        assertFalse(representatives.isEmpty(), "La lista no debería estar vacía");
-        boolean found = representatives.stream()
-                .anyMatch(rep -> rep.getIdRepresentative().equals("5"));
+        List<RepresentativeDTO> representativeList = representativeDAO.getAllRepresentatives();
+        assertNotNull(representativeList, "La lista no debería ser nula");
+        assertFalse(representativeList.isEmpty(), "La lista no debería estar vacía");
+        boolean found = representativeList.stream()
+                .anyMatch(representative -> representative.getIdRepresentative().equals("5"));
         assertTrue(found, "El representante de prueba debería estar en la lista");
     }
 
     private void insertTestRepresentative(String id, String names, String surnames, String email, String orgId) throws SQLException {
         String sql = "INSERT INTO representante (idRepresentante, nombres, apellidos, correo, idOrganizacion) VALUES (?, ?, ?, ?, ?)";
-        try (var statement = connection.prepareStatement(sql)) {
-            statement.setString(1, id);
-            statement.setString(2, names);
-            statement.setString(3, surnames);
-            statement.setString(4, email);
-            statement.setString(5, orgId);
-            statement.executeUpdate();
+        try (var preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, names);
+            preparedStatement.setString(3, surnames);
+            preparedStatement.setString(4, email);
+            preparedStatement.setString(5, orgId);
+            preparedStatement.executeUpdate();
         }
     }
 
@@ -193,8 +193,8 @@ class RepresentativeDAOTest {
         String longName = "a".repeat(300);
         String longSurname = "b".repeat(300);
         String longEmail = "c".repeat(300) + "@example.com";
-        RepresentativeDTO rep = new RepresentativeDTO(null, longName, longSurname, longEmail, String.valueOf(testOrganizationId), String.valueOf(testDepartmentId), 1);
-        assertThrows(SQLException.class, () -> representativeDAO.insertRepresentative(rep));
+        RepresentativeDTO representative = new RepresentativeDTO(null, longName, longSurname, longEmail, String.valueOf(testOrganizationId), String.valueOf(testDepartmentId), 1);
+        assertThrows(SQLException.class, () -> representativeDAO.insertRepresentative(representative));
     }
 
     @Test
@@ -204,7 +204,6 @@ class RepresentativeDAOTest {
         assertFalse(result, "No debería actualizar un representante inexistente");
     }
 
-    // Intenta eliminar un representante inexistente
     @Test
     void deleteRepresentativeFailsWhenNotExists() throws SQLException, IOException {
         boolean result = representativeDAO.deleteRepresentative("8888");
@@ -222,12 +221,11 @@ class RepresentativeDAOTest {
     @Test
     void getAllRepresentativesReturnsEmptyListWhenNoRepresentativesExist() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
-        List<RepresentativeDTO> list = representativeDAO.getAllRepresentatives();
-        assertNotNull(list, "La lista no debe ser nula");
-        assertTrue(list.isEmpty(), "La lista debe estar vacía si no hay representantes");
+        List<RepresentativeDTO> representativeList = representativeDAO.getAllRepresentatives();
+        assertNotNull(representativeList, "La lista no debe ser nula");
+        assertTrue(representativeList.isEmpty(), "La lista debe estar vacía si no hay representantes");
     }
 
-    // Busca por nombre y apellido que no existen y espera un resultado null
     @Test
     void searchRepresentativeByFirstNameReturnsNullWhenNotExists() throws SQLException, IOException {
         RepresentativeDTO found = representativeDAO.searchRepresentativeByFirstName("NombreInexistente");
@@ -236,24 +234,24 @@ class RepresentativeDAOTest {
 
     @Test
     void getRepresentativesByDepartmentReturnsCorrectList() throws SQLException, IOException {
-        int deptId = createTestDepartment();
-        RepresentativeDTO rep = new RepresentativeDTO(null, "Dept", "Test", "dept@example.com", String.valueOf(testOrganizationId), String.valueOf(deptId), 1);
-        representativeDAO.insertRepresentative(rep);
+        int departmentIdCreated = createTestDepartment();
+        RepresentativeDTO representative = new RepresentativeDTO(null, "Dept", "Test", "dept@example.com", String.valueOf(testOrganizationId), String.valueOf(departmentIdCreated), 1);
+        representativeDAO.insertRepresentative(representative);
 
-        List<RepresentativeDTO> reps = representativeDAO.getRepresentativesByDepartment(String.valueOf(deptId));
-        assertNotNull(reps);
-        assertFalse(reps.isEmpty());
-        assertTrue(reps.stream().allMatch(r -> String.valueOf(deptId).equals(r.getIdDepartment())));
+        List<RepresentativeDTO> representativeList = representativeDAO.getRepresentativesByDepartment(String.valueOf(departmentIdCreated));
+        assertNotNull(representativeList);
+        assertFalse(representativeList.isEmpty());
+        assertTrue(representativeList.stream().allMatch(r -> String.valueOf(departmentIdCreated).equals(r.getIdDepartment())));
     }
 
     @Test
     void getRepresentativesByOrganizationReturnsCorrectList() throws SQLException, IOException {
-        RepresentativeDTO rep = new RepresentativeDTO(null, "Org", "Test", "org@example.com", String.valueOf(testOrganizationId), String.valueOf(testDepartmentId), 1);
-        representativeDAO.insertRepresentative(rep);
+        RepresentativeDTO representative = new RepresentativeDTO(null, "Org", "Test", "org@example.com", String.valueOf(testOrganizationId), String.valueOf(testDepartmentId), 1);
+        representativeDAO.insertRepresentative(representative);
 
-        List<RepresentativeDTO> reps = representativeDAO.getRepresentativesByOrganization(String.valueOf(testOrganizationId));
-        assertNotNull(reps);
-        assertFalse(reps.isEmpty());
-        assertTrue(reps.stream().allMatch(r -> String.valueOf(testOrganizationId).equals(r.getIdOrganization())));
+        List<RepresentativeDTO> representativeList = representativeDAO.getRepresentativesByOrganization(String.valueOf(testOrganizationId));
+        assertNotNull(representativeList);
+        assertFalse(representativeList.isEmpty());
+        assertTrue(representativeList.stream().allMatch(r -> String.valueOf(testOrganizationId).equals(r.getIdOrganization())));
     }
 }

@@ -63,8 +63,8 @@ public class GUI_CheckPresentationGradeController {
         idEvaluationColumn.setCellValueFactory(new PropertyValueFactory<>("idEvaluation"));
         idPresentationColumn.setCellValueFactory(new PropertyValueFactory<>("idProject"));
         dateColumn.setCellValueFactory(cellData -> {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            return new SimpleStringProperty(cellData.getValue().getDate() != null ? sdf.format(cellData.getValue().getDate()) : "");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            return new SimpleStringProperty(cellData.getValue().getDate() != null ? simpleDateFormat.format(cellData.getValue().getDate()) : "");
         });
         averageColumn.setCellValueFactory(new PropertyValueFactory<>("average"));
 
@@ -130,7 +130,7 @@ public class GUI_CheckPresentationGradeController {
             }
 
             EvaluationPresentationDAO evaluationDAO = new EvaluationPresentationDAO();
-            List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuiton(student.getTuition());
+            List<EvaluationPresentationDTO> studentEvaluations = evaluationDAO.getEvaluationPresentationsByTuition(student.getTuition());
 
             ObservableList<EvaluationPresentationDTO> data = FXCollections.observableArrayList(studentEvaluations);
 

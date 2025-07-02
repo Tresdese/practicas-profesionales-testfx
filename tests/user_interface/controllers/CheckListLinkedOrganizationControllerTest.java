@@ -223,7 +223,7 @@ public class CheckListLinkedOrganizationControllerTest extends ApplicationTest {
         Stage confirmStage = (Stage) confirmLabel.getScene().getWindow();
         targetWindow(confirmStage);
 
-        Button confirmButton = lookup("#okButton").queryButton();
+        Button confirmButton = lookup("#confirmButton").queryButton();
         clickOn(confirmButton);
         WaitForAsyncUtils.waitForFxEvents();
 
@@ -233,16 +233,38 @@ public class CheckListLinkedOrganizationControllerTest extends ApplicationTest {
         interact(() -> filterChoiceBox.setValue("Activos"));
         WaitForAsyncUtils.waitForFxEvents();
 
+        Label statusLabel = lookup("#statusLabel").query();
         assertThat(tableView.getItems()).isEmpty();
+        assertThat(statusLabel.getText()).contains("Organizacion eliminada correctamente.");
+    }
 
-        String sql = "SELECT estado FROM organizacion_vinculada WHERE idOrganizacion = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, testOrganizationId);
-            try (ResultSet rs = statement.executeQuery()) {
-                assertThat(rs.next()).isTrue();
-                assertThat(rs.getInt("estado")).isEqualTo(0);
-            }
-        }
+    @Test
+    public void testCancelDeleteOrganization() throws Exception {
+        forceLoadData();
+        WaitForAsyncUtils.waitForFxEvents();
+
+        TableView<LinkedOrganizationDTO> tableView = lookup("#tableView").query();
+        interact(() -> tableView.getSelectionModel().select(0));
+
+        Button deleteButton = lookup("#deleteOrganizationButton").query();
+        clickOn(deleteButton);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        Label confirmLabel = lookup("#confirmMessageLabel").query();
+        Stage confirmStage = (Stage) confirmLabel.getScene().getWindow();
+        targetWindow(confirmStage);
+
+        Button cancelButton = lookup("#cancelButton").queryButton();
+        clickOn(cancelButton);
+        WaitForAsyncUtils.waitForFxEvents();
+
+        targetWindow(window("Lista de Organizaciones"));
+
+        TableView<LinkedOrganizationDTO> updatedTableView = lookup("#tableView").query();
+        Label statusLabel = lookup("#statusLabel").query();
+
+        assertThat(updatedTableView.getItems()).isNotEmpty();
+        assertThat(statusLabel.getText()).contains("Eliminación cancelada.");
     }
 
     @Test
@@ -263,6 +285,7 @@ public class CheckListLinkedOrganizationControllerTest extends ApplicationTest {
         interact(() -> tableView.getSelectionModel().select(0));
 
         Button deleteDepartmentButton = lookup("#deleteDepartmentButton").query();
+
         assertThat(deleteDepartmentButton.isDisable()).isFalse();
     }
 

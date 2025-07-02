@@ -12,7 +12,14 @@ public class PeriodService {
         this.periodDAO = new PeriodDAO();
     }
 
-    public boolean registerPeriod(PeriodDTO period) throws RepeatedId, Exception {
+    public boolean registerPeriod(PeriodDTO period) throws RepeatedId, IllegalArgumentException, Exception {
+        if (period.getIdPeriod() == null || period.getIdPeriod().isEmpty()) {
+            throw new IllegalArgumentException("El ID del periodo no puede estar vacío.");
+        }
+
+        if (!period.getIdPeriod().matches("\\d+")) {
+            throw new IllegalArgumentException("El ID del periodo solo puede contener números.");
+        }
 
         if (periodDAO.isIdRegistered(period.getIdPeriod())) {
             throw new RepeatedId("El ID del periodo ya está registrado.");

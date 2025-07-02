@@ -245,7 +245,7 @@ public class GUI_CheckSelfAssessmentController {
     private void handleViewEvidence() {
         if (evidenceId <= 0) {
             LOGGER.warn("No hay evidencia vinculada.");
-            return;
+            clearInterface("No hay evidencia vinculada", "No hay evidencia vinculada", "No hay evidencia vinculada");
         }
         try {
             EvidenceDAO evidenceDAO = new EvidenceDAO();
@@ -285,7 +285,7 @@ public class GUI_CheckSelfAssessmentController {
             clearInterface("URL inválida al abrir evidencia", "URL inválida al abrir evidencia", "URL inválida al abrir evidencia");
         } catch (IOException e) {
             LOGGER.error("Error al intentar abrir la evidencia: {}", e.getMessage(), e);
-            clearInterface("Error al abrir evidencia", "Error al abrir evidencia", "Error al abrir evidencia");
+            clearInterface("Evidencia no encontrada", "Evidencia no encontrada", "Evidencia no encontrada");
         } catch (Exception e) {
             LOGGER.error("No se pudo abrir la evidencia: {}", e.getMessage(), e);
             clearInterface("Error inesperado al abrir evidencia", "Error inesperado al abrir evidencia", "Error inesperado al abrir evidencia");

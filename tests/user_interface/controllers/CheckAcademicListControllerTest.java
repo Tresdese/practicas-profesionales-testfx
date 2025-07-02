@@ -174,7 +174,7 @@ public class CheckAcademicListControllerTest extends ApplicationTest {
         TextField searchField = lookup("#searchField").query();
         Button searchButton = lookup("#searchButton").query();
 
-        interact(() -> searchField.setText(String.valueOf(testUserId)));
+        interact(() -> searchField.setText("12345"));
         clickOn(searchButton);
         WaitForAsyncUtils.waitForFxEvents();
 

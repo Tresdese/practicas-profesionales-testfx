@@ -118,12 +118,12 @@ public class EvaluationPresentationDAO implements IEvaluationPresentationDAO {
         throw new SQLException("No se pudo obtener el último ID insertado.");
     }
 
-    public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuiton(String tuiton) throws SQLException, IOException {
+    public List<EvaluationPresentationDTO> getEvaluationPresentationsByTuition(String tuition) throws SQLException, IOException {
         List<EvaluationPresentationDTO> evaluations = new ArrayList<>();
         try (ConnectionDataBase connectionDataBase = new ConnectionDataBase();
              Connection connection = connectionDataBase.connectDataBase();
              PreparedStatement statement = connection.prepareStatement(SQL_SELECT_BY_TUITON)) {
-            statement.setString(1, tuiton);
+            statement.setString(1, tuition);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     evaluations.add(new EvaluationPresentationDTO(

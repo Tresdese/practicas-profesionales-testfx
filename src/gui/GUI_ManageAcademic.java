@@ -20,7 +20,6 @@ public class GUI_ManageAcademic extends Application {
         academic = academicData;
     }
 
-    @Override
     public void start(Stage primaryStage) {
         try {
             if (academic == null) {

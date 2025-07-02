@@ -16,6 +16,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GUI_RegisterAcademicController {
 
@@ -147,42 +150,29 @@ public class GUI_RegisterAcademicController {
     }
 
     public void setRoles() {
-        roleBox.getItems().clear();
-        roleBox.getItems().addAll(
-                Role.ACADEMIC,
-                Role.EVALUATOR_ACADEMIC,
-                Role.COORDINATOR
-        );
+        // Solo roles visibles (sin GUEST)
+        List<Role> visibleRoles = Arrays.stream(Role.values())
+                .filter(role -> role != Role.GUEST)
+                .collect(Collectors.toList());
+        roleBox.getItems().setAll(visibleRoles);
         roleBox.setConverter(new StringConverter<Role>() {
             @Override
             public String toString(Role role) {
-                if (role == null) return "";
-                return switch (role) {
-                    case ACADEMIC -> "Académico";
-                    case EVALUATOR_ACADEMIC -> "Académico Evaluador";
-                    case COORDINATOR -> "Coordinador";
-                    default -> "";
-                };
+                return role != null ? role.getDisplayName() : "";
             }
             @Override
             public Role fromString(String string) {
-                return getRoleFromText(string);
-            }
-        });
-    }
-
-    private Role getRoleFromText(String text) {
-        return switch (text) {
-            case "Académico" -> Role.ACADEMIC;
-            case "Académico Evaluador" -> Role.EVALUATOR_ACADEMIC;
-            case "Coordinador" -> Role.COORDINATOR;
-            default -> {
+                for (Role role : visibleRoles) {
+                    if (role.getDisplayName().equals(string)) {
+                        return role;
+                    }
+                }
                 statusLabel.setText("Rol no válido");
                 statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Rol no válido: {}", text);
-                yield Role.ACADEMIC;
+                LOGGER.error("Rol no válido: {}", string);
+                return null;
             }
-        };
+        });
     }
 
     @FXML
@@ -241,7 +231,7 @@ public class GUI_RegisterAcademicController {
 
             String names = namesField.getText();
             String surname = surnamesField.getText();
-            Role role = roleBox.getValue(); // Ya no necesitas conversión aquí
+            Role role = roleBox.getValue();
             String userName = userField.getText();
             String hashedPassword = PasswordHasher.hashPassword(password);
 

@@ -136,50 +136,48 @@ public class GUI_CheckListOfGroupsController {
     }
 
     public void searchGroup() {
+        ObservableList<GroupDTO> filteredList = FXCollections.observableArrayList();
         String searchQuery = searchField.getText().trim();
+
         if (searchQuery.isEmpty()) {
             loadGroupData();
-            return;
-        }
-
-        ObservableList<GroupDTO> filteredList = FXCollections.observableArrayList();
-
-        try {
-            GroupDTO group = groupDAO.searchGroupById(searchQuery);
-            if (group != null && !"N/A".equals(group.getNRC())) {
-                filteredList.add(group);
+        } else {
+            try {
+                GroupDTO group = groupDAO.searchGroupById(searchQuery);
+                if (group != null && !"N/A".equals(group.getNRC())) {
+                    filteredList.add(group);
+                }
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                if ("08001".equals(sqlState)) {
+                    statusLabel.setText("Error de conexión con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
+                } else if ("08S01".equals(sqlState)) {
+                    statusLabel.setText("Conexión interrumpida con la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
+                } else if ("42000".equals(sqlState)) {
+                    statusLabel.setText("Base de datos desconocida.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
+                } else if ("28000".equals(sqlState)) {
+                    statusLabel.setText("Acceso denegado a la base de datos.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
+                } else {
+                    statusLabel.setText("Error al buscar el grupo.");
+                    statusLabel.setTextFill(Color.RED);
+                    LOGGER.error("Error al buscar el grupo: {}", e.getMessage(), e);
+                }
+            } catch (Exception e) {
+                statusLabel.setText("Error inesperado al buscar el grupo.");
+                statusLabel.setTextFill(Color.RED);
+                LOGGER.error("Error inesperado al buscar el grupo: {}", e.getMessage(), e);
             }
-        } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            if ("08001".equals(sqlState)) {
-                statusLabel.setText("Error de conexión con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error de conexión con la base de datos: {}", e.getMessage(), e);
-            } else if ("08S01".equals(sqlState)) {
-                statusLabel.setText("Conexión interrumpida con la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
-            } else if ("42000".equals(sqlState)) {
-                statusLabel.setText("Base de datos desconocida.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Base de datos desconocida: {}", e.getMessage(), e);
-            } else if ("28000".equals(sqlState)) {
-                statusLabel.setText("Acceso denegado a la base de datos.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Acceso denegado a la base de datos: {}", e.getMessage(), e);
-            } else {
-                statusLabel.setText("Error al buscar el grupo.");
-                statusLabel.setTextFill(Color.RED);
-                LOGGER.error("Error al buscar el grupo: {}", e.getMessage(), e);
-            }
-        } catch (Exception e) {
-            statusLabel.setText("Error inesperado al buscar el grupo.");
-            statusLabel.setTextFill(Color.RED);
-            LOGGER.error("Error inesperado al buscar el grupo: {}", e.getMessage(), e);
+            groupsTableView.setItems(filteredList);
+            updateGroupCounts(filteredList);
         }
-
-        groupsTableView.setItems(filteredList);
-        updateGroupCounts(filteredList);
     }
 
     private void updateGroupCounts(ObservableList<GroupDTO> list) {

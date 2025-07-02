@@ -173,49 +173,54 @@ public class GUI_AssignProjectController {
 
     @FXML
     private void handleAssignProject() {
+        boolean success = true;
+
         if (!validateInputs()) {
-            return;
+            success = false;
         }
 
-        if (!assignProjectToStudent()) {
-            return;
+        if (success && !assignProjectToStudent()) {
+            success = false;
         }
 
         String[] pdfPathHolder = new String[1];
-        if (!generateAssignmentPDF(pdfPathHolder)) {
-            return;
+        if (success && !generateAssignmentPDF(pdfPathHolder)) {
+            success = false;
         }
 
         String[] driveUrlHolder = new String[1];
-        if (!uploadPDFToDrive(pdfPathHolder[0], driveUrlHolder)) {
-            return;
+        if (success && !uploadPDFToDrive(pdfPathHolder[0], driveUrlHolder)) {
+            success = false;
         }
 
-        if (!sendNotificationEmail(pdfPathHolder[0])) {
-            return;
+        if (success && !sendNotificationEmail(pdfPathHolder[0])) {
+            success = false;
         }
 
-        statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
-        statusLabel.setTextFill(Color.GREENYELLOW);
-        showSuccessAlert();
-        closeWindow();
+        if (success) {
+            statusLabel.setText("Proyecto asignado, PDF subido a Drive y correo enviado correctamente.");
+            statusLabel.setTextFill(Color.GREENYELLOW);
+            showSuccessAlert();
+            closeWindow();
+        }
     }
 
     private boolean validateInputs() {
+        boolean isValid = true;
         if (student == null) {
             statusLabel.setText("No se ha seleccionado un estudiante");
             statusLabel.setStyle("-fx-text-fill: red;");
-            return false;
-        }
-        if (projectChoiceBox.getValue() == null) {
+            isValid = false;
+        } else if (projectChoiceBox.getValue() == null) {
             statusLabel.setText("Debe seleccionar un proyecto");
             statusLabel.setStyle("-fx-text-fill: red;");
-            return false;
+            isValid = false;
         }
-        return true;
+        return isValid;
     }
 
     private boolean assignProjectToStudent() {
+        boolean result = true;
         try {
             ProjectDTO selectedProject = projectChoiceBox.getValue();
             StudentProjectDTO studentProject = new StudentProjectDTO(selectedProject.getIdProject(), student.getTuition());
@@ -223,27 +228,27 @@ public class GUI_AssignProjectController {
             if (!assigned) {
                 statusLabel.setText("No se pudo asignar el proyecto.");
                 statusLabel.setStyle("-fx-text-fill: red;");
-                return false;
+                result = false;
             }
-            return true;
         } catch (SQLException e) {
             handleSQLException(e, "asignar el proyecto");
-            return false;
+            result = false;
         } catch (IOException e) {
             statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
             statusLabel.setStyle("-fx-text-fill: red;");
             logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
-            return false;
-        }
-        catch (Exception e) {
+            result = false;
+        } catch (Exception e) {
             statusLabel.setText("Error inesperado al asignar el proyecto.");
             statusLabel.setStyle("-fx-text-fill: red;");
             logger.error("Error inesperado al asignar el proyecto: {}", e.getMessage(), e);
-            return false;
+            result = false;
         }
+        return result;
     }
 
     private boolean generateAssignmentPDF(String[] pdfPathHolder) {
+        boolean result = true;
         try {
             ProjectDTO selectedProject = projectChoiceBox.getValue();
             AssignmentData data = prepareAssignmentData(selectedProject);
@@ -251,71 +256,73 @@ public class GUI_AssignProjectController {
             String tempPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
             AssignmentPDFGenerator.generatePDF(tempPath, data);
             pdfPathHolder[0] = tempPath;
-            return true;
         } catch (IOException e) {
             logger.error("Error de entrada/salida al generar el PDF de asignación: {}", e.getMessage(), e);
             statusLabel.setText("Error de entrada/salida al generar el PDF de asignación.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (DocumentException e) {
             logger.error("Error al crear el documento PDF: {}", e.getMessage(), e);
             statusLabel.setText("Error al crear el documento PDF.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (Exception e) {
             logger.error("Error al generar el PDF de asignación: {}", e.getMessage(), e);
             statusLabel.setText("Error al generar el PDF de asignación.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         }
+        return result;
     }
 
     private boolean uploadPDFToDrive(String pdfPath, String[] driveUrlHolder) {
+        boolean result = true;
         try {
             String idPeriod = getIdPeriod();
             String parentId = createDriveFolders(idPeriod);
             String driveUrl = uploadFile(pdfPath, parentId);
             driveUrlHolder[0] = driveUrl;
-            return true;
         } catch (UnknownHostException e) {
             logger.error("Error de red al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Error de red al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (SocketTimeoutException e) {
             logger.error("Tiempo de espera agotado al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Tiempo de espera agotado al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (FileNotFoundException e) {
             logger.error("Archivo no encontrado al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Archivo no encontrado al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (GoogleJsonResponseException e) {
             logger.error("Error de Google Drive al subir PDF: {}", e.getDetails().getMessage(), e);
             statusLabel.setText("Error de Google Drive al subir PDF.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (GeneralSecurityException e) {
             logger.error("Error de seguridad al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Error de seguridad al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (IOException e) {
             logger.error("Error entrada/salida al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Error entrada/salida al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (Exception e) {
             logger.error("Error al subir PDF a Drive: {}", e.getMessage(), e);
             statusLabel.setText("Error al subir PDF a Drive.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         }
+        return result;
     }
 
     private boolean sendNotificationEmail(String pdfPath) {
+        boolean result = true;
         try {
             ProjectDTO selectedProject = projectChoiceBox.getValue();
             String subject = "Asignación de Prácticas Profesionales";
@@ -326,36 +333,37 @@ public class GUI_AssignProjectController {
             File pdfAttachment = new File(pdfPath);
             logic.gmail.GmailService.sendEmailWithAttachment(student.getEmail(), subject, body, pdfAttachment);
             logger.info("Correo enviado a " + student.getEmail());
-            return true;
         } catch (AuthenticationFailedException e) {
             logger.error("Error de autenticación al enviar el correo: {}", e.getMessage(), e);
             statusLabel.setText("Error de autenticación al enviar el correo.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (SendFailedException e) {
             logger.error("Error al enviar el correo: {}", e.getMessage(), e);
             statusLabel.setText("Error al enviar el correo al estudiante.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (MessagingException e) {
             logger.error("Error de mensajería al enviar el correo: {}", e.getMessage(), e);
             statusLabel.setText("Error de mensajería al enviar el correo.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (IOException e) {
             logger.error("Error de entrada/salida al enviar el correo: {}", e.getMessage(), e);
             statusLabel.setText("Error de entrada/salida al enviar el correo.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         } catch (Exception e) {
             logger.error("Error al enviar el correo de notificación: {}", e.getMessage(), e);
             statusLabel.setText("Error al enviar el correo al estudiante.");
             statusLabel.setTextFill(Color.RED);
-            return false;
+            result = false;
         }
+        return result;
     }
 
     private AssignmentData prepareAssignmentData(ProjectDTO project) {
+        AssignmentData data = new AssignmentData();
         try {
             LinkedOrganizationDAO orgDAO = new LinkedOrganizationDAO();
             RepresentativeDAO representativeDAO = new RepresentativeDAO();
@@ -364,7 +372,6 @@ public class GUI_AssignProjectController {
                     .stream()
                     .findFirst()
                     .orElse(new RepresentativeDTO("N/A", "N/A", "N/A", "N/A", "N/A", "N/A", 0));
-            AssignmentData data = new AssignmentData();
             data.setRepresentativeFirstName(rep.getNames());
             data.setRepresentativeLastName(rep.getSurnames());
             data.setOrganizationName(org.getName());
@@ -373,21 +380,18 @@ public class GUI_AssignProjectController {
             data.setStudentLastName(student.getSurnames());
             data.setStudentTuition(student.getTuition());
             data.setProjectName(project.getName());
-            return data;
         } catch (SQLException e) {
             handleSQLException(e, "preparar los datos de asignación");
-            return new AssignmentData();
         } catch (IOException e) {
             logger.error("Error al leer el archivo de configuración de la base de datos: {}", e.getMessage(), e);
             statusLabel.setText("Error al leer el archivo de configuración de la base de datos.");
             statusLabel.setTextFill(Color.RED);
-            return new AssignmentData();
         } catch (Exception e) {
             logger.error("Error al preparar los datos de asignación: {}", e.getMessage(), e);
             statusLabel.setText("Error al preparar los datos de asignación.");
             statusLabel.setTextFill(Color.RED);
-            return new AssignmentData();
         }
+        return data;
     }
 
     private void handleSQLException(SQLException e, String context) {
@@ -414,85 +418,81 @@ public class GUI_AssignProjectController {
     }
 
     private String createDriveFolders(String idPeriod) {
+        String parentId = "";
         try {
-            String parentId = null;
-            parentId = createOrGetFolder(idPeriod, parentId);
+            parentId = createOrGetFolder(idPeriod, null);
             parentId = createOrGetFolder(student.getNRC(), parentId);
             parentId = createOrGetFolder(student.getTuition(), parentId);
             parentId = createOrGetFolder("Asignacion", parentId);
-            return parentId;
         } catch (UnknownHostException e) {
             logger.error("Error de red al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error de red al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         } catch (SocketTimeoutException e) {
             logger.error("Tiempo de espera agotado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Tiempo de espera agotado al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         } catch (FileNotFoundException e) {
             logger.error("Archivo no encontrado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Archivo no encontrado al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         } catch (GoogleJsonResponseException e) {
             logger.error("Error de Google Drive al crear carpetas: {}", e.getDetails().getMessage(), e);
             showAlert("Error de Google Drive al crear carpetas: ");
-            return "";
+            parentId = "";
         } catch (GeneralSecurityException e) {
             logger.error("Error de seguridad al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error de seguridad al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         } catch (IOException e) {
             logger.error("Error entrada/salida al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error entrada/salida al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         } catch (Exception e) {
             logger.error("Error inesperado al crear carpetas en Drive: {}", e.getMessage(), e);
             showAlert("Error inesperado al crear carpetas en Drive: ");
-            return "";
+            parentId = "";
         }
+        return parentId;
     }
 
     private String getIdPeriod() {
+        String period = "PeriodoDesconocido";
         try {
             logic.DAO.GroupDAO groupDAO = new logic.DAO.GroupDAO();
             logic.DTO.GroupDTO group = groupDAO.searchGroupById(student.getNRC());
-            return (group != null && group.getIdPeriod() != null) ? group.getIdPeriod() : "PeriodoDesconocido";
+            if (group != null && group.getIdPeriod() != null) {
+                period = group.getIdPeriod();
+            }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
-            if (sqlState != null && sqlState.equals("08001")) {
+            if ("08001".equals(sqlState)) {
                 logger.warn("Error de conexión con la base de datos: {}", e.getMessage(), e);
                 showAlert("Error de conexión con la base de datos: ");
-                return "PeriodoDesconocido";
-            } else if (sqlState != null && sqlState.equals("08S01")) {
+            } else if ("08S01".equals(sqlState)) {
                 logger.warn("Conexión interrumpida con la base de datos: {}", e.getMessage(), e);
                 showAlert("Conexión interrumpida con la base de datos: ");
-                return "PeriodoDesconocido";
-            } else if (sqlState != null && sqlState.equals("42000")) {
+            } else if ("42000".equals(sqlState)) {
                 logger.warn("Base de datos desconocida: {}", e.getMessage(), e);
                 showAlert("Base de datos desconocida: ");
-                return "PeriodoDesconocido";
-            } else if (sqlState != null && sqlState.equals("42S02")) {
+            } else if ("42S02".equals(sqlState)) {
                 logger.warn("Tabla de grupos no encontrada: {}", e.getMessage(), e);
                 showAlert("Tabla de grupos no encontrada en la base de datos: ");
-                return "PeriodoDesconocido";
-            } else if (sqlState != null && sqlState.equals("42S22")) {
+            } else if ("42S22".equals(sqlState)) {
                 logger.warn("Columna no encontrada en la tabla de grupos: {}", e.getMessage(), e);
                 showAlert("Columna no encontrada en la tabla de grupos: ");
-                return "PeriodoDesconocido";
-            } else if (sqlState != null && sqlState.equals("28000")) {
+            } else if ("28000".equals(sqlState)) {
                 logger.warn("Acceso denegado a la base de datos: {}", e.getMessage(), e);
                 showAlert("Acceso denegado a la base de datos: ");
-                return "PeriodoDesconocido";
             } else {
                 logger.warn("Error al obtener el periodo del grupo de la base de datos: {}", e.getMessage(), e);
                 showAlert("Error al obtener el periodo del grupo de la base de datos: ");
-                return "PeriodoDesconocido";
             }
         } catch (Exception e) {
             logger.warn("Error inesperado. No se pudo obtener el periodo del grupo {}", e.getMessage(), e);
             showAlert("Error inesperado al obtener el periodo del grupo: ");
-            return "PeriodoDesconocido";
         }
+        return period;
     }
 
     private void closeWindow() {

@@ -14,47 +14,47 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EvidenceDAOTest {
 
-    private static ConnectionDataBase connectionDB;
-    private static Connection connection;
+    private static ConnectionDataBase connectionDataBase;
+    private static Connection databaseConnection;
 
-    private EvidenceDAO evidenceDAO;
+    private EvidenceDAO evidenceDataAccessObject;
     private int testEvidenceId;
 
     @BeforeAll
     static void setUpClass() {
         try {
-            connectionDB = new ConnectionDataBase();
-            connection = connectionDB.connectDataBase();
-        } catch (SQLException e) {
-            fail("Error al conectar a la base de datos: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
-        } catch (Exception e) {
-            fail("Error inesperado al conectar a la base de datos: " + e.getMessage());
+            connectionDataBase = new ConnectionDataBase();
+            databaseConnection = connectionDataBase.connectDataBase();
+        } catch (SQLException exception) {
+            fail("Error al conectar a la base de datos: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
+        } catch (Exception exception) {
+            fail("Error inesperado al conectar a la base de datos: " + exception.getMessage());
         }
     }
 
     @AfterAll
     static void tearDownClass() {
-        connectionDB.close();
+        connectionDataBase.close();
     }
 
     @BeforeEach
     void setUp() {
-        evidenceDAO = new EvidenceDAO();
+        evidenceDataAccessObject = new EvidenceDAO();
     }
 
     private int insertTestEvidence(String evidenceName, Date deliveryDate, String route) throws SQLException {
         String sql = "INSERT INTO evidencia (nombreEvidencia, fechaEntrega, ruta) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, evidenceName);
-            stmt.setDate(2, new java.sql.Date(deliveryDate.getTime()));
-            stmt.setString(3, route);
-            stmt.executeUpdate();
+        try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, evidenceName);
+            preparedStatement.setDate(2, new java.sql.Date(deliveryDate.getTime()));
+            preparedStatement.setString(3, route);
+            preparedStatement.executeUpdate();
 
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 } else {
                     throw new SQLException("No se generó ID para la evidencia");
                 }
@@ -70,24 +70,23 @@ class EvidenceDAOTest {
             String route = "/ruta/test";
 
             EvidenceDTO evidence = new EvidenceDTO(0, evidenceName, deliveryDate, route);
-            boolean result = evidenceDAO.insertEvidence(evidence);
-            assertTrue(result, "La inserción debería ser exitosa");
+            boolean wasInserted = evidenceDataAccessObject.insertEvidence(evidence);
+            assertTrue(wasInserted, "La inserción debería ser exitosa");
 
             String sql = "SELECT * FROM evidencia WHERE nombreEvidencia = ?";
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, evidenceName);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    assertTrue(rs.next(), "Debería encontrar la evidencia insertada");
-                    assertEquals(evidenceName, rs.getString("nombreEvidencia"), "El nombre de la evidencia debería coincidir");
-                    assertEquals(route, rs.getString("ruta"), "La ruta debería coincidir");
+            try (PreparedStatement preparedStatement = databaseConnection.prepareStatement(sql)) {
+                preparedStatement.setString(1, evidenceName);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    assertTrue(resultSet.next(), "Debería encontrar la evidencia insertada");
+                    assertEquals(evidenceName, resultSet.getString("nombreEvidencia"), "El nombre de la evidencia debería coincidir");
+                    assertEquals(route, resultSet.getString("ruta"), "La ruta debería coincidir");
                 }
             }
-        } catch (SQLException e) {
-            fail("Error en testInsertEvidence: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (SQLException exception) {
+            fail("Error en testInsertEvidence: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
         }
-
     }
 
     @Test
@@ -99,14 +98,14 @@ class EvidenceDAOTest {
 
             testEvidenceId = insertTestEvidence(evidenceName, deliveryDate, route);
 
-            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(testEvidenceId);
+            EvidenceDTO evidence = evidenceDataAccessObject.searchEvidenceById(testEvidenceId);
             assertNotNull(evidence, "Debería encontrar la evidencia");
             assertEquals(evidenceName, evidence.getEvidenceName(), "El nombre de la evidencia debería coincidir");
             assertEquals(route, evidence.getRoute(), "La ruta debería coincidir");
-        } catch (SQLException e) {
-            fail("Error en testGetEvidence: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (SQLException exception) {
+            fail("Error en testGetEvidence: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
         }
     }
 
@@ -121,16 +120,16 @@ class EvidenceDAOTest {
             EvidenceDTO evidence = new EvidenceDTO(evidenceId, evidenceName, deliveryDate, route);
             evidence.setEvidenceName("Evidencia Actualizada");
             evidence.setRoute("/ruta/actualizada");
-            boolean updated = evidenceDAO.updateEvidence(evidence);
-            assertTrue(updated, "La actualización debería ser exitosa");
+            boolean wasUpdated = evidenceDataAccessObject.updateEvidence(evidence);
+            assertTrue(wasUpdated, "La actualización debería ser exitosa");
 
-            EvidenceDTO updatedEvidence = evidenceDAO.searchEvidenceById(evidenceId);
+            EvidenceDTO updatedEvidence = evidenceDataAccessObject.searchEvidenceById(evidenceId);
             assertEquals("Evidencia Actualizada", updatedEvidence.getEvidenceName());
             assertEquals("/ruta/actualizada", updatedEvidence.getRoute());
-        } catch (SQLException e) {
-            fail("Error en testUpdateEvidence: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (SQLException exception) {
+            fail("Error en testUpdateEvidence: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
         }
     }
 
@@ -142,79 +141,79 @@ class EvidenceDAOTest {
             String route = "/ruta/delete";
             int evidenceId = insertTestEvidence(evidenceName, deliveryDate, route);
 
-            boolean deleted = evidenceDAO.deleteEvidence(evidenceId);
-            assertTrue(deleted, "La eliminación debería ser exitosa");
+            boolean wasDeleted = evidenceDataAccessObject.deleteEvidence(evidenceId);
+            assertTrue(wasDeleted, "La eliminación debería ser exitosa");
 
-            EvidenceDTO evidence = evidenceDAO.searchEvidenceById(evidenceId);
+            EvidenceDTO evidence = evidenceDataAccessObject.searchEvidenceById(evidenceId);
             assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
-        } catch (SQLException e) {
-            fail("Error en testDeleteEvidence: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (SQLException exception) {
+            fail("Error en testDeleteEvidence: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
         }
     }
 
     @Test
     void testGetAllEvidences() {
         try {
-            for (int i = 0; i < 2; i++) {
-                insertTestEvidence("Evidencia All " + i, new Date(), "/ruta/all" + i);
+            for (int index = 0; index < 2; index++) {
+                insertTestEvidence("Evidencia All " + index, new Date(), "/ruta/all" + index);
             }
-            List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
+            List<EvidenceDTO> evidences = evidenceDataAccessObject.getAllEvidences();
             assertNotNull(evidences, "La lista no debe ser nula");
             assertTrue(evidences.size() >= 2, "Debe haber al menos dos evidencias");
-        } catch (SQLException e) {
-            fail("Error en testGetAllEvidences: " + e.getMessage());
-        } catch (IOException e) {
-            fail("Error al cargar la configuración de la base de datos: " + e.getMessage());
+        } catch (SQLException exception) {
+            fail("Error en testGetAllEvidences: " + exception.getMessage());
+        } catch (IOException exception) {
+            fail("Error al cargar la configuración de la base de datos: " + exception.getMessage());
         }
     }
 
     @Test
-    void testUpdateEvidence_NonExistent() throws SQLException, IOException {
+    void testUpdateEvidenceNonExistent() throws SQLException, IOException {
         EvidenceDTO evidence = new EvidenceDTO(9999, "No existe", new Date(), "/ruta/noexiste");
-        boolean updated = evidenceDAO.updateEvidence(evidence);
-        assertFalse(updated, "No debe actualizar una evidencia inexistente");
+        boolean wasUpdated = evidenceDataAccessObject.updateEvidence(evidence);
+        assertFalse(wasUpdated, "No debe actualizar una evidencia inexistente");
     }
 
     @Test
-    void testDeleteEvidence_NonExistent() throws SQLException, IOException {
-        boolean deleted = evidenceDAO.deleteEvidence(9999);
-        assertFalse(deleted, "No debe eliminar una evidencia inexistente");
+    void testDeleteEvidenceNonExistent() throws SQLException, IOException {
+        boolean wasDeleted = evidenceDataAccessObject.deleteEvidence(9999);
+        assertFalse(wasDeleted, "No debe eliminar una evidencia inexistente");
     }
 
     @Test
-    void testSearchEvidenceById_NonExistent() throws SQLException, IOException {
-        EvidenceDTO evidence = evidenceDAO.searchEvidenceById(9999);
+    void testSearchEvidenceByIdNonExistent() throws SQLException, IOException {
+        EvidenceDTO evidence = evidenceDataAccessObject.searchEvidenceById(9999);
         assertNotNull(evidence, "Debe retornar un objeto");
         assertEquals(-1, evidence.getIdEvidence(), "Debe retornar una evidencia inválida si el ID no existe");
     }
 
     @Test
-    void testGetAllEvidences_EmptyTable() throws SQLException, IOException {
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("DELETE FROM evidencia");
+    void testGetAllEvidencesEmptyTable() throws SQLException, IOException {
+        try (Statement statement = databaseConnection.createStatement()) {
+            statement.execute("DELETE FROM evidencia");
         }
-        List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
+        List<EvidenceDTO> evidences = evidenceDataAccessObject.getAllEvidences();
         assertNotNull(evidences);
         assertTrue(evidences.isEmpty(), "La lista debe estar vacía si no hay evidencias");
     }
 
     @Test
     void testInsertAndRetrieveMultipleEvidences() throws SQLException, IOException {
-        for (int i = 0; i < 3; i++) {
-            EvidenceDTO evidence = new EvidenceDTO(0, "Evidencia" + i, new Date(), "/ruta/" + i);
-            evidenceDAO.insertEvidence(evidence);
+        for (int index = 0; index < 3; index++) {
+            EvidenceDTO evidence = new EvidenceDTO(0, "Evidencia" + index, new Date(), "/ruta/" + index);
+            evidenceDataAccessObject.insertEvidence(evidence);
         }
-        List<EvidenceDTO> evidences = evidenceDAO.getAllEvidences();
+        List<EvidenceDTO> evidences = evidenceDataAccessObject.getAllEvidences();
         assertTrue(evidences.size() >= 3, "Debe haber al menos tres evidencias");
     }
 
     @Test
     void testGetNextEvidenceId() throws SQLException, IOException {
-        int nextIdBefore = evidenceDAO.getNextEvidenceId();
+        int nextIdBefore = evidenceDataAccessObject.getNextEvidenceId();
         insertTestEvidence("Evidencia NextId", new Date(), "/ruta/nextid");
-        int nextIdAfter = evidenceDAO.getNextEvidenceId();
+        int nextIdAfter = evidenceDataAccessObject.getNextEvidenceId();
         assertEquals(nextIdBefore + 1, nextIdAfter, "El siguiente ID debe incrementarse en 1");
     }
 }

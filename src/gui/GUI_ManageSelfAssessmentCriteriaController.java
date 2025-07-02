@@ -85,6 +85,8 @@ public class GUI_ManageSelfAssessmentCriteriaController {
             } else {
                 setStatus("No se pudo registrar el criterio.", true);
             }
+        } catch (IllegalArgumentException e) {
+            setStatus(e.getMessage(), true);
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("08001".equals(sqlState)) {
@@ -118,8 +120,7 @@ public class GUI_ManageSelfAssessmentCriteriaController {
         } catch (IOException e) {
             setStatus("Error al leer la configuración de la base de datos.", true);
             LOGGER.error("Error al leer la configuración de la base de datos: {}", e.getMessage(), e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             setStatus("Error inesperado al registrar criterio", true);
             LOGGER.error("Error al registrar criterio: {}", e.getMessage(), e);
         }

@@ -13,17 +13,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ActivityReportDAOTest {
-    private ConnectionDataBase connectionDB;
+    private ConnectionDataBase connectionDataBase;
     private Connection connection;
-    private ActivityReportDAO activityReportDAO;
-    private LinkedOrganizationDAO organizationDAO;
-    private UserDAO userDAO;
-    private DepartmentDAO departmentDAO;
-    private ProjectDAO projectDAO;
-    private StudentDAO studentDAO;
-    private EvidenceDAO evidenceDAO;
-    private ActivityDAO activityDAO;
-    private ReportDAO reportDAO;
+    private ActivityReportDAO activityReportDataAccessObject;
+    private LinkedOrganizationDAO linkedOrganizationDataAccessObject;
+    private UserDAO userDataAccessObject;
+    private DepartmentDAO departmentDataAccessObject;
+    private ProjectDAO projectDataAccessObject;
+    private StudentDAO studentDataAccessObject;
+    private EvidenceDAO evidenceDataAccessObject;
+    private ActivityDAO activityDataAccessObject;
+    private ReportDAO reportDataAccessObject;
 
     private int evidenceId;
     private int reportId;
@@ -38,17 +38,17 @@ class ActivityReportDAOTest {
 
     @BeforeAll
     void setUpAll() throws Exception {
-        connectionDB = new ConnectionDataBase();
-        connection = connectionDB.connectDataBase();
-        activityReportDAO = new ActivityReportDAO();
-        organizationDAO = new LinkedOrganizationDAO();
-        userDAO = new UserDAO();
-        departmentDAO = new DepartmentDAO();
-        projectDAO = new ProjectDAO();
-        studentDAO = new StudentDAO();
-        evidenceDAO = new EvidenceDAO();
-        activityDAO = new ActivityDAO();
-        reportDAO = new ReportDAO();
+        connectionDataBase = new ConnectionDataBase();
+        connection = connectionDataBase.connectDataBase();
+        activityReportDataAccessObject = new ActivityReportDAO();
+        linkedOrganizationDataAccessObject = new LinkedOrganizationDAO();
+        userDataAccessObject = new UserDAO();
+        departmentDataAccessObject = new DepartmentDAO();
+        projectDataAccessObject = new ProjectDAO();
+        studentDataAccessObject = new StudentDAO();
+        evidenceDataAccessObject = new EvidenceDAO();
+        activityDataAccessObject = new ActivityDAO();
+        reportDataAccessObject = new ReportDAO();
         clearTablesAndResetAutoIncrement();
     }
 
@@ -59,65 +59,65 @@ class ActivityReportDAOTest {
     }
 
     private void clearTablesAndResetAutoIncrement() throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-        stmt.execute("TRUNCATE TABLE reporte_actividad");
-        stmt.execute("TRUNCATE TABLE reporte");
-        stmt.execute("TRUNCATE TABLE actividad");
-        stmt.execute("TRUNCATE TABLE evidencia");
-        stmt.execute("TRUNCATE TABLE proyecto");
-        stmt.execute("TRUNCATE TABLE usuario");
-        stmt.execute("TRUNCATE TABLE departamento");
-        stmt.execute("TRUNCATE TABLE organizacion_vinculada");
-        stmt.execute("TRUNCATE TABLE estudiante");
-        stmt.execute("TRUNCATE TABLE grupo");
-        stmt.execute("TRUNCATE TABLE periodo");
-        stmt.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE reporte AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE actividad AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
-        stmt.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
-        try { stmt.execute("ALTER TABLE reporte_actividad AUTO_INCREMENT = 1"); } catch (SQLException ignored) {}
-        stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-        stmt.close();
+        Statement statement = connection.createStatement();
+        statement.execute("SET FOREIGN_KEY_CHECKS=0");
+        statement.execute("TRUNCATE TABLE reporte_actividad");
+        statement.execute("TRUNCATE TABLE reporte");
+        statement.execute("TRUNCATE TABLE actividad");
+        statement.execute("TRUNCATE TABLE evidencia");
+        statement.execute("TRUNCATE TABLE proyecto");
+        statement.execute("TRUNCATE TABLE usuario");
+        statement.execute("TRUNCATE TABLE departamento");
+        statement.execute("TRUNCATE TABLE organizacion_vinculada");
+        statement.execute("TRUNCATE TABLE estudiante");
+        statement.execute("TRUNCATE TABLE grupo");
+        statement.execute("TRUNCATE TABLE periodo");
+        statement.execute("ALTER TABLE evidencia AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE reporte AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE actividad AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE proyecto AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE usuario AUTO_INCREMENT = 1");
+        statement.execute("ALTER TABLE organizacion_vinculada AUTO_INCREMENT = 1");
+        try { statement.execute("ALTER TABLE reporte_actividad AUTO_INCREMENT = 1"); } catch (SQLException ignored) {}
+        statement.execute("SET FOREIGN_KEY_CHECKS=1");
+        statement.close();
     }
 
     private void createBaseData() throws SQLException, IOException {
         String sqlPeriod = "INSERT INTO periodo (idPeriodo, nombre, fechaInicio, fechaFin) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlPeriod)) {
-            stmt.setInt(1, TEST_PERIOD_ID);
-            stmt.setString(2, "Periodo Test");
-            stmt.setDate(3, java.sql.Date.valueOf("2024-01-01"));
-            stmt.setDate(4, java.sql.Date.valueOf("2024-12-31"));
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlPeriod)) {
+            statement.setInt(1, TEST_PERIOD_ID);
+            statement.setString(2, "Periodo Test");
+            statement.setDate(3, java.sql.Date.valueOf("2024-01-01"));
+            statement.setDate(4, java.sql.Date.valueOf("2024-12-31"));
+            statement.executeUpdate();
         }
 
         String sqlGroup = "INSERT INTO grupo (NRC, nombre, idUsuario, idPeriodo) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sqlGroup)) {
-            stmt.setInt(1, TEST_NRC);
-            stmt.setString(2, "Grupo Test");
-            stmt.setNull(3, java.sql.Types.INTEGER); // idUsuario puede ser null
-            stmt.setInt(4, TEST_PERIOD_ID);
-            stmt.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(sqlGroup)) {
+            statement.setInt(1, TEST_NRC);
+            statement.setString(2, "Grupo Test");
+            statement.setNull(3, java.sql.Types.INTEGER);
+            statement.setInt(4, TEST_PERIOD_ID);
+            statement.executeUpdate();
         }
 
         StudentDTO student = new StudentDTO(
                 studentEnrollment, 1, "Juan", "Perez", "1234567890",
                 "juan.perez@example.com", "juanperez", "password", String.valueOf(TEST_NRC), "50", 0.0
         );
-        studentDAO.insertStudent(student);
+        studentDataAccessObject.insertStudent(student);
 
-        LinkedOrganizationDTO organization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
-        organizationId = Integer.parseInt(organizationDAO.insertLinkedOrganizationAndGetId(organization));
+        LinkedOrganizationDTO linkedOrganization = new LinkedOrganizationDTO(null, "Org Test", "Dirección Test", 1);
+        organizationId = Integer.parseInt(linkedOrganizationDataAccessObject.insertLinkedOrganizationAndGetId(linkedOrganization));
 
         UserDTO user = new UserDTO(null,1,"12345", "Nombre", "Apellido", "usuarioTest", "contraseñaTest123456789012345678901234567890", Role.ACADEMIC);
         userId = insertUserAndGetId(user);
 
         DepartmentDTO department = new DepartmentDTO(0, "Dept Test", "Descripción test", organizationId, 1);
-        departmentDAO.insertDepartment(department);
-        List<DepartmentDTO> departments = departmentDAO.getAllDepartmentsByOrganizationId(organizationId);
-        departmentId = departments.get(0).getDepartmentId();
+        departmentDataAccessObject.insertDepartment(department);
+        List<DepartmentDTO> departmentList = departmentDataAccessObject.getAllDepartmentsByOrganizationId(organizationId);
+        departmentId = departmentList.get(0).getDepartmentId();
 
         ProjectDTO project = new ProjectDTO(null, "Proyecto Test", "Descripción Test",
                 new java.sql.Timestamp(System.currentTimeMillis()),
@@ -125,18 +125,15 @@ class ActivityReportDAOTest {
                 String.valueOf(userId), organizationId, departmentId);
         projectId = insertProjectAndGetId(project);
 
-        // 7. Evidence using EvidenceDAO
-        int nextEvidenceId = evidenceDAO.getNextEvidenceId();
+        int nextEvidenceId = evidenceDataAccessObject.getNextEvidenceId();
         EvidenceDTO evidence = new EvidenceDTO(nextEvidenceId, "Evidencia Test", new java.util.Date(), "/ruta/evidencia");
-        evidenceDAO.insertEvidence(evidence);
+        evidenceDataAccessObject.insertEvidence(evidence);
         evidenceId = nextEvidenceId;
 
-        // 8. Activity using ActivityDAO
         activityId = getNextActivityId();
         ActivityDTO activity = new ActivityDTO(String.valueOf(activityId), "Actividad Test");
-        activityDAO.insertActivity(activity);
+        activityDataAccessObject.insertActivity(activity);
 
-        // 9. Report using ReportDAO
         ReportDTO report = new ReportDTO(
                 null,
                 new java.util.Date(),
@@ -149,23 +146,23 @@ class ActivityReportDAOTest {
                 "Observaciones Test",
                 String.valueOf(evidenceId)
         );
-        reportDAO.insertReport(report);
+        reportDataAccessObject.insertReport(report);
         reportId = Integer.parseInt(report.getNumberReport());
     }
 
     private int insertUserAndGetId(UserDTO user) throws SQLException, IOException {
         String sql = "INSERT INTO usuario (numeroDePersonal, nombres, apellidos, nombreUsuario, contraseña, rol) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, user.getStaffNumber());
-            stmt.setString(2, user.getNames());
-            stmt.setString(3, user.getSurnames());
-            stmt.setString(4, user.getUserName());
-            stmt.setString(5, user.getPassword());
-            stmt.setString(6, user.getRole().toString());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, user.getStaffNumber());
+            statement.setString(2, user.getNames());
+            statement.setString(3, user.getSurnames());
+            statement.setString(4, user.getUserName());
+            statement.setString(5, user.getPassword());
+            statement.setString(6, user.getRole().toString());
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -174,17 +171,17 @@ class ActivityReportDAOTest {
 
     private int insertProjectAndGetId(ProjectDTO project) throws SQLException, IOException {
         String sql = "INSERT INTO proyecto (nombre, descripcion, fechaAproximada, fechaInicio, idUsuario, idOrganizacion) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, project.getName());
-            stmt.setString(2, project.getDescription());
-            stmt.setTimestamp(3, project.getApproximateDate());
-            stmt.setTimestamp(4, project.getStartDate());
-            stmt.setString(5, project.getIdUser());
-            stmt.setInt(6, project.getIdOrganization());
-            stmt.executeUpdate();
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, project.getName());
+            statement.setString(2, project.getDescription());
+            statement.setTimestamp(3, project.getApproximateDate());
+            statement.setTimestamp(4, project.getStartDate());
+            statement.setString(5, project.getIdUser());
+            statement.setInt(6, project.getIdOrganization());
+            statement.executeUpdate();
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
                 }
             }
         }
@@ -193,10 +190,10 @@ class ActivityReportDAOTest {
 
     private int getNextActivityId() throws SQLException {
         String sql = "SELECT IFNULL(MAX(idActividad), 0) + 1 FROM actividad";
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
             }
         }
         return 1;
@@ -207,8 +204,8 @@ class ActivityReportDAOTest {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
-        if (connectionDB != null) {
-            connectionDB.close();
+        if (connectionDataBase != null) {
+            connectionDataBase.close();
         }
     }
 
@@ -219,71 +216,71 @@ class ActivityReportDAOTest {
 
     @Test
     void insertActivityReportSuccessfully() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO(
+        ActivityReportDTO activityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones de avance"
         );
-        boolean inserted = activityReportDAO.insertActivityReport(report);
-        assertTrue(inserted, "El reporte debería insertarse correctamente.");
+        boolean wasInserted = activityReportDataAccessObject.insertActivityReport(activityReport);
+        assertTrue(wasInserted, "El reporte debería insertarse correctamente.");
     }
 
     @Test
     void updateActivityReportSuccessfully() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO(
+        ActivityReportDTO activityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones de avance"
         );
-        activityReportDAO.insertActivityReport(report);
-        ActivityReportDTO updatedReport = new ActivityReportDTO(
+        activityReportDataAccessObject.insertActivityReport(activityReport);
+        ActivityReportDTO updatedActivityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 80,
                 "Observaciones actualizadas"
         );
-        boolean updated = activityReportDAO.updateActivityReport(updatedReport);
-        assertTrue(updated, "El reporte debería actualizarse correctamente.");
+        boolean wasUpdated = activityReportDataAccessObject.updateActivityReport(updatedActivityReport);
+        assertTrue(wasUpdated, "El reporte debería actualizarse correctamente.");
     }
 
     @Test
     void updateActivityReportFailsWhenNotExists() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO("999", "102", 10, "No existe");
-        boolean updated = activityReportDAO.updateActivityReport(report);
-        assertFalse(updated, "No debería permitir actualizar un reporte inexistente.");
+        ActivityReportDTO nonExistentActivityReport = new ActivityReportDTO("999", "102", 10, "No existe");
+        boolean wasUpdated = activityReportDataAccessObject.updateActivityReport(nonExistentActivityReport);
+        assertFalse(wasUpdated, "No debería permitir actualizar un reporte inexistente.");
     }
 
     @Test
     void deleteActivityReportSuccessfully() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO(
+        ActivityReportDTO activityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones de avance"
         );
-        activityReportDAO.insertActivityReport(report);
-        boolean deleted = activityReportDAO.deleteActivityReport(String.valueOf(reportId));
-        assertTrue(deleted, "El reporte debería eliminarse correctamente.");
+        activityReportDataAccessObject.insertActivityReport(activityReport);
+        boolean wasDeleted = activityReportDataAccessObject.deleteActivityReport(String.valueOf(reportId));
+        assertTrue(wasDeleted, "El reporte debería eliminarse correctamente.");
     }
 
     @Test
     void deleteActivityReportFailsWhenNotExists() throws SQLException, IOException {
-        boolean deleted = activityReportDAO.deleteActivityReport("999");
-        assertFalse(deleted, "No debería permitir eliminar un reporte inexistente.");
+        boolean wasDeleted = activityReportDataAccessObject.deleteActivityReport("999");
+        assertFalse(wasDeleted, "No debería permitir eliminar un reporte inexistente.");
     }
 
     @Test
     void searchActivityReportByReportNumberWhenExists() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO(
+        ActivityReportDTO activityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones de avance"
         );
-        activityReportDAO.insertActivityReport(report);
-        ActivityReportDTO result = activityReportDAO.searchActivityReportByReportNumber(String.valueOf(reportId));
+        activityReportDataAccessObject.insertActivityReport(activityReport);
+        ActivityReportDTO result = activityReportDataAccessObject.searchActivityReportByReportNumber(String.valueOf(reportId));
         assertNotNull(result, "El reporte no debería ser nulo.");
         assertEquals(String.valueOf(reportId), result.getNumberReport());
         assertEquals(String.valueOf(activityId), result.getIdActivity());
@@ -293,7 +290,7 @@ class ActivityReportDAOTest {
 
     @Test
     void searchActivityReportByReportNumberWhenNotExists() throws SQLException, IOException {
-        ActivityReportDTO result = activityReportDAO.searchActivityReportByReportNumber("999");
+        ActivityReportDTO result = activityReportDataAccessObject.searchActivityReportByReportNumber("999");
         assertNotNull(result, "El reporte no debería ser nulo.");
         assertEquals("N/A", result.getNumberReport());
         assertEquals("N/A", result.getIdActivity());
@@ -301,24 +298,23 @@ class ActivityReportDAOTest {
 
     @Test
     void getAllActivityReportsReturnsList() throws SQLException, IOException {
-        // Insert first activity report
-        ActivityReportDTO report1 = new ActivityReportDTO(
+        ActivityReportDTO firstActivityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones de avance"
         );
-        activityReportDAO.insertActivityReport(report1);
+        activityReportDataAccessObject.insertActivityReport(firstActivityReport);
 
-        int evidenceId2 = evidenceDAO.getNextEvidenceId();
-        EvidenceDTO evidence2 = new EvidenceDTO(evidenceId2, "Evidencia Test 2", new java.util.Date(), "/ruta/evidencia2");
-        evidenceDAO.insertEvidence(evidence2);
+        int evidenceId2 = evidenceDataAccessObject.getNextEvidenceId();
+        EvidenceDTO secondEvidence = new EvidenceDTO(evidenceId2, "Evidencia Test 2", new java.util.Date(), "/ruta/evidencia2");
+        evidenceDataAccessObject.insertEvidence(secondEvidence);
 
         int activityId2 = getNextActivityId();
-        ActivityDTO activity2 = new ActivityDTO(String.valueOf(activityId2), "Actividad Test 2");
-        activityDAO.insertActivity(activity2);
+        ActivityDTO secondActivity = new ActivityDTO(String.valueOf(activityId2), "Actividad Test 2");
+        activityDataAccessObject.insertActivity(secondActivity);
 
-        ReportDTO report2 = new ReportDTO(
+        ReportDTO secondReport = new ReportDTO(
                 null,
                 new java.util.Date(),
                 12,
@@ -330,82 +326,80 @@ class ActivityReportDAOTest {
                 "Observaciones Test 2",
                 String.valueOf(evidenceId2)
         );
-        reportDAO.insertReport(report2);
-        int reportId2 = Integer.parseInt(report2.getNumberReport());
+        reportDataAccessObject.insertReport(secondReport);
+        int reportId2 = Integer.parseInt(secondReport.getNumberReport());
 
-        ActivityReportDTO activityReport2 = new ActivityReportDTO(
+        ActivityReportDTO secondActivityReport = new ActivityReportDTO(
                 String.valueOf(reportId2),
                 String.valueOf(activityId2),
                 80,
                 "Observaciones de avance 2"
         );
-        activityReportDAO.insertActivityReport(activityReport2);
+        activityReportDataAccessObject.insertActivityReport(secondActivityReport);
 
-        List<ActivityReportDTO> result = activityReportDAO.getAllActivityReports();
-        assertNotNull(result, "La lista de reportes no debería ser nula.");
-        assertEquals(2, result.size(), "Debe haber dos reportes de actividad.");
+        List<ActivityReportDTO> activityReportList = activityReportDataAccessObject.getAllActivityReports();
+        assertNotNull(activityReportList, "La lista de reportes no debería ser nula.");
+        assertEquals(2, activityReportList.size(), "Debe haber dos reportes de actividad.");
     }
 
     @Test
     void insertDuplicateActivityReportFails() throws SQLException, IOException {
-        ActivityReportDTO report = new ActivityReportDTO(
+        ActivityReportDTO activityReport = new ActivityReportDTO(
                 String.valueOf(reportId),
                 String.valueOf(activityId),
                 50,
                 "Observaciones"
         );
-        assertTrue(activityReportDAO.insertActivityReport(report));
-        // Try to insert the same activity report (same PK)
-        assertThrows(SQLException.class, () -> activityReportDAO.insertActivityReport(report));
+        assertTrue(activityReportDataAccessObject.insertActivityReport(activityReport));
+        assertThrows(SQLException.class, () -> activityReportDataAccessObject.insertActivityReport(activityReport));
     }
 
     @Test
     void insertActivityReportWithInvalidForeignKeysFails() {
-        ActivityReportDTO report = new ActivityReportDTO(
-                "99999", // non-existent report number
-                "88888", // non-existent activity id
+        ActivityReportDTO invalidActivityReport = new ActivityReportDTO(
+                "99999",
+                "88888",
                 10,
                 "Datos inválidos"
         );
-        assertThrows(SQLException.class, () -> activityReportDAO.insertActivityReport(report));
+        assertThrows(SQLException.class, () -> activityReportDataAccessObject.insertActivityReport(invalidActivityReport));
     }
 
     @Test
     void getAllActivityReportsReturnsEmptyListWhenNoneExist() throws SQLException, IOException {
         clearTablesAndResetAutoIncrement();
-        List<ActivityReportDTO> result = activityReportDAO.getAllActivityReports();
-        assertNotNull(result);
-        assertTrue(result.isEmpty(), "La lista debe estar vacía si no hay reportes.");
+        List<ActivityReportDTO> activityReportList = activityReportDataAccessObject.getAllActivityReports();
+        assertNotNull(activityReportList);
+        assertTrue(activityReportList.isEmpty(), "La lista debe estar vacía si no hay reportes.");
     }
 
     @Test
     void activityReportDTOEqualsAndToStringWork() {
-        ActivityReportDTO report1 = new ActivityReportDTO("1", "2", 50, "Obs");
-        ActivityReportDTO report2 = new ActivityReportDTO("1", "2", 50, "Obs");
-        ActivityReportDTO report3 = new ActivityReportDTO("2", "3", 10, "Otro");
-        assertEquals(report1, report2, "equals debe ser true para objetos iguales");
-        assertNotEquals(report1, report3, "equals debe ser false para objetos distintos");
-        assertTrue(report1.toString().contains("numberReport='1'"), "toString debe contener los campos");
+        ActivityReportDTO activityReportOne = new ActivityReportDTO("1", "2", 50, "Obs");
+        ActivityReportDTO activityReportTwo = new ActivityReportDTO("1", "2", 50, "Obs");
+        ActivityReportDTO activityReportThree = new ActivityReportDTO("2", "3", 10, "Otro");
+        assertEquals(activityReportOne, activityReportTwo, "equals debe ser true para objetos iguales");
+        assertNotEquals(activityReportOne, activityReportThree, "equals debe ser false para objetos distintos");
+        assertTrue(activityReportOne.toString().contains("numberReport='1'"), "toString debe contener los campos");
     }
 
     @Test
     void insertMultipleActivityReportsSuccessfully() throws SQLException, IOException {
         for (int i = 0; i < 5; i++) {
-            // Create new evidence, activity and report for each iteration
-            int evidenceIdX = evidenceDAO.getNextEvidenceId();
-            evidenceDAO.insertEvidence(new EvidenceDTO(evidenceIdX, "Evidencia " + i, new java.util.Date(), "/ruta/evidencia" + i));
+            int evidenceIdX = evidenceDataAccessObject.getNextEvidenceId();
+            evidenceDataAccessObject.insertEvidence(new EvidenceDTO(evidenceIdX, "Evidencia " + i, new java.util.Date(), "/ruta/evidencia" + i));
             int activityIdX = getNextActivityId();
-            activityDAO.insertActivity(new ActivityDTO(String.valueOf(activityIdX), "Actividad " + i));
+            activityDataAccessObject.insertActivity(new ActivityDTO(String.valueOf(activityIdX), "Actividad " + i));
             ReportDTO report = new ReportDTO(
                     null, new java.util.Date(), 10 + i, "Obj " + i, "Met " + i, "Res " + i,
                     projectId, studentEnrollment, "Obs " + i, String.valueOf(evidenceIdX)
             );
-            reportDAO.insertReport(report);
+            reportDataAccessObject.insertReport(report);
             int reportIdX = Integer.parseInt(report.getNumberReport());
-            ActivityReportDTO ar = new ActivityReportDTO(String.valueOf(reportIdX), String.valueOf(activityIdX), 10 * i, "Obs " + i);
-            assertTrue(activityReportDAO.insertActivityReport(ar));
+            ActivityReportDTO activityReport = new ActivityReportDTO(String.valueOf(reportIdX), String.valueOf(activityIdX), 10 * i, "Obs " + i);
+            assertTrue(activityReportDataAccessObject.insertActivityReport(activityReport));
         }
-        List<ActivityReportDTO> all = activityReportDAO.getAllActivityReports();
-        assertEquals(5, all.size(), "Debe haber 5 reportes de actividad insertados.");
+        List<ActivityReportDTO> activityReportList = activityReportDataAccessObject.getAllActivityReports();
+        assertEquals(5, activityReportList.size(), "Debe haber 5 reportes de actividad insertados.");
     }
 }
